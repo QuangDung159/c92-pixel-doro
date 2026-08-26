@@ -1,0 +1,227 @@
+# PixelDoro — Technical Documentation Checklist
+
+Checklist này dùng để quản lý tám tài liệu kỹ thuật bắt buộc trước khi bắt đầu phát triển Mobile MVP.
+
+**Project roles:** Dũng Lư — Tech Lead, Product Owner và Lead Mobile Developer.
+
+## Quy ước trạng thái
+
+- [ ] Chưa bắt đầu
+- [/] Đang thực hiện
+- [x] Hoàn thành và đã review
+- `[BLOCKED]` Đang bị chặn; ghi rõ nguyên nhân trong phần ghi chú
+
+## Tiêu chí hoàn thành chung
+
+Một tài liệu chỉ được đánh dấu hoàn thành khi đáp ứng tất cả điều kiện sau:
+
+- [ ] Đã tạo đúng file và đặt trong thư mục quy định.
+- [ ] Nội dung phản ánh đúng phạm vi Mobile MVP hiện tại.
+- [ ] Không còn quyết định quan trọng ở trạng thái mơ hồ hoặc `TBD` mà không có owner.
+- [ ] Có acceptance criteria hoặc quy tắc đủ rõ để triển khai và kiểm thử.
+- [ ] Các thuật ngữ, enum và tên trạng thái nhất quán với những tài liệu còn lại.
+- [ ] Đã được ít nhất một thành viên khác trong team review.
+- [ ] Các quyết định kỹ thuật quan trọng đã được ghi lại bằng ADR nếu cần.
+
+## Tổng quan tiến độ
+
+| # | Tài liệu | Đường dẫn | Owner | Trạng thái | Reviewer | Ngày hoàn thành |
+|---:|---|---|---|---|---|---|
+| 1 | Technical Overview | [`architecture/technical-overview.md`](architecture/technical-overview.md) | Dũng Lư | Hoàn thành | Dũng Lư — Tech Lead | 2026-08-26 |
+| 2 | System Architecture | [`architecture/system-architecture.md`](architecture/system-architecture.md) | Dũng Lư | Hoàn thành | Dũng Lư — Tech Lead | 2026-08-26 |
+| 3 | Project Structure | [`architecture/project-structure.md`](architecture/project-structure.md) | Dũng Lư | Hoàn thành | Dũng Lư — Tech Lead | 2026-08-26 |
+| 4 | Timer Engine Specification | [`specifications/timer-engine.md`](specifications/timer-engine.md) | Dũng Lư | Hoàn thành | Dũng Lư — Tech Lead | 2026-08-26 |
+| 5 | Session Lifecycle | [`specifications/session-lifecycle.md`](specifications/session-lifecycle.md) | Dũng Lư | Hoàn thành | Dũng Lư — Tech Lead | 2026-08-26 |
+| 6 | Pet State Machine | [`specifications/pet-state-machine.md`](specifications/pet-state-machine.md) | Chưa phân công | Chưa bắt đầu | Chưa phân công | — |
+| 7 | Gamification Rules | [`specifications/gamification-rules.md`](specifications/gamification-rules.md) | Chưa phân công | Chưa bắt đầu | Chưa phân công | — |
+| 8 | Data Model | [`architecture/data-model.md`](architecture/data-model.md) | Chưa phân công | Chưa bắt đầu | Chưa phân công | — |
+
+---
+
+## 1. Technical Overview
+
+**File:** [`architecture/technical-overview.md`](architecture/technical-overview.md)
+
+- [x] Xác định nền tảng MVP: iOS và Android.
+- [x] Chốt React Native, TypeScript và Expo Development Build.
+- [x] Chốt navigation, state management, database và animation stack.
+- [x] Xác định rõ phạm vi có và không có trong MVP.
+- [x] Ghi các nguyên tắc offline-first và privacy-first.
+- [x] Liệt kê các ràng buộc kỹ thuật quan trọng.
+- [x] Liên kết tới các ADR liên quan.
+- [x] Đã review và phê duyệt.
+
+**Owner:** Dũng Lư  
+**Reviewer:** Dũng Lư — Tech Lead  
+**Trạng thái:** Hoàn thành  
+**Ghi chú:** Technical Overview `1.0.0` được Tech Lead Dũng Lư phê duyệt ngày 2026-08-26; `TECH-OPEN-001` đến `TECH-OPEN-006` đã chốt và ADR-001 đến ADR-008 đều `ACCEPTED`.
+
+## 2. System Architecture
+
+**File:** [`architecture/system-architecture.md`](architecture/system-architecture.md)
+
+- [x] Mô tả các layer: Presentation, Application, Domain và Infrastructure.
+- [x] Xác định dependency direction giữa các layer.
+- [x] Có sơ đồ data flow cho một focus session hoàn chỉnh.
+- [x] Xác định ranh giới giữa shared core và mobile adapters.
+- [x] Quy định UI không truy cập database trực tiếp.
+- [x] Quy định domain không import React Native hoặc Expo.
+- [x] Mô tả cách xử lý side effects và dependency injection.
+- [x] Đã review và phê duyệt.
+
+**Owner:** Dũng Lư  
+**Reviewer:** Dũng Lư — Tech Lead  
+**Trạng thái:** Hoàn thành  
+**Ghi chú:** System Architecture `1.0.0` được Tech Lead Dũng Lư phê duyệt ngày 2026-08-26; `SA-OPEN-001` đến `SA-OPEN-005` đều đã chốt.
+
+## 3. Project Structure
+
+**File:** [`architecture/project-structure.md`](architecture/project-structure.md)
+
+- [x] Định nghĩa cấu trúc `apps/`, `packages/` và `docs/`.
+- [x] Mô tả trách nhiệm của từng thư mục/module.
+- [x] Quy định import boundaries.
+- [x] Quy định naming cho file, component, hook, store và service.
+- [x] Quy định vị trí của test, fixture và mock.
+- [x] Quy định vị trí và naming của sprite, audio và font.
+- [x] Có ví dụ thêm một feature mới đúng kiến trúc.
+- [x] Đã review và phê duyệt.
+
+**Owner:** Dũng Lư  
+**Reviewer:** Dũng Lư — Tech Lead  
+**Trạng thái:** Hoàn thành  
+**Ghi chú:** Project Structure `1.0.0` được Tech Lead Dũng Lư phê duyệt ngày 2026-08-26; `PS-OPEN-001` đến `PS-OPEN-008` đều đã chốt.
+
+## 4. Timer Engine Specification
+
+**File:** [`specifications/timer-engine.md`](specifications/timer-engine.md)
+
+- [x] Định nghĩa đầy đủ timer states và events.
+- [x] Có state-transition table hoặc state diagram.
+- [x] Chốt cách dùng `startedAt`, `endsAt`, `pausedAt` và timestamp hiện tại.
+- [x] Quy định hành vi start, pause, resume, cancel và complete.
+- [x] Quy định hành vi khi app background, foreground, bị kill hoặc thiết bị restart.
+- [x] Quy định cách xử lý timezone và thay đổi giờ hệ thống.
+- [x] Quy định cơ chế chống complete/claim reward hai lần.
+- [x] Liệt kê edge cases và acceptance criteria tương ứng.
+- [x] Đã review và phê duyệt.
+
+**Owner:** Dũng Lư — Tech Lead / Product Owner / Lead Mobile Developer  
+**Reviewer:** Dũng Lư — Tech Lead  
+**Trạng thái:** Hoàn thành  
+**Ghi chú:** Timer Engine `1.0.0` được Dũng Lư — Tech Lead/Product Owner review và phê duyệt ngày 2026-08-26; maintenance `1.0.1` được phê duyệt cùng ngày để đồng bộ Product decision references mà không đổi timer semantics. `TE-OPEN-001` đến `TE-OPEN-010` đều `RESOLVED`.
+
+## 5. Session Lifecycle
+
+**File:** [`specifications/session-lifecycle.md`](specifications/session-lifecycle.md)
+
+- [x] Định nghĩa `running`, `completed`, `failed` và `cancelled`.
+- [x] Mô tả toàn bộ luồng Focus → Reward → Break.
+- [x] Chốt hành vi Relax Mode.
+- [x] Chốt hành vi Strict Mode nhẹ và ngưỡng rời app 10 giây.
+- [x] Quy định kết quả khi app crash hoặc được mở lại sau `endsAt`.
+- [x] Xác định điều kiện nhận XP/Coin cho từng kết quả.
+- [x] Có bảng tình huống, status cuối và reward tương ứng.
+- [x] Có acceptance criteria cho các luồng thành công và thất bại.
+- [x] Đã review và phê duyệt.
+
+**Owner:** Dũng Lư — Tech Lead / Product Owner / Lead Mobile Developer  
+**Reviewer:** Dũng Lư — Tech Lead  
+**Trạng thái:** Hoàn thành  
+**Ghi chú:** Session Lifecycle `1.0.0` được Dũng Lư — Tech Lead/Product Owner review và phê duyệt ngày 2026-08-26; `SL-OPEN-001`, `SL-OPEN-002`, Product `OPEN-003`, `OPEN-004` và `OPEN-010` đều `RESOLVED`.
+
+## 6. Pet State Machine
+
+**File:** [`specifications/pet-state-machine.md`](specifications/pet-state-machine.md)
+
+- [ ] Định nghĩa Idle, Working, Break, Bugged và Celebrating.
+- [ ] Ánh xạ timer/session state sang Pet state.
+- [ ] Có state-transition table hoặc state diagram.
+- [ ] Quy định animation loop và animation chạy một lần.
+- [ ] Quy định priority khi nhiều animation cùng được yêu cầu.
+- [ ] Chốt thời gian giữ trạng thái Bugged và Celebrating.
+- [ ] Có fallback khi asset hoặc animation không tải được.
+- [ ] Có acceptance criteria cho từng Pet state.
+- [ ] Đã review và phê duyệt.
+
+**Owner:** Chưa phân công  
+**Reviewer:** Chưa phân công  
+**Trạng thái:** Chưa bắt đầu  
+**Ghi chú:** —
+
+## 7. Gamification Rules
+
+**File:** [`specifications/gamification-rules.md`](specifications/gamification-rules.md)
+
+- [ ] Chốt công thức XP và Coin.
+- [ ] Chốt level thresholds và unlock conditions.
+- [ ] Chốt reward theo thời lượng focus.
+- [ ] Chốt hành vi reward cho completed, failed và cancelled session.
+- [ ] Quy định rounding và giới hạn reward nếu có.
+- [ ] Quy định cách chống claim reward nhiều lần.
+- [ ] Chốt danh sách vật phẩm và giá cho MVP.
+- [ ] Có ví dụ tính reward cho các thời lượng phổ biến.
+- [ ] Đã review và phê duyệt.
+
+**Owner:** Chưa phân công  
+**Reviewer:** Chưa phân công  
+**Trạng thái:** Chưa bắt đầu  
+**Ghi chú:** —
+
+## 8. Data Model
+
+**File:** [`architecture/data-model.md`](architecture/data-model.md)
+
+- [ ] Liệt kê đầy đủ entity của MVP.
+- [ ] Định nghĩa field, datatype, default và nullable rules.
+- [ ] Định nghĩa primary key, foreign key và index.
+- [ ] Chốt enum values và naming thống nhất.
+- [ ] Bổ sung RewardTransaction hoặc cơ chế ledger tương đương.
+- [ ] Mô tả quan hệ giữa Pet, Session, Inventory và Reward.
+- [ ] Có chiến lược migration và schema versioning.
+- [ ] Có quy tắc xóa/reset dữ liệu người dùng.
+- [ ] Có ví dụ record cho các entity chính.
+- [ ] Đã review và phê duyệt.
+
+**Owner:** Chưa phân công  
+**Reviewer:** Chưa phân công  
+**Trạng thái:** Chưa bắt đầu  
+**Ghi chú:** —
+
+## Dependency và thứ tự thực hiện
+
+```text
+1. Technical Overview
+        ↓
+2. System Architecture
+        ↓
+3. Project Structure
+        ↓
+4. Timer Engine ──────► 5. Session Lifecycle
+        │                       │
+        └──────────────┬────────┘
+                       ↓
+                6. Pet State Machine
+                       ↓
+                7. Gamification Rules
+                       ↓
+                   8. Data Model
+```
+
+Timer Engine và Session Lifecycle có thể được soạn song song sau khi System Architecture đã được chốt. Data Model nên được duyệt cuối cùng sau khi các trạng thái và quy tắc gameplay đã ổn định.
+
+## Review cuối bộ tài liệu
+
+- [ ] Tám tài liệu đều đã hoàn thành.
+- [ ] Không có enum hoặc thuật ngữ mâu thuẫn giữa các tài liệu.
+- [ ] Timer states, session statuses và Pet states được ánh xạ đầy đủ.
+- [ ] Data Model lưu được toàn bộ trạng thái và quy tắc đã mô tả.
+- [ ] Gamification không thể cộng reward hai lần.
+- [ ] Mọi edge case quan trọng đều có acceptance criteria.
+- [ ] Các quyết định bị hoãn đều có owner và thời hạn xem xét lại.
+- [ ] Tech lead đã phê duyệt bộ tài liệu để bắt đầu implementation.
+
+**Ngày bắt đầu:** —  
+**Ngày phê duyệt:** —  
+**Tech lead:** Dũng Lư  
+**Ghi chú chung:** Technical Overview, System Architecture, Project Structure, Timer Engine và Session Lifecycle đã được phê duyệt; ba tài liệu còn lại tiếp tục theo dependency order.
