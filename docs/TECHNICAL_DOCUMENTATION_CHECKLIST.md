@@ -32,7 +32,7 @@ Một tài liệu chỉ được đánh dấu hoàn thành khi đáp ứng tất
 | 3 | Project Structure | [`architecture/project-structure.md`](architecture/project-structure.md) | Dũng Lư | Hoàn thành | Dũng Lư — Tech Lead | 2026-08-26 |
 | 4 | Timer Engine Specification | [`specifications/timer-engine.md`](specifications/timer-engine.md) | Dũng Lư | Hoàn thành | Dũng Lư — Tech Lead | 2026-08-26 |
 | 5 | Session Lifecycle | [`specifications/session-lifecycle.md`](specifications/session-lifecycle.md) | Dũng Lư | Hoàn thành | Dũng Lư — Tech Lead | 2026-08-26 |
-| 6 | Pet State Machine | [`specifications/pet-state-machine.md`](specifications/pet-state-machine.md) | Chưa phân công | Chưa bắt đầu | Chưa phân công | — |
+| 6 | Pet State Machine | [`specifications/pet-state-machine.md`](specifications/pet-state-machine.md) | Dũng Lư | Hoàn thành | Dũng Lư — Tech Lead | 2026-08-26 |
 | 7 | Gamification Rules | [`specifications/gamification-rules.md`](specifications/gamification-rules.md) | Chưa phân công | Chưa bắt đầu | Chưa phân công | — |
 | 8 | Data Model | [`architecture/data-model.md`](architecture/data-model.md) | Chưa phân công | Chưa bắt đầu | Chưa phân công | — |
 
@@ -134,20 +134,20 @@ Một tài liệu chỉ được đánh dấu hoàn thành khi đáp ứng tất
 
 **File:** [`specifications/pet-state-machine.md`](specifications/pet-state-machine.md)
 
-- [ ] Định nghĩa Idle, Working, Break, Bugged và Celebrating.
-- [ ] Ánh xạ timer/session state sang Pet state.
-- [ ] Có state-transition table hoặc state diagram.
-- [ ] Quy định animation loop và animation chạy một lần.
-- [ ] Quy định priority khi nhiều animation cùng được yêu cầu.
-- [ ] Chốt thời gian giữ trạng thái Bugged và Celebrating.
-- [ ] Có fallback khi asset hoặc animation không tải được.
-- [ ] Có acceptance criteria cho từng Pet state.
-- [ ] Đã review và phê duyệt.
+- [x] Định nghĩa Idle, Working, Break, Bugged và Celebrating.
+- [x] Ánh xạ timer/session state sang Pet state.
+- [x] Có state-transition table hoặc state diagram.
+- [x] Quy định animation loop và animation chạy một lần.
+- [x] Quy định priority khi nhiều animation cùng được yêu cầu.
+- [x] Chốt thời gian giữ trạng thái Bugged và Celebrating.
+- [x] Có fallback khi asset hoặc animation không tải được.
+- [x] Có acceptance criteria cho từng Pet state.
+- [x] Đã review và phê duyệt.
 
-**Owner:** Chưa phân công  
-**Reviewer:** Chưa phân công  
-**Trạng thái:** Chưa bắt đầu  
-**Ghi chú:** —
+**Owner:** Dũng Lư — Tech Lead / Product Owner / Lead Mobile Developer
+**Reviewer:** Dũng Lư — Tech Lead
+**Trạng thái:** Hoàn thành
+**Ghi chú:** Pet State Machine `1.0.0` được Dũng Lư — Tech Lead/Product Owner review và phê duyệt ngày 2026-08-26; `PSM-OPEN-001` đến `PSM-OPEN-004` đều `RESOLVED`.
 
 ## 7. Gamification Rules
 
@@ -224,4 +224,4 @@ Timer Engine và Session Lifecycle có thể được soạn song song sau khi S
 **Ngày bắt đầu:** —  
 **Ngày phê duyệt:** —  
 **Tech lead:** Dũng Lư  
-**Ghi chú chung:** Technical Overview, System Architecture, Project Structure, Timer Engine và Session Lifecycle đã được phê duyệt; ba tài liệu còn lại tiếp tục theo dependency order.
+**Ghi chú chung:** Technical Overview, System Architecture, Project Structure, Timer Engine, Session Lifecycle và Pet State Machine đã được phê duyệt; Gamification Rules và Data Model tiếp tục theo dependency order.
