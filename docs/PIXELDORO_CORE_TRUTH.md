@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_CORE_TRUTH
 title: PixelDoro Product Core — Single Source of Truth
-version: 1.10.0
+version: 1.12.0
 status: ACTIVE
 last_updated: 2026-08-26
 owner: Dũng Lư
@@ -281,10 +281,13 @@ Trạng thái: `LOCKED` cho phạm vi MVP hiện tại; các mục này có th�
 
 | Thuộc tính | Giá trị | Trạng thái |
 |---|---:|---|
-| Minimum | 15 phút | `LOCKED` |
-| Maximum | 120 phút | `LOCKED` |
-| Default | 25 phút | `MVP_DEFAULT` |
-| Step | 5 phút | `MVP_DEFAULT` |
+| Minimum standard Focus | 15 phút | `LOCKED` |
+| Maximum standard Focus | 120 phút | `LOCKED` |
+| Default standard Focus | 25 phút | `MVP_DEFAULT` |
+| Standard Focus step | 5 phút | `MVP_DEFAULT` |
+| Onboarding trial Focus | Cố định 5 phút | `MVP_DEFAULT`; ngoại lệ đã chốt qua `GR-OPEN-003` |
+
+Minimum 15 phút chỉ áp dụng cho Focus được bắt đầu từ normal focus flow. Onboarding trial là special Focus cố định 5 phút và không mở rộng duration selector của standard Focus.
 
 ## 5.2. Break duration
 
@@ -299,6 +302,7 @@ Long Break cadence cho Mobile MVP:
 - Sau bốn Focus session `completed` kể từ Long Break `completed` gần nhất, loại Break kế tiếp là Long Break 15 phút.
 - Nếu chưa từng hoàn thành Long Break, bộ đếm bắt đầu từ completed Focus đầu tiên trong local history.
 - Focus `failed` hoặc `cancelled` không tăng bộ đếm.
+- Onboarding trial Focus không tăng bộ đếm, kể cả khi `completed`.
 - Trạng thái Long Break đến hạn phải giữ qua app relaunch và tiếp tục có hiệu lực cho tới khi Long Break `completed`.
 - Long Break `cancelled` không reset trạng thái đến hạn.
 - Trước khi Long Break đến hạn, Break kế tiếp sau completed Focus là Short Break 5 phút.
@@ -577,19 +581,48 @@ Ví dụ:
 
 `completedFocusMinutes` là số phút Focus đã cấu hình của một session `completed`; thời gian vượt quá `endsAt` không tạo thêm reward. `floor` làm tròn Coin xuống số nguyên. Focus `failed`/`cancelled` và mọi Break không nhận XP/Coin.
 
+Ngoại lệ onboarding đã chốt qua `GR-OPEN-003`:
+
+- Onboarding trial là special Focus có configured duration cố định 5 phút.
+- Trial `completed` áp dụng cùng công thức và nhận `5 XP`, `1 Coin`.
+- Trial reward được grant tự động trong cùng completed transaction và idempotent bằng RewardTransaction unique theo trial `sessionId`.
+- `5 XP` đóng góp vào cumulative XP/level; `1 Coin` đóng góp vào spendable Coin balance.
+- Trial không `completed` không nhận partial XP/Coin.
+- Trial không tính vào standard Focus history/contribution graph, Long Break cadence, store-review eligibility hoặc core Focus/reward analytics.
+
 Trạng thái: `MVP_DEFAULT`, chốt từ `OPEN-004` ngày 2026-08-26.
 
 ## 9.4. Shop and inventory
 
-MVP nên có một shop nhỏ với khoảng 10–15 vật phẩm để kiểm chứng người dùng có quan tâm tới reward loop hay không.
+Mobile MVP có đúng 12 shop items để kiểm chứng người dùng có quan tâm tới reward loop hay không:
 
-Các category dài hạn:
+| Stable item ID | Tên hiển thị | Category | Giá |
+|---|---|---|---:|
+| `desk-mug` | Cốc trên bàn | `furniture` | 5 Coin |
+| `tiny-plant` | Chậu cây nhỏ | `furniture` | 10 Coin |
+| `book-stack` | Chồng sách | `furniture` | 15 Coin |
+| `desk-lamp` | Đèn bàn | `furniture` | 20 Coin |
+| `wall-calendar` | Lịch treo tường | `furniture` | 25 Coin |
+| `floor-cushion` | Đệm ngồi | `furniture` | 30 Coin |
+| `small-rug` | Thảm nhỏ | `furniture` | 40 Coin |
+| `wall-poster` | Tranh treo tường | `furniture` | 50 Coin |
+| `bookshelf` | Kệ sách | `furniture` | 60 Coin |
+| `standing-lamp` | Đèn đứng | `furniture` | 75 Coin |
+| `armchair` | Ghế bành | `furniture` | 90 Coin |
+| `window-view` | Khung cửa sổ | `furniture` | 120 Coin |
 
-- `skin`
-- `furniture`
-- `theme`
+Shop/inventory rules đã chốt:
 
-Số lượng và giá cụ thể: `OPEN`.
+- 12 item trên là shop items purchasable; default room/Pet presentation assets không tính vào catalog.
+- Catalog hiển thị từ đầu và không level-gate item.
+- Item được mua một lần bằng Coin; purchase debit và ownership phải commit atomically.
+- Coin balance không được âm; item đã sở hữu không thể mua lại hoặc bị xóa do unequip, Focus failed/cancelled hay economy progression.
+- Equip item đã sở hữu không tốn thêm Coin.
+- Toàn bộ item chỉ là cosmetic room decoration và không tạo XP/Coin multiplier, reward bonus, protection hoặc gameplay advantage.
+- Không dynamic pricing, sale, discount, refund, sell-back, consumable, duplicate stack, gift hoặc trade trong Mobile MVP.
+- Exact schema, constraint, index và migration thuộc `architecture/data-model.md` nhưng không được thay đổi behavior đã chốt ở đây.
+
+Trạng thái: `MVP_DEFAULT`, chốt từ `OPEN-005` ngày 2026-08-26.
 
 ## 9.5. Streak
 
@@ -628,13 +661,20 @@ Trạng thái: `DEFERRED`.
 Launch
   → Giới thiệu ngắn về Pet
   → Chọn tên Pet hoặc dùng tên mặc định
-  → Chạy phiên thử 3–5 phút
+  → Chạy onboarding trial Focus 5 phút
   → Pet celebrate
-  → Nhận reward đầu tiên
+  → Nhận 5 XP và 1 Coin
   → Vào Home/Pet Room
 ```
 
-Phiên onboarding ngắn hơn minimum focus thông thường và không được tính vào analytics focus chính nếu có thể gây sai dữ liệu.
+Onboarding trial là special Focus ngắn hơn minimum standard Focus. Reward được grant tự động và idempotent như completed Focus khác, nhưng trial không được tính vào:
+
+- Standard Focus history hoặc contribution graph.
+- Long Break cadence.
+- Completed Focus count/active day dùng cho store-review eligibility.
+- Standard `focus_session_started`, `focus_session_completed` hoặc `reward_granted` analytics.
+
+Trial dùng `onboarding_started`/`onboarding_completed` cho core analytics. Data Model phải làm trial có thể được phân biệt bền vững với standard Focus mà không tạo session status mới.
 
 ## 10.3. Normal focus flow — `LOCKED`
 
@@ -686,7 +726,7 @@ PixelDoro có hai luồng độc lập:
 - Không review-gate: `experience score`, sentiment hoặc nội dung feedback không được dùng để quyết định ai được thấy, ai bị chặn hoặc ai được chuyển tới store review.
 - Không hỏi người dùng về mức độ hài lòng ngay trước hoặc trong store review flow.
 - Không thưởng XP, Coin, item hoặc lợi ích khác để đổi lấy rating/review.
-- Store review request lần đầu chỉ eligible trong production build sau ít nhất 7 ngày cài đặt, 5 completed Focus sessions và 3 ngày có completed session khác nhau.
+- Store review request lần đầu chỉ eligible trong production build sau ít nhất 7 ngày cài đặt, 5 completed standard Focus sessions và 3 ngày có completed standard Focus session khác nhau. Onboarding trial không đóng góp vào count hoặc active day này.
 - Request chỉ được gọi tại natural stopping point: người dùng vừa completed Focus, đã xem xong reward/celebration và trở về Home; không gọi sau failed/cancelled session hoặc khi có active Focus/Break, onboarding hay modal khác.
 - Cooldown tối thiểu 120 ngày, tối đa 3 attempts trong rolling 365 ngày và tối đa một attempt/app version. Mọi lần gọi đều tính là attempt kể cả khi OS/store không hiển thị prompt; không retry ngay.
 - Eligibility không được đọc feedback score, sentiment, comment hoặc feedback history. App không suy diễn rating/review outcome từ native API.
@@ -744,13 +784,16 @@ Người dùng có thể xem:
 - Completed/failed/cancelled status.
 - Contribution graph cơ bản theo ngày.
 
+Onboarding trial không xuất hiện trong standard Focus history và không đóng góp vào tổng phút focus theo ngày.
+
 Phân tích sâu theo tuần/tháng và cloud history là `DEFERRED`.
 
 ## 12.2. Contribution graph semantics
 
-Mỗi ô biểu diễn tổng số phút của các session `completed` trong một ngày local.
+Mỗi ô biểu diễn tổng số phút của các standard Focus session `completed` trong một ngày local.
 
 Session `failed` và `cancelled` không đóng góp vào intensity.
+Onboarding trial không đóng góp vào intensity dù trial `completed`.
 
 Ngưỡng màu cụ thể: `OPEN`.
 
@@ -788,6 +831,8 @@ history_viewed
 feedback_started
 feedback_submitted
 ```
+
+Onboarding trial chỉ dùng `onboarding_started` và `onboarding_completed` trong core analytics. Trial không phát `focus_session_started`, `focus_session_completed` hoặc `reward_granted`; điều này giữ first-session/core Focus metrics tách khỏi tutorial exception.
 
 ## 13.3. Core metrics
 
@@ -1056,8 +1101,12 @@ Mobile MVP được xem là đủ điều kiện closed beta khi:
 - [ ] Local notification hoạt động khi được cấp quyền.
 - [ ] Permission bị từ chối không làm hỏng timer.
 - [ ] XP/Coin và inventory persist sau khi restart app.
+- [ ] Shop có đúng 12 item và price theo §9.4; catalog hiển thị từ đầu và không level-gate.
+- [ ] Purchase không làm Coin âm, không debit/unlock hai lần và commit Coin debit + ownership atomically.
+- [ ] Item đã sở hữu persist sau restart, equip miễn phí và không bị xóa do unequip hoặc session outcome.
 - [ ] Lịch sử hiển thị đúng completed/failed/cancelled session.
-- [ ] Contribution graph chỉ tính completed focus minutes.
+- [ ] Completed onboarding trial 5 phút nhận đúng 5 XP/1 Coin tối đa một lần và không ảnh hưởng standard history/cadence/store-review/core Focus analytics.
+- [ ] Contribution graph chỉ tính completed standard Focus minutes và loại onboarding trial.
 - [ ] Người dùng có thể tắt audio và haptic.
 - [ ] Người dùng có thể gửi feedback.
 - [ ] Các analytics event chính không phát trùng ngoài chủ đích.
@@ -1078,9 +1127,11 @@ Mobile MVP được xem là đủ điều kiện closed beta khi:
 | OPEN-010 | Break không auto-start. Sau completed Focus reward/celebration, người dùng chọn “Bắt đầu nghỉ” hoặc “Về Home”; chỉ StartBreak transaction sau explicit action mới tạo running Break. | Product | `RESOLVED` | 2026-08-26 |
 | OPEN-007 | Beta analytics dùng PostHog Cloud EU qua adapter, anonymous-only và manual allowlist; áp dụng queue, privacy, retention và cost limits trong ADR-008. | Engineering/Product | `RESOLVED` | 2026-08-26 |
 | OPEN-008 | Feedback được thu bằng popup/screen trong app với `experience score` 1–5 sao và nội dung tùy chọn. Store review là flow độc lập dùng system API; cấm review gating. | Product | `RESOLVED` | 2026-08-26 |
-| OPEN-011 | Store review dùng engagement trigger trung tính: production-only, sau 7 ngày cài đặt, 5 completed Focus sessions và 3 active days; request tại Home sau reward/celebration. Cooldown 120 ngày, tối đa 3 attempts/365 ngày và một attempt/app version. | Product/Engineering | `RESOLVED` | 2026-08-26 |
+| OPEN-011 | Store review dùng engagement trigger trung tính: production-only, sau 7 ngày cài đặt, 5 completed standard Focus sessions và 3 standard-Focus active days; onboarding trial không được tính. Request tại Home sau reward/celebration; cooldown 120 ngày, tối đa 3 attempts/365 ngày và một attempt/app version. | Product/Engineering | `RESOLVED` | 2026-08-26 |
 | SL-OPEN-001 | Break không áp dụng Strict/grace violation; background/lock/crash/kill không làm Break failed. | Product/Engineering | `RESOLVED` | 2026-08-26 |
 | SL-OPEN-002 | Chỉ completed Focus eligible đi tiếp tới Break; failed/cancelled Focus về Home hoặc thử lại và không có Break CTA/entry. | Product | `RESOLVED` | 2026-08-26 |
+| GR-OPEN-003 | Onboarding trial là special Focus cố định 5 phút; completed trial nhận 5 XP/1 Coin bằng automatic idempotent grant nhưng không tính standard history/contribution, Long Break cadence, store-review eligibility hoặc core Focus/reward analytics. | Product/Game Design | `RESOLVED` | 2026-08-26 |
+| OPEN-005 | Mobile MVP có đúng 12 neutral room `furniture` items với exact ID/name/price 5–120 Coin theo §9.4; catalog mở từ đầu, không level-gate, mua một lần atomically bằng Coin và equip miễn phí khi owned. | Product/Game Design | `RESOLVED` | 2026-08-26 |
 
 ## 20.2. Open decisions
 
@@ -1089,7 +1140,6 @@ Các mục sau chưa được chốt và phải được quyết định rõ tro
 | ID | Câu hỏi | Owner | Trạng thái |
 |---|---|---|---|
 | OPEN-001 | Pet mặc định của MVP là Cat, Dog hay Robot? | Product/Art | `OPEN` |
-| OPEN-005 | MVP có bao nhiêu item và giá từng item? | Product/Game Design | `OPEN` |
 | OPEN-006 | Contribution graph dùng các ngưỡng màu nào? | Product/Design | `OPEN` |
 | OPEN-009 | Người dùng có được đặt tên Pet trong onboarding không? | Product | `OPEN` |
 
@@ -1118,6 +1168,21 @@ Không mục nào trong bảng này được xem là requirement đã chốt cho
 ---
 
 # 22. Change Log
+
+## 1.12.0 — 2026-08-26
+
+- Chốt Product `OPEN-005` theo phương án B: Mobile MVP có đúng 12 neutral room `furniture` items với exact ID/name/price từ 5 đến 120 Coin.
+- Chốt default room/Pet assets không tính vào 12 shop items; catalog hiển thị từ đầu và không level-gate.
+- Chốt item mua một lần bằng atomic Coin debit + ownership, Coin không âm và equip miễn phí khi đã sở hữu.
+- Chốt catalog cosmetic-only, không multiplier/gameplay advantage và không dynamic pricing/refund/sell-back/consumable/duplicate/gift/trade trong MVP.
+- Bổ sung MVP acceptance cho exact catalog, purchase idempotency/atomicity và inventory persistence.
+
+## 1.11.0 — 2026-08-26
+
+- Chốt `GR-OPEN-003`: onboarding trial là special Focus cố định 5 phút và là ngoại lệ đối với minimum standard Focus 15 phút.
+- Chốt completed trial nhận `5 XP`, `1 Coin` bằng cùng reward formula và automatic atomic/idempotent grant theo `sessionId`.
+- Chốt trial reward đóng góp cumulative XP/level và Coin balance nhưng không tính standard history/contribution graph, Long Break cadence, store-review eligibility hoặc core Focus/reward analytics.
+- Làm rõ standard Focus duration, first-use flow, store-review count, history, contribution graph, analytics và MVP acceptance tương ứng.
 
 ## 1.10.0 — 2026-08-26
 

@@ -33,7 +33,7 @@ Một tài liệu chỉ được đánh dấu hoàn thành khi đáp ứng tất
 | 4 | Timer Engine Specification | [`specifications/timer-engine.md`](specifications/timer-engine.md) | Dũng Lư | Hoàn thành | Dũng Lư — Tech Lead | 2026-08-26 |
 | 5 | Session Lifecycle | [`specifications/session-lifecycle.md`](specifications/session-lifecycle.md) | Dũng Lư | Hoàn thành | Dũng Lư — Tech Lead | 2026-08-26 |
 | 6 | Pet State Machine | [`specifications/pet-state-machine.md`](specifications/pet-state-machine.md) | Dũng Lư | Hoàn thành | Dũng Lư — Tech Lead | 2026-08-26 |
-| 7 | Gamification Rules | [`specifications/gamification-rules.md`](specifications/gamification-rules.md) | Chưa phân công | Chưa bắt đầu | Chưa phân công | — |
+| 7 | Gamification Rules | [`specifications/gamification-rules.md`](specifications/gamification-rules.md) | Dũng Lư | Hoàn thành | Dũng Lư — Tech Lead | 2026-08-26 |
 | 8 | Data Model | [`architecture/data-model.md`](architecture/data-model.md) | Chưa phân công | Chưa bắt đầu | Chưa phân công | — |
 
 ---
@@ -153,20 +153,20 @@ Một tài liệu chỉ được đánh dấu hoàn thành khi đáp ứng tất
 
 **File:** [`specifications/gamification-rules.md`](specifications/gamification-rules.md)
 
-- [ ] Chốt công thức XP và Coin.
-- [ ] Chốt level thresholds và unlock conditions.
-- [ ] Chốt reward theo thời lượng focus.
-- [ ] Chốt hành vi reward cho completed, failed và cancelled session.
-- [ ] Quy định rounding và giới hạn reward nếu có.
-- [ ] Quy định cách chống claim reward nhiều lần.
-- [ ] Chốt danh sách vật phẩm và giá cho MVP.
-- [ ] Có ví dụ tính reward cho các thời lượng phổ biến.
-- [ ] Đã review và phê duyệt.
+- [x] Chốt công thức XP và Coin.
+- [x] Chốt level thresholds và unlock conditions.
+- [x] Chốt reward theo thời lượng focus.
+- [x] Chốt hành vi reward cho completed, failed và cancelled session.
+- [x] Quy định rounding và giới hạn reward nếu có.
+- [x] Quy định cách chống claim reward nhiều lần.
+- [x] Chốt danh sách vật phẩm và giá cho MVP.
+- [x] Có ví dụ tính reward cho các thời lượng phổ biến.
+- [x] Đã review và phê duyệt.
 
-**Owner:** Chưa phân công  
-**Reviewer:** Chưa phân công  
-**Trạng thái:** Chưa bắt đầu  
-**Ghi chú:** —
+**Owner:** Dũng Lư — Tech Lead / Product Owner / Lead Mobile Developer
+**Reviewer:** Dũng Lư — Tech Lead
+**Trạng thái:** Hoàn thành
+**Ghi chú:** Gamification Rules `1.0.0` được Dũng Lư — Tech Lead/Product Owner review và phê duyệt ngày 2026-08-26; `GR-OPEN-001`, `GR-OPEN-002`, `GR-OPEN-003` và Product `OPEN-005` đều `RESOLVED`.
 
 ## 8. Data Model
 
@@ -224,4 +224,4 @@ Timer Engine và Session Lifecycle có thể được soạn song song sau khi S
 **Ngày bắt đầu:** —  
 **Ngày phê duyệt:** —  
 **Tech lead:** Dũng Lư  
-**Ghi chú chung:** Technical Overview, System Architecture, Project Structure, Timer Engine, Session Lifecycle và Pet State Machine đã được phê duyệt; Gamification Rules và Data Model tiếp tục theo dependency order.
+**Ghi chú chung:** Technical Overview, System Architecture, Project Structure, Timer Engine, Session Lifecycle, Pet State Machine và Gamification Rules đã được phê duyệt; Data Model tiếp tục theo dependency order.
