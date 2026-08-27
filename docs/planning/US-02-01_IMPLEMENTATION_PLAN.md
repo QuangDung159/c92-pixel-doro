@@ -3,6 +3,7 @@ document_id: PIXELDORO_US_02_01_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-02-01 Implementation Plan
 version: 1.0.0
 status: READY_FOR_IMPLEMENTATION
+implementation_status: AWAITING_OWNER_NATIVE_RUNTIME
 last_updated: 2026-08-27
 owner: Dũng Lư
 reviewer: Dũng Lư
@@ -61,6 +62,11 @@ nào được tạo bởi tài liệu này.
 
 `EPIC02-INPUT-01` đã được resolve bằng approval này. Story vẫn không được đóng chỉ bằng
 fake hoặc host test; exact native runtime probe là acceptance evidence bắt buộc.
+
+**Implementation update — 2026-08-27:** `T01` đến `T07` đã hoàn tất; `T08` harness và
+owner runbook đã sẵn sàng nhưng exact native report chưa được chạy. Automated portion của
+`T09` pass; Story giữ `AWAITING_OWNER_NATIVE_RUNTIME` cho tới khi evidence record nhận
+`passed: true` từ development build.
 
 ## 1. Baseline và current-state review
 

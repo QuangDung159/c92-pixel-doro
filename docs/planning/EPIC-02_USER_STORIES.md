@@ -267,12 +267,12 @@ purchase use case, Zustand persistence, provider SDK và database connection t�
 **Task checklist sơ bộ:**
 
 - [x] Resolve `EPIC02-INPUT-01` và ghi test-runtime rationale.
-- [ ] Cài compatible SQLite dependency.
-- [ ] Định nghĩa transaction/database lifecycle port contract.
-- [ ] Implement SQLite connection/transaction owner.
-- [ ] Wire owner tại `create-mobile-application` hoặc equivalent.
-- [ ] Thêm commit/rollback/FK/dispose contract tests.
-- [ ] Cập nhật boundary rule nếu concrete driver có thể bị import sai layer.
+- [x] Cài compatible SQLite dependency.
+- [x] Định nghĩa transaction/database lifecycle port contract.
+- [x] Implement SQLite connection/transaction owner.
+- [x] Wire owner tại `create-mobile-application` hoặc equivalent.
+- [x] Thêm commit/rollback/FK/dispose contract tests.
+- [x] Cập nhật boundary rule nếu concrete driver có thể bị import sai layer.
 
 **Evidence yêu cầu:**
 

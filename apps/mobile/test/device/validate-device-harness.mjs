@@ -4,9 +4,12 @@ import { fileURLToPath } from 'node:url';
 const deviceDirectory = fileURLToPath(new URL('.', import.meta.url));
 const mobileDirectory = fileURLToPath(new URL('../..', import.meta.url));
 const flowPath = `${deviceDirectory}foundation-smoke.md`;
+const sqliteFlowPath = `${deviceDirectory}sqlite-kernel-smoke.md`;
 
 await access(flowPath);
+await access(sqliteFlowPath);
 const flow = await readFile(flowPath, 'utf8');
+const sqliteFlow = await readFile(sqliteFlowPath, 'utf8');
 
 const requiredLabels = [
   'Chào mừng đến PixelDoro',
@@ -38,4 +41,22 @@ const requiredRoutes = [
 
 await Promise.all(requiredRoutes.map((route) => access(`${mobileDirectory}/${route}`)));
 
-console.log('Manual device checklist and required route skeleton are present.');
+const requiredSQLiteEvidence = [
+  'EXPO_PUBLIC_SQLITE_KERNEL_PROBE=1',
+  'US-02-01_SQLITE_KERNEL',
+  'passed: true',
+  'pixeldoro-us-02-01-probe.db',
+  'EPIC-02_IMPLEMENTATION_EVIDENCE.md',
+];
+
+for (const evidence of requiredSQLiteEvidence) {
+  if (!sqliteFlow.includes(evidence)) {
+    throw new Error(`SQLite device probe is missing: ${evidence}`);
+  }
+}
+
+await access(
+  `${mobileDirectory}/src/composition/diagnostics/run-sqlite-kernel-probe.ts`,
+);
+
+console.log('Manual device checklists, SQLite probe, and required route skeleton are present.');

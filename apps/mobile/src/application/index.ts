@@ -7,4 +7,10 @@ export type {
   AppLifecyclePort,
   AppLifecycleState,
 } from './ports/app-lifecycle.port';
+export {
+  databaseLifecycleError,
+  type DatabaseLifecycleError,
+  type DatabaseLifecycleErrorCode,
+  type DatabaseLifecyclePort,
+} from './ports/database-lifecycle.port';
 export type { MobileApplicationFacade } from './mobile-application.facade';

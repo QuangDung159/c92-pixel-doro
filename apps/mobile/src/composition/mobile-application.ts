@@ -1,3 +1,6 @@
 import type { MobileApplicationFacade } from '@/application';
+import type { SQLiteTransaction } from '@/infrastructure/database/sqlite-transaction';
 
-export type MobileApplication = MobileApplicationFacade;
+export interface MobileApplication extends MobileApplicationFacade {
+  readonly transaction: SQLiteTransaction;
+}

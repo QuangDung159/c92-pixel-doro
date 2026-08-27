@@ -40,3 +40,4 @@ minimumReleaseAgeExclude:
   - expo-updates@57.0.18
   - expo@57.0.17
   - expo-doctor@1.20.4
+  - expo-sqlite@57.0.2
