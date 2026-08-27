@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_EPIC_02_IMPLEMENTATION_EVIDENCE
 title: PixelDoro Mobile MVP — EPIC-02 Implementation Evidence
-version: 0.1.0
-status: AWAITING_OWNER_NATIVE_RUNTIME
-last_updated: 2026-08-27
+version: 0.2.0
+status: IN_PROGRESS
+last_updated: 2026-08-28
 owner: Dũng Lư
 language: vi
 scope:
@@ -18,10 +18,10 @@ us_02_01_plan: ./US-02-01_IMPLEMENTATION_PLAN.md
 
 ## 1. Kết luận hiện tại
 
-Implementation và host evidence của `US-02-01 — SQLite Ownership và Transactional Kernel`
-đã hoàn tất trên working tree dựa trên commit `12ea70d`. Story chưa được đánh dấu `DONE`
-vì exact Expo native runtime probe theo `EPIC02-INPUT-01` cần owner chạy thủ công trên
-development build và ghi final commit SHA/platform report.
+`US-02-01 — SQLite Ownership và Transactional Kernel` đã `DONE`. Host evidence và exact
+Expo native runtime probe đều pass trên implementation commit
+`a75ecc9112c2aa279bee9a818d9c97e586b84b21`; repository `HEAD` đã được đối chiếu đúng SHA
+này khi tiếp nhận report ngày 2026-08-28.
 
 Không có normative schema/migration, Timer/Session/Reward/Pet/Inventory/Settings behavior,
 auto-reset, native/EAS build hoặc native artifact nào được tạo trong implementation turn này.
@@ -32,15 +32,15 @@ auto-reset, native/EAS build hoặc native artifact nào được tạo trong im
 |---|---|---|
 | Compatible SQLite dependency | `expo-sqlite ~57.0.2`, Expo config plugin mặc định, root lockfile và minimum-release-age allowlist | `PASS` |
 | Application-owned contract | Opaque `TransactionScope`, result-aware `TransactionPort`, stable `TransactionTechnicalError` | `PASS` |
-| Connection ownership | `SQLiteDatabaseOwner` open single-flight, FK enable/readback, close/lease coordination, stable close-failed state | `PASS_HOST` |
-| Transaction kernel | Same owner connection; static `BEGIN IMMEDIATE`/`COMMIT`/`ROLLBACK`; returned-failure/throw rollback | `PASS_HOST` |
-| Scope safety | Executor chỉ resolve khi scope active; stale scope reject; no raw connection trên facade | `PASS_HOST` |
-| Concurrency | Nested/overlapping transaction reject deterministic bằng `TRANSACTION_BUSY` | `PASS_HOST` |
-| Parameter binding | Executor bắt buộc params; injection-shaped string được truyền tách khỏi SQL | `PASS_HOST` |
-| Error mapping | Open/close/begin/work/commit/rollback failures map về application-owned code; raw exception không tới Presentation | `PASS_HOST` |
-| Async application lifecycle | Boot mở/verify DB trước ready; repeated boot/dispose idempotent; dispose-during-open không late-ready | `PASS_HOST` |
+| Connection ownership | `SQLiteDatabaseOwner` open single-flight, FK enable/readback, close/lease coordination, stable close-failed state | `PASS_HOST_AND_NATIVE_IOS` |
+| Transaction kernel | Same owner connection; static `BEGIN IMMEDIATE`/`COMMIT`/`ROLLBACK`; returned-failure/throw rollback | `PASS_HOST_AND_NATIVE_IOS` |
+| Scope safety | Executor chỉ resolve khi scope active; stale scope reject; no raw connection trên facade | `PASS_HOST_AND_NATIVE_IOS` |
+| Concurrency | Nested/overlapping transaction reject deterministic bằng `TRANSACTION_BUSY` | `PASS_HOST_AND_NATIVE_IOS` |
+| Parameter binding | Executor bắt buộc params; injection-shaped string được truyền tách khỏi SQL | `PASS_HOST_AND_NATIVE_IOS` |
+| Error mapping | Open/close/begin/work/commit/rollback failures map về application-owned code; raw exception không tới Presentation | `PASS_HOST`; native work/FK/overlap paths pass |
+| Async application lifecycle | Boot mở/verify DB trước ready; repeated boot/dispose idempotent; dispose-during-open không late-ready | `PASS_HOST_AND_NATIVE_IOS` |
 | Architecture enforcement | Driver import chỉ hợp lệ trong database Infrastructure; route/Presentation/Application/composition/non-database Infrastructure bị chặn | `PASS` |
-| Native runtime probe | Dev-only, explicit-flag harness trên exact probe DB; no product route; structured report/cleanup | `READY_OWNER_RUN` |
+| Native runtime probe | Dev-only, explicit-flag harness trên exact probe DB; no product route; structured report/cleanup | `PASS_NATIVE_IOS` |
 
 ## 3. Automated evidence — 2026-08-27
 
@@ -72,26 +72,49 @@ Host fault-injection coverage gồm:
 - Overlap trả `TRANSACTION_BUSY`; stale transaction scope bị reject.
 - Dispose trong open không publish late `ready`.
 
-## 4. Native runtime acceptance — owner action required
+## 4. Native runtime acceptance — owner evidence received 2026-08-28
 
-Chạy theo
+Owner đã chạy harness theo
 [`apps/mobile/test/device/sqlite-kernel-smoke.md`](../../apps/mobile/test/device/sqlite-kernel-smoke.md)
-trên native platform có development build khả dụng trước:
-
-```sh
-EXPO_PUBLIC_SQLITE_KERNEL_PROBE=1 EXPO_PUBLIC_COMMIT_SHA=<commit-sha> pnpm start
-```
-
-Gắn structured log `[PixelDoro][SQLiteKernelProbe]` vào mục này và ghi:
+và cung cấp structured report `[PixelDoro][SQLiteKernelProbe]`:
 
 | Field | Owner evidence |
 |---|---|
-| Platform / OS / device | `PENDING` |
-| App version | `PENDING` |
-| Final implementation commit SHA | `PENDING` |
+| Platform / OS / device | iOS / 26.5 / target model không được cung cấp |
+| App version | `0.1.0` |
+| Evidence received | 2026-08-28; exact runtime timestamp không có trong owner report |
+| Final implementation commit SHA | `a75ecc9112c2aa279bee9a818d9c97e586b84b21` — khớp repository `HEAD` khi review |
 | `expo-sqlite` version | `57.0.2` |
-| Probe result | `PENDING` — yêu cầu `passed: true` |
-| Probe DB cleanup | `PENDING` |
+| Probe result | `PASS` — `passed: true`, đủ `11/11` assertions được report |
+| Probe DB cleanup | `PASS` — toàn probe kết thúc `passed: true`, không có `failedAssertion`; harness chỉ pass sau exact probe cleanup |
+
+```json
+{
+  "probe": "US-02-01_SQLITE_KERNEL",
+  "passed": true,
+  "platform": "ios",
+  "osVersion": "26.5",
+  "appVersion": "0.1.0",
+  "commitSha": "a75ecc9112c2aa279bee9a818d9c97e586b84b21",
+  "assertions": [
+    "connection_open_and_foreign_keys_verified",
+    "probe_schema_committed",
+    "successful_work_committed",
+    "close_reopen_succeeded",
+    "committed_bound_value_survived_reopen",
+    "returned_failure_preserved",
+    "thrown_failure_mapped",
+    "returned_and_thrown_work_rolled_back",
+    "foreign_key_violation_rejected",
+    "overlap_rejected_deterministically",
+    "dispose_is_idempotent"
+  ]
+}
+```
+
+Package version được đối chiếu từ exact implementation commit thay vì suy đoán từ runtime
+report. Thiếu target model và exact runtime timestamp chỉ là khoảng trống audit metadata,
+không làm yếu assertion behavior hoặc SHA traceability nên không block Story acceptance.
 
 Probe phải chứng minh trên exact native runtime:
 
@@ -102,8 +125,9 @@ Probe phải chứng minh trên exact native runtime:
 - Overlap trả `TRANSACTION_BUSY`.
 - Close/dispose lặp an toàn và exact probe DB được cleanup.
 
-Owner unset `EXPO_PUBLIC_SQLITE_KERNEL_PROBE` sau run. Both-platform repeat vẫn thuộc
-`US-02-09`; một native target pass là gate còn lại để đóng `US-02-01`.
+Việc unset `EXPO_PUBLIC_SQLITE_KERNEL_PROBE` sau run vẫn là vệ sinh local environment của
+owner, không phải repository acceptance. Both-platform repeat vẫn thuộc `US-02-09`; iOS pass
+đáp ứng native gate của `US-02-01` nhưng không tự hoàn thành Epic exit gate.
 
 ## 5. Acceptance status
 
@@ -111,17 +135,17 @@ Owner unset `EXPO_PUBLIC_SQLITE_KERNEL_PROBE` sau run. Both-platform repeat vẫ
 |---|---|
 | Dependency/lockfile compatible | `PASS` |
 | Single owner và architecture boundary | `PASS` |
-| Application-scoped lifecycle/dispose | `PASS_HOST`; native repeat pending |
-| Foreign-key enable/enforcement | `PASS_HOST`; `PENDING_NATIVE` |
-| Commit success | `PASS_HOST`; `PENDING_NATIVE` |
-| Returned-failure/throw rollback | `PASS_HOST`; `PENDING_NATIVE` |
-| Nested/overlap deterministic | `PASS_HOST`; native probe pending |
+| Application-scoped lifecycle/dispose | `PASS_HOST_AND_NATIVE_IOS` |
+| Foreign-key enable/enforcement | `PASS_HOST_AND_NATIVE_IOS` |
+| Commit success | `PASS_HOST_AND_NATIVE_IOS` |
+| Returned-failure/throw rollback | `PASS_HOST_AND_NATIVE_IOS` |
+| Nested/overlap deterministic | `PASS_HOST_AND_NATIVE_IOS` |
 | No side-effect capability trong transaction scope | `PASS` |
-| Parameter binding | `PASS_HOST`; native probe pending |
+| Parameter binding | `PASS_HOST_AND_NATIVE_IOS` |
 | Typed failure/no raw provider leak | `PASS_HOST` |
 | Architecture checks | `PASS` |
 
-**Current Story status:** `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
+**Current Story status:** `DONE`.
 
-`US-02-02` vẫn bị block cho tới khi native report pass, evidence được owner review và
-`US-02-01` được đánh dấu `DONE`.
+Dependency gate từ `US-02-01` sang `US-02-02` đã mở. `US-02-02` chỉ được active sau khi
+các input/plan riêng của Story đó đạt gate; không giữ đồng thời `US-02-01` active.

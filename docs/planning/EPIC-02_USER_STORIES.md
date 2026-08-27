@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_EPIC_02_USER_STORIES
 title: PixelDoro Mobile MVP — EPIC-02 User Stories
-version: 0.2.0
+version: 0.3.0
 status: READY_FOR_REVIEW
-last_updated: 2026-08-27
+last_updated: 2026-08-28
 owner: Dũng Lư
 reviewer: Dũng Lư
 reviewer_role: Tech Lead
@@ -224,6 +224,10 @@ vẫn thuộc `US-02-09`. Chi tiết authoritative nằm trong
 
 ### US-02-01 — SQLite Ownership và Transactional Kernel
 
+**Implementation status:** `DONE` — host evidence và exact iOS runtime probe pass trên
+commit `a75ecc9112c2aa279bee9a818d9c97e586b84b21` ngày 2026-08-28. Dependency gate cho
+`US-02-02` đã mở; both-platform repeat vẫn thuộc `US-02-09`.
+
 **Story statement**
 
 > Với vai trò solo developer, tôi muốn một SQLite connection và transaction boundary
@@ -252,17 +256,17 @@ purchase use case, Zustand persistence, provider SDK và database connection t�
 
 **Acceptance criteria:**
 
-- [ ] `expo-sqlite` version tương thích Expo SDK 57 được cài theo baseline và lockfile được cập nhật.
-- [ ] Chỉ composition/database owner khởi tạo concrete SQLite connection; route, Presentation và shared Domain không import database driver.
-- [ ] Một mobile application graph dùng một application-scoped connection/transaction implementation và dispose idempotently.
-- [ ] Foreign key được bật và kiểm tra trên connection trước khi tạo/cho phép repository access.
-- [ ] Transaction port commit toàn bộ write khi callback thành công.
-- [ ] Transaction port rollback toàn bộ write khi callback throw/trả failure theo contract.
-- [ ] Nested/overlapping transaction behavior được định nghĩa rõ hoặc bị reject typed; không silently auto-commit.
-- [ ] Provider/platform side effect không thể được gọi bên trong database transaction abstraction.
-- [ ] SQL value đi qua parameter binding; API không khuyến khích ghép raw input vào SQL.
-- [ ] Open, transaction và close failure được map sang application-owned technical error, không rò raw provider exception ra Presentation.
-- [ ] Architecture boundary checks hiện có vẫn pass.
+- [x] `expo-sqlite` version tương thích Expo SDK 57 được cài theo baseline và lockfile được cập nhật.
+- [x] Chỉ composition/database owner khởi tạo concrete SQLite connection; route, Presentation và shared Domain không import database driver.
+- [x] Một mobile application graph dùng một application-scoped connection/transaction implementation và dispose idempotently.
+- [x] Foreign key được bật và kiểm tra trên connection trước khi tạo/cho phép repository access.
+- [x] Transaction port commit toàn bộ write khi callback thành công.
+- [x] Transaction port rollback toàn bộ write khi callback throw/trả failure theo contract.
+- [x] Nested/overlapping transaction behavior được định nghĩa rõ hoặc bị reject typed; không silently auto-commit.
+- [x] Provider/platform side effect không thể được gọi bên trong database transaction abstraction.
+- [x] SQL value đi qua parameter binding; API không khuyến khích ghép raw input vào SQL.
+- [x] Open, transaction và close failure được map sang application-owned technical error, không rò raw provider exception ra Presentation.
+- [x] Architecture boundary checks hiện có vẫn pass.
 
 **Task checklist sơ bộ:**
 
@@ -867,10 +871,9 @@ Một Story chỉ được đánh dấu `[x]` khi:
 - **Product blocker:** không có; ba Product decision còn `OPEN` đều nằm ngoài schema
   foundation và đã có explicit exclusion.
 - **Story breakdown:** `READY_FOR_REVIEW`, chưa tự coi là owner-approved baseline.
-- **Implementation readiness:** implementation plan của `US-02-01` đã
-  `READY_FOR_IMPLEMENTATION` và `EPIC02-INPUT-01` đã `RESOLVED`. Toàn Story breakdown
-  của Epic vẫn `READY_FOR_REVIEW` cho tới khi Dũng duyệt đủ chín Story/execution order;
-  `EPIC02-INPUT-02` và `03` tiếp tục được resolve tại gate tương ứng.
+- **Implementation readiness:** `US-02-01` đã `DONE`; dependency gate cho `US-02-02` đã
+  mở. Toàn Story breakdown của Epic vẫn `READY_FOR_REVIEW` cho tới khi Dũng duyệt đủ chín
+  Story/execution order; `EPIC02-INPUT-02` và `03` tiếp tục được resolve tại gate tương ứng.
 
 ### 8.2. Điều kiện chuyển `READY_FOR_IMPLEMENTATION`
 
@@ -895,6 +898,15 @@ Một Story chỉ được đánh dấu `[x]` khi:
 - [ ] Dũng Lư review và phê duyệt Story breakdown trước khi chuyển status sang `APPROVED`/`READY_FOR_IMPLEMENTATION`.
 
 ## 10. Change log
+
+### 0.3.0 — 2026-08-28
+
+- Ghi nhận exact iOS runtime probe `passed: true` với đủ 11 assertion trên implementation
+  commit `a75ecc9112c2aa279bee9a818d9c97e586b84b21`.
+- Đóng `US-02-01` là `DONE`, hoàn tất acceptance checklist và mở dependency gate cho
+  `US-02-02`.
+- Giữ cross-platform iOS + Android repeat ở `US-02-09`; không đổi approval status của toàn
+  bộ chín-Story breakdown và không resolve sớm `EPIC02-INPUT-02`/`03`.
 
 ### 0.2.0 — 2026-08-27
 

@@ -1,10 +1,10 @@
 ---
 document_id: PIXELDORO_US_02_01_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-02-01 Implementation Plan
-version: 1.0.0
-status: READY_FOR_IMPLEMENTATION
-implementation_status: AWAITING_OWNER_NATIVE_RUNTIME
-last_updated: 2026-08-27
+version: 1.1.0
+status: APPROVED
+implementation_status: DONE
+last_updated: 2026-08-28
 owner: Dũng Lư
 reviewer: Dũng Lư
 reviewer_role: Tech Lead
@@ -46,12 +46,12 @@ kiểm chứng được.
 
 **Story priority:** `MUST` / `P0_CORRECTNESS` / execution order `01` trong EPIC-02.
 
-**Blocks:** `US-02-02`. Schema, migration và seed không được bắt đầu trước khi owner,
-connection lifecycle và transaction semantics của Story này có automated evidence.
+**Blocks:** `US-02-02`. Gate này đã mở ngày 2026-08-28 sau khi host evidence và exact
+iOS runtime probe đều pass trên final implementation commit.
 
-**Planning status:** `READY_FOR_IMPLEMENTATION`. Owner đã duyệt technical direction và
-test strategy ngày 2026-08-27. Không có production code, dependency hoặc native artifact
-nào được tạo bởi tài liệu này.
+**Planning status:** `APPROVED`. Owner đã duyệt technical direction và test strategy ngày
+2026-08-27. **Implementation status:** `DONE` ngày 2026-08-28; không có native artifact
+hoặc probe database nào được commit.
 
 ### 0.1. Readiness gate — đã đạt
 
@@ -60,13 +60,14 @@ nào được tạo bởi tài liệu này.
 - [x] Một Story duy nhất active; `US-02-02` vẫn `NOT_STARTED`.
 - [x] Working tree được kiểm tra và thay đổi ngoài Story được giữ nguyên.
 
-`EPIC02-INPUT-01` đã được resolve bằng approval này. Story vẫn không được đóng chỉ bằng
-fake hoặc host test; exact native runtime probe là acceptance evidence bắt buộc.
+`EPIC02-INPUT-01` đã được resolve bằng approval này. Story được đóng bằng cả host evidence
+và exact native runtime probe, không chỉ bằng fake hoặc host test.
 
-**Implementation update — 2026-08-27:** `T01` đến `T07` đã hoàn tất; `T08` harness và
-owner runbook đã sẵn sàng nhưng exact native report chưa được chạy. Automated portion của
-`T09` pass; Story giữ `AWAITING_OWNER_NATIVE_RUNTIME` cho tới khi evidence record nhận
-`passed: true` từ development build.
+**Implementation update — 2026-08-28:** `T00` đến `T09` đã hoàn tất. Owner report xác nhận
+exact native probe `passed: true` trên iOS 26.5, app `0.1.0`, commit
+`a75ecc9112c2aa279bee9a818d9c97e586b84b21`; report có đủ 11 assertion bắt buộc. Evidence
+được lưu trong `EPIC-02_IMPLEMENTATION_EVIDENCE.md`. Both-platform repeat vẫn thuộc
+`US-02-09`.
 
 ## 1. Baseline và current-state review
 
@@ -375,11 +376,11 @@ không merge Story như complete trước Task này.
 
 **Outcome:** Mobile workspace resolve đúng package dành cho Expo SDK 57 và lockfile ổn định.
 
-- [ ] Chạy Expo-compatible install từ `apps/mobile` bằng pnpm toolchain đã pin.
-- [ ] Review change chỉ gồm `apps/mobile/package.json` và root `pnpm-lock.yaml` cần thiết.
-- [ ] Chạy Expo dependency compatibility check.
-- [ ] Không bật SQLCipher, libSQL, FTS config hoặc custom native build flag.
-- [ ] Không thêm ORM, Jest preset hoặc SQLite driver khác.
+- [x] Chạy Expo-compatible install từ `apps/mobile` bằng pnpm toolchain đã pin.
+- [x] Review change chỉ gồm `apps/mobile/package.json` và root `pnpm-lock.yaml` cần thiết.
+- [x] Chạy Expo dependency compatibility check.
+- [x] Không bật SQLCipher, libSQL, FTS config hoặc custom native build flag.
+- [x] Không thêm ORM, Jest preset hoặc SQLite driver khác.
 
 **Verification:** dependency list, lockfile diff, mobile typecheck, Expo package check.
 
@@ -389,13 +390,13 @@ không merge Story như complete trước Task này.
 
 **Outcome:** Shared Application diễn đạt transaction semantics mà không biết SQLite.
 
-- [ ] Thêm opaque `TransactionScope`.
-- [ ] Thêm result-aware `TransactionPort`.
-- [ ] Thêm `TransactionTechnicalError` với stable code ở `TD-02-01-E`.
-- [ ] Export production types qua `packages/application/src/index.ts`.
-- [ ] Thêm fake trong package test support; không export fake ở runtime public API.
-- [ ] Test fake: success commit, returned failure rollback, throw rollback, overlap reject.
-- [ ] Type/boundary test: scope không có SQL/native/provider capability.
+- [x] Thêm opaque `TransactionScope`.
+- [x] Thêm result-aware `TransactionPort`.
+- [x] Thêm `TransactionTechnicalError` với stable code ở `TD-02-01-E`.
+- [x] Export production types qua `packages/application/src/index.ts`.
+- [x] Thêm fake trong package test support; không export fake ở runtime public API.
+- [x] Test fake: success commit, returned failure rollback, throw rollback, overlap reject.
+- [x] Type/boundary test: scope không có SQL/native/provider capability.
 
 **Không làm:** repository port, session/reward DTO hoặc generic Unit of Work framework.
 
@@ -405,15 +406,15 @@ không merge Story như complete trước Task này.
 
 **Outcome:** Một owner mở/verify/đóng một native connection deterministic.
 
-- [ ] Tạo database capability directory và private driver seam.
-- [ ] Implement open single-flight/state machine.
-- [ ] Set `PRAGMA foreign_keys = ON` ngay sau native open.
-- [ ] Read back `PRAGMA foreign_keys` và yêu cầu exact enabled value.
-- [ ] Cleanup handle khi initialization/verification fail.
-- [ ] Implement close/dispose idempotent và in-flight coordination.
-- [ ] Map native error sang application-owned lifecycle error.
-- [ ] Giữ database filename là composition configuration, không hard-code trong screen/use case.
-- [ ] Không expose raw native connection ngoài database Infrastructure module.
+- [x] Tạo database capability directory và private driver seam.
+- [x] Implement open single-flight/state machine.
+- [x] Set `PRAGMA foreign_keys = ON` ngay sau native open.
+- [x] Read back `PRAGMA foreign_keys` và yêu cầu exact enabled value.
+- [x] Cleanup handle khi initialization/verification fail.
+- [x] Implement close/dispose idempotent và in-flight coordination.
+- [x] Map native error sang application-owned lifecycle error.
+- [x] Giữ database filename là composition configuration, không hard-code trong screen/use case.
+- [x] Không expose raw native connection ngoài database Infrastructure module.
 
 **Host verification:** fake driver đếm open/close và inject lỗi ở từng phase.
 
@@ -423,17 +424,17 @@ không merge Story như complete trước Task này.
 
 **Outcome:** Transaction port commit/rollback đúng trên private owner connection.
 
-- [ ] Implement transaction state guard.
-- [ ] Begin bằng static `BEGIN IMMEDIATE` trên owner connection.
-- [ ] Tạo opaque scope và internal resolver chỉ hợp lệ khi state `ACTIVE`.
-- [ ] Commit khi callback trả `ok: true`; chỉ trả value sau successful commit.
-- [ ] Rollback khi callback trả `ok: false`; preserve error khi rollback thành công.
-- [ ] Rollback khi callback throw/query fail; map raw failure.
-- [ ] Nếu rollback fail, trả `TRANSACTION_ROLLBACK_FAILED` thay vì expected failure.
-- [ ] Reject overlap/nested bằng `TRANSACTION_BUSY`.
-- [ ] Release state guard trong mọi path bằng `finally` có kiểm soát.
-- [ ] Track active promise để owner close chờ settle.
-- [ ] Không nhận hoặc gọi provider/notification/analytics capability.
+- [x] Implement transaction state guard.
+- [x] Begin bằng static `BEGIN IMMEDIATE` trên owner connection.
+- [x] Tạo opaque scope và internal resolver chỉ hợp lệ khi state `ACTIVE`.
+- [x] Commit khi callback trả `ok: true`; chỉ trả value sau successful commit.
+- [x] Rollback khi callback trả `ok: false`; preserve error khi rollback thành công.
+- [x] Rollback khi callback throw/query fail; map raw failure.
+- [x] Nếu rollback fail, trả `TRANSACTION_ROLLBACK_FAILED` thay vì expected failure.
+- [x] Reject overlap/nested bằng `TRANSACTION_BUSY`.
+- [x] Release state guard trong mọi path bằng `finally` có kiểm soát.
+- [x] Track active promise để owner close chờ settle.
+- [x] Không nhận hoặc gọi provider/notification/analytics capability.
 
 **Host verification:** scripted fake driver kiểm tra exact statement order và fault injection
 ở begin/work/commit/rollback.
@@ -444,16 +445,16 @@ không merge Story như complete trước Task này.
 
 **Outcome:** Production graph sở hữu connection từ boot tới dispose mà chưa kéo migration.
 
-- [ ] Thêm mobile Application `DatabaseLifecyclePort` tối thiểu hoặc equivalent approved seam.
-- [ ] Chuyển facade `boot()`/`dispose()` sang async contract.
-- [ ] Boot gọi database open/verify trước existing foundation snapshot.
-- [ ] Boot idempotent/single-flight khi React effect hoặc test gọi lặp.
-- [ ] Dispose trong lúc boot không để late `ready` update sau unmount.
-- [ ] Dispose unsubscribe lifecycle rồi đóng database an toàn.
-- [ ] Open failure tạo typed recovery projection; không rò provider message.
-- [ ] `MobileApplicationRoot` không return Promise từ effect cleanup; gọi async dispose an toàn.
-- [ ] Không expose transaction/database qua Presentation context.
-- [ ] Không thêm Retry, migration phase, hydration hoặc reconciliation giả.
+- [x] Thêm mobile Application `DatabaseLifecyclePort` tối thiểu hoặc equivalent approved seam.
+- [x] Chuyển facade `boot()`/`dispose()` sang async contract.
+- [x] Boot gọi database open/verify trước existing foundation snapshot.
+- [x] Boot idempotent/single-flight khi React effect hoặc test gọi lặp.
+- [x] Dispose trong lúc boot không để late `ready` update sau unmount.
+- [x] Dispose unsubscribe lifecycle rồi đóng database an toàn.
+- [x] Open failure tạo typed recovery projection; không rò provider message.
+- [x] `MobileApplicationRoot` không return Promise từ effect cleanup; gọi async dispose an toàn.
+- [x] Không expose transaction/database qua Presentation context.
+- [x] Không thêm Retry, migration phase, hydration hoặc reconciliation giả.
 
 **Blocks:** `T07`, `T08`.
 
@@ -461,13 +462,13 @@ không merge Story như complete trước Task này.
 
 **Outcome:** Chỉ database Infrastructure được phép import concrete SQLite driver.
 
-- [ ] Thêm negative case: shared Application không import `expo-sqlite`.
-- [ ] Thêm negative case: mobile Application không import `expo-sqlite`.
-- [ ] Thêm negative case: Presentation/route không import `expo-sqlite`.
-- [ ] Thêm negative case: composition không import driver trực tiếp; chỉ import owner adapter.
-- [ ] Thêm restriction cho non-database Infrastructure nếu cấu hình ESLint cho phép rõ ràng.
-- [ ] Giữ database Infrastructure import hợp lệ.
-- [ ] Xác nhận production source không import `test/**`.
+- [x] Thêm negative case: shared Application không import `expo-sqlite`.
+- [x] Thêm negative case: mobile Application không import `expo-sqlite`.
+- [x] Thêm negative case: Presentation/route không import `expo-sqlite`.
+- [x] Thêm negative case: composition không import driver trực tiếp; chỉ import owner adapter.
+- [x] Thêm restriction cho non-database Infrastructure nếu cấu hình ESLint cho phép rõ ràng.
+- [x] Giữ database Infrastructure import hợp lệ.
+- [x] Xác nhận production source không import `test/**`.
 
 **Blocks:** `T09`.
 
@@ -475,15 +476,15 @@ không merge Story như complete trước Task này.
 
 **Outcome:** Contract, lifecycle và composition behavior có fast automated regression suite.
 
-- [ ] Application contract/fake tests.
-- [ ] Owner state-machine tests với fake driver.
-- [ ] Transaction statement-order/fault-injection tests.
-- [ ] Async mobile bootstrap integration tests.
-- [ ] Composition single-owner/open-once/close-once tests.
-- [ ] Parameter-binding/injection-shaped value test qua internal probe repository fake.
-- [ ] Raw error non-leak test.
-- [ ] Dispose-during-open và close-during-transaction test.
-- [ ] Overlap/nested rejection test không dùng timing sleep dễ flaky.
+- [x] Application contract/fake tests.
+- [x] Owner state-machine tests với fake driver.
+- [x] Transaction statement-order/fault-injection tests.
+- [x] Async mobile bootstrap integration tests.
+- [x] Composition single-owner/open-once/close-once tests.
+- [x] Parameter-binding/injection-shaped value test qua internal probe repository fake.
+- [x] Raw error non-leak test.
+- [x] Dispose-during-open và close-during-transaction test.
+- [x] Overlap/nested rejection test không dùng timing sleep dễ flaky.
 
 **Blocks:** `T08`, `T09`.
 
@@ -495,21 +496,21 @@ Probe phải dùng database riêng, ví dụ `pixeldoro-us-02-01-probe.db`; khô
 database. Harness chỉ kích hoạt khi `__DEV__` và explicit environment flag được set, không tạo
 route/screen production.
 
-- [ ] Reuse production owner/kernel; không reimplement transaction trong probe.
-- [ ] Tạo probe repository nội bộ với bound parameters.
-- [ ] Mở probe DB và assert `PRAGMA foreign_keys = 1`.
-- [ ] Tạo probe parent/child schema trong probe DB.
-- [ ] Commit path: insert hợp lệ, reopen/read thấy committed row.
-- [ ] Returned-failure path: insert rồi trả `ok: false`, reopen/read không thấy row.
-- [ ] Throw path: insert rồi throw, reopen/read không thấy row.
-- [ ] FK path: invalid child insert fail và không persist partial row.
-- [ ] Parameter-binding path: value chứa quote/SQL-shaped text được lưu như data.
-- [ ] Overlap path trả stable `TRANSACTION_BUSY`, không provider-dependent message.
-- [ ] Close/reopen path giữ committed row và owner dispose idempotent.
-- [ ] Close probe DB trước khi xóa exact probe filename.
-- [ ] Structured result log có platform, OS, app version, SDK/package version, commit SHA,
+- [x] Reuse production owner/kernel; không reimplement transaction trong probe.
+- [x] Tạo probe repository nội bộ với bound parameters.
+- [x] Mở probe DB và assert `PRAGMA foreign_keys = 1`.
+- [x] Tạo probe parent/child schema trong probe DB.
+- [x] Commit path: insert hợp lệ, reopen/read thấy committed row.
+- [x] Returned-failure path: insert rồi trả `ok: false`, reopen/read không thấy row.
+- [x] Throw path: insert rồi throw, reopen/read không thấy row.
+- [x] FK path: invalid child insert fail và không persist partial row.
+- [x] Parameter-binding path: value chứa quote/SQL-shaped text được lưu như data.
+- [x] Overlap path trả stable `TRANSACTION_BUSY`, không provider-dependent message.
+- [x] Close/reopen path giữ committed row và owner dispose idempotent.
+- [x] Close probe DB trước khi xóa exact probe filename.
+- [x] Structured result log có platform, OS, app version, SDK/package version, commit SHA,
   timestamp và pass/fail từng assertion.
-- [ ] Chạy ít nhất một native target ở Story này; repeat iOS + Android là final audit `US-02-09`.
+- [x] Chạy ít nhất một native target ở Story này; repeat iOS + Android là final audit `US-02-09`.
 
 Nếu runtime evidence cho thấy `BEGIN IMMEDIATE` qua driver API không an toàn hoặc foreign-key
 setting không tồn tại trên transaction connection, dừng Story, không fallback âm thầm sang
@@ -524,14 +525,14 @@ chạy native/EAS build nếu không có yêu cầu mới rõ ràng.
 
 **Outcome:** Mọi acceptance criterion của `US-02-01` có evidence traceable.
 
-- [ ] Chạy clean typecheck/lint/test/boundary validation.
-- [ ] Chạy Expo dependency compatibility/doctor check không tạo native artifact.
-- [ ] Review `git diff` không có schema/migration/product behavior ngoài scope.
-- [ ] Ghi result vào `docs/planning/EPIC-02_IMPLEMENTATION_EVIDENCE.md`.
-- [ ] Link automated output và runtime probe record tới từng acceptance criterion.
-- [ ] Xác nhận không commit probe database, native build output, secret hoặc machine path.
-- [ ] Mark checklist `US-02-01` chỉ sau evidence review.
-- [ ] Chuyển `US-02-02` sang ready; không cùng lúc giữ `US-02-01` active.
+- [x] Chạy clean typecheck/lint/test/boundary validation.
+- [x] Chạy Expo dependency compatibility/doctor check không tạo native artifact.
+- [x] Review `git diff` không có schema/migration/product behavior ngoài scope.
+- [x] Ghi result vào `docs/planning/EPIC-02_IMPLEMENTATION_EVIDENCE.md`.
+- [x] Link automated output và runtime probe record tới từng acceptance criterion.
+- [x] Xác nhận không commit probe database, native build output, secret hoặc machine path.
+- [x] Mark checklist `US-02-01` chỉ sau evidence review.
+- [x] Chuyển `US-02-02` sang ready; không cùng lúc giữ `US-02-01` active.
 
 ## 6. Planned file impact
 
@@ -720,17 +721,17 @@ slice chưa pass. Nếu repository policy yêu cầu một PR/Story, dùng commi
 
 Story chỉ `DONE` khi:
 
-- [ ] `T00` → `T09` hoàn tất theo order.
-- [ ] Mọi acceptance criterion trong `EPIC-02_USER_STORIES.md` có evidence.
-- [ ] Application/Presentation/Domain không import SQLite/native type.
-- [ ] Một composition graph chỉ có một connection owner/transaction implementation.
-- [ ] Open/FK verification/close lifecycle deterministic và idempotent.
-- [ ] Result-aware commit/rollback, throw, overlap và failure mapping đều pass.
-- [ ] Native runtime probe pass trên ít nhất một platform bằng exact Expo SDK/package.
-- [ ] No raw provider error/value/connection lọt ra Presentation.
-- [ ] No schema/migration/product behavior scope creep.
-- [ ] No native artifact/probe DB/secret được commit.
-- [ ] `EPIC-02_IMPLEMENTATION_EVIDENCE.md` được reviewer chấp nhận.
+- [x] `T00` → `T09` hoàn tất theo order.
+- [x] Mọi acceptance criterion trong `EPIC-02_USER_STORIES.md` có evidence.
+- [x] Application/Presentation/Domain không import SQLite/native type.
+- [x] Một composition graph chỉ có một connection owner/transaction implementation.
+- [x] Open/FK verification/close lifecycle deterministic và idempotent.
+- [x] Result-aware commit/rollback, throw, overlap và failure mapping đều pass.
+- [x] Native runtime probe pass trên ít nhất một platform bằng exact Expo SDK/package.
+- [x] No raw provider error/value/connection lọt ra Presentation.
+- [x] No schema/migration/product behavior scope creep.
+- [x] No native artifact/probe DB/secret được commit.
+- [x] `EPIC-02_IMPLEMENTATION_EVIDENCE.md` được reviewer chấp nhận.
 
 Sau đó `US-02-02` mới đủ dependency gate để active. Both-platform native evidence vẫn được
 audit lại ở `US-02-09`; việc pass một platform trong Story này không tự hoàn thành Epic exit gate.
