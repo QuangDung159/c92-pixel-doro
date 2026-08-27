@@ -21,8 +21,8 @@ Repository đã hoàn thành foundation có thể kiểm chứng tự động c�
 `US-01-06`, đồng thời đã tạo configuration, workflow, smoke harness và runbook cho
 `US-01-07`. Theo quyết định của owner, mọi native/EAS build sẽ được chạy manual.
 
-Epic chưa được đánh dấu hoàn thành vì còn các gate manual phụ thuộc Expo account,
-EAS cloud và iOS/Android route-smoke evidence theo Definition of Story Done.
+Epic chưa được đánh dấu hoàn thành vì còn owner review và việc phân loại các EAS
+cloud/OTA operation chỉ áp dụng trước production use theo Definition of Story Done.
 
 Không có Timer, Session, Pet identity, gamification, SQLite schema, backend, cloud sync,
 desktop hoặc Product decision đang `OPEN` được triển khai trong Epic này.
@@ -105,7 +105,18 @@ chủ động và gắn vào record theo runbook.
 - Owner đã cung cấp screenshot onboarding boot trên Simulator và xác nhận manual route
   smoke pass cho toàn bộ checklist.
 - Simulator build không tạo hoặc xác nhận iOS distribution certificate/provisioning
-  profile; EAS-managed iOS credential evidence vẫn là gate riêng.
+  profile; credential này được xác nhận riêng qua EAS ở bằng chứng bên dưới.
+
+### iOS EAS credential evidence — 2026-08-27
+
+- EAS xác nhận tất cả build credentials đã sẵn sàng cho project
+  `@dragonc92team/pixeldoro` và bundle identifier `com.dragonc92team.pixeldoro`.
+- PixelDoro reuse Distribution Certificate còn hiệu lực của cùng Apple Developer Team;
+  EAS tạo App Store Provisioning Profile riêng cho bundle identifier của ứng dụng.
+- Credential được EAS quản lý từ xa; không download certificate/profile và không tạo
+  `credentials.json` trong repository.
+- Không tạo APNs Push Notifications Key ở Epic 1: MVP chỉ dùng local notification;
+  server push notification nằm ngoài scope và không cần APNs credential.
 
 ### Manual route-smoke evidence — 2026-08-27
 
@@ -123,9 +134,9 @@ chủ động và gắn vào record theo runbook.
 - [x] Xác nhận Expo account owner `dragonc92team`; EAS project ID
   `6f65fb79-ffe9-4fa6-9951-895f27bf0725` đã được link.
 - [x] Chạy `eas workflow:validate` thành công cho cả 3 workflow sau khi project được link.
-- [ ] Hoàn tất EAS-managed remote credentials; xác nhận không export/commit secret.
+- [x] Hoàn tất EAS-managed remote credentials; xác nhận không export/commit secret.
   - [x] Android remote keystore đã được EAS tạo và resolve cho local build.
-  - [ ] iOS distribution certificate/provisioning profile còn chờ Apple Developer setup.
+  - [x] iOS Distribution Certificate và App Store Provisioning Profile đã sẵn sàng trên EAS.
 - [ ] Trigger thủ công development workflow và lưu iOS/Android build URL/ID.
 - [x] Chạy manual route smoke trên ít nhất một iOS và một Android target theo
   `apps/mobile/test/device/foundation-smoke.md`; gắn pass/fail result cùng platform, OS,
