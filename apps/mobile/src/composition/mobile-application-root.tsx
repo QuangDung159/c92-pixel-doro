@@ -9,8 +9,10 @@ export const MobileApplicationRoot = ({ children }: PropsWithChildren) => {
   const [application] = useState(createMobileApplication);
 
   useEffect(() => {
-    application.boot();
-    return () => application.dispose();
+    void application.boot();
+    return () => {
+      void application.dispose();
+    };
   }, [application]);
 
   return (
@@ -19,4 +21,3 @@ export const MobileApplicationRoot = ({ children }: PropsWithChildren) => {
     </MobileApplicationProvider>
   );
 };
-

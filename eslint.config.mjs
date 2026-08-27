@@ -127,9 +127,31 @@ export default defineConfig([
   {
     files: ['apps/mobile/src/infrastructure/**/*.{ts,tsx}'],
     rules: {
+      'no-restricted-imports': noRestrictedImports(['zustand', 'expo-sqlite'], [
+        '@/presentation/**',
+        '@/app/**',
+        'expo-sqlite/**',
+        '**/test/**',
+      ]),
+    },
+  },
+  {
+    files: ['apps/mobile/src/infrastructure/database/**/*.{ts,tsx}'],
+    rules: {
       'no-restricted-imports': noRestrictedImports(['zustand'], [
         '@/presentation/**',
         '@/app/**',
+        '**/test/**',
+      ]),
+    },
+  },
+  {
+    files: ['apps/mobile/src/composition/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': noRestrictedImports(['expo-sqlite'], [
+        '@pixeldoro/domain/src/**',
+        '@pixeldoro/application/src/**',
+        'expo-sqlite/**',
         '**/test/**',
       ]),
     },

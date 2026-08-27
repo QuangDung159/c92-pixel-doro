@@ -14,9 +14,19 @@ const invalidCases = [
     code: "import 'expo';",
   },
   {
+    name: 'Shared Application cannot import SQLite',
+    filePath: 'packages/application/src/__sqlite-boundary-check__.ts',
+    code: "import 'expo-sqlite';",
+  },
+  {
     name: 'Mobile Application cannot import Infrastructure',
     filePath: 'apps/mobile/src/application/__boundary-check__.ts',
     code: "import '@/infrastructure/platform/clock/device-clock.adapter';",
+  },
+  {
+    name: 'Mobile Application cannot import SQLite',
+    filePath: 'apps/mobile/src/application/__sqlite-boundary-check__.ts',
+    code: "import 'expo-sqlite';",
   },
   {
     name: 'Mobile Presentation cannot import Domain directly',
@@ -27,6 +37,16 @@ const invalidCases = [
     name: 'Route cannot import Infrastructure',
     filePath: 'apps/mobile/src/app/__boundary-check__.tsx',
     code: "import '@/infrastructure/platform/clock/device-clock.adapter';",
+  },
+  {
+    name: 'Composition cannot import SQLite directly',
+    filePath: 'apps/mobile/src/composition/__sqlite-boundary-check__.ts',
+    code: "import 'expo-sqlite';",
+  },
+  {
+    name: 'Non-database Infrastructure cannot import SQLite',
+    filePath: 'apps/mobile/src/infrastructure/platform/__sqlite-boundary-check__.ts',
+    code: "import 'expo-sqlite';",
   },
   {
     name: 'Consumer cannot deep-import package source',
@@ -64,6 +84,11 @@ const validCases = [
     filePath: 'apps/mobile/src/infrastructure/__valid-boundary-check__.ts',
     code: "import type { AppLifecyclePort } from '@/application';\nexport type Port = AppLifecyclePort;",
   },
+  {
+    name: 'Database Infrastructure can import SQLite',
+    filePath: 'apps/mobile/src/infrastructure/database/__valid-sqlite-boundary-check__.ts',
+    code: "import type { SQLiteDatabase } from 'expo-sqlite';\nexport type Database = SQLiteDatabase;",
+  },
 ];
 
 for (const boundaryCase of validCases) {
@@ -80,4 +105,3 @@ for (const boundaryCase of validCases) {
 }
 
 console.log(`${invalidCases.length} forbidden imports rejected; ${validCases.length} valid imports accepted.`);
-
