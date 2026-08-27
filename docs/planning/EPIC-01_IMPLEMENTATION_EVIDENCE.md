@@ -1,15 +1,10 @@
 ---
 document_id: PIXELDORO_EPIC_01_IMPLEMENTATION_EVIDENCE
 title: PixelDoro Mobile MVP — EPIC-01 Implementation Evidence
-version: 1.0.0
-status: DONE
+version: 0.1.0
+status: IN_PROGRESS_MANUAL_BUILD_GATES
 last_updated: 2026-08-27
 owner: Dũng Lư
-reviewed_by: Dũng Lư
-reviewer_roles:
-  - Product Owner
-  - Tech Lead
-closed_at: 2026-08-27
 language: vi
 scope:
   - mobile_mvp
