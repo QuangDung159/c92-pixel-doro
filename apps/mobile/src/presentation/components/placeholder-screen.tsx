@@ -1,4 +1,5 @@
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { palette } from '@/presentation/theme/palette';
 
@@ -88,4 +89,3 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-

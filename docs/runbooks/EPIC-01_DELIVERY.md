@@ -40,6 +40,15 @@ opt-in config keys are no longer part of the SDK 57 config schema.
 All native and EAS builds are manual owner-triggered actions. No checked-in workflow
 has a push/schedule trigger.
 
+Release signing credentials use `credentialsSource: remote` for every profile and stay
+managed by EAS. Do not create `credentials.json`, use `credentialsSource: local`, or
+download signing material into the repository. A local Android EAS build authenticates
+with Expo only to resolve the project and temporarily download the EAS-managed
+credential for signing; the build itself runs on the developer machine.
+
+For the phone-first MVP, native iPad support is disabled. Android tablet is not part of
+the Epic acceptance device matrix; validate on an Android phone target.
+
 Run repository gates first:
 
 ```sh
@@ -63,6 +72,25 @@ maestro test test/device/foundation-smoke.yaml
 
 Attach build URLs/IDs, platform + OS/device details, date, commit SHA, and the Maestro
 result to the Epic evidence record. A successful EAS build alone is not boot evidence.
+
+To conserve EAS cloud build quota, Android artifacts may also be built locally from the
+repository root. Both commands keep `credentialsSource: remote`; generated artifacts
+are written to the git-ignored `apps/mobile/artifacts/` directory:
+
+```sh
+pnpm android:apk
+pnpm android:aab
+```
+
+The APK is for direct installation and smoke testing. The AAB is the Google Play upload
+artifact and cannot be installed directly on an emulator/device. Local build evidence
+must still record the artifact checksum, platform/toolchain, date, commit SHA, and
+device smoke result.
+
+The mobile workspace pins the EAS local-build plugin used by EAS CLI `22.6.0` and sets
+`EAS_LOCAL_BUILD_PLUGIN_PATH` in both local Android scripts. This avoids relying on
+`npx` to create the plugin executable dynamically; it does not change the remote
+credential source or persist signing material in the repository.
 
 ## 4. Preview and production OTA boundary
 

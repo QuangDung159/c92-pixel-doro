@@ -8,6 +8,7 @@ linkWorkspacePackages: true
 verifyDepsBeforeRun: false
 
 allowBuilds:
+  dtrace-provider: false
   esbuild: true
   unrs-resolver: true
 

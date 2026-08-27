@@ -20,6 +20,8 @@
     "prebuild": "pnpm --filter @pixeldoro/mobile exec expo prebuild --platform ios",
     "ios": "pnpm --filter @pixeldoro/mobile ios",
     "android": "pnpm --filter @pixeldoro/mobile android",
+    "android:apk": "pnpm --filter @pixeldoro/mobile run build:android:apk",
+    "android:aab": "pnpm --filter @pixeldoro/mobile run build:android:aab",
     "mobile": "pnpm --filter @pixeldoro/mobile",
     "mobile:doctor": "pnpm --filter @pixeldoro/mobile run doctor",
     "check:repository": "node scripts/check-repository.mjs"

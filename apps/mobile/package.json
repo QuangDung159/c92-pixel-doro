@@ -6,6 +6,8 @@
   "scripts": {
     "start": "expo start --dev-client",
     "android": "expo run:android",
+    "build:android:apk": "EAS_LOCAL_BUILD_PLUGIN_PATH=./node_modules/.bin/eas-cli-local-build-plugin pnpm dlx eas-cli@22.6.0 build --platform android --profile android-apk --local --output ./artifacts/pixeldoro.apk",
+    "build:android:aab": "EAS_LOCAL_BUILD_PLUGIN_PATH=./node_modules/.bin/eas-cli-local-build-plugin pnpm dlx eas-cli@22.6.0 build --platform android --profile android-aab --local --output ./artifacts/pixeldoro.aab",
     "ios": "expo run:ios",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
@@ -36,6 +38,7 @@
   "devDependencies": {
     "@types/node": "22.19.11",
     "@types/react": "~19.2.2",
+    "eas-cli-local-build-plugin": "22.0.0",
     "expo-doctor": "1.20.4",
     "typescript": "~6.0.3",
     "vitest": "4.1.11"

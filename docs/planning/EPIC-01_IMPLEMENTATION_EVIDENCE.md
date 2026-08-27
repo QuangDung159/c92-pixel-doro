@@ -36,10 +36,13 @@ desktop hoặc Product decision đang `OPEN` được triển khai trong Epic n�
 | `CONFIG-03` | Expo `57.0.17`, React Native `0.86.3`, React `19.2.3`; `expo install --check` pass | `RESOLVED` |
 | `CONFIG-04` | Vitest `4.1.11`; pure TypeScript tests không cần Expo runtime | `RESOLVED` |
 | `CONFIG-05` | iOS/Android identifier: `com.dragonc92team.pixeldoro` | `RESOLVED_OWNER_CONFIRMED` |
-| `CONFIG-06` | EAS project `6f65fb79-ffe9-4fa6-9951-895f27bf0725` đã link; Expo owner/role còn chờ xác nhận | `PARTIALLY_RESOLVED` |
+| `CONFIG-06` | Expo owner `dragonc92team`; EAS project `6f65fb79-ffe9-4fa6-9951-895f27bf0725` đã link | `RESOLVED` |
 
 Bundle/application identifier đã được Dũng Lư xác nhận trước EAS initialization. Đổi
 identifier sau khi phân phối binary sẽ tạo migration/release cost.
+
+MVP hiện giới hạn device acceptance ở iPhone và Android phone; native iPad support bị
+tắt để không mở rộng layout/device QA scope trước khi core loop ổn định.
 
 ## 3. Story evidence
 
@@ -51,7 +54,7 @@ identifier sau khi phân phối binary sẽ tạo migration/release cost.
 | `US-01-04` | Manual composition root, application facade/context, readiness/recovery, one-subscription + dispose tests | `REPO_COMPLETE` |
 | `US-01-05` | Root quality command; 7 deliberate violations bị reject, 2 valid dependency cases được accept | `REPO_COMPLETE` |
 | `US-01-06` | 4 representative tests pass; deterministic fakes; mobile integration và device harness đúng owner | `REPO_COMPLETE` |
-| `US-01-07` | App/EAS profiles, 3 channels, runtime policy, remote credentials, manual quality-gated workflows, rollback runbook | `CONFIG_COMPLETE_MANUAL_EVIDENCE_PENDING` |
+| `US-01-07` | App/EAS profiles, 3 channels, runtime policy, remote-only credentials, local Android APK/AAB profiles, manual quality-gated workflows, rollback runbook | `CONFIG_COMPLETE_MANUAL_EVIDENCE_PENDING` |
 
 Story checkbox trong baseline chưa đổi sang `[x]` vì Definition of Story Done còn yêu
 cầu owner review/task record/PR evidence. Bảng này phản ánh implementation evidence,
@@ -81,10 +84,12 @@ chủ động và gắn vào record theo runbook.
 ## 5. Manual gate để đóng Epic
 
 - [x] Dũng Lư xác nhận `com.dragonc92team.pixeldoro` cho cả hai platform.
-- [ ] Xác nhận Expo account owner/role; EAS project ID
+- [x] Xác nhận Expo account owner `dragonc92team`; EAS project ID
   `6f65fb79-ffe9-4fa6-9951-895f27bf0725` đã được link.
-- [ ] Chạy `eas workflow:validate` cho cả 3 workflow sau khi project được link.
-- [ ] Tạo EAS-managed remote credentials; xác nhận không export/commit secret.
+- [x] Chạy `eas workflow:validate` thành công cho cả 3 workflow sau khi project được link.
+- [ ] Hoàn tất EAS-managed remote credentials; xác nhận không export/commit secret.
+  - [x] Android remote keystore đã được EAS tạo và resolve cho local build.
+  - [ ] iOS distribution certificate/provisioning profile còn chờ Apple Developer setup.
 - [ ] Trigger thủ công development workflow và lưu iOS/Android build URL/ID.
 - [ ] Chạy route smoke trên ít nhất một iOS và một Android target; gắn output cùng
   platform, OS, device và commit SHA.
@@ -92,6 +97,5 @@ chủ động và gắn vào record theo runbook.
 - [ ] Diễn tập rollback/republish trên artifact phù hợp trước production use.
 - [ ] Dũng Lư review Story breakdown/evidence và cập nhật checkbox theo Definition of Done.
 
-EAS workflow schema validation đã được thử nhưng CLI dừng ở project prerequisite vì app
-chưa link EAS project. Không tạo/link cloud project tự động vì đây là lựa chọn account
-ownership và external state thuộc `CONFIG-06`.
+EAS project đã được owner link thủ công. Cả ba workflow đã được Expo API xác nhận có
+configuration YAML hợp lệ bằng EAS CLI `22.6.0` ngày 2026-08-27.

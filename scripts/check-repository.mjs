@@ -3,6 +3,11 @@ import { extname, relative, resolve } from 'node:path';
 
 const repositoryRoot = process.cwd();
 const ignoredDirectories = new Set(['.git', '.expo', 'coverage', 'dist', 'node_modules']);
+const ignoredGeneratedPaths = new Set([
+  'apps/mobile/android',
+  'apps/mobile/artifacts',
+  'apps/mobile/ios',
+]);
 const forbiddenFiles = new Set([
   'package-lock.json',
   'yarn.lock',
@@ -27,7 +32,12 @@ const walk = async (directory) => {
     }
 
     const absolutePath = resolve(directory, entry.name);
+    const repositoryPath = relative(repositoryRoot, absolutePath);
     if (entry.isDirectory()) {
+      if (ignoredGeneratedPaths.has(repositoryPath)) {
+        continue;
+      }
+
       await walk(absolutePath);
     } else {
       files.push(absolutePath);
@@ -61,4 +71,3 @@ for (const manifest of manifests) {
 }
 
 console.log('Repository hygiene verified: one lockfile, no signing material, no Skia dependency.');
-

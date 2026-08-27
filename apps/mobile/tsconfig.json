@@ -9,7 +9,7 @@
       "@/*": ["./src/*"],
       "@/assets/*": ["./assets/*"]
     },
-    "types": ["vitest/globals"]
+    "types": ["node", "vitest/globals"]
   },
   "include": [
     "src/**/*.ts",
@@ -20,4 +20,3 @@
     "app.config.ts"
   ]
 }
-

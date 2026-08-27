@@ -31,10 +31,16 @@ pnpm run mobile:doctor
 pnpm start
 pnpm ios
 pnpm android
+pnpm android:apk
+pnpm android:aab
 ```
 
 `pnpm quality` runs strict TypeScript checks, ESLint architecture rules, layer smoke
 tests, the device-harness validation, and deliberate forbidden-import checks.
+
+`pnpm android:apk` and `pnpm android:aab` run signed Android EAS builds on the local
+machine to conserve cloud quota. Signing credentials remain EAS-managed remotely;
+artifacts are written under the git-ignored `apps/mobile/artifacts/` directory.
 
 For EAS account setup, native build validation, preview promotion, rollback, and
 evidence capture, follow [the delivery runbook](docs/runbooks/EPIC-01_DELIVERY.md).

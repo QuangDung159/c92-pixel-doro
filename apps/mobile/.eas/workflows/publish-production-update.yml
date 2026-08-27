@@ -1,7 +1,7 @@
 name: Promote validated update to production
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: {}
 
 defaults:
   image: sdk-57
@@ -31,4 +31,3 @@ jobs:
     environment: production
     params:
       channel: production
-

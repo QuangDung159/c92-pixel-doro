@@ -9,6 +9,8 @@ apps/mobile/.expo/
 apps/mobile/android/
 apps/mobile/ios/
 apps/mobile/web-build/
+apps/mobile/artifacts/*
+!apps/mobile/artifacts/.gitkeep
 
 # Local environment and signing material
 .env
@@ -24,4 +26,3 @@ credentials.json
 # Editors and operating systems
 .DS_Store
 *.log
-

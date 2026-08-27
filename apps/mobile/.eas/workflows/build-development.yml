@@ -1,7 +1,7 @@
 name: Build development clients
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: {}
 
 defaults:
   image: sdk-57
@@ -34,4 +34,3 @@ jobs:
     params:
       platform: ios
       profile: development
-
