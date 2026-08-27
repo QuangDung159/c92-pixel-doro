@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_GAMIFICATION_RULES_SPECIFICATION
 title: PixelDoro Mobile MVP — Gamification Rules Specification
-version: 1.0.0
+version: 1.0.1
 status: APPROVED
-last_updated: 2026-08-26
+last_updated: 2026-08-27
 owner: Dũng Lư
 owner_roles:
   - Tech Lead
@@ -11,10 +11,10 @@ owner_roles:
   - Lead Mobile Developer
 reviewer: Dũng Lư
 reviewer_role: Tech Lead
-reviewed_at: 2026-08-26
+reviewed_at: 2026-08-27
 approved_by: Dũng Lư
 approver_role: Tech Lead / Product Owner
-approved_at: 2026-08-26
+approved_at: 2026-08-27
 language: vi
 scope:
   - mobile_mvp
@@ -55,7 +55,7 @@ Tài liệu này không quyết định lại timer/session/Pet truth và không
 - Schema, datatype, index, migration hoặc exact SQL; các nội dung đó thuộc `architecture/data-model.md`.
 - Artwork, sprite, slot layout hoặc visual theme cụ thể của từng item.
 
-Nếu có mâu thuẫn, Product Core 1.12.0 là nguồn sự thật sản phẩm ưu tiên cao nhất. Technical Overview 1.0.0, System Architecture 1.0.0, Project Structure 1.0.0, Timer Engine 1.0.1, Session Lifecycle 1.0.0, Pet State Machine 1.0.0 và ADR-001 đến ADR-008 là baseline đã duyệt.
+Nếu có mâu thuẫn, Product Core 1.13.0 là nguồn sự thật sản phẩm ưu tiên cao nhất. Technical Overview 1.0.0, System Architecture 1.0.0, Project Structure 1.0.0, Timer Engine 1.0.2, Session Lifecycle 1.0.1, Pet State Machine 1.0.0 và ADR-001 đến ADR-008 là baseline đã duyệt.
 
 ### 0.1. Trạng thái quyết định
 
@@ -68,19 +68,19 @@ Nếu có mâu thuẫn, Product Core 1.12.0 là nguồn sự thật sản phẩm
 | `OPEN` | Chưa quyết định; không được tự suy diễn khi triển khai hoặc viết test. |
 | `DEFERRED` | Không thuộc Mobile MVP. |
 
-Phiên bản `1.0.0` đã được Dũng Lư — Tech Lead/Product Owner review và phê duyệt ngày 2026-08-26. `GR-OPEN-001`, `GR-OPEN-002`, `GR-OPEN-003` và Product `OPEN-005` đều đã `RESOLVED`; Product Core 1.12.0 đã đồng bộ onboarding reward, exact catalog/price cùng shop semantics có phê duyệt. Không còn decision `OPEN` ảnh hưởng trực tiếp đến Gamification Rules Mobile MVP.
+Phiên bản `1.0.0` đã được Dũng Lư — Tech Lead/Product Owner review và phê duyệt ngày 2026-08-26. Maintenance `1.0.1` ngày 2026-08-27 đồng bộ trial Relax/no-tag semantics từ Product Core 1.13.0 mà không đổi reward/economy rule. `GR-OPEN-001`, `GR-OPEN-002`, `GR-OPEN-003`, `DM-OPEN-006` và Product `OPEN-005` đều đã `RESOLVED`; không còn decision `OPEN` ảnh hưởng trực tiếp đến Gamification Rules Mobile MVP.
 
 ### 0.2. Authority và traceability
 
 | Nguồn | Phiên bản/trạng thái | Rule được kế thừa |
 |---|---|---|
-| `PIXELDORO_CORE_TRUTH.md` | 1.12.0 `ACTIVE` | XP/Coin, standard/onboarding Focus reward, level/economy boundary, exact shop catalog/price và deferred boundaries. |
+| `PIXELDORO_CORE_TRUTH.md` | 1.13.0 `ACTIVE` | XP/Coin, onboarding trial mode/tag/reward, level/economy boundary, exact shop catalog/price và deferred boundaries. |
 | `TECHNICAL_DOCUMENTATION_CHECKLIST.md` | Hiện hành | Definition of done của Gamification Rules. |
 | `architecture/technical-overview.md` | 1.0.0 `APPROVED` | SQLite durable truth, offline-first, reward transaction và side-effect boundary. |
 | `architecture/system-architecture.md` | 1.0.0 `APPROVED` | Domain/Application ownership, command serialization, atomic transaction và unique `sessionId`. |
 | `architecture/project-structure.md` | 1.0.0 `APPROVED` | Reward/inventory module boundary, naming, test placement và asset neutrality với Product `OPEN-001`. |
-| `specifications/timer-engine.md` | 1.0.1 `APPROVED` | Completion truth, concurrency, automatic claim, safe recovery và reward idempotency. |
-| `specifications/session-lifecycle.md` | 1.0.0 `APPROVED` | Reward eligibility, formula/rounding, Focus → Reward → Result và Break behavior. |
+| `specifications/timer-engine.md` | 1.0.2 `APPROVED` | Completion truth, trial validation, concurrency, automatic claim, safe recovery và reward idempotency. |
+| `specifications/session-lifecycle.md` | 1.0.1 `APPROVED` | Reward eligibility, trial Relax/no-tag lifecycle, formula/rounding, Focus → Reward → Result và Break behavior. |
 | `specifications/pet-state-machine.md` | 1.0.0 `APPROVED` | Animation là transient side effect và không thay đổi durable reward truth. |
 | ADR-003, ADR-004 | `ACCEPTED` | SQLite/Zustand ownership và pure Domain/platform boundary. |
 
@@ -88,7 +88,7 @@ Phiên bản `1.0.0` đã được Dũng Lư — Tech Lead/Product Owner review 
 
 | Phạm vi | Trạng thái hiện tại | Ghi chú |
 |---|---|---|
-| Focus reward eligibility/formula/rounding | `LOCKED`/`BASELINE` | Đã chốt trong Product Core 1.12.0. |
+| Focus reward eligibility/formula/rounding | `LOCKED`/`BASELINE` | Đã chốt trong Product Core 1.13.0. |
 | Automatic atomic reward grant/idempotency | `LOCKED`/`BASELINE` | Đã chốt trong Product Core và các baseline kỹ thuật. |
 | Level curve và level semantics | `RESOLVED` | `GR-OPEN-001`; Dũng chọn phương án B ngày 2026-08-26. |
 | Shop access, purchase và equip conditions | `RESOLVED` | `GR-OPEN-002`; Dũng chọn phương án A ngày 2026-08-26. |
@@ -270,8 +270,9 @@ Dũng Lư chọn phương án A ngày 2026-08-26:
 - Trial không tính vào completed Focus count/active day dùng cho store-review eligibility.
 - Trial không phát standard `focus_session_started`/`focus_session_completed`/`reward_granted` core analytics; onboarding analytics tiếp tục dùng `onboarding_started`/`onboarding_completed` theo approved analytics allowlist. Exact onboarding property/event expansion, nếu có, cần analytics schema review riêng.
 - Trial chỉ nhận reward khi terminal result là `completed`; incomplete/cancelled trial không nhận partial XP/Coin.
+- Trial persist `mode = relax`, `workTag = null`, không hiển thị mode/tag selector và không có Strict failure branch. Mode/tag không thay đổi reward formula hoặc exclusion semantics.
 
-Product Core 1.12.0 chứa toàn bộ duration, reward và exclusion semantics trên; quyết định onboarding được Dũng phê duyệt và đồng bộ lần đầu ở Product Core 1.11.0 ngày 2026-08-26.
+Product Core 1.13.0 chứa toàn bộ duration, mode/tag, reward và exclusion semantics trên; reward decision được đồng bộ lần đầu ở Product Core 1.11.0 và `DM-OPEN-006` được đồng bộ ngày 2026-08-27.
 
 ## 5. Automatic reward grant và idempotency
 
@@ -572,6 +573,7 @@ Các nội dung sau không thuộc Gamification Rules Mobile MVP:
 | `GR-EDGE-023` | Session failed/cancelled sau khi user đã sở hữu item từ trước | Không xóa/revoke item hoặc XP/Coin cũ. | `LOCKED`. |
 | `GR-EDGE-024` | Onboarding trial 5 phút completes | Grant atomically/idempotently `5 XP`, `1 Coin`; cộng progression/balance nhưng loại khỏi standard history/contribution, cadence, store-review eligibility và core Focus analytics. | `LOCKED`/`RESOLVED` theo Product Core 1.12.0 và `GR-OPEN-003`. |
 | `GR-EDGE-025` | Catalog/price thay đổi ở version tương lai sau khi user đã mua | Mobile MVP không có dynamic pricing. Nếu Product duyệt thay đổi ở version sau, OwnedItem hiện có không bị thu hồi; migration/price-version contract phải được Data Model review. | `RESOLVED` cho MVP; future change cần authority mới. |
+| `GR-EDGE-026` | Trial record có mode/tag khác `relax`/`null` | Không tự grant hoặc normalize từ dữ liệu sai invariant; dùng safe recovery. | `RESOLVED` theo Product Core 1.13.0/`DM-OPEN-006`. |
 
 ## 12. Traceability tới Technical Documentation Checklist
 
@@ -596,7 +598,7 @@ Các nội dung sau không thuộc Gamification Rules Mobile MVP:
 |---|---|---|---|
 | Currency set | MVP chỉ có XP và Coin. | Product Core §9.2 | `LOCKED`. |
 | Eligibility | Chỉ completed Focus nhận reward; failed/cancelled Focus và mọi Break không reward. | Product Core §7.4, §9.3; Session Lifecycle §5 | `LOCKED`. |
-| Formula | `XP = completedFocusMinutes`; `Coin = floor(completedFocusMinutes / 5)`. | Product Core 1.12.0 §9.3; Product `OPEN-004` đã resolved | `LOCKED`/`BASELINE`. |
+| Formula | `XP = completedFocusMinutes`; `Coin = floor(completedFocusMinutes / 5)`. | Product Core 1.13.0 §9.3; Product `OPEN-004` đã resolved | `LOCKED`/`BASELINE`. |
 | Duration source | Dùng configured Focus minutes; overtime/reconcile muộn không tăng reward. | Product Core §9.3; Session Lifecycle §5.2 | `LOCKED`. |
 | Rounding | Coin dùng integer floor. | Product Core §9.3 | `LOCKED`. |
 | Automatic grant | Grant trong completed Focus transaction; Result không manual claim. | Product Core §7.4; Timer `TE-OPEN-009` | `LOCKED`/`BASELINE`. |
@@ -606,7 +608,8 @@ Các nội dung sau không thuộc Gamification Rules Mobile MVP:
 | Deferred boundary | Không evolution, Happiness, Energy, streak UI, Revive Token hoặc monetization trong MVP. | Product Core §4.3, §8.5–8.6, §9.5–9.6, §16 | `LOCKED`/`DEFERRED`. |
 | `GR-OPEN-001` | Level 1 tại 0 XP; XP cumulative/non-spendable; threshold `25 × (L-1) × (L+2) / 2`; không max level riêng; một reward có thể vượt nhiều threshold. | Dũng Lư — Product Owner/Tech Lead | `RESOLVED` ngày 2026-08-26. |
 | `GR-OPEN-002` | Catalog không level-gate; item visible/purchasable từ đầu; đủ Coin thì purchase một lần atomically; equip miễn phí khi owned; Coin bắt đầu từ 0 và không âm. | Dũng Lư — Product Owner/Tech Lead | `RESOLVED` ngày 2026-08-26. |
-| `GR-OPEN-003` | Onboarding trial là special completed Focus 5 phút, nhận `5 XP`/`1 Coin` bằng automatic idempotent grant; không tính standard history/contribution, Long Break cadence, store-review eligibility hoặc core Focus analytics. | Product Core 1.12.0; Dũng Lư — Product Owner/Tech Lead | `RESOLVED` ngày 2026-08-26; authority sync hoàn tất. |
+| `GR-OPEN-003` | Onboarding trial là special completed Focus 5 phút, nhận `5 XP`/`1 Coin` bằng automatic idempotent grant; không tính standard history/contribution, Long Break cadence, store-review eligibility hoặc core Focus analytics. | Product Core 1.13.0; Dũng Lư — Product Owner/Tech Lead | `RESOLVED` ngày 2026-08-26; authority sync hoàn tất. |
+| Data Model `DM-OPEN-006` | Trial persist `mode = relax`, `workTag = null`; mode/tag không tạo multiplier hoặc thay reward/exclusion. | Product Core 1.13.0; Timer 1.0.2; Session Lifecycle 1.0.1 | `RESOLVED` ngày 2026-08-27. |
 | Product `OPEN-005` | 12 neutral room items với exact stable ID/display name/category/price 5–120 Coin; visible từ đầu, purchase một lần bằng Coin, equip miễn phí. | Product Core 1.12.0 §9.4; Dũng Lư — Product Owner/Tech Lead | `RESOLVED` ngày 2026-08-26; authority sync hoàn tất. |
 
 ### 13.2. Open decisions
@@ -679,13 +682,14 @@ Checkbox ở mục này là implementation acceptance criteria và vẫn để t
 ### 14.5. Onboarding trial — `GR-OPEN-003` `RESOLVED`
 
 - [ ] Trial là special completed Focus có configured duration cố định 5 phút.
+- [ ] Trial persist `mode = relax`, `workTag = null`; mode/tag không thay đổi 5 XP/1 Coin hoặc tạo Strict failure/multiplier.
 - [ ] Completed trial nhận `5 XP`, `1 Coin` bằng automatic atomic/idempotent RewardTransaction unique theo `sessionId`.
 - [ ] Trial reward cộng cumulative XP/level và spendable Coin balance.
 - [ ] Incomplete/cancelled trial không nhận partial XP/Coin.
 - [ ] Trial không tính vào standard Focus history/contribution graph, Long Break cadence hoặc store-review eligibility.
 - [ ] Trial dùng onboarding analytics thay vì standard Focus/reward core analytics.
 
-Authority sync đã hoàn tất trong Product Core 1.12.0; các checkbox trên tiếp tục là implementation acceptance criteria.
+Authority sync đã hoàn tất trong Product Core 1.13.0, Timer Engine 1.0.2 và Session Lifecycle 1.0.1; các checkbox trên tiếp tục là implementation acceptance criteria.
 
 ### 14.6. Test matrix tối thiểu
 
@@ -710,7 +714,16 @@ Gamification Rules `1.0.0` được Dũng Lư — Tech Lead/Product Owner review
 
 Các checkbox ở mục 14 là implementation acceptance criteria và vẫn để trống cho tới khi có test/device evidence; specification approval không thay thế implementation verification.
 
+Maintenance `1.0.1` được Dũng Lư phê duyệt ngày 2026-08-27 để trace `DM-OPEN-006` sau Product Core 1.13.0, Timer Engine 1.0.2 và Session Lifecycle 1.0.1. Update không thay đổi reward, level, catalog, purchase hoặc inventory semantics.
+
 ## 16. Change log
+
+### 1.0.1 — 2026-08-27
+
+- Dũng Lư phê duyệt maintenance sync cho `DM-OPEN-006`.
+- Ghi trial persist `mode = relax`, `workTag = null`, không có Strict failure branch và không hiển thị selector tương ứng.
+- Xác nhận mode/tag không thay đổi automatic atomic 5 XP/1 Coin grant, level/balance contribution hoặc standard aggregate/analytics exclusions.
+- Bổ sung edge case, decision trace và acceptance criteria; không đổi reward/economy baseline 1.0.0.
 
 ### 1.0.0 — 2026-08-26
 

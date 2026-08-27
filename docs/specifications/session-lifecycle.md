@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_SESSION_LIFECYCLE_SPECIFICATION
 title: PixelDoro Mobile MVP — Session Lifecycle Specification
-version: 1.0.0
+version: 1.0.1
 status: APPROVED
-last_updated: 2026-08-26
+last_updated: 2026-08-27
 owner: Dũng Lư
 owner_roles:
   - Tech Lead
@@ -11,10 +11,10 @@ owner_roles:
   - Lead Mobile Developer
 reviewer: Dũng Lư
 reviewer_role: Tech Lead
-reviewed_at: 2026-08-26
+reviewed_at: 2026-08-27
 approved_by: Dũng Lư
 approver_role: Tech Lead / Product Owner
-approved_at: 2026-08-26
+approved_at: 2026-08-27
 language: vi
 scope:
   - mobile_mvp
@@ -43,13 +43,13 @@ Tài liệu này đặc tả vòng đời sản phẩm của Focus và Break ses
 
 Tài liệu này không quyết định lại:
 
-- Timer truth, timestamp representation, reconciliation precedence, notification idempotency hoặc safe recovery đã khóa trong [Timer Engine 1.0.1](./timer-engine.md).
-- Công thức XP/Coin (`OPEN-004`), Long Break cadence (`OPEN-003`) và manual Break start (`OPEN-010`) đã được chốt trong [Product Core 1.10.0](../PIXELDORO_CORE_TRUTH.md) và được tài liệu này kế thừa.
+- Timer truth, timestamp representation, reconciliation precedence, notification idempotency hoặc safe recovery đã khóa trong [Timer Engine 1.0.2](./timer-engine.md).
+- Công thức XP/Coin (`OPEN-004`), Long Break cadence (`OPEN-003`), manual Break start (`OPEN-010`) và onboarding trial Relax/no-tag behavior (`DM-OPEN-006`) đã được chốt trong [Product Core 1.13.0](../PIXELDORO_CORE_TRUTH.md) và được tài liệu này kế thừa.
 - Pet animation duration/priority của `pet-state-machine.md`.
 - Reward formula, level threshold, item hoặc economy detail của `gamification-rules.md`.
 - Schema, datatype, index, constraint hoặc migration của `data-model.md`.
 
-Nếu có mâu thuẫn, Product Core là nguồn sự thật sản phẩm ưu tiên cao nhất. Technical Overview 1.0.0, System Architecture 1.0.0, Project Structure 1.0.0, Timer Engine 1.0.1 và ADR-001 đến ADR-008 là baseline đã duyệt; tài liệu này chỉ chi tiết hóa và không được làm suy yếu các quyết định đó.
+Nếu có mâu thuẫn, Product Core là nguồn sự thật sản phẩm ưu tiên cao nhất. Technical Overview 1.0.0, System Architecture 1.0.0, Project Structure 1.0.0, Timer Engine 1.0.2 và ADR-001 đến ADR-008 là baseline đã duyệt; tài liệu này chỉ chi tiết hóa và không được làm suy yếu các quyết định đó.
 
 ### 0.1. Trạng thái quyết định
 
@@ -68,12 +68,12 @@ Phiên bản `1.0.0` đã được Dũng Lư — Tech Lead/Product Owner review 
 
 | Nguồn | Phiên bản/trạng thái | Rule được kế thừa |
 |---|---|---|
-| `PIXELDORO_CORE_TRUTH.md` | 1.10.0 `ACTIVE` | Product loop, four statuses, Relax/Strict behavior, Long Break cadence, manual Break start và reward formula. |
+| `PIXELDORO_CORE_TRUTH.md` | 1.13.0 `ACTIVE` | Product loop, four statuses, Relax/Strict behavior, onboarding trial, Long Break cadence, manual Break start và reward formula. |
 | `TECHNICAL_DOCUMENTATION_CHECKLIST.md` | Hiện hành | Phạm vi và definition of done của Session Lifecycle. |
 | `architecture/technical-overview.md` | 1.0.0 `APPROVED` | Offline-first, durable truth, transaction/side-effect constraints. |
 | `architecture/system-architecture.md` | 1.0.0 `APPROVED` | Application command coordinator, transaction ordering, typed result và projection boundary. |
 | `architecture/project-structure.md` | 1.0.0 `APPROVED` | Domain/Application/Infrastructure/Presentation ownership và test placement. |
-| `specifications/timer-engine.md` | 1.0.1 `APPROVED` | Direct baseline cho timestamp, lifecycle reconciliation, precedence, concurrency, reward idempotency và safe recovery. |
+| `specifications/timer-engine.md` | 1.0.2 `APPROVED` | Direct baseline cho timestamp, onboarding trial validation, lifecycle reconciliation, precedence, concurrency, reward idempotency và safe recovery. |
 | ADR-001 đến ADR-008 | `ACCEPTED`/`ACCEPTED_WITH_GATE` | Runtime, persistence, domain/platform boundary và side-effect constraints liên quan. |
 
 ## 1. Nguyên tắc và invariant
@@ -99,7 +99,8 @@ Các invariant sau là normative vì đã được khóa ở Product Core hoặc
 
 | Session type | Mục đích | Thời lượng baseline | Reward boundary |
 |---|---|---:|---|
-| Focus | Khoảng thời gian người dùng cam kết tập trung cùng Pet | 15–120 phút | Completed Focus có thể nhận XP/Coin theo công thức được duyệt. |
+| Standard Focus | Khoảng thời gian người dùng cam kết tập trung cùng Pet | 15–120 phút | Completed standard Focus nhận XP/Coin và tham gia standard aggregates. |
+| Onboarding trial Focus | Special first-use Focus, `mode = relax`, `workTag = null` | 5 phút | Completed trial nhận 5 XP/1 Coin nhưng bị loại khỏi standard aggregates/analytics. |
 | Short Break | Khoảng nghỉ ngắn sau Focus | 5 phút | Không tạo XP/Coin; completion chỉ ghi nhận kết quả Break. |
 | Long Break | Khoảng nghỉ dài | 15 phút | Không tạo XP/Coin; là Break kế tiếp khi cadence bốn completed Focus đến hạn. |
 
@@ -214,6 +215,22 @@ Home / Focus Setup
 ```
 
 Start không thành công khi duration/timestamp không hợp lệ, có active session hoặc database write thất bại. Trong các trường hợp đó app không điều hướng như đã start và không schedule notification.
+
+#### 4.1.1. Start onboarding trial — `DM-OPEN-006` (`RESOLVED`)
+
+```text
+First-use flow
+  → không hiển thị Focus Setup/mode/tag selector
+  → StartOnboardingTrial capture ID + now
+  → validate focusVariant = onboarding_trial, duration = 5
+  → persist mode = relax, workTag = null
+  → transaction tạo Focus status running với startedAt/endsAt
+  → commit
+  → render trial Focus + Pet working
+  → best-effort notification/audio/haptic theo setting
+```
+
+Trial dùng Relax lifecycle: background, lock, crash hoặc kill không tạo Strict violation/`failed`. Trial chỉ resolve `completed` theo deadline hoặc `cancelled` do explicit user action; completed trial nhận automatic atomic 5 XP/1 Coin once. `focusVariant` bền vững tiếp tục loại trial khỏi standard history/contribution, Long Break cadence, store-review eligibility và core Focus/reward analytics.
 
 ### 4.2. Running Focus
 
@@ -364,6 +381,8 @@ Relax Mode cho phép user chuyển app, khóa màn hình, nghe nhạc hoặc tra
 | Notification không giao | Không đổi kết quả hoặc reward eligibility. |
 
 Trace: Product Core §6.1, §7.5; Timer Engine §6, §8.
+
+Onboarding trial luôn đi theo bảng Relax Focus trên, có `mode = relax`, `workTag = null` và không có Strict failure branch. Đây là rule `RESOLVED` theo Product Core 1.13.0/`DM-OPEN-006`.
 
 ### 6.2. Strict Focus — `LOCKED`
 
@@ -558,6 +577,8 @@ Stable error code tối thiểu kế thừa Timer Engine:
 | `SL-SCENARIO-026` | Long Break đến hạn rồi bị cancel | `cancelled`; due state không reset | Không | Product Core 1.9.0 §5.2. |
 | `SL-SCENARIO-027` | Long Break hoàn thành | `completed`; reset cycle về 0 | Không | Product Core 1.9.0 §5.2. |
 | `SL-SCENARIO-028` | App crash/kill/relaunch ở completed Result trước khi user chọn Bắt đầu nghỉ | Hydrate Focus result/reward; không tạo running Break | Không reward mới | Product Core 1.9.0 §10.3; `OPEN-010` `RESOLVED`. |
+| `SL-SCENARIO-029` | Onboarding trial background/lock quá 10 giây rồi quay lại trước deadline | Giữ `running`; không có Strict violation | Chưa grant lúc này | Product Core 1.13.0; `DM-OPEN-006` `RESOLVED`. |
+| `SL-SCENARIO-030` | Onboarding trial reconcile tại/sau deadline | `completed` theo Relax deadline | 5 XP/1 Coin, đúng một grant; vẫn bị loại khỏi standard aggregates | Product Core 1.13.0; `GR-OPEN-003`/`DM-OPEN-006`. |
 
 ## 10. Edge cases
 
@@ -583,6 +604,7 @@ Stable error code tối thiểu kế thừa Timer Engine:
 | `SL-EDGE-018` | User rời completed Result mà chưa chọn Bắt đầu nghỉ | Focus terminal/reward không đổi; không tạo Break record; due state giữ nguyên. | `RESOLVED` theo `OPEN-010`. |
 | `SL-EDGE-019` | Break rời app quá 10 giây | Giữ `running` trước deadline hoặc `completed` khi deadline tới; không `failed`. | `RESOLVED` theo `SL-OPEN-001`. |
 | `SL-EDGE-020` | User ở failed/cancelled Result cố gọi StartBreak trực tiếp | Reject bằng typed eligibility error; không tạo running Break. | `RESOLVED` theo `SL-OPEN-002`; exact error code thuộc Application/Data Model review. |
+| `SL-EDGE-021` | Trial record có `mode != relax` hoặc non-null `workTag` | Invalid invariant; không tự đổi mode/tag hoặc resolve/reward, dùng safe recovery. | `RESOLVED` theo Product Core 1.13.0/`DM-OPEN-006`. |
 
 ## 11. Documentation boundaries và open decisions
 
@@ -592,9 +614,10 @@ Stable error code tối thiểu kế thừa Timer Engine:
 |---|---|---|---|
 | `OPEN-003` | Long Break có tự động sau mỗi bốn completed Focus không? | Long Break due sau bốn completed Focus; sticky qua relaunch; reset khi Long Break completed; không tự quyết định start. | `RESOLVED` ngày 2026-08-26; Product Core 1.8.0. |
 | `OPEN-004` | Công thức XP/Coin đề xuất có được chốt không? | `XP = completedFocusMinutes`; `Coin = floor(completedFocusMinutes / 5)`; không thưởng overtime. | `RESOLVED` ngày 2026-08-26; Product Core 1.10.0. |
+| `DM-OPEN-006` | Onboarding trial dùng mode/tag và lifecycle nào? | Persist `mode = relax`, `workTag = null`; không có Strict failure branch. | `RESOLVED` ngày 2026-08-27; Product Core 1.13.0. |
 | `OPEN-010` | Có tự động bắt đầu Break sau Focus completed không? | Không auto-start; user chọn “Bắt đầu nghỉ” hoặc “Về Home”; Break chỉ tạo sau explicit StartBreak action. | `RESOLVED` ngày 2026-08-26; Product Core 1.9.0. |
 
-`OPEN-003`, `OPEN-004` và `OPEN-010` đã được cập nhật ở Product Core 1.10.0. Timer Engine 1.0.1 đã đồng bộ các tham chiếu `OPEN-003`/`OPEN-010` bằng maintenance update được Dũng Lư phê duyệt; không thay đổi timer semantics.
+`OPEN-003`, `OPEN-004` và `OPEN-010` đã được cập nhật ở Product Core 1.10.0. `DM-OPEN-006` được đồng bộ ở Product Core 1.13.0 và Timer Engine 1.0.2 bằng maintenance update được Dũng Lư phê duyệt; four-status/timestamp semantics không thay đổi.
 
 ### 11.2. Session Lifecycle decisions
 
@@ -657,10 +680,11 @@ Stable error code tối thiểu kế thừa Timer Engine:
 | Product `OPEN-003` | Long Break đến hạn sau bốn completed Focus, sticky qua relaunch và reset khi completed Long Break. | Product Core 1.8.0 | `RESOLVED` ngày 2026-08-26. |
 | Product `OPEN-010` | Break không auto-start; chỉ explicit “Bắt đầu nghỉ” và committed StartBreak transaction tạo running Break. | Product Core 1.9.0 | `RESOLVED` ngày 2026-08-26. |
 | Product `OPEN-004` | Completed Focus nhận XP bằng configured minutes và Coin bằng `floor(minutes / 5)`; overtime không thưởng thêm. | Product Core 1.10.0 | `RESOLVED` ngày 2026-08-26. |
+| Data Model `DM-OPEN-006` | Onboarding trial persist `mode = relax`, `workTag = null`, dùng Relax lifecycle và không có Strict failure branch. | Product Core 1.13.0; Timer Engine 1.0.2 | `RESOLVED` ngày 2026-08-27. |
 
 ### 13.2. Open decisions
 
-Không còn Session Lifecycle hoặc Product decision mở ảnh hưởng trực tiếp tới phạm vi tài liệu này. Các Product Core decision khác như Pet mặc định, shop price hoặc contribution color vẫn ngoài phạm vi và không được tài liệu này tự chốt.
+Không còn Session Lifecycle, Product hoặc Data Model decision mở ảnh hưởng trực tiếp tới phạm vi tài liệu này. Các Product Core decision khác như Pet mặc định, Pet naming hoặc contribution color vẫn ngoài phạm vi và không được tài liệu này tự chốt.
 
 ## 14. Acceptance criteria
 
@@ -679,6 +703,8 @@ Các acceptance criteria dưới đây phản ánh toàn bộ Session Lifecycle/
 
 ### 14.2. Successful Focus flow
 
+- [ ] Onboarding trial tạo Focus 5 phút với `mode = relax`, `workTag = null`, không hiển thị selector và không có Strict failure branch.
+- [ ] Trial background/lock/crash/kill áp dụng Relax recovery; completed trial nhận 5 XP/1 Coin once và vẫn bị loại khỏi standard aggregates/analytics.
 - [ ] Relax Focus foreground tới deadline resolve `completed` tại `now >= endsAt`.
 - [ ] Relax Focus background/kill qua deadline resolve `completed` khi relaunch/foreground.
 - [ ] Strict Focus có `endsAt < violationAt` resolve `completed` khi deadline tới.
@@ -756,7 +782,17 @@ Session Lifecycle `1.0.0` được Dũng Lư — Tech Lead/Product Owner review 
 
 Các checkbox ở mục 14 là implementation acceptance criteria và vẫn để trống cho tới khi có test/device evidence; việc phê duyệt specification không được dùng thay cho implementation verification.
 
+Maintenance `1.0.1` được Dũng Lư phê duyệt ngày 2026-08-27 để đồng bộ Product Core 1.13.0, Timer Engine 1.0.2 và `DM-OPEN-006`. Update chỉ làm rõ onboarding trial dùng Relax/no-tag lifecycle; không thay đổi standard Focus, Break, four-status, transaction hoặc reward-idempotency baseline.
+
 ## 16. Change log
+
+### 1.0.1 — 2026-08-27
+
+- Dũng Lư phê duyệt maintenance sync cho `DM-OPEN-006` sau Product Core 1.13.0 và Timer Engine 1.0.2.
+- Chốt trial Start record: `focusVariant = onboarding_trial`, duration 5 phút, `mode = relax`, `workTag = null`.
+- Chốt trial không hiển thị mode/tag selector, không có Strict failure branch và dùng Relax recovery qua background/kill/relaunch.
+- Giữ nguyên automatic atomic 5 XP/1 Coin grant cùng toàn bộ standard-history/cadence/store-review/core-analytics exclusions.
+- Bổ sung scenario, edge case, decision trace và acceptance criteria; không đổi standard Focus/Break semantics.
 
 ### 1.0.0 — 2026-08-26
 

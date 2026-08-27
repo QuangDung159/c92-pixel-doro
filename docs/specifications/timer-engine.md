@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_TIMER_ENGINE_SPECIFICATION
 title: PixelDoro Mobile MVP — Timer Engine Specification
-version: 1.0.1
+version: 1.0.2
 status: APPROVED
-last_updated: 2026-08-26
+last_updated: 2026-08-27
 owner: Dũng Lư
 owner_roles:
   - Tech Lead
@@ -11,10 +11,10 @@ owner_roles:
   - Lead Mobile Developer
 reviewer: Dũng Lư
 reviewer_role: Tech Lead
-reviewed_at: 2026-08-26
+reviewed_at: 2026-08-27
 approved_by: Dũng Lư
 approver_role: Tech Lead / Product Owner
-approved_at: 2026-08-26
+approved_at: 2026-08-27
 language: vi
 scope:
   - mobile_mvp
@@ -43,7 +43,7 @@ Tài liệu này đặc tả cơ chế đo thời gian và resolve timer cho Foc
 
 Tài liệu này không quyết định lại:
 
-- Product behavior ngoài timer semantics. Product Core 1.10.0 đã chốt Long Break cadence (`OPEN-003`) và Break không auto-start (`OPEN-010`); flow chi tiết thuộc `session-lifecycle.md`. Pause Focus/Break đã được chốt không hỗ trợ trong Mobile MVP.
+- Product behavior ngoài timer semantics. Product Core 1.13.0 đã chốt Long Break cadence (`OPEN-003`), Break không auto-start (`OPEN-010`) và onboarding trial dùng Relax semantics/no work tag (`DM-OPEN-006`); flow chi tiết thuộc `session-lifecycle.md`. Pause Focus/Break đã được chốt không hỗ trợ trong Mobile MVP.
 - Trạng thái cuối, Focus → Reward → Break và reward eligibility chi tiết của `session-lifecycle.md`.
 - Công thức XP/Coin của `gamification-rules.md`.
 - Schema, datatype, constraint và migration cụ thể của `data-model.md`.
@@ -62,13 +62,13 @@ Nếu có mâu thuẫn, Product Core được ưu tiên về sản phẩm. Techn
 | `OPEN` | Chưa quyết định; không được tự suy diễn khi triển khai hoặc viết test. |
 | `DEFERRED` | Không thuộc Mobile MVP. |
 
-Baseline `1.0.0` đã được Dũng Lư — Tech Lead/Product Owner review và phê duyệt ngày 2026-08-26; maintenance `1.0.1` được phê duyệt cùng ngày để đồng bộ Product decision references mà không đổi timer semantics. `TE-OPEN-001` đến `TE-OPEN-010` đều `RESOLVED`; đây là baseline Timer Engine cho Mobile MVP và các tài liệu phụ thuộc.
+Baseline `1.0.0` đã được Dũng Lư — Tech Lead/Product Owner review và phê duyệt ngày 2026-08-26; maintenance `1.0.1` đồng bộ Long Break/manual-start references và maintenance `1.0.2` ngày 2026-08-27 đồng bộ onboarding trial Relax/no-tag semantics. `TE-OPEN-001` đến `TE-OPEN-010` đều `RESOLVED`; đây là baseline Timer Engine cho Mobile MVP và các tài liệu phụ thuộc.
 
 ### 0.2. Authority và nguồn tham chiếu
 
 | Tài liệu | Phiên bản/trạng thái | Vai trò |
 |---|---|---|
-| `PIXELDORO_CORE_TRUTH.md` | 1.10.0 `ACTIVE` | Nguồn sự thật sản phẩm ưu tiên cao nhất. |
+| `PIXELDORO_CORE_TRUTH.md` | 1.13.0 `ACTIVE` | Nguồn sự thật sản phẩm ưu tiên cao nhất. |
 | `TECHNICAL_DOCUMENTATION_CHECKLIST.md` | Hiện hành | Phạm vi và tiêu chí hoàn thành Timer Engine. |
 | `architecture/technical-overview.md` | 1.0.0 `APPROVED` | Stack, timer consistency, offline-first và source-of-truth baseline. |
 | `architecture/system-architecture.md` | 1.0.0 `APPROVED` | Layer, transaction, command serialization và side-effect ordering. |
@@ -244,7 +244,7 @@ COMPLETED / FAILED / CANCELLED:
 ```text
 START_REQUESTED
   → SessionCommandCoordinator
-  → validate duration/tag/mode/type và active-session invariant
+  → validate variant/duration/tag/mode/type và active-session invariant
   → capture startedAt = now
   → derive endsAt
   → transaction: persist running session
@@ -256,8 +256,9 @@ START_REQUESTED
 
 Quy tắc:
 
-- Duration Focus phải nằm trong Product Core: 15–120 phút; default/step không được timer engine diễn giải lại.
-- Short Break 5 phút và Long Break 15 phút theo Product Core. Product Core 1.10.0 đã chốt tự động chọn Long Break sau bốn completed Focus (`OPEN-003`) nhưng Break chỉ start sau explicit user action (`OPEN-010`); transaction boundary tiếp tục theo session lifecycle.
+- Standard Focus phải có duration 15–120 phút theo step đã duyệt, approved work tag và mode `relax`/`strict`; default/step không được timer engine diễn giải lại.
+- Onboarding trial là `focusVariant = onboarding_trial`, duration đúng 5 phút, `mode = relax`, `workTag = null`. Trial không hiển thị mode/tag selector, không ghi `backgroundedAt` cho Strict enforcement và không có Strict failure branch.
+- Short Break 5 phút và Long Break 15 phút theo Product Core. Product Core 1.13.0 đã chốt tự động chọn Long Break sau bốn completed Focus (`OPEN-003`) nhưng Break chỉ start sau explicit user action (`OPEN-010`); transaction boundary tiếp tục theo session lifecycle.
 - Start thất bại nếu durable active-session invariant không cho phép tạo session mới.
 - Notification failure hoặc permission denial không rollback session.
 - UI chỉ điều hướng như session đã start sau khi transaction commit.
@@ -546,12 +547,13 @@ Nếu Product muốn manual claim, đó là thay đổi gameplay/session lifecyc
 | `TE-EDGE-019` | Result screen mở lại | Render committed result; không claim lại | `LOCKED`. |
 | `TE-EDGE-020` | User chỉnh giờ tiến mạnh | Reconcile theo wall clock mới; session có thể complete sớm | `RESOLVED`. |
 | `TE-EDGE-021` | User chỉnh giờ lùi | Reconcile theo wall clock mới; completion có thể bị trì hoãn | `RESOLVED`. |
-| `TE-EDGE-022` | Đổi timezone giữa session | Absolute deadline không đổi; presentation/history regroup thuộc spec khác | Timer truth `LOCKED`; history detail `OPEN` ngoài phạm vi. |
+| `TE-EDGE-022` | Đổi timezone giữa session | Absolute deadline không đổi; presentation/history regroup thuộc spec khác | Timer truth `LOCKED`; history detail ngoài phạm vi. |
 | `TE-EDGE-023` | Invalid/overflow duration arithmetic | Reject Start bằng typed error; không persist session | `RESOLVED`. |
 | `TE-EDGE-024` | Database unavailable khi Start | Start thất bại; không schedule notification hoặc điều hướng như đã start | `BASELINE`. |
 | `TE-EDGE-025` | Database failure khi reconcile | Không hiển thị terminal/reward chưa commit; giữ dữ liệu và vào safe recovery với Retry | `RESOLVED`. |
 | `TE-EDGE-026` | Pause/Resume được gọi tại defensive boundary | Không mutate; `PAUSE_NOT_SUPPORTED` hoặc `RESUME_NOT_SUPPORTED` | `RESOLVED`. |
 | `TE-EDGE-027` | Stale background event được xử lý sau foreground event | Coordinator giữ event order/timestamp; exact coalescing policy cần test | `BASELINE` + implementation detail. |
+| `TE-EDGE-028` | Onboarding trial background/lock quá 10 giây | Trial dùng Relax semantics; không Strict failure, reconcile theo deadline và grant 5 XP/1 Coin once nếu completed | `LOCKED` theo Product Core 1.13.0/`DM-OPEN-006`. |
 
 ### 10.2. Safe recovery — `TE-OPEN-010` (`RESOLVED`)
 
@@ -631,6 +633,7 @@ Mỗi quyết định chỉ được chuyển sang `RESOLVED` và đưa vào nor
 - [ ] Defensive Pause/Resume command không mutate và trả typed not-supported error.
 - [ ] App foreground/startup reconcile active session từ durable record + current timestamp trước khi render final truth.
 - [ ] Relax Mode không fail chỉ vì app background.
+- [ ] Onboarding trial validate đúng 5 phút, `mode = relax`, `workTag = null`; background không tạo Strict failure.
 - [ ] Strict Mode dùng grace 10 giây và boundary `violationAt <= endsAt` đúng Product Core.
 - [ ] `completed`, `failed`, `cancelled` là terminal và không quay lại `running`.
 - [ ] Cancelled/failed session không nhận XP/Coin.
@@ -665,6 +668,13 @@ Các ô chưa được đánh dấu vì đây là implementation acceptance crit
 Test không được khóa behavior cho câu hỏi `OPEN` trước khi quyết định tương ứng được duyệt.
 
 ## 13. Change log
+
+### 1.0.2 — 2026-08-27
+
+- Dũng Lư phê duyệt maintenance sync cho `DM-OPEN-006` sau khi Product Core 1.13.0 được cập nhật.
+- Chốt Start validation của onboarding trial: `focusVariant = onboarding_trial`, duration 5 phút, `mode = relax`, `workTag = null`.
+- Chốt trial không ghi Strict evidence và background/lock không tạo Strict failure; deadline/reward idempotency giữ nguyên.
+- Không thay đổi four-status model, timestamp authority, terminal precedence, reward transaction hoặc safe-recovery semantics.
 
 ### 1.0.1 — 2026-08-26
 

@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_CORE_TRUTH
 title: PixelDoro Product Core — Single Source of Truth
-version: 1.12.0
+version: 1.13.0
 status: ACTIVE
-last_updated: 2026-08-26
+last_updated: 2026-08-27
 owner: Dũng Lư
 owner_roles:
   - Tech Lead
@@ -312,7 +312,7 @@ Trạng thái cadence: `MVP_DEFAULT`, chốt từ `OPEN-003` ngày 2026-08-26.
 
 ## 5.3. Work tags
 
-Tags mặc định:
+Tags mặc định của standard Focus:
 
 - `coding`
 - `study`
@@ -322,6 +322,10 @@ Tags mặc định:
 Trạng thái: `LOCKED` theo product backlog gốc.
 
 Tag mở rộng như `design`, `planning`, `meeting` hoặc custom tag là `DEFERRED`.
+
+Onboarding trial không yêu cầu người dùng chọn loại công việc và không có work tag; durable session record dùng `workTag = null`. Trial tiếp tục bị loại khỏi standard Focus history, contribution graph, Long Break cadence, store-review eligibility và core Focus/reward analytics.
+
+Trạng thái trial tag: `MVP_DEFAULT`, chốt từ `DM-OPEN-006` ngày 2026-08-27.
 
 ## 5.4. Pause behavior
 
@@ -347,6 +351,10 @@ Relax Mode cho phép người dùng:
 - Để timer tiếp tục dựa trên timestamp.
 
 Rời app không làm session thất bại trong Relax Mode.
+
+Onboarding trial 5 phút luôn dùng Relax Mode semantics, không hiển thị mode selector và không có Strict/grace-period failure. Durable session record dùng `mode = relax`.
+
+Trạng thái trial mode: `MVP_DEFAULT`, chốt từ `DM-OPEN-006` ngày 2026-08-27.
 
 ## 6.2. Strict Mode Lite — `LOCKED` cho MVP
 
@@ -674,7 +682,7 @@ Onboarding trial là special Focus ngắn hơn minimum standard Focus. Reward đ
 - Completed Focus count/active day dùng cho store-review eligibility.
 - Standard `focus_session_started`, `focus_session_completed` hoặc `reward_granted` analytics.
 
-Trial dùng `onboarding_started`/`onboarding_completed` cho core analytics. Data Model phải làm trial có thể được phân biệt bền vững với standard Focus mà không tạo session status mới.
+Trial không hiển thị Focus Setup, mode selector hoặc work-tag selector. Trial persist `mode = relax`, `workTag = null`, dùng Relax lifecycle và không thể `failed` bởi Strict violation. Trial dùng `onboarding_started`/`onboarding_completed` cho core analytics. Data Model phải làm trial có thể được phân biệt bền vững với standard Focus mà không tạo session status mới.
 
 ## 10.3. Normal focus flow — `LOCKED`
 
@@ -1106,6 +1114,7 @@ Mobile MVP được xem là đủ điều kiện closed beta khi:
 - [ ] Item đã sở hữu persist sau restart, equip miễn phí và không bị xóa do unequip hoặc session outcome.
 - [ ] Lịch sử hiển thị đúng completed/failed/cancelled session.
 - [ ] Completed onboarding trial 5 phút nhận đúng 5 XP/1 Coin tối đa một lần và không ảnh hưởng standard history/cadence/store-review/core Focus analytics.
+- [ ] Onboarding trial persist `mode = relax`, `workTag = null`, không hiển thị selector tương ứng và không thể fail bởi Strict violation.
 - [ ] Contribution graph chỉ tính completed standard Focus minutes và loại onboarding trial.
 - [ ] Người dùng có thể tắt audio và haptic.
 - [ ] Người dùng có thể gửi feedback.
@@ -1131,6 +1140,7 @@ Mobile MVP được xem là đủ điều kiện closed beta khi:
 | SL-OPEN-001 | Break không áp dụng Strict/grace violation; background/lock/crash/kill không làm Break failed. | Product/Engineering | `RESOLVED` | 2026-08-26 |
 | SL-OPEN-002 | Chỉ completed Focus eligible đi tiếp tới Break; failed/cancelled Focus về Home hoặc thử lại và không có Break CTA/entry. | Product | `RESOLVED` | 2026-08-26 |
 | GR-OPEN-003 | Onboarding trial là special Focus cố định 5 phút; completed trial nhận 5 XP/1 Coin bằng automatic idempotent grant nhưng không tính standard history/contribution, Long Break cadence, store-review eligibility hoặc core Focus/reward analytics. | Product/Game Design | `RESOLVED` | 2026-08-26 |
+| DM-OPEN-006 | Onboarding trial dùng Relax semantics, persist `mode = relax`, không có work tag (`workTag = null`), không hiển thị mode/tag selector và không có Strict failure branch. | Product/Engineering | `RESOLVED` | 2026-08-27 |
 | OPEN-005 | Mobile MVP có đúng 12 neutral room `furniture` items với exact ID/name/price 5–120 Coin theo §9.4; catalog mở từ đầu, không level-gate, mua một lần atomically bằng Coin và equip miễn phí khi owned. | Product/Game Design | `RESOLVED` | 2026-08-26 |
 
 ## 20.2. Open decisions
@@ -1168,6 +1178,13 @@ Không mục nào trong bảng này được xem là requirement đã chốt cho
 ---
 
 # 22. Change Log
+
+## 1.13.0 — 2026-08-27
+
+- Chốt `DM-OPEN-006` theo phương án A: onboarding trial persist `mode = relax` và `workTag = null`.
+- Chốt trial không hiển thị mode/work-tag selector, dùng Relax lifecycle và không có Strict/grace-period failure.
+- Giữ nguyên trial reward 5 XP/1 Coin, automatic idempotent grant và toàn bộ exclusion khỏi standard history/contribution/cadence/store-review/core Focus analytics.
+- Bổ sung MVP acceptance và cho phép maintenance sync Timer Engine, Session Lifecycle, Gamification Rules cùng Data Model.
 
 ## 1.12.0 — 2026-08-26
 

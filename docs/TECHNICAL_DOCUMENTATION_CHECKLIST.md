@@ -2,7 +2,11 @@
 
 Checklist này dùng để quản lý tám tài liệu kỹ thuật bắt buộc trước khi bắt đầu phát triển Mobile MVP.
 
+**Project model:** Indie solo project; Dũng Lư là người duy nhất thực hiện và chịu trách nhiệm review/phê duyệt.
+
 **Project roles:** Dũng Lư — Tech Lead, Product Owner và Lead Mobile Developer.
+
+**Documentation preparation status:** `DONE` — Dũng Lư phê duyệt ngày 2026-08-27; bộ tài liệu hiện là baseline để bắt đầu implementation Mobile MVP.
 
 ## Quy ước trạng thái
 
@@ -20,7 +24,7 @@ Một tài liệu chỉ được đánh dấu hoàn thành khi đáp ứng tất
 - [ ] Không còn quyết định quan trọng ở trạng thái mơ hồ hoặc `TBD` mà không có owner.
 - [ ] Có acceptance criteria hoặc quy tắc đủ rõ để triển khai và kiểm thử.
 - [ ] Các thuật ngữ, enum và tên trạng thái nhất quán với những tài liệu còn lại.
-- [ ] Đã được ít nhất một thành viên khác trong team review.
+- [ ] Với indie solo project: owner đã self-review có ghi nhận ngày, hoàn tất consistency audit giữa các tài liệu và tự phê duyệt trong vai trò Tech Lead/Product Owner. Nếu có contributor/reviewer khác tham gia sau này, peer review được khuyến nghị nhưng không phải điều kiện hồi tố của baseline hiện tại.
 - [ ] Các quyết định kỹ thuật quan trọng đã được ghi lại bằng ADR nếu cần.
 
 ## Tổng quan tiến độ
@@ -34,7 +38,7 @@ Một tài liệu chỉ được đánh dấu hoàn thành khi đáp ứng tất
 | 5 | Session Lifecycle | [`specifications/session-lifecycle.md`](specifications/session-lifecycle.md) | Dũng Lư | Hoàn thành | Dũng Lư — Tech Lead | 2026-08-26 |
 | 6 | Pet State Machine | [`specifications/pet-state-machine.md`](specifications/pet-state-machine.md) | Dũng Lư | Hoàn thành | Dũng Lư — Tech Lead | 2026-08-26 |
 | 7 | Gamification Rules | [`specifications/gamification-rules.md`](specifications/gamification-rules.md) | Dũng Lư | Hoàn thành | Dũng Lư — Tech Lead | 2026-08-26 |
-| 8 | Data Model | [`architecture/data-model.md`](architecture/data-model.md) | Chưa phân công | Chưa bắt đầu | Chưa phân công | — |
+| 8 | Data Model | [`architecture/data-model.md`](architecture/data-model.md) | Dũng Lư | Hoàn thành | Dũng Lư — Tech Lead | 2026-08-27 |
 
 ---
 
@@ -106,10 +110,10 @@ Một tài liệu chỉ được đánh dấu hoàn thành khi đáp ứng tất
 - [x] Liệt kê edge cases và acceptance criteria tương ứng.
 - [x] Đã review và phê duyệt.
 
-**Owner:** Dũng Lư — Tech Lead / Product Owner / Lead Mobile Developer  
-**Reviewer:** Dũng Lư — Tech Lead  
-**Trạng thái:** Hoàn thành  
-**Ghi chú:** Timer Engine `1.0.0` được Dũng Lư — Tech Lead/Product Owner review và phê duyệt ngày 2026-08-26; maintenance `1.0.1` được phê duyệt cùng ngày để đồng bộ Product decision references mà không đổi timer semantics. `TE-OPEN-001` đến `TE-OPEN-010` đều `RESOLVED`.
+**Owner:** Dũng Lư — Tech Lead / Product Owner / Lead Mobile Developer
+**Reviewer:** Dũng Lư — Tech Lead
+**Trạng thái:** Hoàn thành
+**Ghi chú:** Timer Engine `1.0.0` được Dũng Lư — Tech Lead/Product Owner review và phê duyệt ngày 2026-08-26; maintenance `1.0.1` đồng bộ Product decision references và `1.0.2` ngày 2026-08-27 đồng bộ onboarding trial Relax/no-tag semantics. `TE-OPEN-001` đến `TE-OPEN-010` đều `RESOLVED`.
 
 ## 5. Session Lifecycle
 
@@ -128,7 +132,7 @@ Một tài liệu chỉ được đánh dấu hoàn thành khi đáp ứng tất
 **Owner:** Dũng Lư — Tech Lead / Product Owner / Lead Mobile Developer  
 **Reviewer:** Dũng Lư — Tech Lead  
 **Trạng thái:** Hoàn thành  
-**Ghi chú:** Session Lifecycle `1.0.0` được Dũng Lư — Tech Lead/Product Owner review và phê duyệt ngày 2026-08-26; `SL-OPEN-001`, `SL-OPEN-002`, Product `OPEN-003`, `OPEN-004` và `OPEN-010` đều `RESOLVED`.
+**Ghi chú:** Session Lifecycle `1.0.0` được Dũng Lư — Tech Lead/Product Owner review và phê duyệt ngày 2026-08-26; maintenance `1.0.1` ngày 2026-08-27 đồng bộ `DM-OPEN-006`. `SL-OPEN-001`, `SL-OPEN-002`, Product `OPEN-003`, `OPEN-004`, `OPEN-010` và Data Model `DM-OPEN-006` đều `RESOLVED`.
 
 ## 6. Pet State Machine
 
@@ -166,27 +170,27 @@ Một tài liệu chỉ được đánh dấu hoàn thành khi đáp ứng tất
 **Owner:** Dũng Lư — Tech Lead / Product Owner / Lead Mobile Developer
 **Reviewer:** Dũng Lư — Tech Lead
 **Trạng thái:** Hoàn thành
-**Ghi chú:** Gamification Rules `1.0.0` được Dũng Lư — Tech Lead/Product Owner review và phê duyệt ngày 2026-08-26; `GR-OPEN-001`, `GR-OPEN-002`, `GR-OPEN-003` và Product `OPEN-005` đều `RESOLVED`.
+**Ghi chú:** Gamification Rules `1.0.0` được Dũng Lư — Tech Lead/Product Owner review và phê duyệt ngày 2026-08-26; maintenance `1.0.1` ngày 2026-08-27 đồng bộ `DM-OPEN-006` mà không đổi reward/economy semantics. `GR-OPEN-001`, `GR-OPEN-002`, `GR-OPEN-003`, Product `OPEN-005` và Data Model `DM-OPEN-006` đều `RESOLVED`.
 
 ## 8. Data Model
 
 **File:** [`architecture/data-model.md`](architecture/data-model.md)
 
-- [ ] Liệt kê đầy đủ entity của MVP.
-- [ ] Định nghĩa field, datatype, default và nullable rules.
-- [ ] Định nghĩa primary key, foreign key và index.
-- [ ] Chốt enum values và naming thống nhất.
-- [ ] Bổ sung RewardTransaction hoặc cơ chế ledger tương đương.
-- [ ] Mô tả quan hệ giữa Pet, Session, Inventory và Reward.
-- [ ] Có chiến lược migration và schema versioning.
-- [ ] Có quy tắc xóa/reset dữ liệu người dùng.
-- [ ] Có ví dụ record cho các entity chính.
-- [ ] Đã review và phê duyệt.
+- [x] Liệt kê đầy đủ entity của MVP.
+- [x] Định nghĩa field, datatype, default và nullable rules.
+- [x] Định nghĩa primary key, foreign key và index.
+- [x] Chốt enum values và naming thống nhất.
+- [x] Bổ sung RewardTransaction hoặc cơ chế ledger tương đương.
+- [x] Mô tả quan hệ giữa Pet, Session, Inventory và Reward.
+- [x] Có chiến lược migration và schema versioning.
+- [x] Có quy tắc xóa/reset dữ liệu người dùng.
+- [x] Có ví dụ record cho các entity chính.
+- [x] Đã review và phê duyệt.
 
-**Owner:** Chưa phân công  
-**Reviewer:** Chưa phân công  
-**Trạng thái:** Chưa bắt đầu  
-**Ghi chú:** —
+**Owner:** Dũng Lư — Tech Lead / Product Owner / Lead Mobile Developer
+**Reviewer:** Dũng Lư — Tech Lead
+**Trạng thái:** Hoàn thành
+**Ghi chú:** Data Model `1.0.0` được Dũng Lư — Tech Lead/Product Owner review và phê duyệt ngày 2026-08-27; `DM-OPEN-001` đến `DM-OPEN-007` đều `RESOLVED`, authority sync cần thiết đã hoàn tất và implementation acceptance tiếp tục chờ test/device evidence.
 
 ## Dependency và thứ tự thực hiện
 
@@ -210,18 +214,33 @@ Một tài liệu chỉ được đánh dấu hoàn thành khi đáp ứng tất
 
 Timer Engine và Session Lifecycle có thể được soạn song song sau khi System Architecture đã được chốt. Data Model nên được duyệt cuối cùng sau khi các trạng thái và quy tắc gameplay đã ổn định.
 
+## Governance cho decision ngoài documentation baseline
+
+Các decision dưới vẫn `OPEN` và không bị documentation approval chốt ngầm. Với indie solo project, Dũng Lư sở hữu decision theo vai trò chức năng và phải review trước milestone tương ứng:
+
+| Decision | Owner | Review milestone | Trạng thái |
+|---|---|---|---|
+| Product `OPEN-001` — Pet mặc định | Dũng Lư — Product/Art | Trước khi chọn hoặc tích hợp asset Pet mặc định vào production implementation. | `OPEN` |
+| Product `OPEN-006` — Contribution graph colors | Dũng Lư — Product/Design | Trước khi khóa visual design và visual QA của contribution graph. | `OPEN` |
+| Product `OPEN-009` — Pet naming | Dũng Lư — Product | Trước khi khóa onboarding UX hoặc schema/migration liên quan Pet naming. | `OPEN` |
+
+Milestone là governance gate, không phải quyết định sản phẩm. Implementation không được tự chọn giá trị trước khi Dũng cập nhật Product Core và tài liệu phụ thuộc nếu cần.
+
 ## Review cuối bộ tài liệu
 
-- [ ] Tám tài liệu đều đã hoàn thành.
-- [ ] Không có enum hoặc thuật ngữ mâu thuẫn giữa các tài liệu.
-- [ ] Timer states, session statuses và Pet states được ánh xạ đầy đủ.
-- [ ] Data Model lưu được toàn bộ trạng thái và quy tắc đã mô tả.
-- [ ] Gamification không thể cộng reward hai lần.
-- [ ] Mọi edge case quan trọng đều có acceptance criteria.
-- [ ] Các quyết định bị hoãn đều có owner và thời hạn xem xét lại.
-- [ ] Tech lead đã phê duyệt bộ tài liệu để bắt đầu implementation.
+- [x] Tám tài liệu đều đã hoàn thành.
+- [x] Không có enum hoặc thuật ngữ mâu thuẫn giữa các tài liệu.
+- [x] Timer states, session statuses và Pet states được ánh xạ đầy đủ.
+- [x] Data Model lưu được toàn bộ trạng thái và quy tắc đã mô tả.
+- [x] Gamification không thể cộng reward hai lần.
+- [x] Mọi edge case quan trọng đều có acceptance criteria.
+- [x] Các decision `OPEN`/`DEFERRED` ngoài documentation baseline có owner và review milestone; không bị chốt ngầm.
+- [x] Tech Lead/Owner đã phê duyệt bộ tài liệu, đóng giai đoạn chuẩn bị tài liệu và cho phép bắt đầu implementation.
 
-**Ngày bắt đầu:** —  
-**Ngày phê duyệt:** —  
-**Tech lead:** Dũng Lư  
-**Ghi chú chung:** Technical Overview, System Architecture, Project Structure, Timer Engine, Session Lifecycle, Pet State Machine và Gamification Rules đã được phê duyệt; Data Model tiếp tục theo dependency order.
+**Ngày bắt đầu:** —
+
+**Ngày phê duyệt:** 2026-08-27
+
+**Tech lead:** Dũng Lư
+
+**Ghi chú chung:** `DONE` cho giai đoạn chuẩn bị tài liệu của indie solo project. Cả tám tài liệu kỹ thuật bắt buộc đã được self-review và phê duyệt; consistency audit về enum, state mapping, durable truth, reward idempotency và edge-case acceptance đã hoàn tất. Product `OPEN-001`, `OPEN-006` và `OPEN-009` giữ nguyên trạng thái, có owner/review milestone và không chặn implementation ngoài phần chức năng trực tiếp phụ thuộc các decision đó. Implementation acceptance tiếp tục cần code/test/device evidence; documentation approval không tự đánh dấu các acceptance checkbox trong specification.
