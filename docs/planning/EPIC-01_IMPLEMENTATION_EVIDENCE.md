@@ -81,6 +81,42 @@ Một local iOS development build cũng đã compile/install thành công trong 
 foundation verification. Bằng chứng close-story chính thức vẫn dùng manual run do owner
 chủ động và gắn vào record theo runbook.
 
+### Android physical-device evidence — 2026-08-27
+
+- Local APK build hoàn tất bằng profile `android-apk` với Android remote keystore do
+  EAS quản lý; artifact không được commit.
+- Artifact: `apps/mobile/artifacts/pixeldoro.apk`, SHA-256
+  `545efcbb311215afd5dd16771e93172261cdda039f7be6e5eb891f0ac2ccc8ad`.
+- APK signature verify pass; signing certificate SHA-256
+  `c055bf5b4eb7eb7abe56641eed452e5439909076288fc28732b9528d44054f35`.
+- Cài và boot thành công trên TECNO CK7n, Android 14 / API 34, ARM64.
+- Installed package được ADB xác nhận là `com.dragonc92team.pixeldoro`, version `0.1.0`,
+  version code `1`, min SDK `24`, target SDK `36`.
+- Owner đã cung cấp screenshot onboarding boot trên thiết bị thật và xác nhận manual
+  route smoke pass cho toàn bộ checklist. Maestro không phải dependency của Epic 1.
+
+### iOS Simulator evidence — 2026-08-27
+
+- Owner chạy local native build bằng `pnpm run ios` sau khi cập nhật bundle identifier.
+- Build được cài và boot thành công trên iPhone 14 Plus Simulator, iOS 26.5.
+- Simulator app container và `Info.plist` xác nhận bundle identifier
+  `com.dragonc92team.pixeldoro`, display name `PixelDoro`, version `0.1.0`, build `1`,
+  minimum iOS `16.4`.
+- Owner đã cung cấp screenshot onboarding boot trên Simulator và xác nhận manual route
+  smoke pass cho toàn bộ checklist.
+- Simulator build không tạo hoặc xác nhận iOS distribution certificate/provisioning
+  profile; EAS-managed iOS credential evidence vẫn là gate riêng.
+
+### Manual route-smoke evidence — 2026-08-27
+
+- Build source commit: `ddd759ef96945f3e4f5ce0dcb26ecd04012ed6a5`.
+- Targets: TECNO CK7n / Android 14 và iPhone 14 Plus Simulator / iOS 26.5.
+- Owner đã test tay và xác nhận PASS trên cả hai platform cho onboarding cùng các deep
+  link `pixeldoro://focus/setup`, `pixeldoro://focus/session`,
+  `pixeldoro://focus/result`, `pixeldoro://break/session` và `pixeldoro://feedback`.
+- Mỗi deep link mở đúng màn hình mong đợi; không có crash, hang hoặc Expo error screen
+  được báo cáo trong lượt kiểm tra.
+
 ## 5. Manual gate để đóng Epic
 
 - [x] Dũng Lư xác nhận `com.dragonc92team.pixeldoro` cho cả hai platform.
@@ -91,8 +127,9 @@ chủ động và gắn vào record theo runbook.
   - [x] Android remote keystore đã được EAS tạo và resolve cho local build.
   - [ ] iOS distribution certificate/provisioning profile còn chờ Apple Developer setup.
 - [ ] Trigger thủ công development workflow và lưu iOS/Android build URL/ID.
-- [ ] Chạy route smoke trên ít nhất một iOS và một Android target; gắn output cùng
-  platform, OS, device và commit SHA.
+- [x] Chạy manual route smoke trên ít nhất một iOS và một Android target theo
+  `apps/mobile/test/device/foundation-smoke.md`; gắn pass/fail result cùng platform, OS,
+  device và commit SHA. Không yêu cầu Maestro.
 - [ ] Publish preview thủ công, xác minh cùng runtime trên hai platform và lưu update group.
 - [ ] Diễn tập rollback/republish trên artifact phù hợp trước production use.
 - [ ] Dũng Lư review Story breakdown/evidence và cập nhật checkbox theo Definition of Done.

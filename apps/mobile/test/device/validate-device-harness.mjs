@@ -3,13 +3,13 @@ import { fileURLToPath } from 'node:url';
 
 const deviceDirectory = fileURLToPath(new URL('.', import.meta.url));
 const mobileDirectory = fileURLToPath(new URL('../..', import.meta.url));
-const flowPath = `${deviceDirectory}foundation-smoke.yaml`;
+const flowPath = `${deviceDirectory}foundation-smoke.md`;
 
 await access(flowPath);
 const flow = await readFile(flowPath, 'utf8');
 
 const requiredLabels = [
-  'Pet Room',
+  'Chào mừng đến PixelDoro',
   'Chuẩn bị phiên',
   'Đang tập trung',
   'Kết quả phiên',
@@ -38,5 +38,4 @@ const requiredRoutes = [
 
 await Promise.all(requiredRoutes.map((route) => access(`${mobileDirectory}/${route}`)));
 
-console.log('Device harness and required route skeleton are present.');
-
+console.log('Manual device checklist and required route skeleton are present.');

@@ -63,15 +63,14 @@ eas workflow:run .eas/workflows/build-development.yml --wait
 ```
 
 Install the Android artifact on at least one API 24+ emulator/device and the iOS
-artifact on at least one iOS 16.4+ simulator/device. Start Metro with `pnpm start`, then
-run the same route flow on each platform:
+artifact on at least one iOS 16.4+ simulator/device. Follow the visual checklist in
+`apps/mobile/test/device/foundation-smoke.md` on both platforms. Maestro is not required;
+open each deep link with the platform command in that checklist and verify the expected
+screen text manually.
 
-```sh
-maestro test test/device/foundation-smoke.yaml
-```
-
-Attach build URLs/IDs, platform + OS/device details, date, commit SHA, and the Maestro
-result to the Epic evidence record. A successful EAS build alone is not boot evidence.
+Attach build URLs/IDs, platform + OS/device details, date, commit SHA, and the manual
+pass/fail result to the Epic evidence record. A screenshot of the initial screen plus a
+short result table is sufficient. A successful build alone is not boot evidence.
 
 To conserve EAS cloud build quota, Android artifacts may also be built locally from the
 repository root. Both commands keep `credentialsSource: remote`; generated artifacts
