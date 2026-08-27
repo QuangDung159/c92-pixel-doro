@@ -1,10 +1,15 @@
 ---
 document_id: PIXELDORO_EPIC_01_USER_STORIES
 title: PixelDoro Mobile MVP — EPIC-01 User Stories
-version: 0.1.0
-status: DRAFT_FOR_REVIEW
+version: 1.0.0
+status: APPROVED
 last_updated: 2026-08-27
 owner: Dũng Lư
+reviewer: Dũng Lư
+reviewer_role: Tech Lead
+approved_by: Dũng Lư
+approver_role: Product Owner
+approved_at: 2026-08-27
 language: vi
 scope:
   - mobile_mvp
@@ -55,13 +60,13 @@ Checkbox chỉ được đánh dấu `[x]` khi có implementation evidence. Docu
 
 Thứ tự mặc định cho solo developer:
 
-- [ ] `US-01-01` — Thiết lập reproducible toolchain và pnpm workspace.
-- [ ] `US-01-02` — Thiết lập shared Domain/Application packages và public API.
-- [ ] `US-01-03` — Scaffold Expo mobile app và typed route skeleton.
-- [ ] `US-01-04` — Thiết lập mobile layers và manual composition root.
-- [ ] `US-01-05` — Tự động enforce architecture boundaries và quality gates.
-- [ ] `US-01-06` — Thiết lập test foundation cho Domain/Application/Mobile.
-- [ ] `US-01-07` — Thiết lập EAS delivery baseline và xác minh development builds.
+- [x] `US-01-01` — Thiết lập reproducible toolchain và pnpm workspace.
+- [x] `US-01-02` — Thiết lập shared Domain/Application packages và public API.
+- [x] `US-01-03` — Scaffold Expo mobile app và typed route skeleton.
+- [x] `US-01-04` — Thiết lập mobile layers và manual composition root.
+- [x] `US-01-05` — Tự động enforce architecture boundaries và quality gates.
+- [x] `US-01-06` — Thiết lập test foundation cho Domain/Application/Mobile.
+- [x] `US-01-07` — Thiết lập EAS delivery baseline và xác minh development builds.
 
 ```text
 US-01-01 Reproducible Workspace
@@ -118,25 +123,25 @@ Các input trên là technical configuration, không phải Product decision `OP
 
 **Acceptance criteria:**
 
-- [ ] `CONFIG-01` được resolve và Node patch được pin bằng `.nvmrc` hoặc `.tool-versions`.
-- [ ] `CONFIG-02` được resolve và exact pnpm version được pin trong root `packageManager`.
-- [ ] Root package được đánh dấu private và không publish ngoài chủ đích.
-- [ ] Workspace nhận diện `apps/mobile`, `packages/domain` và `packages/application`.
-- [ ] Nội bộ workspace dùng `workspace:*`, không resolve package trùng tên từ public registry.
-- [ ] Repository chỉ có một `pnpm-lock.yaml`; không có `package-lock.json` hoặc `yarn.lock`.
-- [ ] Base TypeScript configuration bật strict type checking.
-- [ ] Fresh dependency installation hoàn tất bằng toolchain đã pin.
-- [ ] Root commands có stable entry point cho typecheck, lint và test.
-- [ ] Không thêm task orchestrator/cache layer ngoài baseline.
+- [x] `CONFIG-01` được resolve và Node patch được pin bằng `.nvmrc` hoặc `.tool-versions`.
+- [x] `CONFIG-02` được resolve và exact pnpm version được pin trong root `packageManager`.
+- [x] Root package được đánh dấu private và không publish ngoài chủ đích.
+- [x] Workspace nhận diện `apps/mobile`, `packages/domain` và `packages/application`.
+- [x] Nội bộ workspace dùng `workspace:*`, không resolve package trùng tên từ public registry.
+- [x] Repository chỉ có một `pnpm-lock.yaml`; không có `package-lock.json` hoặc `yarn.lock`.
+- [x] Base TypeScript configuration bật strict type checking.
+- [x] Fresh dependency installation hoàn tất bằng toolchain đã pin.
+- [x] Root commands có stable entry point cho typecheck, lint và test.
+- [x] Không thêm task orchestrator/cache layer ngoài baseline.
 
 **Task checklist sơ bộ:**
 
-- [ ] Pin Node và pnpm.
-- [ ] Tạo root workspace/package configuration.
-- [ ] Tạo base TypeScript configuration.
-- [ ] Tạo root script contract.
-- [ ] Sinh và kiểm tra root lockfile.
-- [ ] Ghi local setup instructions tối thiểu.
+- [x] Pin Node và pnpm.
+- [x] Tạo root workspace/package configuration.
+- [x] Tạo base TypeScript configuration.
+- [x] Tạo root script contract.
+- [x] Sinh và kiểm tra root lockfile.
+- [x] Ghi local setup instructions tối thiểu.
 
 **Evidence yêu cầu:**
 
@@ -170,25 +175,25 @@ Các input trên là technical configuration, không phải Product decision `OP
 
 **Acceptance criteria:**
 
-- [ ] Domain package có tên `@pixeldoro/domain` và root public API `src/index.ts`.
-- [ ] Application package có tên `@pixeldoro/application` và root public API `src/index.ts`.
-- [ ] Application khai báo Domain bằng `workspace:*`.
-- [ ] Domain không phụ thuộc Application, mobile app, React, Expo, Zustand, SQLite hoặc provider SDK.
-- [ ] Application không phụ thuộc mobile app, React Native, Expo, Zustand, SQLite hoặc provider SDK.
-- [ ] Package exports chặn consumer deep-import như `@pixeldoro/domain/src/...`.
-- [ ] Source trong package dùng relative import hợp lệ; cross-package import dùng public API.
-- [ ] Hai package typecheck độc lập bằng toolchain đã pin.
-- [ ] Test fixture/builder/fake skeleton không nằm trong production exports.
-- [ ] Không tạo package `shared`, `common`, `utils`, `config` hoặc `test-support` chưa có consumer thực tế.
+- [x] Domain package có tên `@pixeldoro/domain` và root public API `src/index.ts`.
+- [x] Application package có tên `@pixeldoro/application` và root public API `src/index.ts`.
+- [x] Application khai báo Domain bằng `workspace:*`.
+- [x] Domain không phụ thuộc Application, mobile app, React, Expo, Zustand, SQLite hoặc provider SDK.
+- [x] Application không phụ thuộc mobile app, React Native, Expo, Zustand, SQLite hoặc provider SDK.
+- [x] Package exports chặn consumer deep-import như `@pixeldoro/domain/src/...`.
+- [x] Source trong package dùng relative import hợp lệ; cross-package import dùng public API.
+- [x] Hai package typecheck độc lập bằng toolchain đã pin.
+- [x] Test fixture/builder/fake skeleton không nằm trong production exports.
+- [x] Không tạo package `shared`, `common`, `utils`, `config` hoặc `test-support` chưa có consumer thực tế.
 
 **Task checklist sơ bộ:**
 
-- [ ] Tạo Domain package manifest/source/public export.
-- [ ] Tạo Application package manifest/source/public export.
-- [ ] Cấu hình TypeScript/package exports.
-- [ ] Tạo package-local test-support directories.
-- [ ] Thêm package typecheck commands.
-- [ ] Thêm minimal import/build smoke check.
+- [x] Tạo Domain package manifest/source/public export.
+- [x] Tạo Application package manifest/source/public export.
+- [x] Cấu hình TypeScript/package exports.
+- [x] Tạo package-local test-support directories.
+- [x] Thêm package typecheck commands.
+- [x] Thêm minimal import/build smoke check.
 
 **Evidence yêu cầu:**
 
@@ -224,28 +229,28 @@ Các input trên là technical configuration, không phải Product decision `OP
 
 **Acceptance criteria:**
 
-- [ ] `CONFIG-03` được resolve bằng `npx expo install` với stable Expo-compatible packages.
-- [ ] Expo SDK giữ ở dòng 57.x; React Native/React khớp approved compatibility baseline.
-- [ ] New Architecture và Hermes được bật theo baseline.
-- [ ] Expo Router typed routes được cấu hình tại `apps/mobile/src/app`.
-- [ ] Route skeleton tồn tại cho Onboarding, Home, History, Settings, Shop, Focus Setup/Session/Result, Break Session và Feedback.
-- [ ] Route/layout files chỉ default-export composition component.
-- [ ] Screen/component code nằm ngoài route directory.
-- [ ] Route files không import Domain, Infrastructure, repository hoặc provider SDK.
-- [ ] Mobile app chỉ dùng public exports của shared packages.
-- [ ] Asset skeleton có `sprites`, `audio`, `fonts` và `ATTRIBUTIONS.md`.
-- [ ] Reanimated là animation baseline; Skia không được cài.
-- [ ] Placeholder UI có readable text và basic accessibility label; không phụ thuộc sprite.
+- [x] `CONFIG-03` được resolve bằng `npx expo install` với stable Expo-compatible packages.
+- [x] Expo SDK giữ ở dòng 57.x; React Native/React khớp approved compatibility baseline.
+- [x] New Architecture và Hermes được bật theo baseline.
+- [x] Expo Router typed routes được cấu hình tại `apps/mobile/src/app`.
+- [x] Route skeleton tồn tại cho Onboarding, Home, History, Settings, Shop, Focus Setup/Session/Result, Break Session và Feedback.
+- [x] Route/layout files chỉ default-export composition component.
+- [x] Screen/component code nằm ngoài route directory.
+- [x] Route files không import Domain, Infrastructure, repository hoặc provider SDK.
+- [x] Mobile app chỉ dùng public exports của shared packages.
+- [x] Asset skeleton có `sprites`, `audio`, `fonts` và `ATTRIBUTIONS.md`.
+- [x] Reanimated là animation baseline; Skia không được cài.
+- [x] Placeholder UI có readable text và basic accessibility label; không phụ thuộc sprite.
 
 **Task checklist sơ bộ:**
 
-- [ ] Scaffold Expo mobile workspace.
-- [ ] Cài package bằng `npx expo install` và commit lockfile change.
-- [ ] Cấu hình typed Expo Router.
-- [ ] Tạo route groups và placeholder screens.
-- [ ] Tạo mobile asset directory skeleton.
-- [ ] Thiết lập Reanimated baseline.
-- [ ] Chạy mobile start/typecheck smoke check.
+- [x] Scaffold Expo mobile workspace.
+- [x] Cài package bằng `npx expo install` và commit lockfile change.
+- [x] Cấu hình typed Expo Router.
+- [x] Tạo route groups và placeholder screens.
+- [x] Tạo mobile asset directory skeleton.
+- [x] Thiết lập Reanimated baseline.
+- [x] Chạy mobile start/typecheck smoke check.
 
 **Evidence yêu cầu:**
 
@@ -281,27 +286,27 @@ Các input trên là technical configuration, không phải Product decision `OP
 
 **Acceptance criteria:**
 
-- [ ] Mobile layer directories khớp Project Structure baseline.
-- [ ] Mobile-only Application không import Presentation, Infrastructure, React Native, Expo, Zustand, SQLite hoặc provider SDK.
-- [ ] Infrastructure triển khai Application-owned placeholder ports và không chứa business rules.
-- [ ] Presentation chỉ nhận application facade/context và không import Infrastructure.
-- [ ] `create-mobile-application` hoặc equivalent là nơi duy nhất khởi tạo concrete graph.
-- [ ] Dependency được truyền tường minh; không có service locator/global mutable container.
-- [ ] Application-scoped dependency không được khởi tạo lại theo screen render.
-- [ ] Lifecycle subscription chỉ đăng ký một lần cho graph và có cleanup/dispose contract.
-- [ ] Presentation có bootstrap/loading/recovery readiness boundary trước core command.
-- [ ] Placeholder dependency graph có thể boot/dispose trong automated smoke test.
-- [ ] Database/provider capability chưa có implementation thật dùng fake/no-op adapter rõ ràng, không invent product truth.
+- [x] Mobile layer directories khớp Project Structure baseline.
+- [x] Mobile-only Application không import Presentation, Infrastructure, React Native, Expo, Zustand, SQLite hoặc provider SDK.
+- [x] Infrastructure triển khai Application-owned placeholder ports và không chứa business rules.
+- [x] Presentation chỉ nhận application facade/context và không import Infrastructure.
+- [x] `create-mobile-application` hoặc equivalent là nơi duy nhất khởi tạo concrete graph.
+- [x] Dependency được truyền tường minh; không có service locator/global mutable container.
+- [x] Application-scoped dependency không được khởi tạo lại theo screen render.
+- [x] Lifecycle subscription chỉ đăng ký một lần cho graph và có cleanup/dispose contract.
+- [x] Presentation có bootstrap/loading/recovery readiness boundary trước core command.
+- [x] Placeholder dependency graph có thể boot/dispose trong automated smoke test.
+- [x] Database/provider capability chưa có implementation thật dùng fake/no-op adapter rõ ràng, không invent product truth.
 
 **Task checklist sơ bộ:**
 
-- [ ] Tạo mobile Application port/module skeleton.
-- [ ] Tạo Presentation module/context boundary.
-- [ ] Tạo Infrastructure adapter skeleton/fakes.
-- [ ] Tạo manual composition-root factory.
-- [ ] Tạo bootstrap readiness model.
-- [ ] Tạo lifecycle registration/dispose contract.
-- [ ] Thêm composition smoke test.
+- [x] Tạo mobile Application port/module skeleton.
+- [x] Tạo Presentation module/context boundary.
+- [x] Tạo Infrastructure adapter skeleton/fakes.
+- [x] Tạo manual composition-root factory.
+- [x] Tạo bootstrap readiness model.
+- [x] Tạo lifecycle registration/dispose contract.
+- [x] Thêm composition smoke test.
 
 **Evidence yêu cầu:**
 
@@ -336,25 +341,25 @@ Các input trên là technical configuration, không phải Product decision `OP
 
 **Acceptance criteria:**
 
-- [ ] Root quality command chạy typecheck và lint cho toàn workspace.
-- [ ] Domain import Application/mobile/React/Expo/Zustand/SQLite/provider SDK bị fail.
-- [ ] Shared Application import mobile/React Native/Expo/Zustand/SQLite/provider SDK bị fail.
-- [ ] Mobile Application import Presentation/Infrastructure/Expo/provider SDK bị fail.
-- [ ] Mobile Presentation import Domain trực tiếp, Infrastructure, SQL hoặc provider SDK bị fail.
-- [ ] Expo route import Domain/Infrastructure/repository/provider SDK bị fail.
-- [ ] Cross-package deep import ngoài public exports bị fail.
-- [ ] Production source import test support bị fail hoặc không resolve.
-- [ ] Hợp lệ Presentation → Application và Infrastructure → Application-port vẫn typecheck.
-- [ ] Quality command trả exit code khác 0 khi có deliberate violation.
-- [ ] Không thêm architecture-analysis framework ngoài baseline khi ESLint/TypeScript đủ biểu diễn rule.
+- [x] Root quality command chạy typecheck và lint cho toàn workspace.
+- [x] Domain import Application/mobile/React/Expo/Zustand/SQLite/provider SDK bị fail.
+- [x] Shared Application import mobile/React Native/Expo/Zustand/SQLite/provider SDK bị fail.
+- [x] Mobile Application import Presentation/Infrastructure/Expo/provider SDK bị fail.
+- [x] Mobile Presentation import Domain trực tiếp, Infrastructure, SQL hoặc provider SDK bị fail.
+- [x] Expo route import Domain/Infrastructure/repository/provider SDK bị fail.
+- [x] Cross-package deep import ngoài public exports bị fail.
+- [x] Production source import test support bị fail hoặc không resolve.
+- [x] Hợp lệ Presentation → Application và Infrastructure → Application-port vẫn typecheck.
+- [x] Quality command trả exit code khác 0 khi có deliberate violation.
+- [x] Không thêm architecture-analysis framework ngoài baseline khi ESLint/TypeScript đủ biểu diễn rule.
 
 **Task checklist sơ bộ:**
 
-- [ ] Cấu hình TypeScript workspace/package resolution.
-- [ ] Cấu hình ESLint restricted imports theo dependency matrix.
-- [ ] Tạo root quality command.
-- [ ] Tạo negative boundary validation cases.
-- [ ] Ghi hướng dẫn xử lý boundary exception qua review/ADR.
+- [x] Cấu hình TypeScript workspace/package resolution.
+- [x] Cấu hình ESLint restricted imports theo dependency matrix.
+- [x] Tạo root quality command.
+- [x] Tạo negative boundary validation cases.
+- [x] Ghi hướng dẫn xử lý boundary exception qua review/ADR.
 
 **Evidence yêu cầu:**
 
@@ -390,28 +395,28 @@ Các input trên là technical configuration, không phải Product decision `OP
 
 **Acceptance criteria:**
 
-- [ ] `CONFIG-04` được resolve và ghi rõ compatibility rationale.
-- [ ] Unit test colocate cạnh source bằng `<basename>.test.ts[x]`.
-- [ ] Domain test chạy không cần React Native/Expo runtime.
-- [ ] Application test có thể dùng deterministic fake Clock/ID/port.
-- [ ] Package reusable test support nằm trong package owner `test/` và không export runtime.
-- [ ] Mobile integration tests nằm trong `apps/mobile/test/integration`.
-- [ ] Device/simulator test harness hoặc command boundary nằm trong `apps/mobile/test/device`.
-- [ ] Provider SDK mock chỉ nằm ở mobile test boundary.
-- [ ] Root test command chạy test của Domain, Application và Mobile foundation.
-- [ ] Ít nhất một representative passing smoke test tồn tại cho mỗi workspace.
-- [ ] Quality/import checks ngăn production source phụ thuộc test support.
-- [ ] Không tạo `packages/test-support` khi chưa có ít nhất hai package consumers thực tế.
+- [x] `CONFIG-04` được resolve và ghi rõ compatibility rationale.
+- [x] Unit test colocate cạnh source bằng `<basename>.test.ts[x]`.
+- [x] Domain test chạy không cần React Native/Expo runtime.
+- [x] Application test có thể dùng deterministic fake Clock/ID/port.
+- [x] Package reusable test support nằm trong package owner `test/` và không export runtime.
+- [x] Mobile integration tests nằm trong `apps/mobile/test/integration`.
+- [x] Device/simulator test harness hoặc command boundary nằm trong `apps/mobile/test/device`.
+- [x] Provider SDK mock chỉ nằm ở mobile test boundary.
+- [x] Root test command chạy test của Domain, Application và Mobile foundation.
+- [x] Ít nhất một representative passing smoke test tồn tại cho mỗi workspace.
+- [x] Quality/import checks ngăn production source phụ thuộc test support.
+- [x] Không tạo `packages/test-support` khi chưa có ít nhất hai package consumers thực tế.
 
 **Task checklist sơ bộ:**
 
-- [ ] Chọn và cấu hình compatible test tooling.
-- [ ] Tạo colocated unit smoke tests.
-- [ ] Tạo package fixtures/builders/fakes skeleton.
-- [ ] Tạo mobile integration/device directory và command.
-- [ ] Tạo fake Clock/ID/port examples.
-- [ ] Kết nối root test command.
-- [ ] Document test placement và command usage.
+- [x] Chọn và cấu hình compatible test tooling.
+- [x] Tạo colocated unit smoke tests.
+- [x] Tạo package fixtures/builders/fakes skeleton.
+- [x] Tạo mobile integration/device directory và command.
+- [x] Tạo fake Clock/ID/port examples.
+- [x] Kết nối root test command.
+- [x] Document test placement và command usage.
 
 **Evidence yêu cầu:**
 
@@ -450,33 +455,33 @@ Các input trên là technical configuration, không phải Product decision `OP
 
 **Acceptance criteria:**
 
-- [ ] `CONFIG-05` được resolve và app identifiers ổn định trong app/EAS configuration.
-- [ ] `CONFIG-06` được resolve với least-privilege owner/role phù hợp.
-- [ ] `app.config.ts` và `eas.json` có development, preview và production profiles rõ ràng.
-- [ ] Update channels `development`, `preview`, `production` được tách.
-- [ ] `runtimeVersion` dùng `appVersion` policy.
-- [ ] Native dependency/Expo SDK/permission/config-plugin change được document là binary-build requirement.
-- [ ] Production OTA chỉ cho JavaScript, styling và bundled assets tương thích runtime.
-- [ ] EAS Workflow gọi quality/test gates trước build/update job.
-- [ ] Signing credentials dùng EAS-managed remote source và không nằm trong repository.
-- [ ] iOS development build boot và route smoke test thành công trên một target phù hợp.
-- [ ] Android development build boot và route smoke test thành công trên một target phù hợp.
-- [ ] Preview validation với cùng runtime là điều kiện trước production update.
-- [ ] Rollback/republish stable update procedure được ghi và có thể diễn tập khi artifact phù hợp.
-- [ ] EAS Submit được mô tả là upload step, không phải bằng chứng app đã public.
-- [ ] Skia không được thêm chỉ để hoàn tất build foundation.
+- [x] `CONFIG-05` được resolve và app identifiers ổn định trong app/EAS configuration.
+- [x] `CONFIG-06` được resolve với least-privilege owner/role phù hợp.
+- [x] `app.config.ts` và `eas.json` có development, preview và production profiles rõ ràng.
+- [x] Update channels `development`, `preview`, `production` được tách.
+- [x] `runtimeVersion` dùng `appVersion` policy.
+- [x] Native dependency/Expo SDK/permission/config-plugin change được document là binary-build requirement.
+- [x] Production OTA chỉ cho JavaScript, styling và bundled assets tương thích runtime.
+- [x] EAS Workflow gọi quality/test gates trước build/update job.
+- [x] Signing credentials dùng EAS-managed remote source và không nằm trong repository.
+- [x] iOS development build boot và route smoke test thành công trên một target phù hợp.
+- [x] Android development build boot và route smoke test thành công trên một target phù hợp.
+- [x] Preview validation với cùng runtime là điều kiện trước production update.
+- [x] Rollback/republish stable update procedure được ghi và có thể diễn tập khi artifact phù hợp.
+- [x] EAS Submit được mô tả là upload step, không phải bằng chứng app đã public.
+- [x] Skia không được thêm chỉ để hoàn tất build foundation.
 
 **Task checklist sơ bộ:**
 
-- [ ] Resolve app/EAS identifiers và permission ownership.
-- [ ] Cấu hình app version/runtime policy.
-- [ ] Tạo EAS build/submit/update profiles.
-- [ ] Tạo EAS quality/build workflow.
-- [ ] Thiết lập EAS-managed remote credentials.
-- [ ] Tạo iOS development build và chạy smoke test.
-- [ ] Tạo Android development build và chạy smoke test.
-- [ ] Ghi preview/promotion/rollback procedure.
-- [ ] Kiểm tra repository không chứa signing secret.
+- [x] Resolve app/EAS identifiers và permission ownership.
+- [x] Cấu hình app version/runtime policy.
+- [x] Tạo EAS build/submit/update profiles.
+- [x] Tạo EAS quality/build workflow.
+- [x] Thiết lập EAS-managed remote credentials.
+- [x] Tạo iOS development build và chạy smoke test.
+- [x] Tạo Android development build và chạy smoke test.
+- [x] Ghi preview/promotion/rollback procedure.
+- [x] Kiểm tra repository không chứa signing secret.
 
 **Evidence yêu cầu:**
 
@@ -507,36 +512,47 @@ Các input trên là technical configuration, không phải Product decision `OP
 
 Một Story đủ điều kiện chia thành Task khi:
 
-- [ ] Story statement, outcome và dependency đã được Dũng Lư review.
-- [ ] In-scope/out-of-scope không mâu thuẫn Epic hoặc baseline.
-- [ ] Configuration input thuộc Story đã có owner và cách resolve.
-- [ ] Acceptance criteria có thể kiểm thử bằng output/file/build/evidence cụ thể.
-- [ ] Không có Product decision `OPEN` bị chốt trong Story.
-- [ ] Task có thể chia theo implementation responsibility mà không tạo business rule mới.
+- [x] Story statement, outcome và dependency đã được Dũng Lư review.
+- [x] In-scope/out-of-scope không mâu thuẫn Epic hoặc baseline.
+- [x] Configuration input thuộc Story đã có owner và cách resolve.
+- [x] Acceptance criteria có thể kiểm thử bằng output/file/build/evidence cụ thể.
+- [x] Không có Product decision `OPEN` bị chốt trong Story.
+- [x] Task có thể chia theo implementation responsibility mà không tạo business rule mới.
 
 ## 7. Definition of Story Done
 
 Một Story chỉ được đánh dấu `[x]` khi:
 
-- [ ] Tất cả acceptance criteria bắt buộc đã đạt.
-- [ ] Task chính thức của Story đã hoàn thành hoặc được loại qua review có chủ đích.
-- [ ] Root quality/test commands liên quan pass.
-- [ ] Evidence yêu cầu được gắn vào PR/issue/review record.
-- [ ] Không có secret, generated credential hoặc forbidden dependency trong repository.
-- [ ] Không kéo implementation của Epic sau vào Story ngoài minimal fake/skeleton đã nêu.
-- [ ] Documentation/ADR được cập nhật nếu implementation tạo technical decision mới.
+- [x] Tất cả acceptance criteria bắt buộc đã đạt.
+- [x] Task chính thức của Story đã hoàn thành hoặc được loại qua review có chủ đích.
+- [x] Root quality/test commands liên quan pass.
+- [x] Evidence yêu cầu được gắn vào PR/issue/review record.
+- [x] Không có secret, generated credential hoặc forbidden dependency trong repository.
+- [x] Không kéo implementation của Epic sau vào Story ngoài minimal fake/skeleton đã nêu.
+- [x] Documentation/ADR được cập nhật nếu implementation tạo technical decision mới.
 
 ## 8. Review checklist
 
-- [ ] Bảy Story cover đủ toàn bộ completion criteria của `EPIC-01`.
-- [ ] Story order phù hợp dependency và giới hạn một active Epic/Story cho solo developer.
-- [ ] Không có Product `OPEN-001`, `OPEN-006`, `OPEN-009` bị chốt ngầm.
-- [ ] Không có Timer/Session/Pet/Gamification business behavior lọt vào Epic foundation.
-- [ ] Không có backend, cloud sync, desktop hoặc scope `DEFERRED`.
-- [ ] Configuration input chưa khóa đã được ghi owner thay vì invent value.
-- [ ] Dũng Lư review và phê duyệt Story breakdown trước khi tạo Task IDs.
+- [x] Bảy Story cover đủ toàn bộ completion criteria của `EPIC-01`.
+- [x] Story order phù hợp dependency và giới hạn một active Epic/Story cho solo developer.
+- [x] Không có Product `OPEN-001`, `OPEN-006`, `OPEN-009` bị chốt ngầm.
+- [x] Không có Timer/Session/Pet/Gamification business behavior lọt vào Epic foundation.
+- [x] Không có backend, cloud sync, desktop hoặc scope `DEFERRED`.
+- [x] Configuration input chưa khóa đã được ghi owner thay vì invent value.
+- [x] Dũng Lư review và phê duyệt Story breakdown trước khi tạo Task IDs.
 
 ## 9. Change log
+
+### 1.0.0 — 2026-08-27
+
+- Dũng Lư duyệt Story breakdown với vai trò Product Owner/Tech Lead và khóa tài liệu
+  làm planning baseline cho implementation.
+- Xác nhận `US-01-01` đến `US-01-07` đã đạt Definition of Story Done theo
+  `EPIC-01_IMPLEMENTATION_EVIDENCE.md`.
+- Chấp nhận implementation/evidence record hiện có thay cho việc tạo Task ID hồi tố;
+  không mở rộng scope chỉ để tái tạo planning ceremony sau khi code đã hoàn tất.
+- Giữ EAS preview validation và rollback rehearsal làm pre-production gate, không phải
+  blocker của Epic 1 khi chưa publish production OTA.
 
 ### 0.1.0 — 2026-08-27
 

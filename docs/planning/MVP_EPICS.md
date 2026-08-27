@@ -1,10 +1,15 @@
 ---
 document_id: PIXELDORO_MVP_EPIC_BREAKDOWN
 title: PixelDoro Mobile MVP — Epic Breakdown
-version: 0.2.0
-status: DRAFT_FOR_REVIEW
+version: 1.0.0
+status: APPROVED
 last_updated: 2026-08-27
 owner: Dũng Lư
+reviewer: Dũng Lư
+reviewer_role: Tech Lead
+approved_by: Dũng Lư
+approver_role: Product Owner
+approved_at: 2026-08-27
 language: vi
 scope:
   - mobile_mvp
@@ -104,7 +109,7 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 
 ### 2.3. Master execution checklist
 
-- [ ] `01 / EPIC-01 / W1` — Mobile Foundation.
+- [x] `01 / EPIC-01 / W1` — Mobile Foundation.
 - [ ] `02 / EPIC-02 / W1` — Durable Data & Bootstrap.
 - [ ] `03 / EPIC-03 / W1` — Timer & Session Core.
 - [ ] `04 / EPIC-04 / W2` — Pet Companion.
@@ -195,6 +200,7 @@ Trong khi gate chưa chốt:
 - **MVP priority:** `MUST`
 - **Delivery wave:** `W1_FOUNDATION`
 - **Execution order:** `01`
+- **Status:** `DONE`
 - **Start gate:** Epic plan được review; không có upstream implementation dependency.
 
 **Outcome:** Solo developer có workspace tái lập được, chạy development build trên iOS/Android và có quality/delivery baseline đúng kiến trúc đã duyệt.  
@@ -216,16 +222,16 @@ Trong khi gate chưa chốt:
 
 **Epic completion checklist:**
 
-- [ ] Workspace layout và package dependency direction khớp Project Structure.
-- [ ] Root scripts chạy được typecheck, lint và test theo workspace.
-- [ ] Forbidden imports giữa Domain/Application/Presentation/Infrastructure bị CI phát hiện.
-- [ ] Mobile development build khởi động được trên ít nhất một iOS target và một Android target.
-- [ ] Composition root là nơi duy nhất biết concrete dependency graph.
-- [ ] Route files chỉ làm composition, không chứa business rule hoặc SDK/database access.
-- [ ] Development, preview và production build/update boundary được cấu hình.
-- [ ] Native dependency/config change không thể bị phát hành nhầm chỉ bằng OTA.
-- [ ] Signing secret/credential không được commit vào repository.
-- [ ] Skia không nằm trong baseline dependency khi chưa vượt ADR-005 gate.
+- [x] Workspace layout và package dependency direction khớp Project Structure.
+- [x] Root scripts chạy được typecheck, lint và test theo workspace.
+- [x] Forbidden imports giữa Domain/Application/Presentation/Infrastructure bị CI phát hiện.
+- [x] Mobile development build khởi động được trên ít nhất một iOS target và một Android target.
+- [x] Composition root là nơi duy nhất biết concrete dependency graph.
+- [x] Route files chỉ làm composition, không chứa business rule hoặc SDK/database access.
+- [x] Development, preview và production build/update boundary được cấu hình.
+- [x] Native dependency/config change không thể bị phát hành nhầm chỉ bằng OTA.
+- [x] Signing secret/credential không được commit vào repository.
+- [x] Skia không nằm trong baseline dependency khi chưa vượt ADR-005 gate.
 
 **Out of scope:** Desktop app, backend, cloud sync, DI container, Turborepo/Nx và abstraction chỉ phục vụ future scope.
 
@@ -761,7 +767,11 @@ Một Epic chỉ được đánh dấu `[x]` khi:
 
 ## 9. Checklist trước khi chia User Story
 
-- [ ] Dũng Lư review và phê duyệt danh sách, outcome và thứ tự Epic.
+Việc duyệt master Epic plan hoàn tất item đầu tiên. Các item còn lại là refinement gate
+áp dụng riêng trước khi khóa User Story cho từng Product Epic tương lai; chúng không
+block trạng thái `APPROVED` của master plan hoặc `DONE` của Epic 1.
+
+- [x] Dũng Lư review và phê duyệt danh sách, outcome và thứ tự Epic.
 - [ ] Tạo/review tài liệu user flow end-to-end trước khi khóa Story cho các Product Epic.
 - [ ] Gắn mỗi flow với Epic owner và source requirement.
 - [ ] Xác định happy path, alternate path, error/recovery path và exit state cho từng flow.
@@ -771,6 +781,14 @@ Một Epic chỉ được đánh dấu `[x]` khi:
 - [ ] Không estimate deadline trước khi Story refinement hoàn tất.
 
 ## 10. Change log
+
+### 1.0.0 — 2026-08-27
+
+- Dũng Lư duyệt danh sách, outcome, execution order và delivery gate của 12 Epic làm
+  planning baseline với vai trò Product Owner/Tech Lead.
+- Đánh dấu `EPIC-01 — Mobile Foundation và Delivery Baseline` là `DONE` theo
+  cross-platform build/device evidence và quality/repository gates đã pass.
+- Mở start gate cho `EPIC-02`; giữ `EPIC-02` đến `EPIC-12` chưa triển khai.
 
 ### 0.2.0 — 2026-08-27
 
