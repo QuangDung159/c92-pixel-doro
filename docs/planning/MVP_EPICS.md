@@ -132,6 +132,7 @@ Trong khi gate chưa chốt:
 **Loại:** Enabler  
 **Outcome:** Solo developer có workspace tái lập được, chạy development build trên iOS/Android và có quality/delivery baseline đúng kiến trúc đã duyệt.  
 **Dependency:** Không.  
+**Story breakdown:** [`EPIC-01_USER_STORIES.md`](./EPIC-01_USER_STORIES.md).
 **Nguồn chính:** Technical Overview, System Architecture, Project Structure, ADR-001 đến ADR-008.
 
 **In scope:**
