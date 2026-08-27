@@ -13,6 +13,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     slug: 'pixeldoro',
     version: '0.1.0',
     orientation: 'portrait',
+    icon: './assets/images/pixeldoro-icon-1024.png',
     scheme: 'pixeldoro',
     userInterfaceStyle: 'automatic',
     runtimeVersion: {
