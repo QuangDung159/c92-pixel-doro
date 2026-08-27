@@ -1,10 +1,11 @@
 import type { ConfigContext, ExpoConfig } from 'expo/config';
 
-const IOS_BUNDLE_IDENTIFIER = 'com.dunglu.pixeldoro';
-const ANDROID_APPLICATION_ID = 'com.dunglu.pixeldoro';
+const IOS_BUNDLE_IDENTIFIER = 'com.dragonc92team.pixeldoro';
+const ANDROID_APPLICATION_ID = 'com.dragonc92team.pixeldoro';
+const EAS_PROJECT_ID = '6f65fb79-ffe9-4fa6-9951-895f27bf0725';
 
 export default ({ config }: ConfigContext): ExpoConfig => {
-  const projectId = process.env.EXPO_PROJECT_ID;
+  const projectId = process.env.EXPO_PROJECT_ID ?? EAS_PROJECT_ID;
   const owner = process.env.EXPO_OWNER;
 
   return {

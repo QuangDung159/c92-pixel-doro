@@ -16,7 +16,7 @@ and device-dependent evidence required to close `US-01-07`.
 6. Validate each checked-in workflow with
    `eas workflow:validate .eas/workflows/<workflow>.yml --non-interactive`.
 
-Stable native identifiers are `com.dunglu.pixeldoro` for both the iOS bundle and
+Stable native identifiers are `com.dragonc92team.pixeldoro` for both the iOS bundle and
 Android application. Changing either identifier, Expo SDK, native dependency,
 permission, entitlement, or config plugin requires an app-version bump and new binary.
 Expo SDK 57 runs the New Architecture and Hermes baseline by default; their legacy

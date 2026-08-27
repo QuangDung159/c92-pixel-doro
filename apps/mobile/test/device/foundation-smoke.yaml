@@ -1,4 +1,4 @@
-appId: com.dunglu.pixeldoro
+appId: com.dragonc92team.pixeldoro
 name: PixelDoro foundation route smoke
 ---
 - launchApp:
@@ -14,4 +14,3 @@ name: PixelDoro foundation route smoke
 - assertVisible: "Nghỉ một chút"
 - openLink: "pixeldoro://feedback"
 - assertVisible: "Gửi góp ý"
-

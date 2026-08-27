@@ -17,6 +17,7 @@
     "test:boundaries": "node scripts/validate-boundaries.mjs",
     "quality": "pnpm run typecheck && pnpm run lint && pnpm run test && pnpm run test:boundaries",
     "start": "pnpm --filter @pixeldoro/mobile start",
+    "prebuild": "pnpm --filter @pixeldoro/mobile exec expo prebuild --platform ios",
     "ios": "pnpm --filter @pixeldoro/mobile ios",
     "android": "pnpm --filter @pixeldoro/mobile android",
     "mobile": "pnpm --filter @pixeldoro/mobile",

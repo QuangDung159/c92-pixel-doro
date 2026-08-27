@@ -35,12 +35,11 @@ desktop hoặc Product decision đang `OPEN` được triển khai trong Epic n�
 | `CONFIG-02` | pnpm `11.24.0`, pin trong root `packageManager` | `RESOLVED` |
 | `CONFIG-03` | Expo `57.0.17`, React Native `0.86.3`, React `19.2.3`; `expo install --check` pass | `RESOLVED` |
 | `CONFIG-04` | Vitest `4.1.11`; pure TypeScript tests không cần Expo runtime | `RESOLVED` |
-| `CONFIG-05` | iOS/Android identifier: `com.dunglu.pixeldoro` | `RESOLVED_ASSUMPTION_REVIEW_REQUIRED` |
-| `CONFIG-06` | `EXPO_OWNER` và `EXPO_PROJECT_ID` chưa được owner chọn/link | `PENDING_OWNER` |
+| `CONFIG-05` | iOS/Android identifier: `com.dragonc92team.pixeldoro` | `RESOLVED_OWNER_CONFIRMED` |
+| `CONFIG-06` | EAS project `6f65fb79-ffe9-4fa6-9951-895f27bf0725` đã link; Expo owner/role còn chờ xác nhận | `PARTIALLY_RESOLVED` |
 
-Bundle/application identifier là technical assumption hợp lý cho owner hiện tại nhưng
-cần Dũng Lư xác nhận trước EAS initialization vì đổi identifier sau khi phân phối
-binary tạo migration/release cost.
+Bundle/application identifier đã được Dũng Lư xác nhận trước EAS initialization. Đổi
+identifier sau khi phân phối binary sẽ tạo migration/release cost.
 
 ## 3. Story evidence
 
@@ -81,9 +80,9 @@ chủ động và gắn vào record theo runbook.
 
 ## 5. Manual gate để đóng Epic
 
-- [ ] Dũng Lư xác nhận `com.dunglu.pixeldoro` cho cả hai platform.
-- [ ] Chọn Expo account owner và chạy `eas init` để resolve
-  `EXPO_OWNER`/`EXPO_PROJECT_ID`.
+- [x] Dũng Lư xác nhận `com.dragonc92team.pixeldoro` cho cả hai platform.
+- [ ] Xác nhận Expo account owner/role; EAS project ID
+  `6f65fb79-ffe9-4fa6-9951-895f27bf0725` đã được link.
 - [ ] Chạy `eas workflow:validate` cho cả 3 workflow sau khi project được link.
 - [ ] Tạo EAS-managed remote credentials; xác nhận không export/commit secret.
 - [ ] Trigger thủ công development workflow và lưu iOS/Android build URL/ID.
@@ -96,4 +95,3 @@ chủ động và gắn vào record theo runbook.
 EAS workflow schema validation đã được thử nhưng CLI dừng ở project prerequisite vì app
 chưa link EAS project. Không tạo/link cloud project tự động vì đây là lựa chọn account
 ownership và external state thuộc `CONFIG-06`.
-
