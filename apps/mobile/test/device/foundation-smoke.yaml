@@ -1,0 +1,17 @@
+appId: com.dunglu.pixeldoro
+name: PixelDoro foundation route smoke
+---
+- launchApp:
+    clearState: true
+- assertVisible: "Pet Room"
+- openLink: "pixeldoro://focus/setup"
+- assertVisible: "Chuẩn bị phiên"
+- openLink: "pixeldoro://focus/session"
+- assertVisible: "Đang tập trung"
+- openLink: "pixeldoro://focus/result"
+- assertVisible: "Kết quả phiên"
+- openLink: "pixeldoro://break/session"
+- assertVisible: "Nghỉ một chút"
+- openLink: "pixeldoro://feedback"
+- assertVisible: "Gửi góp ý"
+

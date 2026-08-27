@@ -1,0 +1,34 @@
+name: Promote validated update to production
+
+on:
+  workflow_dispatch:
+
+defaults:
+  image: sdk-57
+  run:
+    working_directory: ../..
+
+jobs:
+  quality:
+    name: Workspace quality gates
+    steps:
+      - uses: eas/checkout
+      - uses: eas/install_node_modules
+      - name: Typecheck, lint, test, and architecture checks
+        run: corepack pnpm quality
+      - name: Repository hygiene
+        run: corepack pnpm check:repository
+
+  confirm_preview_evidence:
+    name: Preview has passed on the same runtime
+    needs: [quality]
+    type: require-approval
+
+  publish_production:
+    name: Publish production channel
+    needs: [quality, confirm_preview_evidence]
+    type: update
+    environment: production
+    params:
+      channel: production
+

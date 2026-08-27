@@ -1,0 +1,36 @@
+{
+  "name": "pixeldoro",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.24.0",
+  "engines": {
+    "node": "22.23.2",
+    "pnpm": "11.24.0"
+  },
+  "scripts": {
+    "build": "pnpm --recursive --if-present run build",
+    "typecheck": "pnpm --recursive --if-present run typecheck",
+    "lint": "eslint .",
+    "test": "vitest run && pnpm --filter @pixeldoro/mobile run test:device",
+    "test:coverage": "vitest run --coverage",
+    "test:boundaries": "node scripts/validate-boundaries.mjs",
+    "quality": "pnpm run typecheck && pnpm run lint && pnpm run test && pnpm run test:boundaries",
+    "start": "pnpm --filter @pixeldoro/mobile start",
+    "ios": "pnpm --filter @pixeldoro/mobile ios",
+    "android": "pnpm --filter @pixeldoro/mobile android",
+    "mobile": "pnpm --filter @pixeldoro/mobile",
+    "mobile:doctor": "pnpm --filter @pixeldoro/mobile run doctor",
+    "check:repository": "node scripts/check-repository.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.5",
+    "@types/node": "22.19.11",
+    "@vitest/coverage-v8": "4.1.11",
+    "eslint": "9.39.5",
+    "eslint-config-expo": "57.0.2",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.68.0",
+    "vitest": "4.1.11"
+  }
+}
