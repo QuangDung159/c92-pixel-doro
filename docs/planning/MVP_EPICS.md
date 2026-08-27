@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_MVP_EPIC_BREAKDOWN
 title: PixelDoro Mobile MVP — Epic Breakdown
-version: 0.1.0
+version: 0.2.0
 status: DRAFT_FOR_REVIEW
 last_updated: 2026-08-27
 owner: Dũng Lư
@@ -59,6 +59,10 @@ Mobile MVP
 6. Không estimate hoặc cam kết thời gian Epic trước khi các Story chính được refine.
 7. Mỗi Epic phải có outcome, scope, dependency, decision gate và completion checklist rõ ràng.
 8. Documentation approval không thay thế code/test/device evidence.
+9. `MVP Priority` và `Execution Order` là hai khái niệm khác nhau: mọi Epic trong file này đều `MUST`, nhưng chỉ được thực hiện theo thứ tự đã công bố.
+10. Không bắt đầu Epic kế tiếp khi exit gate của Epic hiện tại chưa có evidence, trừ một spike/prototype được ghi rõ là non-production và không được tính completion.
+11. Testing, accessibility, offline behavior, privacy và recovery được thực hiện trong Epic sở hữu behavior; không dồn toàn bộ về `EPIC-12`.
+12. Analytics event contract/hook được thêm cùng feature tạo event; provider delivery, queue và final taxonomy validation thuộc `EPIC-11`.
 
 ### 1.3. Trạng thái checklist
 
@@ -67,47 +71,104 @@ Mobile MVP
 
 Nếu đang thực hiện, trạng thái được quản lý ở planning tool/issue tracker; checkbox chỉ được đánh dấu khi item hoàn tất.
 
-## 2. MVP Epic overview
+## 2. Priority và execution model
 
-Thứ tự dưới là implementation sequence mặc định cho solo developer.
+### 2.1. Priority definitions
 
-- [ ] `EPIC-01` — Thiết lập nền tảng Mobile và delivery pipeline.
-- [ ] `EPIC-02` — Xây dựng durable local data, migration và safe bootstrap.
-- [ ] `EPIC-03` — Xây dựng Timer/Session Core đáng tin cậy.
-- [ ] `EPIC-04` — Xây dựng Home/Pet Room và Pet companion projection.
-- [ ] `EPIC-05` — Hoàn thành first-use onboarding trial.
-- [ ] `EPIC-06` — Hoàn thành Standard Focus experience.
-- [ ] `EPIC-07` — Hoàn thành Break experience và Long Break cadence.
-- [ ] `EPIC-08` — Hoàn thành progression, shop và inventory loop.
-- [ ] `EPIC-09` — Hoàn thành history và contribution graph.
-- [ ] `EPIC-10` — Hoàn thành settings, device feedback và local-data control.
-- [ ] `EPIC-11` — Hoàn thành product analytics, feedback integrity và store review.
-- [ ] `EPIC-12` — Hardening, device validation và closed-beta delivery.
+| Thuộc tính | Ý nghĩa | Giá trị áp dụng |
+|---|---|---|
+| `MVP Priority` | Mức độ bắt buộc đối với Mobile MVP/closed beta | Tất cả Epic là `MUST`. Không Epic nào là optional/nice-to-have trong baseline hiện tại. |
+| `Delivery Wave` | Nhóm outcome cần hoàn thành trước khi qua milestone kế tiếp | `W1_FOUNDATION`, `W2_CORE_LOOP`, `W3_MVP_COMPLETE`, `W4_BETA_RELEASE`. |
+| `Execution Order` | Thứ tự solo developer bắt đầu và hoàn thành Epic | `01` đến `12`; đây là thứ tự authoritative mặc định. |
+| `Start Gate` | Evidence bắt buộc trước khi mở Epic | Exit gate của Epic đứng ngay trước trong execution order, cộng decision gate trực tiếp nếu có. |
+| `Exit Gate` | Outcome/evidence tối thiểu để đóng Epic và mở Epic tiếp theo | Completion checklist + Definition of Epic Done. |
 
-## 3. Dependency map
+`MUST` không có nghĩa mọi Epic được làm đồng thời. Với solo developer, execution order tối ưu cho feedback và giảm rework quan trọng hơn việc mở nhiều Epic sớm.
+
+### 2.2. Authoritative execution order
+
+| Order | Epic | Loại | MVP Priority | Delivery Wave | Start Gate | Exit outcome mở Epic kế tiếp |
+|---:|---|---|---|---|---|---|
+| `01` | `EPIC-01` — Mobile Foundation | Enabler | `MUST` | `W1_FOUNDATION` | Epic plan được review | Workspace/build/quality baseline chạy được trên iOS và Android. |
+| `02` | `EPIC-02` — Durable Data & Bootstrap | Enabler | `MUST` | `W1_FOUNDATION` | `EPIC-01 DONE` | SQLite schema/migration/bootstrap/recovery có integration evidence. |
+| `03` | `EPIC-03` — Timer & Session Core | Enabler/Core | `MUST` | `W1_FOUNDATION` | `EPIC-02 DONE` | Session/timer/reward core deterministic, atomic và idempotent. |
+| `04` | `EPIC-04` — Pet Companion | Product | `MUST` | `W2_CORE_LOOP` | `EPIC-03 DONE`; neutral placeholder được phép tới khi Pet gate đóng | Home/Pet projection phản ánh committed truth; production Pet identity đã được chốt trước Epic exit. |
+| `05` | `EPIC-05` — Onboarding Trial | Product | `MUST` | `W2_CORE_LOOP` | `EPIC-04 DONE` và `GATE-PET-NAMING` đã đóng trước khi khóa Story/UX | Trial 5 phút hoàn thành end-to-end và nhận reward đúng một lần. |
+| `06` | `EPIC-06` — Standard Focus | Product | `MUST` | `W2_CORE_LOOP` | `EPIC-05 DONE` | Standard Relax/Strict Focus hoàn thành/cancel/fail end-to-end. |
+| `07` | `EPIC-07` — Break & Cadence | Product | `MUST` | `W2_CORE_LOOP` | `EPIC-06 DONE` | Focus → explicit Break/Home loop và Long Break cadence đúng durable truth. |
+| `08` | `EPIC-08` — Progression & Shop | Product | `MUST` | `W3_MVP_COMPLETE` | `EPIC-07 DONE` | XP/Coin/level/shop/purchase/equip loop hoàn chỉnh và offline. |
+| `09` | `EPIC-09` — History & Contribution | Product | `MUST` | `W3_MVP_COMPLETE` | `EPIC-08 DONE`; `GATE-CONTRIBUTION-COLOR` đóng trước visual Story/QA | History/contribution đọc đúng durable sessions và exclusions. |
+| `10` | `EPIC-10` — Settings & Data Control | Product | `MUST` | `W3_MVP_COMPLETE` | `EPIC-09 DONE` | User kiểm soát setting, permission preference, analytics opt-out và reset. |
+| `11` | `EPIC-11` — Analytics, Feedback & Store Review | Product/Operational | `MUST` | `W3_MVP_COMPLETE` | `EPIC-10 DONE` | Beta signals/feedback/review flow hoạt động đúng privacy/integrity guardrails. |
+| `12` | `EPIC-12` — Beta Readiness | Release | `MUST` | `W4_BETA_RELEASE` | `EPIC-11 DONE` | Toàn bộ MVP có device evidence và closed-beta artifact/rollback path. |
+
+### 2.3. Master execution checklist
+
+- [ ] `01 / EPIC-01 / W1` — Mobile Foundation.
+- [ ] `02 / EPIC-02 / W1` — Durable Data & Bootstrap.
+- [ ] `03 / EPIC-03 / W1` — Timer & Session Core.
+- [ ] `04 / EPIC-04 / W2` — Pet Companion.
+- [ ] `05 / EPIC-05 / W2` — Onboarding Trial.
+- [ ] `06 / EPIC-06 / W2` — Standard Focus.
+- [ ] `07 / EPIC-07 / W2` — Break & Cadence.
+- [ ] `08 / EPIC-08 / W3` — Progression & Shop.
+- [ ] `09 / EPIC-09 / W3` — History & Contribution.
+- [ ] `10 / EPIC-10 / W3` — Settings & Data Control.
+- [ ] `11 / EPIC-11 / W3` — Analytics, Feedback & Store Review.
+- [ ] `12 / EPIC-12 / W4` — Beta Readiness.
+
+## 3. Critical path và delivery gates
+
+### 3.1. Authoritative solo-developer critical path
 
 ```text
-EPIC-01 Mobile Foundation
-    ↓
-EPIC-02 Durable Data & Bootstrap
-    ↓
-EPIC-03 Timer & Session Core
-    ├──────────────→ EPIC-04 Pet Companion
-    │                    ├────────→ EPIC-05 Onboarding Trial
-    │                    ├────────→ EPIC-06 Standard Focus
-    │                    │              └────→ EPIC-07 Break & Cadence
-    │                    └────────→ EPIC-08 Progression & Shop
-    ├─────────────────────────────→ EPIC-09 History
-    └─────────────────────────────→ EPIC-10 Settings & Data Control
-
-EPIC-05/06/09/10
-    └─────────────────────────────→ EPIC-11 Analytics & Store Review
-
-EPIC-01 đến EPIC-11
-    └─────────────────────────────→ EPIC-12 Beta Readiness
+EPIC-01
+  → EPIC-02
+  → EPIC-03
+  → EPIC-04
+  → EPIC-05
+  → EPIC-06
+  → EPIC-07
+  → EPIC-08
+  → EPIC-09
+  → EPIC-10
+  → EPIC-11
+  → EPIC-12
 ```
 
-Dependency map thể hiện điều kiện hoàn thành, không cấm prototype UI sớm. Prototype không được xem là committed product truth hoặc Epic completion evidence.
+Đây là execution path được dùng để tạo Story/Task priority. Dependency kỹ thuật có thể cho phép một Epic bắt đầu sớm hơn về mặt lý thuyết, nhưng solo developer không làm vậy nếu Epic trước chưa đạt exit gate.
+
+### 3.2. Delivery wave gates
+
+| Wave | Epic | Gate để kết thúc Wave | Ý nghĩa |
+|---|---|---|---|
+| `W1_FOUNDATION` | `EPIC-01` → `EPIC-03` | `FOUNDATION_READY` | Workspace, durable data và session core đủ an toàn để xây vertical product flow. |
+| `W2_CORE_LOOP` | `EPIC-04` → `EPIC-07` | `CORE_LOOP_READY` | Pet + onboarding + Standard Focus + Break chạy end-to-end; MVP thesis có thể demo nội bộ. |
+| `W3_MVP_COMPLETE` | `EPIC-08` → `EPIC-11` | `MVP_FEATURE_COMPLETE` | Toàn bộ 18 scope item cùng privacy/feedback/analytics requirement đã có implementation evidence. |
+| `W4_BETA_RELEASE` | `EPIC-12` | `CLOSED_BETA_READY` | Device matrix, hardening, delivery và rollback path hoàn tất. |
+
+Không mở Wave kế tiếp khi gate của Wave hiện tại chưa đạt.
+
+### 3.3. Lý do của execution order
+
+1. `EPIC-01 → 03` khóa toolchain, durable truth và correctness trước UI/product breadth.
+2. `EPIC-04` đi trước onboarding/Focus vì Pet companion là giá trị cảm xúc cốt lõi, không phải decoration thêm sau.
+3. `EPIC-05` là vertical slice nhỏ nhất để kiểm chứng Timer + Reward + Pet trước khi mở rộng Standard Focus.
+4. `EPIC-06 → 07` hoàn tất primary Focus → Result → explicit Break/Home loop.
+5. `EPIC-08` ngay sau core loop để kiểm chứng lời hứa visible progression/reward-room loop.
+6. `EPIC-09` xây read model/history sau khi session và economy writes đã ổn định.
+7. `EPIC-10` hoàn thiện user controls trên các capability đã ổn định; settings defaults/ports cần thiết vẫn được dựng sớm ở Epic sở hữu dữ liệu/capability.
+8. `EPIC-11` nối provider/taxonomy sau khi event producers và eligibility data đã ổn định; event contract/hook phải được thêm từ Epic tạo behavior để tránh retrofit lớn.
+9. `EPIC-12` là final release gate, không phải nơi bù feature/test/accessibility/privacy còn thiếu từ Epic trước.
+
+### 3.4. Cross-cutting execution rules
+
+- Mỗi Epic phải hoàn thành unit/integration/device evidence phù hợp trước khi đóng; `EPIC-12` chỉ audit và chạy cross-feature/device matrix cuối.
+- Accessibility, reduced motion, offline behavior, error/recovery và privacy được triển khai cùng Story sở hữu behavior.
+- Analytics event contract/hook được thêm trong `EPIC-05` đến `EPIC-10`; PostHog adapter, bounded queue và final allowlist validation thuộc `EPIC-11`.
+- Settings/default-state contract được thiết lập trong `EPIC-02`/capability owner; Settings UI và user control hoàn thiện ở `EPIC-10`.
+- Prototype/spike có thể chạy sớm để giảm uncertainty nhưng không merge thành production behavior, không chốt Product decision và không làm thay đổi authoritative execution order.
+- Nếu Epic hiện tại phát hiện thiếu invariant/schema/architecture ở Epic trước, dừng feature work, sửa baseline/upstream evidence trước rồi mới tiếp tục.
 
 ## 4. Product decision gates
 
@@ -129,10 +190,17 @@ Trong khi gate chưa chốt:
 
 ### EPIC-01 — Mobile Foundation và Delivery Baseline
 
-**Loại:** Enabler  
+**Loại:** Enabler
+
+- **MVP priority:** `MUST`
+- **Delivery wave:** `W1_FOUNDATION`
+- **Execution order:** `01`
+- **Start gate:** Epic plan được review; không có upstream implementation dependency.
+
 **Outcome:** Solo developer có workspace tái lập được, chạy development build trên iOS/Android và có quality/delivery baseline đúng kiến trúc đã duyệt.  
 **Dependency:** Không.  
 **Story breakdown:** [`EPIC-01_USER_STORIES.md`](./EPIC-01_USER_STORIES.md).
+
 **Nguồn chính:** Technical Overview, System Architecture, Project Structure, ADR-001 đến ADR-008.
 
 **In scope:**
@@ -165,7 +233,13 @@ Trong khi gate chưa chốt:
 
 ### EPIC-02 — Durable Local Data, Migration và Safe Bootstrap
 
-**Loại:** Enabler  
+**Loại:** Enabler
+
+- **MVP priority:** `MUST`
+- **Delivery wave:** `W1_FOUNDATION`
+- **Execution order:** `02`
+- **Start gate:** `EPIC-01 DONE`.
+
 **Outcome:** Ứng dụng có durable source of truth nhất quán, migrate/seed an toàn và không mất dữ liệu khi bootstrap hoặc database gặp lỗi.  
 **Dependency:** `EPIC-01`.  
 **Nguồn chính:** Data Model 1.0.0, System Architecture, ADR-003.
@@ -201,7 +275,13 @@ Trong khi gate chưa chốt:
 
 ### EPIC-03 — Reliable Timer và Session Core
 
-**Loại:** Enabler/Core capability  
+**Loại:** Enabler/Core capability
+
+- **MVP priority:** `MUST`
+- **Delivery wave:** `W1_FOUNDATION`
+- **Execution order:** `03`
+- **Start gate:** `EPIC-02 DONE`.
+
 **Outcome:** Focus/Break session có thể start, cancel, reconcile và resolve chính xác sau background/relaunch mà không complete hoặc grant reward hai lần.  
 **Dependency:** `EPIC-02`.  
 **Nguồn chính:** Timer Engine 1.0.2, Session Lifecycle 1.0.1, System Architecture.
@@ -240,7 +320,13 @@ Trong khi gate chưa chốt:
 
 ### EPIC-04 — Home/Pet Room và Pet Companion Projection
 
-**Loại:** Product  
+**Loại:** Product
+
+- **MVP priority:** `MUST`
+- **Delivery wave:** `W2_CORE_LOOP`
+- **Execution order:** `04`
+- **Start gate:** `EPIC-03 DONE`; neutral placeholder được phép, nhưng `GATE-PET-IDENTITY` phải đóng trước Epic exit/production asset acceptance.
+
 **Outcome:** Người dùng luôn nhìn thấy Pet phản ánh đúng trạng thái đã commit và cảm nhận được sự đồng hành mà không làm animation ảnh hưởng core focus flow.  
 **Dependency:** `EPIC-01`, `EPIC-03`.  
 **Decision gate:** `GATE-PET-IDENTITY` trước production asset.  
@@ -277,7 +363,13 @@ Trong khi gate chưa chốt:
 
 ### EPIC-05 — First-use Onboarding Trial
 
-**Loại:** Product  
+**Loại:** Product
+
+- **MVP priority:** `MUST`
+- **Delivery wave:** `W2_CORE_LOOP`
+- **Execution order:** `05`
+- **Start gate:** `EPIC-04 DONE`; `GATE-PET-NAMING` phải đóng trước khi khóa Story/UX.
+
 **Outcome:** Người dùng mới hiểu giá trị Pet companion, hoàn thành trial Focus ngắn và đi vào Home với reward đầu tiên đã persist.  
 **Dependency:** `EPIC-03`, `EPIC-04`.  
 **Decision gate:** `GATE-PET-NAMING`; `GATE-PET-IDENTITY` cho production presentation.  
@@ -313,7 +405,13 @@ Trong khi gate chưa chốt:
 
 ### EPIC-06 — Standard Focus Experience
 
-**Loại:** Product  
+**Loại:** Product
+
+- **MVP priority:** `MUST`
+- **Delivery wave:** `W2_CORE_LOOP`
+- **Execution order:** `06`
+- **Start gate:** `EPIC-05 DONE`.
+
 **Outcome:** Người dùng có thể cấu hình, bắt đầu và hoàn thành hoặc kết thúc một Standard Focus session với kết quả rõ ràng, đáng tin cậy.  
 **Dependency:** `EPIC-03`, `EPIC-04`.  
 **Nguồn chính:** Product Core §5–7 và §10.3, Timer Engine, Session Lifecycle.
@@ -350,7 +448,13 @@ Trong khi gate chưa chốt:
 
 ### EPIC-07 — Break Experience và Long Break Cadence
 
-**Loại:** Product  
+**Loại:** Product
+
+- **MVP priority:** `MUST`
+- **Delivery wave:** `W2_CORE_LOOP`
+- **Execution order:** `07`
+- **Start gate:** `EPIC-06 DONE`.
+
 **Outcome:** Sau một completed Focus, người dùng có thể chủ động nghỉ đúng loại Break và Pet phản ánh trạng thái nghỉ mà không bị phạt khi rời app.  
 **Dependency:** `EPIC-03`, `EPIC-04`, `EPIC-06`.  
 **Nguồn chính:** Product Core §5.2, §6.4, §10.3; Session Lifecycle §7.
@@ -385,7 +489,13 @@ Trong khi gate chưa chốt:
 
 ### EPIC-08 — Progression, Shop và Inventory Loop
 
-**Loại:** Product  
+**Loại:** Product
+
+- **MVP priority:** `MUST`
+- **Delivery wave:** `W3_MVP_COMPLETE`
+- **Execution order:** `08`
+- **Start gate:** `EPIC-07 DONE`.
+
 **Outcome:** Người dùng nhìn thấy thời gian Focus chuyển thành XP/Coin, level và cosmetic room items có thể mua/equip an toàn.  
 **Dependency:** `EPIC-02`, `EPIC-03`, `EPIC-04`.  
 **Nguồn chính:** Product Core §9, Gamification Rules 1.0.1, Data Model.
@@ -421,7 +531,13 @@ Trong khi gate chưa chốt:
 
 ### EPIC-09 — Focus History và Contribution Graph
 
-**Loại:** Product  
+**Loại:** Product
+
+- **MVP priority:** `MUST`
+- **Delivery wave:** `W3_MVP_COMPLETE`
+- **Execution order:** `09`
+- **Start gate:** `EPIC-08 DONE`; `GATE-CONTRIBUTION-COLOR` phải đóng trước contribution visual Story/QA.
+
 **Outcome:** Người dùng có thể xem lại các Standard Focus session và thấy completed Focus minutes theo ngày local một cách nhất quán.  
 **Dependency:** `EPIC-02`, `EPIC-06`.  
 **Decision gate:** `GATE-CONTRIBUTION-COLOR` trước final visual QA.  
@@ -454,7 +570,13 @@ Trong khi gate chưa chốt:
 
 ### EPIC-10 — Settings, Device Feedback và Local-data Control
 
-**Loại:** Product  
+**Loại:** Product
+
+- **MVP priority:** `MUST`
+- **Delivery wave:** `W3_MVP_COMPLETE`
+- **Execution order:** `10`
+- **Start gate:** `EPIC-09 DONE`.
+
 **Outcome:** Người dùng kiểm soát được âm thanh, rung, notification preference, analytics preference và dữ liệu local mà không ảnh hưởng tính đúng của timer.  
 **Dependency:** `EPIC-01`, `EPIC-02`, `EPIC-03`.  
 **Nguồn chính:** Product Core §11 và §14.2, Technical Overview, Data Model.
@@ -487,7 +609,13 @@ Trong khi gate chưa chốt:
 
 ### EPIC-11 — Analytics, Product Feedback và Store Review Integrity
 
-**Loại:** Product/Operational  
+**Loại:** Product/Operational
+
+- **MVP priority:** `MUST`
+- **Delivery wave:** `W3_MVP_COMPLETE`
+- **Execution order:** `11`
+- **Start gate:** `EPIC-10 DONE`; event contracts/hooks từ Epic tạo behavior đã tồn tại.
+
 **Outcome:** Team thu được beta signal và feedback cần thiết mà không làm hỏng offline core loop, thu thập quá mức hoặc review-gate người dùng.  
 **Dependency:** `EPIC-02`, `EPIC-05`, `EPIC-06`, `EPIC-09`, `EPIC-10`.  
 **Nguồn chính:** Product Core §10.5 và §13, Technical Overview §8, ADR-006, ADR-008, Data Model.
@@ -527,7 +655,13 @@ Trong khi gate chưa chốt:
 
 ### EPIC-12 — Hardening, Device Validation và Closed-beta Delivery
 
-**Loại:** Release  
+**Loại:** Release
+
+- **MVP priority:** `MUST`
+- **Delivery wave:** `W4_BETA_RELEASE`
+- **Execution order:** `12`
+- **Start gate:** `EPIC-11 DONE` và `MVP_FEATURE_COMPLETE`.
+
 **Outcome:** Mobile MVP đáp ứng acceptance definition, chạy ổn định trên iOS/Android target và sẵn sàng phát hành internal/closed beta có rollback path.  
 **Dependency:** `EPIC-01` đến `EPIC-11`.  
 **Nguồn chính:** Product Core §18–19, Technical Overview §10, ADR-005, ADR-007 và toàn bộ implementation acceptance criteria.
@@ -637,6 +771,16 @@ Một Epic chỉ được đánh dấu `[x]` khi:
 - [ ] Không estimate deadline trước khi Story refinement hoàn tất.
 
 ## 10. Change log
+
+### 0.2.0 — 2026-08-27
+
+- Tách rõ `MVP Priority`, `Delivery Wave`, `Execution Order`, `Start Gate` và `Exit Gate`.
+- Xác nhận toàn bộ 12 Epic đều là `MUST`; thứ tự `01 → 12` là authoritative execution path cho solo developer.
+- Chia delivery thành `W1_FOUNDATION`, `W2_CORE_LOOP`, `W3_MVP_COMPLETE` và `W4_BETA_RELEASE` với gate rõ ràng.
+- Ghi start gate, wave và execution order trực tiếp trong từng Epic definition.
+- Bổ sung lý do sequencing để ưu tiên correctness, Pet companion, vertical trial validation, core Focus/Break loop rồi mới mở rộng breadth.
+- Bổ sung cross-cutting rules: test/accessibility/offline/privacy/recovery phải hoàn tất trong Epic sở hữu; analytics contract/hook được thêm cùng feature; `EPIC-12` chỉ là final audit/release gate.
+- Quy định stop-the-line khi phát hiện thiếu upstream invariant/schema/architecture và không mở Epic/Wave kế tiếp khi exit gate chưa đạt.
 
 ### 0.1.0 — 2026-08-27
 
