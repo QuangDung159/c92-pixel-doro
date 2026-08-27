@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_02_USER_STORIES
 title: PixelDoro Mobile MVP — EPIC-02 User Stories
-version: 0.1.0
+version: 0.2.0
 status: READY_FOR_REVIEW
 last_updated: 2026-08-27
 owner: Dũng Lư
@@ -205,13 +205,20 @@ Các input này là technical implementation decision, không phải Product dec
 
 | ID | Input cần resolve | Recommendation hiện tại | Story gate | Owner |
 |---|---|---|---|---|
-| `EPIC02-INPUT-01` | Authoritative strategy để chạy exact `expo-sqlite` migration/repository integration tests ngoài/ trong app runtime. | Dùng host unit tests với fake transaction/driver cho orchestration và Expo runtime integration harness cho exact SQLite behavior; không thêm SQLite driver thứ hai nếu chưa có compatibility need được chứng minh. | Trước khi đóng `US-02-01`; device half được audit ở `US-02-09`. | Dũng Lư — Tech Lead |
+| `EPIC02-INPUT-01` | `RESOLVED 2026-08-27` — authoritative strategy để chạy exact `expo-sqlite` migration/repository integration tests ngoài/ trong app runtime. | Dùng host unit tests với fake transaction/driver cho orchestration và Expo runtime integration harness cho exact SQLite behavior; không thêm SQLite driver thứ hai nếu chưa có compatibility need được chứng minh. | Đã đạt cho `US-02-01`; device half được audit ở `US-02-09`. | Dũng Lư — Tech Lead |
 | `EPIC02-INPUT-02` | Canonical checksum input/algorithm cho immutable migration artifact. | Dùng deterministic SHA-256 trên canonical migration descriptor/SQL payload được commit; test recompute checksum và fail khi released payload bị sửa. Không checksum runtime-transpiled bundle hoặc timestamp biến đổi. | Trước khi đóng `US-02-03`. | Dũng Lư — Tech Lead |
 | `EPIC02-INPUT-03` | Cách enforce immutable reward/purchase receipt trong normal path nhưng vẫn cho confirmed reset/approved migration delete theo explicit order. | Không expose update/delete trên normal repository; trigger chặn update và database backstop được thiết kế sao cho chỉ private maintenance executor có delete path. Không thêm durable “bypass flag” hoặc table ngoài normative schema nếu chưa review. | Trước khi đóng `US-02-02` và `US-02-08`. | Dũng Lư — Tech Lead |
 
 Exact database filename, adapter class name, test command name và typed error-code
 spelling là Task-level configuration. Chúng phải ổn định/test được nhưng không cần
 Product Owner decision nếu không làm đổi behavior trong baseline.
+
+**Resolution update — 2026-08-27:** `EPIC02-INPUT-01` đã `RESOLVED` bởi Dũng Lư —
+Tech Lead/Product Owner. `US-02-01` dùng host unit/contract tests với fake cho orchestration
+và exact Expo native runtime probe cho SQLite behavior; không thêm SQLite driver thứ hai.
+Probe chạy trên native platform có development build khả dụng trước, còn both-platform audit
+vẫn thuộc `US-02-09`. Chi tiết authoritative nằm trong
+[`US-02-01_IMPLEMENTATION_PLAN.md`](./US-02-01_IMPLEMENTATION_PLAN.md).
 
 ## 4. User Stories
 
@@ -259,7 +266,7 @@ purchase use case, Zustand persistence, provider SDK và database connection t�
 
 **Task checklist sơ bộ:**
 
-- [ ] Resolve `EPIC02-INPUT-01` và ghi test-runtime rationale.
+- [x] Resolve `EPIC02-INPUT-01` và ghi test-runtime rationale.
 - [ ] Cài compatible SQLite dependency.
 - [ ] Định nghĩa transaction/database lifecycle port contract.
 - [ ] Implement SQLite connection/transaction owner.
@@ -860,14 +867,15 @@ Một Story chỉ được đánh dấu `[x]` khi:
 - **Product blocker:** không có; ba Product decision còn `OPEN` đều nằm ngoài schema
   foundation và đã có explicit exclusion.
 - **Story breakdown:** `READY_FOR_REVIEW`, chưa tự coi là owner-approved baseline.
-- **Implementation readiness:** có thể bắt đầu Task refinement/technical spike của
-  `US-02-01`; chưa nên đánh dấu toàn Epic `READY_FOR_IMPLEMENTATION` cho tới khi Dũng
-  duyệt execution order và resolve `EPIC02-INPUT-01` đến `03` tại gate tương ứng.
+- **Implementation readiness:** implementation plan của `US-02-01` đã
+  `READY_FOR_IMPLEMENTATION` và `EPIC02-INPUT-01` đã `RESOLVED`. Toàn Story breakdown
+  của Epic vẫn `READY_FOR_REVIEW` cho tới khi Dũng duyệt đủ chín Story/execution order;
+  `EPIC02-INPUT-02` và `03` tiếp tục được resolve tại gate tương ứng.
 
 ### 8.2. Điều kiện chuyển `READY_FOR_IMPLEMENTATION`
 
 1. Dũng Lư review/approve chín Story, block graph và one-active-Story execution order.
-2. Xác nhận `EPIC02-INPUT-01` trước khi khóa test task của `US-02-01`.
+2. [Đã đạt 2026-08-27] Xác nhận `EPIC02-INPUT-01` trước khi khóa test task của `US-02-01`.
 3. Xác nhận `EPIC02-INPUT-02` trước khi khóa migration runner acceptance.
 4. Xác nhận `EPIC02-INPUT-03` trước khi khóa schema trigger/reset maintenance design.
 5. Tạo Task IDs theo Story; không cần estimate deadline để chuyển readiness.
@@ -887,6 +895,13 @@ Một Story chỉ được đánh dấu `[x]` khi:
 - [ ] Dũng Lư review và phê duyệt Story breakdown trước khi chuyển status sang `APPROVED`/`READY_FOR_IMPLEMENTATION`.
 
 ## 10. Change log
+
+### 0.2.0 — 2026-08-27
+
+- Ghi nhận owner approval cho test strategy của `US-02-01` và chuyển
+  `EPIC02-INPUT-01` sang `RESOLVED`.
+- Link implementation plan authoritative của `US-02-01`; không thay status approval của
+  toàn bộ chín-Story breakdown hoặc resolve sớm `EPIC02-INPUT-02`/`03`.
 
 ### 0.1.0 — 2026-08-27
 
