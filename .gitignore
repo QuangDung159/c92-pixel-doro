@@ -1,0 +1,28 @@
+node_modules/
+.pnpm-store/
+dist/
+coverage/
+
+# Expo / native generated output
+.expo/
+apps/mobile/.expo/
+apps/mobile/android/
+apps/mobile/ios/
+apps/mobile/web-build/
+apps/mobile/artifacts/*
+!apps/mobile/artifacts/.gitkeep
+
+# Local environment and signing material
+.env
+.env.*
+!.env.example
+*.jks
+*.keystore
+*.p8
+*.p12
+*.mobileprovision
+credentials.json
+
+# Editors and operating systems
+.DS_Store
+*.log

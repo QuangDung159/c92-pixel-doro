@@ -1,0 +1,46 @@
+{
+  "name": "@pixeldoro/mobile",
+  "version": "0.1.0",
+  "private": true,
+  "main": "expo-router/entry",
+  "scripts": {
+    "start": "expo start --dev-client",
+    "android": "expo run:android",
+    "build:android:apk": "EAS_LOCAL_BUILD_PLUGIN_PATH=./node_modules/.bin/eas-cli-local-build-plugin pnpm dlx eas-cli@22.6.0 build --platform android --profile android-apk --local --output ./artifacts/pixeldoro.apk",
+    "build:android:aab": "EAS_LOCAL_BUILD_PLUGIN_PATH=./node_modules/.bin/eas-cli-local-build-plugin pnpm dlx eas-cli@22.6.0 build --platform android --profile android-aab --local --output ./artifacts/pixeldoro.aab",
+    "ios": "expo run:ios",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run test src/application src/composition src/infrastructure",
+    "test:device": "node test/device/validate-device-harness.mjs",
+    "doctor": "expo-doctor"
+  },
+  "dependencies": {
+    "@pixeldoro/application": "workspace:*",
+    "@pixeldoro/domain": "workspace:*",
+    "expo": "~57.0.17",
+    "expo-build-properties": "~57.0.15",
+    "expo-constants": "~57.0.15",
+    "expo-dev-client": "~57.0.16",
+    "expo-linking": "~57.0.8",
+    "expo-router": "~57.0.17",
+    "expo-status-bar": "~57.0.1",
+    "expo-updates": "~57.0.18",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native": "0.86.3",
+    "react-native-reanimated": "4.5.1",
+    "react-native-safe-area-context": "~5.7.0",
+    "react-native-screens": "~4.26.0",
+    "react-native-web": "~0.21.0",
+    "react-native-worklets": "0.10.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.19.11",
+    "@types/react": "~19.2.2",
+    "eas-cli-local-build-plugin": "22.0.0",
+    "expo-doctor": "1.20.4",
+    "typescript": "~6.0.3",
+    "vitest": "4.1.11"
+  }
+}
