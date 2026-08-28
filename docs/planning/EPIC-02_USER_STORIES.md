@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_02_USER_STORIES
 title: PixelDoro Mobile MVP — EPIC-02 User Stories
-version: 1.3.0
+version: 1.4.0
 status: READY_FOR_REVIEW
 last_updated: 2026-08-28
 owner: Dũng Lư
@@ -372,8 +372,9 @@ contribution colors, dynamic catalog, cloud/sync field và future nullable place
 ### US-02-03 — Forward-only Migration Safety
 
 **Implementation plan:**
-[`US-02-03_IMPLEMENTATION_PLAN.md`](./US-02-03_IMPLEMENTATION_PLAN.md) `0.4.0` đang
-`READY_FOR_IMPLEMENTATION`; implementation `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
+[`US-02-03_IMPLEMENTATION_PLAN.md`](./US-02-03_IMPLEMENTATION_PLAN.md) `0.5.0` đã `DONE`.
+Exact iOS native report pass `10/10` assertions trên SHA
+`1b6a0427b3db20f4536a2b251101fa0e32b5c0ea` khớp repository `HEAD` khi review.
 `EPIC02-INPUT-02` và toàn bộ
 `US0203-CONFIRM-01`–`03` đã được owner duyệt ngày 2026-08-28.
 
@@ -404,28 +405,28 @@ future product schema, OTA compatibility policy ngoài existing release baseline
 
 **Acceptance criteria:**
 
-- [ ] Migration filename/registry version strictly increasing và stable theo Data Model naming.
-- [ ] Empty database apply `001` rồi ghi đúng một `schema_migrations` row sau full success.
-- [ ] Database đã ở latest không reapply seed/schema và bootstrap lặp idempotent.
-- [ ] Pending migrations apply theo version order; mỗi row history chỉ ghi sau DDL/backfill/validation success.
-- [ ] Canonical checksum contract theo `EPIC02-INPUT-02` deterministic và mismatch của released artifact bị phát hiện trước repository access.
-- [ ] Version gap, duplicate version/name hoặc unknown applied migration fail typed và không chạy phần còn lại.
-- [ ] Binary biết latest thấp hơn database fail safely; không downgrade hoặc query/write incompatible schema.
-- [ ] Failure giữa migration rollback toàn bộ transactional change và không ghi applied row giả.
-- [ ] Retry sau failure bắt đầu từ durable history còn hợp lệ, không duplicate seed hoặc mất existing rows.
-- [ ] Migration failure không gọi reset/delete/recreate database.
-- [ ] Synthetic migration fixture chứng minh upgrade path mà không thêm production feature/schema ngoài baseline.
-- [ ] Released migration artifact được kiểm tra immutability trong repository quality gate hoặc equivalent review evidence.
+- [x] Migration filename/registry version strictly increasing và stable theo Data Model naming.
+- [x] Empty database apply `001` rồi ghi đúng một `schema_migrations` row sau full success.
+- [x] Database đã ở latest không reapply seed/schema và bootstrap lặp idempotent.
+- [x] Pending migrations apply theo version order; mỗi row history chỉ ghi sau DDL/backfill/validation success.
+- [x] Canonical checksum contract theo `EPIC02-INPUT-02` deterministic và mismatch của released artifact bị phát hiện trước repository access.
+- [x] Version gap, duplicate version/name hoặc unknown applied migration fail typed và không chạy phần còn lại.
+- [x] Binary biết latest thấp hơn database fail safely; không downgrade hoặc query/write incompatible schema.
+- [x] Failure giữa migration rollback toàn bộ transactional change và không ghi applied row giả.
+- [x] Retry sau failure bắt đầu từ durable history còn hợp lệ, không duplicate seed hoặc mất existing rows.
+- [x] Migration failure không gọi reset/delete/recreate database.
+- [x] Synthetic migration fixture chứng minh upgrade path mà không thêm production feature/schema ngoài baseline.
+- [x] Released migration artifact được kiểm tra immutability trong repository quality gate hoặc equivalent review evidence.
 
 **Task checklist sơ bộ:**
 
-- [ ] Resolve checksum input/algorithm.
-- [ ] Implement migration descriptor/registry.
-- [ ] Implement history inspection và compatibility validation.
-- [ ] Implement ordered apply + transactional history write.
-- [ ] Implement gap/checksum/newer-schema typed errors.
-- [ ] Tạo synthetic upgrade/failure fixtures.
-- [ ] Thêm immutable-artifact repository check.
+- [x] Resolve checksum input/algorithm.
+- [x] Implement migration descriptor/registry.
+- [x] Implement history inspection và compatibility validation.
+- [x] Implement ordered apply + transactional history write.
+- [x] Implement gap/checksum/newer-schema typed errors.
+- [x] Tạo synthetic upgrade/failure fixtures.
+- [x] Thêm immutable-artifact repository check.
 
 **Evidence yêu cầu:**
 
@@ -886,10 +887,9 @@ Một Story chỉ được đánh dấu `[x]` khi:
 - **Story breakdown:** `READY_FOR_REVIEW`, chưa tự coi là owner-approved baseline.
 - **Implementation readiness:** `US-02-01` và `US-02-02` đã `DONE`. Exact native report của
   `US-02-02` pass trên implementation commit đã đối chiếu. Plan `US-02-03` `0.1.0` đã được
-  chuyển `0.4.0 READY_FOR_IMPLEMENTATION` / implementation
-  `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`; host quality/evidence đã pass, dependency gate
-  và toàn bộ ba confirmation kỹ thuật đã đạt. Production bootstrap `US-02-04` vẫn chưa active
-  cho tới khi exact owner native report được review.
+  đã `DONE` trên exact SHA `1b6a0427b3db20f4536a2b251101fa0e32b5c0ea`; host quality và
+  iOS native report `10/10` assertions đều pass. Dependency gate `US-02-04` đã mở ở mức
+  ready-for-planning nhưng Story sau chưa được active/implement trong closeout này.
 
 ### 8.2. Điều kiện chuyển `READY_FOR_IMPLEMENTATION`
 
@@ -914,6 +914,14 @@ Một Story chỉ được đánh dấu `[x]` khi:
 - [ ] Dũng Lư review và phê duyệt Story breakdown trước khi chuyển status sang `APPROVED`/`READY_FOR_IMPLEMENTATION`.
 
 ## 10. Change log
+
+### 1.4.0 — 2026-08-28
+
+- Tiếp nhận iOS report `US-02-03_FORWARD_MIGRATION` `passed: true`, đủ `10/10` assertions
+  và exact SHA `1b6a0427b3db20f4536a2b251101fa0e32b5c0ea` khớp repository `HEAD`.
+- Re-run host quality `11` files / `53` tests pass; hoàn tất Story acceptance/task checklist.
+- Chuyển `US-02-03` sang `DONE` và mở dependency gate `US-02-04` ở mức planning, chưa active
+  production bootstrap.
 
 ### 1.3.0 — 2026-08-28
 

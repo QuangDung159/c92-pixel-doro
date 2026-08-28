@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_02_IMPLEMENTATION_EVIDENCE
 title: PixelDoro Mobile MVP — EPIC-02 Implementation Evidence
-version: 0.5.0
+version: 0.6.0
 status: IN_PROGRESS
 last_updated: 2026-08-28
 owner: Dũng Lư
@@ -30,11 +30,10 @@ owner iOS native runtime report `passed: true` đủ `11/11` assertions trên im
 commit `4996c7d6529d0a1578e2d052bdbaaf858d9e1a1d`; repository `HEAD` đã được đối chiếu đúng
 SHA này trước documentation closeout ngày 2026-08-28.
 
-`US-02-03 — Forward-only Migration Safety` đã implement registry/checksum lock, history
-preflight, per-migration transaction runner, typed compatibility failures, rollback/retry host
-matrix và dev-only exact Expo probe. Automated evidence pass; Story đang
-`IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME` và chưa `DONE` cho tới khi owner report
-`US-02-03_FORWARD_MIGRATION passed: true` trên exact final implementation SHA.
+`US-02-03 — Forward-only Migration Safety` đã `DONE`. Automated evidence và exact iOS native
+probe đều pass đủ `10/10` assertions trên implementation commit
+`1b6a0427b3db20f4536a2b251101fa0e32b5c0ea`; repository `HEAD` đã được đối chiếu đúng SHA
+này khi tiếp nhận report ngày 2026-08-28.
 
 Không có migration runner/history/checksum, production bootstrap migration,
 Timer/Session/Reward/Pet/Inventory/Settings use case, auto-reset, native/EAS build hoặc native
@@ -280,7 +279,7 @@ chưa active.
 | Rollback/retry | Failed apply/history insert rollback current version; durable predecessor retained; Retry commit đúng một lần | `PASS_HOST` |
 | Latest idempotency | Latest history trả no-op; không gọi Clock/ID, artifact hoặc write transaction | `PASS_HOST` |
 | Typed boundary | Application-owned result/error; transaction technical error được giữ typed; không raw SQL/provider message ra ngoài | `PASS_HOST` |
-| Native probe harness | Isolated exact DBs, production `001`, synthetic upgrade/failure, reopen và cleanup report | `IMPLEMENTED_AWAITING_OWNER` |
+| Native probe harness | Isolated exact DBs, production `001`, synthetic upgrade/failure, reopen và cleanup report | `PASS_NATIVE_IOS` |
 | Scope boundary | Không production bootstrap/repository/Product behavior, production `002`, reset hoặc native artifact | `PASS` |
 
 Automated checks dùng Node.js `22.23.2` và pnpm `11.24.0`:
@@ -302,22 +301,50 @@ empty history cạnh product schema, history gap/name/checksum drift, newer sche
 history, apply failure và history-write failure. Failure cases assert no unsafe write hoặc exact
 before/after fingerprint; retry bắt đầu từ durable prefix còn hợp lệ.
 
-## 10. `US-02-03` native runtime acceptance — pending owner
+## 10. `US-02-03` native runtime acceptance — owner evidence received 2026-08-28
 
-Owner cần chạy runbook
+Owner đã chạy runbook
 [`apps/mobile/test/device/forward-migration-smoke.md`](../../apps/mobile/test/device/forward-migration-smoke.md)
-trên exact final implementation commit bằng existing development build. Agent không chạy
-native/EAS build.
+trên exact final implementation commit:
 
-Required report:
+| Field | Owner evidence |
+|---|---|
+| Platform / OS / device | iOS / 26.5 / target model không được cung cấp |
+| App version / application ID | `0.1.0` / `com.dragonc92team.pixeldoro` |
+| Evidence received | 2026-08-28; exact runtime timestamp không có trong report |
+| Final implementation commit SHA | `1b6a0427b3db20f4536a2b251101fa0e32b5c0ea` — khớp repository `HEAD` khi review |
+| Probe result | `PASS` — `passed: true`, đủ `10/10` named assertions |
+| Cleanup | `PASS` — report chỉ pass sau ba exact probe database close/delete thành công |
 
-- `probe: "US-02-03_FORWARD_MIGRATION"`.
-- `passed: true`.
-- `commitSha` khớp `git rev-parse HEAD` sau khi commit implementation.
-- Đủ `10/10` named assertions trong runbook, gồm empty/latest, exact history, incompatible
-  history, rollback/retry, reopen và exact probe cleanup.
+```json
+{
+  "probe": "US-02-03_FORWARD_MIGRATION",
+  "passed": true,
+  "platform": "ios",
+  "osVersion": "26.5",
+  "appVersion": "0.1.0",
+  "applicationId": "com.dragonc92team.pixeldoro",
+  "commitSha": "1b6a0427b3db20f4536a2b251101fa0e32b5c0ea",
+  "assertions": [
+    "empty_database_migrated_to_latest",
+    "exact_history_committed_after_validation",
+    "latest_rerun_was_noop",
+    "incompatible_history_rejected_before_write",
+    "failed_migration_rolled_back_without_false_history",
+    "failed_history_write_rolled_back_without_false_history",
+    "retry_resumed_from_valid_durable_history",
+    "synthetic_upgrade_applied_in_order",
+    "committed_history_survived_reopen",
+    "probe_connections_closed_and_databases_cleaned"
+  ]
+}
+```
 
-**Current Story status:** `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
+Thiếu target model và exact runtime timestamp chỉ là audit metadata gap, không làm yếu
+behavior assertions hoặc SHA traceability. Một native target pass đóng gate `US-02-03`;
+iOS + Android repeat vẫn thuộc `US-02-09`.
 
-`US-02-04` tiếp tục bị block cho tới khi native report được review và `US-02-03` chuyển
-`DONE`.
+**Current Story status:** `DONE`.
+
+Dependency gate `US-02-04` đã mở ở mức planning. Production bootstrap chưa được active hoặc
+implement trong closeout này.

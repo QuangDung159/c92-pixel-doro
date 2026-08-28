@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_02_03_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-02-03 Implementation Plan
-version: 0.4.0
-status: READY_FOR_IMPLEMENTATION
-implementation_status: IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME
+version: 0.5.0
+status: DONE
+implementation_status: DONE
 last_updated: 2026-08-28
 owner: Dũng Lư
 reviewer: Dũng Lư
@@ -46,11 +46,14 @@ trên commit `4996c7d6529d0a1578e2d052bdbaaf858d9e1a1d`.
 
 **Priority:** `MUST` / `P0_CORRECTNESS` / execution order `03` trong EPIC-02.
 
-**Blocks:** `US-02-04`. Production bootstrap không được dùng database trước khi migration
-history/compatibility/rollback contract có evidence.
+**Dependency handoff:** `US-02-04` gate đã mở sau exact host/native evidence; Story sau vẫn
+chưa được triển khai trong closeout này.
 
-**Planning status:** `READY_FOR_IMPLEMENTATION`. **Implementation status:**
-`IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
+**Planning status:** `DONE`. **Implementation status:** `DONE`.
+
+Exact iOS probe pass đủ `10/10` assertions trên implementation commit
+`1b6a0427b3db20f4536a2b251101fa0e32b5c0ea`; SHA khớp repository `HEAD` khi review ngày
+2026-08-28.
 
 `EPIC02-INPUT-02` / `US0203-CONFIRM-01` đã được Dũng Lư duyệt ngày 2026-08-28.
 `US0203-CONFIRM-02` và `03` đã được Dũng Lư duyệt ngày 2026-08-28. Toàn bộ technical decision
@@ -513,11 +516,12 @@ Agent không chạy native/EAS build.
 
 **Outcome:** One exact Expo runtime report trace được về final implementation commit.
 
-- [ ] Owner commit implementation và truyền `git rev-parse HEAD` vào probe flag.
-- [ ] Owner chạy existing development build trên iOS hoặc Android.
-- [ ] Capture complete structured report, device model nếu biết.
-- [ ] Verify report `passed: true`, exact assertion set và SHA khớp repository.
-- [ ] Unset probe flag/stop Metro; không commit probe DB/native artifact.
+- [x] Owner commit implementation và truyền `git rev-parse HEAD` vào probe flag.
+- [x] Owner chạy existing development build trên iOS.
+- [x] Capture complete structured report; device model không được cung cấp.
+- [x] Verify report `passed: true`, `10/10` assertions và SHA khớp repository.
+- [x] Exact probe DB cleanup được report; stop Metro/unset flag là owner local hygiene,
+  không phải repository acceptance.
 
 **Blocks:** `T10` Story closeout.
 
@@ -528,10 +532,10 @@ Agent không chạy native/EAS build.
 - [x] Run pinned Node/pnpm typecheck/lint/test/boundary/repository checksum checks.
 - [x] Run Expo public-config check không tạo native artifact; SDK 57 và `expo-sqlite` resolve.
 - [x] Review diff/source lock và no-scope-creep audit.
-- [x] Record host/failure evidence trong `EPIC-02_IMPLEMENTATION_EVIDENCE.md`; native pending owner.
-- [ ] Mark every Story acceptance only after exact evidence review.
+- [x] Record host/failure/native evidence trong `EPIC-02_IMPLEMENTATION_EVIDENCE.md`.
+- [x] Mark every Story acceptance after exact evidence review.
 - [x] Confirm no DB/native output/secret/machine-local path trong implementation working tree.
-- [ ] Mark `US-02-03 DONE`; mở `US-02-04` dependency gate, không active song song.
+- [x] Mark `US-02-03 DONE`; mở `US-02-04` dependency gate, không active song song.
 
 ## 6. Implemented file impact
 
@@ -697,21 +701,21 @@ assertions:
 
 ## 12. Definition of Done cho `US-02-03`
 
-- [ ] `T00 → T10` hoàn tất theo order.
+- [x] `T00 → T10` hoàn tất theo order.
 - [x] `EPIC02-INPUT-02` được owner resolve và sync vào Story baseline ngày 2026-08-28.
 - [x] Production registry/lock chỉ chứa exact released `001`, valid contiguous metadata.
-- [ ] Empty → latest và latest no-op pass với exact history/checksum evidence.
-- [ ] Ordered synthetic upgrade pass mà không tạo production schema `002`.
-- [ ] Gap/duplicate/unknown/name/checksum/newer/missing-history cases fail typed trước unsafe write.
-- [ ] Failed migration/history insert rollback full version unit; previous durable version retained.
-- [ ] Retry same database commits failed version đúng một lần, không duplicate seed/catalog.
+- [x] Empty → latest và latest no-op pass với exact history/checksum evidence.
+- [x] Ordered synthetic upgrade pass mà không tạo production schema `002`.
+- [x] Gap/duplicate/unknown/name/checksum/newer/missing-history cases fail typed trước unsafe write.
+- [x] Failed migration/history insert rollback full version unit; previous durable version retained.
+- [x] Retry same database commits failed version đúng một lần, không duplicate seed/catalog.
 - [x] Immutable migration checksum check nằm trong repository quality gate.
-- [ ] Native Expo SQLite probe pass trên ít nhất một platform và exact implementation SHA.
+- [x] Native Expo SQLite probe pass trên iOS và exact implementation SHA.
 - [x] Không auto-adopt/downgrade/reset/delete/recreate/repair database.
 - [x] Không production bootstrap/repository/Product behavior scope creep.
 - [x] Application/Presentation không import SQL/SQLite/Node crypto/provider type.
 - [x] Không có DB/native artifact/secret/machine-local path trong implementation working tree.
-- [ ] Evidence được owner/reviewer chấp nhận; `US-02-03 DONE` trước khi active `US-02-04`.
+- [x] Evidence được owner/reviewer chấp nhận; `US-02-03 DONE` trước khi active `US-02-04`.
 
 ## 13. Owner confirmations cần chốt
 
@@ -751,6 +755,14 @@ Khi Story `DONE`, handoff gồm:
 - [ADR-007 — EAS Delivery Pipeline](../architecture/decisions/ADR-007-eas-delivery-pipeline.md)
 
 ## 16. Change log
+
+### 0.5.0 — 2026-08-28
+
+- Tiếp nhận exact iOS report `US-02-03_FORWARD_MIGRATION` `passed: true`, đủ `10/10`
+  assertions trên SHA `1b6a0427b3db20f4536a2b251101fa0e32b5c0ea` khớp repository `HEAD`.
+- Re-run `pnpm quality`: `11` files / `53` tests cùng boundary/checksum gates pass.
+- Chuyển `US-02-03` sang `DONE` và mở dependency gate `US-02-04`; không triển khai Story sau
+  trong closeout này.
 
 ### 0.4.0 — 2026-08-28
 
