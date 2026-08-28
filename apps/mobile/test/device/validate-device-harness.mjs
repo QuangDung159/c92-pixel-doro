@@ -7,15 +7,18 @@ const flowPath = `${deviceDirectory}foundation-smoke.md`;
 const sqliteFlowPath = `${deviceDirectory}sqlite-kernel-smoke.md`;
 const schemaFlowPath = `${deviceDirectory}initial-schema-smoke.md`;
 const migrationFlowPath = `${deviceDirectory}forward-migration-smoke.md`;
+const bootstrapFlowPath = `${deviceDirectory}safe-bootstrap-smoke.md`;
 
 await access(flowPath);
 await access(sqliteFlowPath);
 await access(schemaFlowPath);
 await access(migrationFlowPath);
+await access(bootstrapFlowPath);
 const flow = await readFile(flowPath, 'utf8');
 const sqliteFlow = await readFile(sqliteFlowPath, 'utf8');
 const schemaFlow = await readFile(schemaFlowPath, 'utf8');
 const migrationFlow = await readFile(migrationFlowPath, 'utf8');
+const bootstrapFlow = await readFile(bootstrapFlowPath, 'utf8');
 
 const requiredLabels = [
   'Chào mừng đến PixelDoro',
@@ -102,6 +105,25 @@ for (const evidence of requiredMigrationEvidence) {
 
 await access(
   `${mobileDirectory}/src/composition/diagnostics/run-forward-migration-probe.ts`,
+);
+
+const requiredBootstrapEvidence = [
+  'EXPO_PUBLIC_SAFE_BOOTSTRAP_PROBE=1',
+  'US-02-04_SAFE_BOOTSTRAP',
+  'passed: true',
+  'pixeldoro-us-02-04-safe-bootstrap-probe.db',
+  'failed_bootstrap_preserved_database_fingerprint',
+  'EPIC-02_IMPLEMENTATION_EVIDENCE.md',
+];
+
+for (const evidence of requiredBootstrapEvidence) {
+  if (!bootstrapFlow.includes(evidence)) {
+    throw new Error(`Safe bootstrap device probe is missing: ${evidence}`);
+  }
+}
+
+await access(
+  `${mobileDirectory}/src/composition/diagnostics/run-safe-bootstrap-probe.ts`,
 );
 
 console.log(

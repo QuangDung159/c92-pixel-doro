@@ -1,5 +1,7 @@
 export {
   MobileBootstrap,
+  type BootstrapErrorCode,
+  type BootstrapPhase,
   type BootstrapProjection,
   type MobileBootstrapDependencies,
 } from './bootstrap/mobile-bootstrap';
@@ -7,6 +9,18 @@ export type {
   AppLifecyclePort,
   AppLifecycleState,
 } from './ports/app-lifecycle.port';
+export {
+  bootstrapDataError,
+  type BootstrapDataError,
+  type BootstrapDataPort,
+  type BootstrapDefaultMode,
+  type BootstrapDurableSnapshot,
+} from './ports/bootstrap-data.port';
+export {
+  bootstrapVerificationError,
+  type BootstrapVerificationError,
+  type BootstrapVerifierPort,
+} from './ports/bootstrap-verifier.port';
 export {
   databaseLifecycleError,
   type DatabaseLifecycleError,
@@ -21,4 +35,15 @@ export {
   type MigrationResult,
   type MigrationRunError,
 } from './ports/migration.port';
+export {
+  startupReconciliationError,
+  type StartupReconciliationError,
+  type StartupReconciliationPort,
+} from './ports/startup-reconciliation.port';
+export {
+  ReadinessGate,
+  type CommandReadinessError,
+  type CommandReadinessPort,
+  type ReadinessController,
+} from './readiness/readiness-gate';
 export type { MobileApplicationFacade } from './mobile-application.facade';

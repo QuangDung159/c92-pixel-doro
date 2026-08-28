@@ -11,7 +11,7 @@
     "ios": "expo run:ios",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
-    "test": "vitest run test src/application src/composition src/infrastructure",
+    "test": "vitest run --root ../.. apps/mobile/test apps/mobile/src/application apps/mobile/src/composition apps/mobile/src/infrastructure",
     "test:device": "node test/device/validate-device-harness.mjs",
     "doctor": "expo-doctor"
   },

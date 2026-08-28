@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_02_USER_STORIES
 title: PixelDoro Mobile MVP — EPIC-02 User Stories
-version: 1.4.0
+version: 1.8.0
 status: READY_FOR_REVIEW
 last_updated: 2026-08-28
 owner: Dũng Lư
@@ -441,6 +441,12 @@ future product schema, OTA compatibility policy ngoài existing release baseline
 ---
 
 ### US-02-04 — Safe Bootstrap và Readiness Barrier
+
+**Implementation plan:**
+[`US-02-04_IMPLEMENTATION_PLAN.md`](./US-02-04_IMPLEMENTATION_PLAN.md) `0.4.0` đang
+`IN_PROGRESS`; implementation `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`. Bốn technical confirmation
+`US0204-CONFIRM-01`–`04` đã được Dũng Lư duyệt ngày 2026-08-28; Story đang được triển khai
+theo authoritative order và hiện chờ `T09` owner native evidence trước closeout `T10`.
 
 **Story statement**
 
@@ -885,11 +891,11 @@ Một Story chỉ được đánh dấu `[x]` khi:
 - **Product blocker:** không có; ba Product decision còn `OPEN` đều nằm ngoài schema
   foundation và đã có explicit exclusion.
 - **Story breakdown:** `READY_FOR_REVIEW`, chưa tự coi là owner-approved baseline.
-- **Implementation readiness:** `US-02-01` và `US-02-02` đã `DONE`. Exact native report của
-  `US-02-02` pass trên implementation commit đã đối chiếu. Plan `US-02-03` `0.1.0` đã được
-  đã `DONE` trên exact SHA `1b6a0427b3db20f4536a2b251101fa0e32b5c0ea`; host quality và
-  iOS native report `10/10` assertions đều pass. Dependency gate `US-02-04` đã mở ở mức
-  ready-for-planning nhưng Story sau chưa được active/implement trong closeout này.
+- **Implementation readiness:** `US-02-01`, `US-02-02` và `US-02-03` đã `DONE` với exact
+  host/native evidence. `US-02-03` pass iOS `10/10` assertions trên SHA
+  `1b6a0427b3db20f4536a2b251101fa0e32b5c0ea`. Plan `US-02-04` `0.4.0` đang
+  `IN_PROGRESS` / `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`; host quality/fault matrix và
+  exact probe/runbook đã hoàn tất, Story chưa `DONE` và chưa mở `US-02-05/07` trước owner report.
 
 ### 8.2. Điều kiện chuyển `READY_FOR_IMPLEMENTATION`
 
@@ -914,6 +920,36 @@ Một Story chỉ được đánh dấu `[x]` khi:
 - [ ] Dũng Lư review và phê duyệt Story breakdown trước khi chuyển status sang `APPROVED`/`READY_FOR_IMPLEMENTATION`.
 
 ## 10. Change log
+
+### 1.8.0 — 2026-08-28
+
+- Ghi nhận `US-02-04` production implementation và host quality/fault evidence hoàn tất.
+- Chuyển implementation sang `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`; giữ Story
+  `IN_PROGRESS`, dependency gate `US-02-05/07` đóng.
+- Link exact `US-02-04_SAFE_BOOTSTRAP` probe/runbook; không chạy native/EAS trong agent turn.
+
+### 1.7.0 — 2026-08-28
+
+- Chuyển `US-02-04` sang `IN_PROGRESS` theo yêu cầu implementation của owner.
+- Giữ full repositories, Retry/reset và production Session reconciliation ngoài active Story.
+- Chưa mở dependency gate `US-02-05/07` trước host/native closeout.
+
+### 1.6.0 — 2026-08-28
+
+- Ghi nhận owner duyệt `US0204-CONFIRM-01`–`04` ngày 2026-08-28.
+- Cập nhật implementation plan `US-02-04` lên `0.2.0` / `READY_FOR_IMPLEMENTATION`, giữ
+  implementation `NOT_STARTED` và authoritative execution `T01 → T10`.
+- Không mở rộng phạm vi sang full repositories, Retry/reset hoặc production Session
+  reconciliation.
+
+### 1.5.0 — 2026-08-28
+
+- Link implementation plan `US-02-04` `0.1.0` và ghi trạng thái `READY_FOR_REVIEW` /
+  `NOT_STARTED`.
+- Ghi rõ bốn owner confirmation cho durable snapshot, runtime verifier, recovery connection
+  lifecycle và reconciliation/lifecycle/readiness seam.
+- Giữ production implementation, full repositories, Retry/reset, Session behavior và native
+  build ngoài planning turn.
 
 ### 1.4.0 — 2026-08-28
 

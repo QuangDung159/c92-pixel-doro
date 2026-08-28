@@ -1,33 +1,54 @@
-import type {
-  CreateFoundationSnapshotUseCase,
-  FoundationSnapshot,
-} from '@pixeldoro/application';
-
 import type { AppLifecyclePort, AppLifecycleState } from '../ports/app-lifecycle.port';
+import type {
+  BootstrapDataPort,
+  BootstrapDurableSnapshot,
+} from '../ports/bootstrap-data.port';
+import type { BootstrapVerifierPort } from '../ports/bootstrap-verifier.port';
 import type {
   DatabaseLifecycleErrorCode,
   DatabaseLifecyclePort,
 } from '../ports/database-lifecycle.port';
+import type { MigrationPort } from '../ports/migration.port';
+import type { StartupReconciliationPort } from '../ports/startup-reconciliation.port';
+import type { ReadinessController } from '../readiness/readiness-gate';
+
+export type BootstrapPhase =
+  | 'opening'
+  | 'migrating'
+  | 'verifying'
+  | 'hydrating'
+  | 'reconciling';
+
+export type BootstrapErrorCode =
+  | DatabaseLifecycleErrorCode
+  | 'BOOTSTRAP_MIGRATION_FAILED'
+  | 'BOOTSTRAP_INVARIANT_FAILED'
+  | 'BOOTSTRAP_DATA_INVALID'
+  | 'STARTUP_RECONCILIATION_FAILED';
 
 export type BootstrapProjection =
   | { readonly status: 'idle' }
-  | { readonly status: 'booting' }
+  | { readonly status: 'booting'; readonly phase: BootstrapPhase }
   | {
       readonly status: 'ready';
-      readonly foundation: FoundationSnapshot;
+      readonly snapshot: BootstrapDurableSnapshot;
       readonly lifecycleState: AppLifecycleState;
     }
   | {
       readonly status: 'recovery';
-      readonly error: {
-        readonly code: 'FOUNDATION_BOOT_FAILED' | DatabaseLifecycleErrorCode;
-      };
-    };
+      readonly phase: BootstrapPhase;
+      readonly error: { readonly code: BootstrapErrorCode };
+    }
+  | { readonly status: 'disposed' };
 
 export interface MobileBootstrapDependencies {
   readonly appLifecycle: AppLifecyclePort;
-  readonly createFoundationSnapshot: CreateFoundationSnapshotUseCase;
+  readonly bootstrapData: BootstrapDataPort;
+  readonly bootstrapVerifier: BootstrapVerifierPort;
   readonly databaseLifecycle: DatabaseLifecyclePort;
+  readonly migration: MigrationPort;
+  readonly readiness: ReadinessController;
+  readonly startupReconciliation: StartupReconciliationPort;
 }
 
 export class MobileBootstrap {
@@ -37,8 +58,11 @@ export class MobileBootstrap {
   private bootPromise: Promise<void> | undefined;
   private disposePromise: Promise<void> | undefined;
   private generation = 0;
+  private lifecycleState: AppLifecycleState = 'background';
 
-  constructor(private readonly dependencies: MobileBootstrapDependencies) {}
+  constructor(private readonly dependencies: MobileBootstrapDependencies) {
+    this.dependencies.readiness.close();
+  }
 
   getSnapshot = (): BootstrapProjection => this.projection;
 
@@ -57,8 +81,9 @@ export class MobileBootstrap {
     }
 
     const generation = ++this.generation;
-    this.updateProjection({ status: 'booting' });
-    const operation = this.runBoot(generation);
+    this.dependencies.readiness.close();
+    this.updateProjection({ status: 'booting', phase: 'opening' });
+    const operation = this.runAttempt(generation);
     this.bootPromise = operation;
 
     const clearBootPromise = () => {
@@ -77,90 +102,127 @@ export class MobileBootstrap {
     }
 
     this.generation += 1;
+    this.dependencies.readiness.close();
+    this.updateProjection({ status: 'disposed' });
     const operation = this.runDispose();
     this.disposePromise = operation;
-
-    const clearDisposePromise = () => {
-      if (this.disposePromise === operation) {
-        this.disposePromise = undefined;
-      }
-    };
-    void operation.then(clearDisposePromise, clearDisposePromise);
-
     return operation;
   }
 
-  private async runBoot(generation: number): Promise<void> {
-    let databaseResult;
-
+  private async runAttempt(generation: number): Promise<void> {
     try {
-      databaseResult = await this.dependencies.databaseLifecycle.open();
-    } catch {
-      if (generation === this.generation) {
-        this.updateProjection({
-          status: 'recovery',
-          error: { code: 'DATABASE_OPEN_FAILED' },
-        });
-      }
-      return;
-    }
-
-    if (generation !== this.generation) {
-      return;
-    }
-
-    if (!databaseResult.ok) {
-      this.updateProjection({
-        status: 'recovery',
-        error: { code: databaseResult.error.code },
-      });
-      return;
-    }
-
-    try {
-      const result = this.dependencies.createFoundationSnapshot.execute();
-
-      if (!result.ok) {
-        this.updateProjection({
-          status: 'recovery',
-          error: { code: 'FOUNDATION_BOOT_FAILED' },
-        });
+      const databaseResult = await this.dependencies.databaseLifecycle.open();
+      if (!this.isCurrent(generation)) return;
+      if (!databaseResult.ok) {
+        this.recover('opening', databaseResult.error.code);
         return;
       }
 
+      this.updateProjection({ status: 'booting', phase: 'migrating' });
+      const migrationResult = await this.dependencies.migration.migrate();
+      if (!this.isCurrent(generation)) return;
+      if (!migrationResult.ok) {
+        this.recover('migrating', 'BOOTSTRAP_MIGRATION_FAILED');
+        return;
+      }
+
+      this.updateProjection({ status: 'booting', phase: 'verifying' });
+      const verificationResult =
+        await this.dependencies.bootstrapVerifier.verify();
+      if (!this.isCurrent(generation)) return;
+      if (!verificationResult.ok) {
+        this.recover('verifying', verificationResult.error.code);
+        return;
+      }
+
+      this.updateProjection({ status: 'booting', phase: 'hydrating' });
+      const dataResult = await this.dependencies.bootstrapData.read();
+      if (!this.isCurrent(generation)) return;
+      if (!dataResult.ok) {
+        this.recover('hydrating', dataResult.error.code);
+        return;
+      }
+
+      this.updateProjection({ status: 'booting', phase: 'reconciling' });
+      this.startLifecycleSubscription();
+      const reconciliationResult =
+        await this.dependencies.startupReconciliation.reconcileAtStartup();
+      if (!this.isCurrent(generation)) return;
+      if (!reconciliationResult.ok) {
+        this.recover('reconciling', reconciliationResult.error.code);
+        return;
+      }
+
+      this.dependencies.readiness.open();
       this.updateProjection({
         status: 'ready',
-        foundation: result.value,
-        lifecycleState: 'active',
-      });
-
-      this.unsubscribeLifecycle = this.dependencies.appLifecycle.subscribe((lifecycleState) => {
-        const current = this.projection;
-
-        if (current.status === 'ready') {
-          this.updateProjection({ ...current, lifecycleState });
-        }
+        snapshot: dataResult.value,
+        lifecycleState: this.lifecycleState,
       });
     } catch {
-      this.updateProjection({
-        status: 'recovery',
-        error: { code: 'FOUNDATION_BOOT_FAILED' },
-      });
+      if (!this.isCurrent(generation)) return;
+      const current = this.projection;
+      const phase = current.status === 'booting' ? current.phase : 'opening';
+      this.recover(phase, this.errorCodeFor(phase));
     }
   }
 
+  private startLifecycleSubscription(): void {
+    if (this.unsubscribeLifecycle !== undefined) {
+      return;
+    }
+
+    this.lifecycleState = this.dependencies.appLifecycle.getCurrentState();
+    this.unsubscribeLifecycle = this.dependencies.appLifecycle.subscribe((state) => {
+      this.lifecycleState = state;
+      const current = this.projection;
+      if (current.status === 'ready') {
+        this.updateProjection({ ...current, lifecycleState: state });
+      }
+    });
+  }
+
   private async runDispose(): Promise<void> {
-    await this.bootPromise;
+    try {
+      await this.bootPromise;
+    } catch {
+      // Bootstrap maps provider failures to recovery; cleanup still proceeds.
+    }
+
     this.unsubscribeLifecycle?.();
     this.unsubscribeLifecycle = undefined;
     try {
       await this.dependencies.databaseLifecycle.close();
     } catch {
-      // Dispose must not leak a raw native/provider exception into React cleanup.
+      // React cleanup must not receive raw native/provider exceptions.
     } finally {
       this.listeners.clear();
-      this.projection = { status: 'idle' };
+      this.projection = { status: 'disposed' };
     }
+  }
+
+  private recover(phase: BootstrapPhase, code: BootstrapErrorCode): void {
+    this.dependencies.readiness.close();
+    this.updateProjection({ status: 'recovery', phase, error: { code } });
+  }
+
+  private errorCodeFor(phase: BootstrapPhase): BootstrapErrorCode {
+    switch (phase) {
+      case 'opening':
+        return 'DATABASE_OPEN_FAILED';
+      case 'migrating':
+        return 'BOOTSTRAP_MIGRATION_FAILED';
+      case 'verifying':
+        return 'BOOTSTRAP_INVARIANT_FAILED';
+      case 'hydrating':
+        return 'BOOTSTRAP_DATA_INVALID';
+      case 'reconciling':
+        return 'STARTUP_RECONCILIATION_FAILED';
+    }
+  }
+
+  private isCurrent(generation: number): boolean {
+    return generation === this.generation;
   }
 
   private updateProjection(projection: BootstrapProjection): void {

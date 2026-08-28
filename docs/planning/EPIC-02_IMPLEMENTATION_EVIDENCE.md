@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_02_IMPLEMENTATION_EVIDENCE
 title: PixelDoro Mobile MVP — EPIC-02 Implementation Evidence
-version: 0.6.0
+version: 0.7.0
 status: IN_PROGRESS
 last_updated: 2026-08-28
 owner: Dũng Lư
@@ -14,6 +14,7 @@ baseline: ./EPIC-02_USER_STORIES.md
 us_02_01_plan: ./US-02-01_IMPLEMENTATION_PLAN.md
 us_02_02_plan: ./US-02-02_IMPLEMENTATION_PLAN.md
 us_02_03_plan: ./US-02-03_IMPLEMENTATION_PLAN.md
+us_02_04_plan: ./US-02-04_IMPLEMENTATION_PLAN.md
 ---
 
 # PixelDoro Mobile MVP — EPIC-02 Implementation Evidence
@@ -34,6 +35,11 @@ SHA này trước documentation closeout ngày 2026-08-28.
 probe đều pass đủ `10/10` assertions trên implementation commit
 `1b6a0427b3db20f4536a2b251101fa0e32b5c0ea`; repository `HEAD` đã được đối chiếu đúng SHA
 này khi tiếp nhận report ngày 2026-08-28.
+
+`US-02-04 — Safe Bootstrap và Readiness Barrier` đã implement xong production slice và host
+quality/fault matrix. Trạng thái hiện tại là `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`;
+chưa `DONE`, chưa mở dependency gate `US-02-05/07` và final implementation SHA vẫn chờ owner
+commit trước khi chạy exact native probe.
 
 Không có migration runner/history/checksum, production bootstrap migration,
 Timer/Session/Reward/Pet/Inventory/Settings use case, auto-reset, native/EAS build hoặc native
@@ -346,5 +352,52 @@ iOS + Android repeat vẫn thuộc `US-02-09`.
 
 **Current Story status:** `DONE`.
 
-Dependency gate `US-02-04` đã mở ở mức planning. Production bootstrap chưa được active hoặc
-implement trong closeout này.
+Dependency gate `US-02-04` đã được mở từ closeout `US-02-03`; Story hiện là active slice duy
+nhất và production bootstrap đã implement, nhưng dependency gate sau vẫn đóng tới native closeout.
+
+## 11. `US-02-04` host implementation evidence — 2026-08-28
+
+| Capability | Repository evidence | Status |
+|---|---|---|
+| Ordered durable bootstrap | `MobileBootstrap` publish phase `opening → migrating → verifying → hydrating → reconciling → ready`; failure dừng suffix | `PASS_HOST` |
+| Durable projection | Bootstrap-specific strict SQLite read adapter trả migration/install/onboarding/settings/XP/Coin/exact catalog; không Clock/ID fabricate hoặc raw row | `PASS_HOST` |
+| Physical/invariant verification | Integrity, FK, exact DDL/column/FK/history, singleton/catalog và economy receipt sums; toàn bộ read-only | `PASS_HOST` |
+| Readiness barrier | Application-owned gate reject `CORE_COMMANDS_NOT_READY` ở idle/mọi boot phase/recovery/disposed, zero callback; open sau reconcile success | `PASS_HOST` |
+| Recovery ownership | Post-open failure giữ application owner tới dispose; không repair/reseed/reset/close-reopen; stable phase/code | `PASS_HOST` |
+| Reconciliation boundary | Explicit Epic-2 no-op adapter sau hydration/trước ready, replacement note cho EPIC-03; không Session read/write | `PASS_HOST` |
+| Lifecycle ownership | Real React Native AppState current-state read + one application-scoped subscription; lifecycle chỉ cập nhật projection | `PASS_HOST` |
+| Concurrency/dispose | Exact single-flight; ready/recovery rerun no-op; dispose từng deferred phase không late-ready, unsubscribe/close once | `PASS_HOST` |
+| Presentation boundary | Existing generic loading/recovery boundary chỉ render children tại `ready`; không Retry/reset/Product route mới | `PASS_HOST` |
+| Native probe harness | Dev-only isolated `US-02-04_SAFE_BOOTSTRAP`, reopen/invariant/fingerprint/readiness/cleanup assertions + owner runbook | `IMPLEMENTED_AWAITING_NATIVE` |
+
+Automated checks dùng pinned Node.js `22.23.2` và pnpm `11.24.0`:
+
+- `pnpm quality`: `PASS`.
+  - Domain/Application/Mobile strict typecheck: `PASS`.
+  - ESLint workspace: `PASS`.
+  - Vitest: `13` files, `75` tests pass.
+  - Device harness: `PASS`, bao gồm safe-bootstrap runbook/probe contract.
+  - Architecture boundary: `11` forbidden imports rejected, `3` valid imports accepted.
+  - Repository hygiene/checksum: `PASS`, một immutable production migration.
+- `pnpm --filter @pixeldoro/mobile test`: `PASS`, `9` files / `66` tests.
+- Expo public config resolve: `PASS`; SDK `57.0.0`, runtime `appVersion`, `expo-sqlite` và
+  application ID `com.dragonc92team.pixeldoro` giữ nguyên.
+- `git diff --check`: `PASS`.
+- Không chạy native/EAS build, prebuild hoặc tạo native artifact.
+
+Host evidence cover exact listener/call trace; returned/thrown failure ở cả năm phase; suffix
+stop; command gate; lifecycle buffering; concurrent/repeated boot; deferred dispose từng phase;
+schema/FK/catalog/economy/singleton mismatch; sanitized provider error; no-write/fingerprint
+preservation và immutable durable snapshot.
+
+## 12. `US-02-04` native runtime acceptance — pending owner
+
+Owner runbook:
+[`apps/mobile/test/device/safe-bootstrap-smoke.md`](../../apps/mobile/test/device/safe-bootstrap-smoke.md).
+
+Required report prefix `[PixelDoro][SafeBootstrapProbe]`, probe
+`US-02-04_SAFE_BOOTSTRAP`, `passed: true`, exact application ID/final commit SHA và đủ `9/9`
+named assertions. Cho tới khi report này được cung cấp và đối chiếu với final implementation
+commit, Story giữ `IN_PROGRESS` / `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
+
+**Current Story status:** `IN_PROGRESS`; host implementation complete, native evidence pending.
