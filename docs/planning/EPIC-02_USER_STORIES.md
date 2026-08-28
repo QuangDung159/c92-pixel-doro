@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_02_USER_STORIES
 title: PixelDoro Mobile MVP — EPIC-02 User Stories
-version: 0.9.0
+version: 1.0.0
 status: READY_FOR_REVIEW
 last_updated: 2026-08-28
 owner: Dũng Lư
@@ -370,6 +370,12 @@ contribution colors, dynamic catalog, cloud/sync field và future nullable place
 ---
 
 ### US-02-03 — Forward-only Migration Safety
+
+**Implementation plan:**
+[`US-02-03_IMPLEMENTATION_PLAN.md`](./US-02-03_IMPLEMENTATION_PLAN.md) `0.1.0` đang
+`READY_FOR_REVIEW`; implementation `NOT_STARTED`. `EPIC02-INPUT-02` cùng
+`US0203-CONFIRM-01`–`03` vẫn chờ owner duyệt trước khi chuyển
+`READY_FOR_IMPLEMENTATION`.
 
 **Story statement**
 
@@ -879,10 +885,10 @@ Một Story chỉ được đánh dấu `[x]` khi:
   foundation và đã có explicit exclusion.
 - **Story breakdown:** `READY_FOR_REVIEW`, chưa tự coi là owner-approved baseline.
 - **Implementation readiness:** `US-02-01` và `US-02-02` đã `DONE`. Exact native report của
-  `US-02-02` pass trên implementation commit đã đối chiếu; dependency gate sang `US-02-03`
-  mở ở mức ready-for-planning. `EPIC02-INPUT-03` đã `RESOLVED`; `EPIC02-INPUT-02` vẫn chờ
-  owner confirmation trong plan riêng của `US-02-03`. Toàn Story breakdown vẫn
-  `READY_FOR_REVIEW`; Story sau chưa tự active.
+  `US-02-02` pass trên implementation commit đã đối chiếu. Plan `US-02-03` `0.1.0` đã được
+  tạo ở trạng thái `READY_FOR_REVIEW` / implementation `NOT_STARTED`; dependency gate đã mở
+  nhưng `EPIC02-INPUT-02` và ba confirmation kỹ thuật của plan vẫn chờ owner duyệt. Toàn
+  Story breakdown vẫn `READY_FOR_REVIEW`; `US-02-03` chưa tự active.
 
 ### 8.2. Điều kiện chuyển `READY_FOR_IMPLEMENTATION`
 
@@ -907,6 +913,14 @@ Một Story chỉ được đánh dấu `[x]` khi:
 - [ ] Dũng Lư review và phê duyệt Story breakdown trước khi chuyển status sang `APPROVED`/`READY_FOR_IMPLEMENTATION`.
 
 ## 10. Change log
+
+### 1.0.0 — 2026-08-28
+
+- Link implementation plan `US-02-03` `0.1.0` và ghi trạng thái `READY_FOR_REVIEW` /
+  `NOT_STARTED`.
+- Ghi rõ ba owner confirmation đang chờ cho canonical checksum, per-migration transaction
+  checkpoint và no-auto-adoption behavior; không tự resolve `EPIC02-INPUT-02`.
+- Giữ production implementation, bootstrap wiring và native/EAS build ngoài planning turn.
 
 ### 0.9.0 — 2026-08-28
 
