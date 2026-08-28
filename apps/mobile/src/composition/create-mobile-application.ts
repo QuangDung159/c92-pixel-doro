@@ -48,10 +48,18 @@ export const createMobileApplication = (
     typeof __DEV__ !== "undefined" &&
     __DEV__ &&
     process.env.EXPO_PUBLIC_INITIAL_SCHEMA_PROBE === "1";
+  const forwardMigrationProbeEnabled =
+    typeof __DEV__ !== "undefined" &&
+    __DEV__ &&
+    process.env.EXPO_PUBLIC_FORWARD_MIGRATION_PROBE === "1";
   let probePromise: Promise<void> | undefined;
 
   const runProbeIfEnabled = (): Promise<void> => {
-    if (!sqliteKernelProbeEnabled && !initialSchemaProbeEnabled) {
+    if (
+      !sqliteKernelProbeEnabled &&
+      !initialSchemaProbeEnabled &&
+      !forwardMigrationProbeEnabled
+    ) {
       return Promise.resolve();
     }
 
@@ -72,6 +80,18 @@ export const createMobileApplication = (
           options.sqliteDriver ?? new ExpoSQLiteDriver(),
         );
         console.info("[PixelDoro][InitialSchemaProbe]", JSON.stringify(report));
+      }
+
+      if (forwardMigrationProbeEnabled) {
+        const { runForwardMigrationProbe } =
+          await import("./diagnostics/run-forward-migration-probe");
+        const report = await runForwardMigrationProbe(
+          options.sqliteDriver ?? new ExpoSQLiteDriver(),
+        );
+        console.info(
+          "[PixelDoro][ForwardMigrationProbe]",
+          JSON.stringify(report),
+        );
       }
     })();
     return probePromise;

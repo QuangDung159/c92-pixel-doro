@@ -13,4 +13,12 @@ export {
   type DatabaseLifecycleErrorCode,
   type DatabaseLifecyclePort,
 } from './ports/database-lifecycle.port';
+export {
+  migrationError,
+  type MigrationError,
+  type MigrationErrorCode,
+  type MigrationPort,
+  type MigrationResult,
+  type MigrationRunError,
+} from './ports/migration.port';
 export type { MobileApplicationFacade } from './mobile-application.facade';

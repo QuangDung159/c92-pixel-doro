@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_02_USER_STORIES
 title: PixelDoro Mobile MVP — EPIC-02 User Stories
-version: 1.0.0
+version: 1.3.0
 status: READY_FOR_REVIEW
 last_updated: 2026-08-28
 owner: Dũng Lư
@@ -206,7 +206,7 @@ Các input này là technical implementation decision, không phải Product dec
 | ID | Input cần resolve | Recommendation hiện tại | Story gate | Owner |
 |---|---|---|---|---|
 | `EPIC02-INPUT-01` | `RESOLVED 2026-08-27` — authoritative strategy để chạy exact `expo-sqlite` migration/repository integration tests ngoài/ trong app runtime. | Dùng host unit tests với fake transaction/driver cho orchestration và Expo runtime integration harness cho exact SQLite behavior; không thêm SQLite driver thứ hai nếu chưa có compatibility need được chứng minh. | Đã đạt cho `US-02-01`; device half được audit ở `US-02-09`. | Dũng Lư — Tech Lead |
-| `EPIC02-INPUT-02` | Canonical checksum input/algorithm cho immutable migration artifact. | Dùng deterministic SHA-256 trên canonical migration descriptor/SQL payload được commit; test recompute checksum và fail khi released payload bị sửa. Không checksum runtime-transpiled bundle hoặc timestamp biến đổi. | Trước khi đóng `US-02-03`. | Dũng Lư — Tech Lead |
+| `EPIC02-INPUT-02` | `RESOLVED 2026-08-28` — canonical checksum input/algorithm cho immutable migration artifact. | SHA-256 lowercase trên canonical ordered migration-owned source set, UTF-8/LF và length-prefixed relative path/content; append-only lock; host recompute, runtime chỉ so committed checksum. Với `001`, source set gồm migration file và schema manifest. | Đã đạt cho checksum contract của `US-02-03`; implementation vẫn chờ hai confirmation khác trong plan. | Dũng Lư — Tech Lead |
 | `EPIC02-INPUT-03` | `RESOLVED 2026-08-28` — enforce immutable reward/purchase receipt trong normal path nhưng vẫn cho confirmed reset/approved migration delete theo explicit order. | Trigger chặn `UPDATE`; normal repository không expose update/delete; chỉ private maintenance executor hoặc approved migration có delete path. Không thêm durable bypass flag/table. | Đã đạt cho `US-02-02`; resolution là baseline cho `US-02-08`. | Dũng Lư — Tech Lead |
 
 Exact database filename, adapter class name, test command name và typed error-code
@@ -372,10 +372,10 @@ contribution colors, dynamic catalog, cloud/sync field và future nullable place
 ### US-02-03 — Forward-only Migration Safety
 
 **Implementation plan:**
-[`US-02-03_IMPLEMENTATION_PLAN.md`](./US-02-03_IMPLEMENTATION_PLAN.md) `0.1.0` đang
-`READY_FOR_REVIEW`; implementation `NOT_STARTED`. `EPIC02-INPUT-02` cùng
-`US0203-CONFIRM-01`–`03` vẫn chờ owner duyệt trước khi chuyển
-`READY_FOR_IMPLEMENTATION`.
+[`US-02-03_IMPLEMENTATION_PLAN.md`](./US-02-03_IMPLEMENTATION_PLAN.md) `0.4.0` đang
+`READY_FOR_IMPLEMENTATION`; implementation `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
+`EPIC02-INPUT-02` và toàn bộ
+`US0203-CONFIRM-01`–`03` đã được owner duyệt ngày 2026-08-28.
 
 **Story statement**
 
@@ -886,15 +886,16 @@ Một Story chỉ được đánh dấu `[x]` khi:
 - **Story breakdown:** `READY_FOR_REVIEW`, chưa tự coi là owner-approved baseline.
 - **Implementation readiness:** `US-02-01` và `US-02-02` đã `DONE`. Exact native report của
   `US-02-02` pass trên implementation commit đã đối chiếu. Plan `US-02-03` `0.1.0` đã được
-  tạo ở trạng thái `READY_FOR_REVIEW` / implementation `NOT_STARTED`; dependency gate đã mở
-  nhưng `EPIC02-INPUT-02` và ba confirmation kỹ thuật của plan vẫn chờ owner duyệt. Toàn
-  Story breakdown vẫn `READY_FOR_REVIEW`; `US-02-03` chưa tự active.
+  chuyển `0.4.0 READY_FOR_IMPLEMENTATION` / implementation
+  `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`; host quality/evidence đã pass, dependency gate
+  và toàn bộ ba confirmation kỹ thuật đã đạt. Production bootstrap `US-02-04` vẫn chưa active
+  cho tới khi exact owner native report được review.
 
 ### 8.2. Điều kiện chuyển `READY_FOR_IMPLEMENTATION`
 
 1. Dũng Lư review/approve chín Story, block graph và one-active-Story execution order.
 2. [Đã đạt 2026-08-27] Xác nhận `EPIC02-INPUT-01` trước khi khóa test task của `US-02-01`.
-3. Xác nhận `EPIC02-INPUT-02` trước khi khóa migration runner acceptance.
+3. [Đã đạt 2026-08-28] Xác nhận `EPIC02-INPUT-02` trước khi khóa migration runner acceptance.
 4. [Đã đạt 2026-08-28] Xác nhận `EPIC02-INPUT-03` trước khi khóa schema trigger/reset maintenance design.
 5. Tạo Task IDs theo Story; không cần estimate deadline để chuyển readiness.
 
@@ -913,6 +914,29 @@ Một Story chỉ được đánh dấu `[x]` khi:
 - [ ] Dũng Lư review và phê duyệt Story breakdown trước khi chuyển status sang `APPROVED`/`READY_FOR_IMPLEMENTATION`.
 
 ## 10. Change log
+
+### 1.3.0 — 2026-08-28
+
+- Ghi nhận `US-02-03` đã implement checksum/registry/history/transaction runner, host matrix
+  và dev-only native probe/runbook.
+- Host `pnpm quality` pass `11` files / `53` tests; Story chuyển
+  `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
+- Giữ acceptance checklist và `US-02-04` block tới khi owner native report trên exact final
+  implementation SHA được review.
+
+### 1.2.0 — 2026-08-28
+
+- Ghi nhận owner duyệt `US0203-CONFIRM-02`/`03`, hoàn tất technical decision gate.
+- Chuyển plan `US-02-03` `0.3.0` sang `READY_FOR_IMPLEMENTATION` và implementation
+  `IN_PROGRESS`.
+- Giữ `US-02-04` cùng production bootstrap ngoài active Story.
+
+### 1.1.0 — 2026-08-28
+
+- Ghi nhận owner duyệt `US0203-CONFIRM-01` và resolve `EPIC02-INPUT-02`.
+- Khóa canonical SHA-256 source-set contract và append-only checksum lock cho migration.
+- Giữ `US0203-CONFIRM-02`/`03` chờ owner; `US-02-03` chưa
+  `READY_FOR_IMPLEMENTATION`.
 
 ### 1.0.0 — 2026-08-28
 

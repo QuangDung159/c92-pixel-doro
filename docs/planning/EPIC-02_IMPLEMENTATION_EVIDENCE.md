@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_02_IMPLEMENTATION_EVIDENCE
 title: PixelDoro Mobile MVP — EPIC-02 Implementation Evidence
-version: 0.4.0
+version: 0.5.0
 status: IN_PROGRESS
 last_updated: 2026-08-28
 owner: Dũng Lư
@@ -13,6 +13,7 @@ scope:
 baseline: ./EPIC-02_USER_STORIES.md
 us_02_01_plan: ./US-02-01_IMPLEMENTATION_PLAN.md
 us_02_02_plan: ./US-02-02_IMPLEMENTATION_PLAN.md
+us_02_03_plan: ./US-02-03_IMPLEMENTATION_PLAN.md
 ---
 
 # PixelDoro Mobile MVP — EPIC-02 Implementation Evidence
@@ -28,6 +29,12 @@ này khi tiếp nhận report ngày 2026-08-28.
 owner iOS native runtime report `passed: true` đủ `11/11` assertions trên implementation
 commit `4996c7d6529d0a1578e2d052bdbaaf858d9e1a1d`; repository `HEAD` đã được đối chiếu đúng
 SHA này trước documentation closeout ngày 2026-08-28.
+
+`US-02-03 — Forward-only Migration Safety` đã implement registry/checksum lock, history
+preflight, per-migration transaction runner, typed compatibility failures, rollback/retry host
+matrix và dev-only exact Expo probe. Automated evidence pass; Story đang
+`IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME` và chưa `DONE` cho tới khi owner report
+`US-02-03_FORWARD_MIGRATION passed: true` trên exact final implementation SHA.
 
 Không có migration runner/history/checksum, production bootstrap migration,
 Timer/Session/Reward/Pet/Inventory/Settings use case, auto-reset, native/EAS build hoặc native
@@ -256,5 +263,61 @@ iOS + Android repeat vẫn thuộc `US-02-09`.
 
 **Current Story status:** `DONE`.
 
-Dependency gate sang `US-02-03` đã mở ở mức ready-for-planning. Story sau vẫn `NOT_STARTED`;
-`EPIC02-INPUT-02` chưa được resolve và không có Story thứ hai tự active trong closeout này.
+Dependency gate sang `US-02-03` đã mở và toàn bộ `US0203-CONFIRM-01`–`03` đã được owner
+duyệt ngày 2026-08-28. `US-02-03` là Story active duy nhất; production bootstrap `US-02-04`
+chưa active.
+
+## 9. `US-02-03` host implementation evidence — 2026-08-28
+
+| Capability | Repository evidence | Status |
+|---|---|---|
+| Immutable production registry | Registry chỉ chứa `001 initial-schema`; strict version/name/filename/checksum validation | `PASS_HOST` |
+| Canonical checksum lock | SHA-256 lowercase trên ordered source set gồm migration `001` và schema manifest; UTF-8/LF + length-prefixed path/content | `PASS_HOST` |
+| Drift quality gate | Repository validator recompute checksum; positive, source-tamper và lock-tamper tests | `PASS_HOST` |
+| History preflight | Empty/history-present classification; contiguous prefix, name/checksum/gap/unknown/newer validation trước write | `PASS_HOST` |
+| No auto-adoption | Non-empty DB thiếu/rỗng history fail typed và giữ fingerprint; không backfill/reset/delete/recreate | `PASS_HOST` |
+| Transactional apply/history | Mỗi pending version chạy `apply → validation → history` trong cùng `BEGIN IMMEDIATE` transaction | `PASS_HOST` |
+| Rollback/retry | Failed apply/history insert rollback current version; durable predecessor retained; Retry commit đúng một lần | `PASS_HOST` |
+| Latest idempotency | Latest history trả no-op; không gọi Clock/ID, artifact hoặc write transaction | `PASS_HOST` |
+| Typed boundary | Application-owned result/error; transaction technical error được giữ typed; không raw SQL/provider message ra ngoài | `PASS_HOST` |
+| Native probe harness | Isolated exact DBs, production `001`, synthetic upgrade/failure, reopen và cleanup report | `IMPLEMENTED_AWAITING_OWNER` |
+| Scope boundary | Không production bootstrap/repository/Product behavior, production `002`, reset hoặc native artifact | `PASS` |
+
+Automated checks dùng Node.js `22.23.2` và pnpm `11.24.0`:
+
+- `pnpm quality`: `PASS`.
+  - Domain/Application/Mobile strict typecheck: `PASS`.
+  - ESLint workspace: `PASS`.
+  - Vitest: `11` files, `53` tests pass.
+  - Device-harness validation: `PASS`.
+  - Architecture boundary validator: `11` forbidden imports rejected, `3` valid imports accepted.
+  - Repository hygiene/checksum validator: `PASS`, một immutable production migration.
+- `git diff --check`: `PASS`.
+- Expo public config resolve: `PASS`; SDK `57.0.0`, runtime policy `appVersion` và
+  `expo-sqlite` plugin hiện diện.
+- Không chạy native/EAS build hoặc tạo native artifact.
+
+Host failure matrix gồm invalid/empty/gap/duplicate registry, non-empty missing history,
+empty history cạnh product schema, history gap/name/checksum drift, newer schema, unreadable
+history, apply failure và history-write failure. Failure cases assert no unsafe write hoặc exact
+before/after fingerprint; retry bắt đầu từ durable prefix còn hợp lệ.
+
+## 10. `US-02-03` native runtime acceptance — pending owner
+
+Owner cần chạy runbook
+[`apps/mobile/test/device/forward-migration-smoke.md`](../../apps/mobile/test/device/forward-migration-smoke.md)
+trên exact final implementation commit bằng existing development build. Agent không chạy
+native/EAS build.
+
+Required report:
+
+- `probe: "US-02-03_FORWARD_MIGRATION"`.
+- `passed: true`.
+- `commitSha` khớp `git rev-parse HEAD` sau khi commit implementation.
+- Đủ `10/10` named assertions trong runbook, gồm empty/latest, exact history, incompatible
+  history, rollback/retry, reopen và exact probe cleanup.
+
+**Current Story status:** `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
+
+`US-02-04` tiếp tục bị block cho tới khi native report được review và `US-02-03` chuyển
+`DONE`.

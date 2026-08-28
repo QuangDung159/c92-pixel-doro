@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_02_03_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-02-03 Implementation Plan
-version: 0.1.0
-status: READY_FOR_REVIEW
-implementation_status: NOT_STARTED
+version: 0.4.0
+status: READY_FOR_IMPLEMENTATION
+implementation_status: IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME
 last_updated: 2026-08-28
 owner: Dũng Lư
 reviewer: Dũng Lư
@@ -49,11 +49,12 @@ trên commit `4996c7d6529d0a1578e2d052bdbaaf858d9e1a1d`.
 **Blocks:** `US-02-04`. Production bootstrap không được dùng database trước khi migration
 history/compatibility/rollback contract có evidence.
 
-**Planning status:** `READY_FOR_REVIEW`. **Implementation status:** `NOT_STARTED`.
+**Planning status:** `READY_FOR_IMPLEMENTATION`. **Implementation status:**
+`IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
 
-`EPIC02-INPUT-02` vẫn `OPEN`. Plan ghi proposal exact ở mục 3 nhưng không tự coi proposal là
-owner decision. Không bắt đầu production implementation trước khi các confirmation mục 13
-được Dũng Lư duyệt.
+`EPIC02-INPUT-02` / `US0203-CONFIRM-01` đã được Dũng Lư duyệt ngày 2026-08-28.
+`US0203-CONFIRM-02` và `03` đã được Dũng Lư duyệt ngày 2026-08-28. Toàn bộ technical decision
+gate đã đóng; production implementation được phép bắt đầu theo thứ tự `T01 → T10`.
 
 ### 0.1. Readiness gate hiện tại
 
@@ -63,10 +64,10 @@ owner decision. Không bắt đầu production implementation trước khi các 
 - [x] Ranh giới artifact `001` với runner/history/checksum đã được owner duyệt ở
   `US0202-CONFIRM-02`.
 - [x] Không có migration runner hoặc production bootstrap migration đang active song song.
-- [ ] `EPIC02-INPUT-02` / `US0203-CONFIRM-01` được owner resolve.
-- [ ] Transaction granularity/retry semantics ở `US0203-CONFIRM-02` được owner duyệt.
-- [ ] Missing-history/no-adoption behavior ở `US0203-CONFIRM-03` được owner duyệt.
-- [ ] Plan chuyển `READY_FOR_IMPLEMENTATION`.
+- [x] `EPIC02-INPUT-02` / `US0203-CONFIRM-01` được owner resolve ngày 2026-08-28.
+- [x] Transaction granularity/retry semantics ở `US0203-CONFIRM-02` được owner duyệt ngày 2026-08-28.
+- [x] Missing-history/no-adoption behavior ở `US0203-CONFIRM-03` được owner duyệt ngày 2026-08-28.
+- [x] Plan chuyển `READY_FOR_IMPLEMENTATION`.
 
 ## 1. Baseline và current-state review
 
@@ -176,8 +177,8 @@ owner decision. Không bắt đầu production implementation trước khi các 
 9. Lock entry đã release là append-only. Future migration chỉ append entry; sửa existing
    checksum/source set cần explicit migration incident review, không phải “update snapshot”.
 
-**Status:** `PENDING_OWNER` — `US0203-CONFIRM-01`; đây là resolution trực tiếp của
-`EPIC02-INPUT-02` nếu được duyệt.
+**Status:** `APPROVED 2026-08-28` — `US0203-CONFIRM-01`; đây là resolution trực tiếp của
+`EPIC02-INPUT-02`.
 
 ### TD-02-03-B — Transaction granularity và retry checkpoint
 
@@ -199,7 +200,7 @@ Nếu `001` commit và synthetic `002` fail, database giữ valid version `001`;
 `002` rollback. Retry đọc durable history `001` và bắt đầu lại ở `002`. Không rollback/downgrade
 `001`, không chạy `003`, không ghi row giả.
 
-**Status:** `PENDING_OWNER` — `US0203-CONFIRM-02`.
+**Status:** `APPROVED 2026-08-28` — `US0203-CONFIRM-02`.
 
 ### TD-02-03-C — Missing history không được auto-adopt
 
@@ -219,7 +220,7 @@ Các state sau fail typed và không mutate:
 Không infer version từ table names, không auto-insert missing history, không reseed/upsert,
 không rename/delete database.
 
-**Status:** `PENDING_OWNER` — `US0203-CONFIRM-03`.
+**Status:** `APPROVED 2026-08-28` — `US0203-CONFIRM-03`.
 
 ### TD-02-03-D — One owner, no nested transaction
 
@@ -384,10 +385,10 @@ Chỉ một Task active tại một thời điểm. Không implement `US-02-04` 
 
 **Outcome:** Checksum, transaction checkpoint và no-adoption behavior được duyệt.
 
-- [ ] Duyệt `US0203-CONFIRM-01` và resolve `EPIC02-INPUT-02`.
-- [ ] Duyệt `US0203-CONFIRM-02` one-transaction-per-migration.
-- [ ] Duyệt `US0203-CONFIRM-03` missing-history fail/no auto-adopt.
-- [ ] Chuyển plan `READY_FOR_IMPLEMENTATION`; giữ `US-02-04 NOT_STARTED`.
+- [x] Duyệt `US0203-CONFIRM-01` và resolve `EPIC02-INPUT-02` ngày 2026-08-28.
+- [x] Duyệt `US0203-CONFIRM-02` one-transaction-per-migration ngày 2026-08-28.
+- [x] Duyệt `US0203-CONFIRM-03` missing-history fail/no auto-adopt ngày 2026-08-28.
+- [x] Chuyển plan `READY_FOR_IMPLEMENTATION`; giữ `US-02-04 NOT_STARTED`.
 
 **Blocks:** mọi implementation Task.
 
@@ -395,12 +396,12 @@ Chỉ một Task active tại một thời điểm. Không implement `US-02-04` 
 
 **Outcome:** Exact contract có manifest/test mapping trước khi refactor artifact `001`.
 
-- [ ] Define descriptor/result/error types và exact registry invariants.
-- [ ] Define lock manifest schema và canonical byte-stream format.
-- [ ] List exact transitive source set của `001`.
-- [ ] Freeze database classification/history state matrix.
-- [ ] Map every invalid state tới one stable error code và zero-write expectation.
-- [ ] Audit no Product `OPEN`/future schema field trong descriptor/test fixture.
+- [x] Define descriptor/result/error types và exact registry invariants.
+- [x] Define lock manifest schema và canonical byte-stream format.
+- [x] List exact transitive source set của `001`.
+- [x] Freeze database classification/history state matrix.
+- [x] Map every invalid state tới one stable error code và zero-write expectation.
+- [x] Audit no Product `OPEN`/future schema field trong descriptor/test fixture.
 
 **Blocks:** `T02`, `T03`, `T04`, `T07`.
 
@@ -408,13 +409,13 @@ Chỉ một Task active tại một thời điểm. Không implement `US-02-04` 
 
 **Outcome:** Released migration drift fail deterministic trong repository quality.
 
-- [ ] Add append-only migration lock manifest với exact `001` entry.
-- [ ] Add Node SHA-256 verifier dùng canonical source-set algorithm đã duyệt.
-- [ ] Validate filename/version/name/source path/checksum format.
-- [ ] Fail missing/unlocked production migration và unexpected runtime migration file.
-- [ ] Add positive recompute test và tampered source/checksum expected failures.
-- [ ] Wire verifier vào `check:repository` hoặc root `quality` without network/native artifact.
-- [ ] Document review rule: existing lock rows không được update sau release.
+- [x] Add append-only migration lock manifest với exact `001` entry.
+- [x] Add Node SHA-256 verifier dùng canonical source-set algorithm đã duyệt.
+- [x] Validate filename/version/name/source path/checksum format.
+- [x] Fail missing/unlocked production migration và unexpected runtime migration file.
+- [x] Add positive recompute test và tampered source/checksum expected failures.
+- [x] Wire verifier vào `check:repository` hoặc root `quality` without network/native artifact.
+- [x] Document review rule: existing lock rows không được update sau release.
 
 **Blocks:** `T03`, `T08`, `T10`.
 
@@ -422,13 +423,13 @@ Chỉ một Task active tại một thời điểm. Không implement `US-02-04` 
 
 **Outcome:** Runner consume exact artifact mà không duplicate DDL/seed hoặc nested transaction.
 
-- [ ] Preserve exact schema/seed behavior đã pass `US-02-02`.
-- [ ] Expose descriptor apply/context seam phù hợp registry.
-- [ ] Import checksum/name/path từ exact lock/registry contract.
-- [ ] Ensure `001` apply runs qua supplied executor, không gọi transaction wrapper.
-- [ ] Keep standalone `applyInitialSchema` only if diagnostic/tests still need it and no duplicate logic.
-- [ ] Re-run `US-02-02` host contract tests to prove no schema regression.
-- [ ] Recompute/lock final `001` canonical checksum only after refactor review.
+- [x] Preserve exact schema/seed behavior đã pass `US-02-02`.
+- [x] Expose descriptor apply/context seam phù hợp registry.
+- [x] Import checksum/name/path từ exact lock/registry contract.
+- [x] Ensure `001` apply runs qua supplied executor, không gọi transaction wrapper.
+- [x] Keep standalone `applyInitialSchema` only if diagnostic/tests still need it and no duplicate logic.
+- [x] Re-run `US-02-02` host contract tests to prove no schema regression.
+- [x] Recompute/lock final `001` canonical checksum only after refactor review.
 
 **Blocks:** `T05`, `T06`, `T08`.
 
@@ -436,12 +437,12 @@ Chỉ một Task active tại một thời điểm. Không implement `US-02-04` 
 
 **Outcome:** Invalid database/registry fail trước mutation.
 
-- [ ] Inspect empty vs history-present vs ambiguous non-empty database.
-- [ ] Read `schema_migrations` ordered with bound/static trusted SQL internal only.
-- [ ] Validate exact contiguous prefix, name và checksum.
-- [ ] Detect gap, unknown, malformed history và newer schema.
-- [ ] Return latest/pending plan without applying anything.
-- [ ] Prove every preflight failure opens zero write transaction and preserves full DB fingerprint.
+- [x] Inspect empty vs history-present vs ambiguous non-empty database.
+- [x] Read `schema_migrations` ordered with bound/static trusted SQL internal only.
+- [x] Validate exact contiguous prefix, name và checksum.
+- [x] Detect gap, unknown, malformed history và newer schema.
+- [x] Return latest/pending plan without applying anything.
+- [x] Prove every preflight failure opens zero write transaction and preserves full DB fingerprint.
 
 **Blocks:** `T05`, `T06`, `T07`.
 
@@ -449,13 +450,13 @@ Chỉ một Task active tại một thời điểm. Không implement `US-02-04` 
 
 **Outcome:** Pending migration và its history row commit/rollback atomically.
 
-- [ ] Apply pending suffix ascending.
-- [ ] Capture Clock/ID only when required by pending descriptor.
-- [ ] Recheck expected durable predecessor inside transaction.
-- [ ] Call descriptor apply/validation then bound history insert.
-- [ ] Stop on first failure; do not run later migration.
-- [ ] Map apply/history/transaction failures typed, no raw provider detail.
-- [ ] Return minimal summary, không publish readiness/repository capability.
+- [x] Apply pending suffix ascending.
+- [x] Capture Clock/ID only when required by pending descriptor.
+- [x] Recheck expected durable predecessor inside transaction.
+- [x] Call descriptor apply/validation then bound history insert.
+- [x] Stop on first failure; do not run later migration.
+- [x] Map apply/history/transaction failures typed, no raw provider detail.
+- [x] Return minimal summary, không publish readiness/repository capability.
 
 **Blocks:** `T06`, `T07`, `T08`.
 
@@ -463,16 +464,16 @@ Chỉ một Task active tại một thời điểm. Không implement `US-02-04` 
 
 **Outcome:** Deterministic tests cover all acceptance branches without second SQLite driver.
 
-- [ ] Empty → `001` → exact one history row.
-- [ ] Latest rerun: no DDL/seed/history write; ID port not called.
-- [ ] Synthetic `001 → 002 → 003` ordered apply.
-- [ ] Duplicate registry version/name, registry gap và invalid checksum fail pre-DB.
-- [ ] Non-empty/no-history và product-schema/empty-history fail no-adoption.
-- [ ] History gap/unknown/name mismatch/checksum mismatch/newer binary failure.
-- [ ] Apply failure, validation failure, history insert failure and rollback failure mapping.
-- [ ] Synthetic `002` fail after partial writes: all `002` writes/history rollback, `001` retained.
-- [ ] Retry starts from exact durable predecessor and succeeds once; no duplicate seed/catalog.
-- [ ] Full before/after fingerprint for failure cases, không assert error message-only.
+- [x] Empty → `001` → exact one history row.
+- [x] Latest rerun: no DDL/seed/history write; ID port not called.
+- [x] Synthetic `001 → 002 → 003` ordered apply.
+- [x] Duplicate registry version/name, registry gap và invalid checksum fail pre-DB.
+- [x] Non-empty/no-history và product-schema/empty-history fail no-adoption.
+- [x] History gap/unknown/name mismatch/checksum mismatch/newer binary failure.
+- [x] Apply failure, validation failure, history insert failure and rollback failure mapping.
+- [x] Synthetic `002` fail after partial writes: all `002` writes/history rollback, `001` retained.
+- [x] Retry starts from exact durable predecessor and succeeds once; no duplicate seed/catalog.
+- [x] Full before/after fingerprint for failure cases, không assert error message-only.
 
 **Blocks:** `T07`, `T08`, `T10`.
 
@@ -480,12 +481,12 @@ Chỉ một Task active tại một thời điểm. Không implement `US-02-04` 
 
 **Outcome:** Migration capability usable by future bootstrap nhưng không leak/cross scope.
 
-- [ ] Application port/result/error không import SQL/SQLite/Node crypto.
-- [ ] SQL/registry implementation chỉ ở database Infrastructure.
-- [ ] Production source không import synthetic fixture/probe.
-- [ ] No `PRAGMA user_version`, AsyncStorage/Zustand schema truth hoặc second driver.
-- [ ] No production bootstrap/readiness/recovery/reset/repository behavior.
-- [ ] Boundary/repository checks cover new files.
+- [x] Application port/result/error không import SQL/SQLite/Node crypto.
+- [x] SQL/registry implementation chỉ ở database Infrastructure.
+- [x] Production source không import synthetic fixture/probe.
+- [x] No `PRAGMA user_version`, AsyncStorage/Zustand schema truth hoặc second driver.
+- [x] No production bootstrap/readiness/recovery/reset/repository behavior.
+- [x] Boundary/repository checks cover new files.
 
 **Blocks:** `T08`, `T10`.
 
@@ -493,16 +494,16 @@ Chỉ một Task active tại một thời điểm. Không implement `US-02-04` 
 
 **Outcome:** Exact packaged SQLite xác nhận history, ordering, rollback và retry semantics.
 
-- [ ] Dev-only explicit flag; lazy import from composition diagnostics only.
-- [ ] Use exact production `001`/runner/registry/lock; không copy production logic.
-- [ ] Use exact isolated database names; never open/delete `pixeldoro.db`.
-- [ ] Empty → latest, exact history row/checksum và no-op rerun.
-- [ ] Synthetic upgrade order on test registry without production schema `002`.
-- [ ] Checksum/gap/unknown/newer/missing-history cases reject before unsafe write.
-- [ ] Inject apply/history failure, compare full fingerprint, close/reopen, then Retry success.
-- [ ] Structured report: platform/OS/app/package/commit SHA + named assertions.
-- [ ] `passed: true` only after all connections close and exact probe DB cleanup.
-- [ ] Add owner manual runbook; one native target for Story, both platforms at `US-02-09`.
+- [x] Dev-only explicit flag; lazy import from composition diagnostics only.
+- [x] Use exact production `001`/runner/registry/lock; không copy production logic.
+- [x] Use exact isolated database names; never open/delete `pixeldoro.db`.
+- [x] Empty → latest, exact history row/checksum và no-op rerun.
+- [x] Synthetic upgrade order on test registry without production schema `002`.
+- [x] Checksum/gap/unknown/newer/missing-history cases reject before unsafe write.
+- [x] Inject apply/history failure, compare full fingerprint, close/reopen, then Retry success.
+- [x] Structured report: platform/OS/app/package/commit SHA + named assertions.
+- [x] `passed: true` only after all connections close and exact probe DB cleanup.
+- [x] Add owner manual runbook; one native target for Story, both platforms at `US-02-09`.
 
 Agent không chạy native/EAS build.
 
@@ -524,19 +525,19 @@ Agent không chạy native/EAS build.
 
 **Outcome:** `US-02-03 DONE` và `US-02-04` nhận migration-compatible boundary ổn định.
 
-- [ ] Run pinned Node/pnpm typecheck/lint/test/boundary/repository checksum checks.
-- [ ] Run Expo dependency/config check không tạo native artifact.
-- [ ] Review diff/source lock và no-scope-creep audit.
-- [ ] Record host/native/failure evidence trong `EPIC-02_IMPLEMENTATION_EVIDENCE.md`.
+- [x] Run pinned Node/pnpm typecheck/lint/test/boundary/repository checksum checks.
+- [x] Run Expo public-config check không tạo native artifact; SDK 57 và `expo-sqlite` resolve.
+- [x] Review diff/source lock và no-scope-creep audit.
+- [x] Record host/failure evidence trong `EPIC-02_IMPLEMENTATION_EVIDENCE.md`; native pending owner.
 - [ ] Mark every Story acceptance only after exact evidence review.
-- [ ] Confirm no DB/native output/secret/machine-local path trong implementation commit set.
+- [x] Confirm no DB/native output/secret/machine-local path trong implementation working tree.
 - [ ] Mark `US-02-03 DONE`; mở `US-02-04` dependency gate, không active song song.
 
-## 6. Planned file impact
+## 6. Implemented file impact
 
 Exact filenames có thể refine khi implement nếu vẫn giữ ownership và được review.
 
-### 6.1. Files dự kiến tạo
+### 6.1. Files đã tạo
 
 | File/khu vực | Mục đích |
 |---|---|
@@ -546,18 +547,18 @@ Exact filenames có thể refine khi implement nếu vẫn giữ ownership và �
 | `apps/mobile/src/infrastructure/database/migrations/migration-registry.ts` | Exact production ordered registry. |
 | `apps/mobile/src/infrastructure/database/migration-runner.ts` | History preflight và ordered transactional apply. |
 | `apps/mobile/src/infrastructure/database/migration-runner.test.ts` | Host registry/history/apply/failure/retry matrix. |
-| `apps/mobile/test/fixtures/migrations/` | Synthetic test-only descriptors; không runtime import. |
 | `scripts/validate-migrations.mjs` | Canonical SHA-256 recompute và lock/naming/source audit. |
-| `apps/mobile/src/composition/diagnostics/run-migration-probe.ts` | Dev-only exact Expo migration probe. |
-| `apps/mobile/test/device/migration-smoke.md` | Owner runbook và expected report. |
+| `scripts/validate-migrations.test.ts` | Positive/source-tamper/lock-tamper integrity matrix. |
+| `apps/mobile/src/composition/diagnostics/run-forward-migration-probe.ts` | Dev-only exact Expo migration probe; synthetic descriptors chỉ nằm trong diagnostic scope. |
+| `apps/mobile/test/device/forward-migration-smoke.md` | Owner runbook và expected report. |
 
-### 6.2. Files dự kiến cập nhật
+### 6.2. Files đã cập nhật
 
 | File/khu vực | Mục đích |
 |---|---|
-| `001_initial-schema.migration.ts` | Normalize descriptor seam; không đổi normative behavior. |
+| `001_initial-schema.migration.ts` | Không sửa; registry adapter reuse exact artifact đã pass `US-02-02`. |
 | Application/index exports | Export migration port/result/error only. |
-| SQLite fake | Inject history read/write/apply failures nếu cần. |
+| Host migration test fake | Stateful test-local DB fingerprint/fault injection; production fake không đổi. |
 | Composition root | Chỉ add dev-only probe flag; chưa production migration bootstrap. |
 | Root scripts / repository validator | Add immutable migration check vào quality gate. |
 | Device harness validator | Validate migration runbook/report contract. |
@@ -663,6 +664,7 @@ assertions:
   synthetic_upgrade_applied_in_order
   incompatible_history_rejected_before_write
   failed_migration_rolled_back_without_false_history
+  failed_history_write_rolled_back_without_false_history
   retry_resumed_from_valid_durable_history
   committed_history_survived_reopen
   probe_connections_closed_and_databases_cleaned
@@ -696,28 +698,28 @@ assertions:
 ## 12. Definition of Done cho `US-02-03`
 
 - [ ] `T00 → T10` hoàn tất theo order.
-- [ ] `EPIC02-INPUT-02` được owner resolve và sync vào Story baseline.
-- [ ] Production registry/lock chỉ chứa exact released `001`, valid contiguous metadata.
+- [x] `EPIC02-INPUT-02` được owner resolve và sync vào Story baseline ngày 2026-08-28.
+- [x] Production registry/lock chỉ chứa exact released `001`, valid contiguous metadata.
 - [ ] Empty → latest và latest no-op pass với exact history/checksum evidence.
 - [ ] Ordered synthetic upgrade pass mà không tạo production schema `002`.
 - [ ] Gap/duplicate/unknown/name/checksum/newer/missing-history cases fail typed trước unsafe write.
 - [ ] Failed migration/history insert rollback full version unit; previous durable version retained.
 - [ ] Retry same database commits failed version đúng một lần, không duplicate seed/catalog.
-- [ ] Immutable migration checksum check nằm trong repository quality gate.
+- [x] Immutable migration checksum check nằm trong repository quality gate.
 - [ ] Native Expo SQLite probe pass trên ít nhất một platform và exact implementation SHA.
-- [ ] Không auto-adopt/downgrade/reset/delete/recreate/repair database.
-- [ ] Không production bootstrap/repository/Product behavior scope creep.
-- [ ] Application/Presentation không import SQL/SQLite/Node crypto/provider type.
-- [ ] Không commit DB/native artifact/secret/machine-local path.
+- [x] Không auto-adopt/downgrade/reset/delete/recreate/repair database.
+- [x] Không production bootstrap/repository/Product behavior scope creep.
+- [x] Application/Presentation không import SQL/SQLite/Node crypto/provider type.
+- [x] Không có DB/native artifact/secret/machine-local path trong implementation working tree.
 - [ ] Evidence được owner/reviewer chấp nhận; `US-02-03 DONE` trước khi active `US-02-04`.
 
 ## 13. Owner confirmations cần chốt
 
 | ID | Proposal | Status | Blocks |
 |---|---|---|---|
-| `US0203-CONFIRM-01` / `EPIC02-INPUT-02` | SHA-256 lowercase trên canonical ordered source set, LF/length-prefix encoding; separate append-only lock; host recompute, runtime compare committed checksum. `001` source set gồm migration file + schema manifest. | `PENDING_OWNER` | `T02`, `T03`, checksum acceptance. |
-| `US0203-CONFIRM-02` | Preflight all; one transaction per migration gồm apply/validate/history. Previous migration commit được giữ nếu later migration fail; Retry resume từ durable prefix. | `PENDING_OWNER` | `T05`, rollback/retry acceptance. |
-| `US0203-CONFIRM-03` | Chỉ empty DB hoặc exact contiguous history được migrate. Non-empty/missing hoặc empty history không auto-adopt/backfill/reset; fail typed, preserve DB. | `PENDING_OWNER` | `T04`, compatibility acceptance. |
+| `US0203-CONFIRM-01` / `EPIC02-INPUT-02` | SHA-256 lowercase trên canonical ordered source set, LF/length-prefix encoding; separate append-only lock; host recompute, runtime compare committed checksum. `001` source set gồm migration file + schema manifest. | `APPROVED 2026-08-28` | Đã mở `T02`, `T03` và checksum acceptance. |
+| `US0203-CONFIRM-02` | Preflight all; one transaction per migration gồm apply/validate/history. Previous migration commit được giữ nếu later migration fail; Retry resume từ durable prefix. | `APPROVED 2026-08-28` | Đã mở `T05` và rollback/retry acceptance. |
+| `US0203-CONFIRM-03` | Chỉ empty DB hoặc exact contiguous history được migrate. Non-empty/missing hoặc empty history không auto-adopt/backfill/reset; fail typed, preserve DB. | `APPROVED 2026-08-28` | Đã mở `T04` và compatibility acceptance. |
 
 Các confirmation này là technical migration policy, không quyết định Product `OPEN-001`,
 `OPEN-006` hoặc `OPEN-009` và không cho phép thêm future schema.
@@ -749,6 +751,30 @@ Khi Story `DONE`, handoff gồm:
 - [ADR-007 — EAS Delivery Pipeline](../architecture/decisions/ADR-007-eas-delivery-pipeline.md)
 
 ## 16. Change log
+
+### 0.4.0 — 2026-08-28
+
+- Implement canonical checksum lock/validator, production registry, typed migration port,
+  history preflight và per-migration transactional runner.
+- Host matrix pass cho order/latest, invalid registry/history, checksum/gap/newer schema,
+  rollback/history-write failure và same-database retry.
+- Implement dev-only exact Expo probe/runbook; chuyển implementation sang
+  `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`, chưa `DONE` và chưa mở `US-02-04`.
+
+### 0.3.0 — 2026-08-28
+
+- Ghi nhận owner duyệt `US0203-CONFIRM-02` và `US0203-CONFIRM-03`.
+- Khóa one-transaction-per-migration checkpoint/retry và missing-history no-auto-adoption.
+- Chuyển plan sang `READY_FOR_IMPLEMENTATION`; implementation bắt đầu ở `IN_PROGRESS` và
+  tiếp tục giữ production bootstrap `US-02-04` ngoài scope.
+
+### 0.2.0 — 2026-08-28
+
+- Ghi nhận owner duyệt `US0203-CONFIRM-01` và resolve `EPIC02-INPUT-02`.
+- Khóa SHA-256 canonical ordered source set, append-only lock, host recompute và runtime
+  committed-checksum comparison.
+- Giữ `US0203-CONFIRM-02`/`03` chờ owner; plan chưa chuyển
+  `READY_FOR_IMPLEMENTATION`.
 
 ### 0.1.0 — 2026-08-28
 

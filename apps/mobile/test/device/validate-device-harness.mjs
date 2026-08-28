@@ -6,13 +6,16 @@ const mobileDirectory = fileURLToPath(new URL('../..', import.meta.url));
 const flowPath = `${deviceDirectory}foundation-smoke.md`;
 const sqliteFlowPath = `${deviceDirectory}sqlite-kernel-smoke.md`;
 const schemaFlowPath = `${deviceDirectory}initial-schema-smoke.md`;
+const migrationFlowPath = `${deviceDirectory}forward-migration-smoke.md`;
 
 await access(flowPath);
 await access(sqliteFlowPath);
 await access(schemaFlowPath);
+await access(migrationFlowPath);
 const flow = await readFile(flowPath, 'utf8');
 const sqliteFlow = await readFile(sqliteFlowPath, 'utf8');
 const schemaFlow = await readFile(schemaFlowPath, 'utf8');
+const migrationFlow = await readFile(migrationFlowPath, 'utf8');
 
 const requiredLabels = [
   'Chào mừng đến PixelDoro',
@@ -79,6 +82,26 @@ for (const evidence of requiredSchemaEvidence) {
 
 await access(
   `${mobileDirectory}/src/composition/diagnostics/run-initial-schema-probe.ts`,
+);
+
+const requiredMigrationEvidence = [
+  'EXPO_PUBLIC_FORWARD_MIGRATION_PROBE=1',
+  'US-02-03_FORWARD_MIGRATION',
+  'passed: true',
+  'pixeldoro-us-02-03-migration-probe.db',
+  'pixeldoro-us-02-03-incompatible-probe.db',
+  'pixeldoro-us-02-03-retry-probe.db',
+  'EPIC-02_IMPLEMENTATION_EVIDENCE.md',
+];
+
+for (const evidence of requiredMigrationEvidence) {
+  if (!migrationFlow.includes(evidence)) {
+    throw new Error(`Forward migration device probe is missing: ${evidence}`);
+  }
+}
+
+await access(
+  `${mobileDirectory}/src/composition/diagnostics/run-forward-migration-probe.ts`,
 );
 
 console.log(

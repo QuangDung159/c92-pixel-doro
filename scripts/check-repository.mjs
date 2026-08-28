@@ -70,4 +70,9 @@ for (const manifest of manifests) {
   }
 }
 
-console.log('Repository hygiene verified: one lockfile, no signing material, no Skia dependency.');
+const { validateMigrations } = await import('./validate-migrations.mjs');
+const migrationResult = await validateMigrations(repositoryRoot);
+
+console.log(
+  `Repository hygiene verified: one lockfile, no signing material, no Skia dependency, ${migrationResult.migrationCount} immutable migration(s).`,
+);
