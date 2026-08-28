@@ -11,6 +11,7 @@ import { SQLiteBootstrapDataAdapter } from '@/infrastructure/database/bootstrap/
 import { SQLiteBootstrapVerifier } from '@/infrastructure/database/bootstrap/sqlite-bootstrap-verifier';
 import { MigrationRunner } from '@/infrastructure/database/migration-runner';
 import { productionMigrationRegistry } from '@/infrastructure/database/migrations/migration-registry';
+import { createSQLitePersistenceGraph } from '@/infrastructure/database/persistence-graph';
 import { SQLiteDatabaseOwner } from '@/infrastructure/database/sqlite-database-owner';
 import {
   ExpoSQLiteDriver,
@@ -48,6 +49,7 @@ export const createMobileApplication = (
     driver,
   );
   const transaction = new SQLiteTransaction(databaseOwner);
+  const persistence = createSQLitePersistenceGraph(databaseOwner, transaction);
   const readiness = new ReadinessGate();
   const migration =
     options.migration ??
@@ -92,6 +94,11 @@ export const createMobileApplication = (
     typeof __DEV__ !== 'undefined' &&
     __DEV__ &&
     process.env.EXPO_PUBLIC_SAFE_BOOTSTRAP_PROBE === '1';
+  const typedRepositoriesProbeEnabled =
+    options.diagnosticsEnabled !== false &&
+    typeof __DEV__ !== 'undefined' &&
+    __DEV__ &&
+    process.env.EXPO_PUBLIC_TYPED_REPOSITORIES_PROBE === '1';
   let probePromise: Promise<void> | undefined;
 
   const runProbeIfEnabled = (): Promise<void> => {
@@ -99,7 +106,8 @@ export const createMobileApplication = (
       !sqliteKernelProbeEnabled &&
       !initialSchemaProbeEnabled &&
       !forwardMigrationProbeEnabled &&
-      !safeBootstrapProbeEnabled
+      !safeBootstrapProbeEnabled &&
+      !typedRepositoriesProbeEnabled
     ) {
       return Promise.resolve();
     }
@@ -135,12 +143,20 @@ export const createMobileApplication = (
         const report = await runSafeBootstrapProbe(driver);
         console.info('[PixelDoro][SafeBootstrapProbe]', JSON.stringify(report));
       }
+
+      if (typedRepositoriesProbeEnabled) {
+        const { runTypedRepositoriesProbe } =
+          await import('./diagnostics/run-typed-repositories-probe');
+        const report = await runTypedRepositoriesProbe(driver);
+        console.info('[PixelDoro][TypedRepositoriesProbe]', JSON.stringify(report));
+      }
     })();
     return probePromise;
   };
 
   return {
     bootstrap,
+    persistence,
     readiness,
     transaction,
     boot: async () => {

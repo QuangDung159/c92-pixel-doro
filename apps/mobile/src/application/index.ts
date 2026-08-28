@@ -47,3 +47,19 @@ export {
   type ReadinessController,
 } from './readiness/readiness-gate';
 export type { MobileApplicationFacade } from './mobile-application.facade';
+export type {
+  AnalyticsDeliveryState,
+  AnalyticsEventRecord,
+  AnalyticsEventRepository,
+  AnalyticsProperties,
+  AnalyticsPropertyValue,
+  AppDefaultMode,
+  AppSettingsRecord,
+  AppSettingsRepository,
+  InstallationRecord,
+  InstallationRepository,
+  ReplaceAppSettingsInput,
+  StoreReviewAttemptRecord,
+  StoreReviewAttemptRepository,
+  UpdateAnalyticsDeliveryInput,
+} from './persistence';

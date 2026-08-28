@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_02_USER_STORIES
 title: PixelDoro Mobile MVP — EPIC-02 User Stories
-version: 1.8.0
+version: 1.12.0
 status: READY_FOR_REVIEW
 last_updated: 2026-08-28
 owner: Dũng Lư
@@ -443,10 +443,9 @@ future product schema, OTA compatibility policy ngoài existing release baseline
 ### US-02-04 — Safe Bootstrap và Readiness Barrier
 
 **Implementation plan:**
-[`US-02-04_IMPLEMENTATION_PLAN.md`](./US-02-04_IMPLEMENTATION_PLAN.md) `0.4.0` đang
-`IN_PROGRESS`; implementation `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`. Bốn technical confirmation
-`US0204-CONFIRM-01`–`04` đã được Dũng Lư duyệt ngày 2026-08-28; Story đang được triển khai
-theo authoritative order và hiện chờ `T09` owner native evidence trước closeout `T10`.
+[`US-02-04_IMPLEMENTATION_PLAN.md`](./US-02-04_IMPLEMENTATION_PLAN.md) `0.5.0` đã `DONE`.
+Host quality pass và exact iOS probe `US-02-04_SAFE_BOOTSTRAP` pass `9/9` assertions trên
+implementation SHA `b36bc45190129da07e42d046f2badf6fddcd99e4`.
 
 **Story statement**
 
@@ -477,26 +476,26 @@ onboarding gating, persistent Zustand và provider initialization làm điều k
 
 **Acceptance criteria:**
 
-- [ ] Bootstrap không chuyển `ready` trước khi connection mở, FK bật, migration và verification hoàn tất.
-- [ ] Singleton/settings/profile/catalog projection hydrate từ committed SQLite rows, không từ hard-coded Zustand defaults.
-- [ ] Exact catalog/singleton/schema history/invariant mismatch fail closed; bootstrap không upsert/repair ngầm.
-- [ ] Startup-reconciliation boundary luôn được gọi sau migration/verification và trước readiness; fake chứng minh call order.
-- [ ] Epic 2 production không resolve/complete/fail/cancel/reward session và không invent terminal truth.
-- [ ] Presentation route/screen chỉ render core children ở `ready`; boot/recovery giữ command gate đóng.
-- [ ] Concurrent/repeated boot dùng single-flight hoặc idempotent result, không mở nhiều connection hay đăng ký lifecycle nhiều lần.
-- [ ] Dispose trong boot/ready/recovery cleanup connection/subscription an toàn.
-- [ ] Side-effect/provider availability không là prerequisite cho durable readiness.
-- [ ] Bootstrap result/projection không chứa raw SQLite row/error.
+- [x] Bootstrap không chuyển `ready` trước khi connection mở, FK bật, migration và verification hoàn tất.
+- [x] Singleton/settings/profile/catalog projection hydrate từ committed SQLite rows, không từ hard-coded Zustand defaults.
+- [x] Exact catalog/singleton/schema history/invariant mismatch fail closed; bootstrap không upsert/repair ngầm.
+- [x] Startup-reconciliation boundary luôn được gọi sau migration/verification và trước readiness; fake chứng minh call order.
+- [x] Epic 2 production không resolve/complete/fail/cancel/reward session và không invent terminal truth.
+- [x] Presentation route/screen chỉ render core children ở `ready`; boot/recovery giữ command gate đóng.
+- [x] Concurrent/repeated boot dùng single-flight hoặc idempotent result, không mở nhiều connection hay đăng ký lifecycle nhiều lần.
+- [x] Dispose trong boot/ready/recovery cleanup connection/subscription an toàn.
+- [x] Side-effect/provider availability không là prerequisite cho durable readiness.
+- [x] Bootstrap result/projection không chứa raw SQLite row/error.
 
 **Task checklist sơ bộ:**
 
-- [ ] Định nghĩa async bootstrap phase/result contract.
-- [ ] Tạo minimal bootstrap repositories/verifiers.
-- [ ] Wire ordered boot pipeline trong composition root.
-- [ ] Tạo readiness command gate.
-- [ ] Tạo startup-reconciliation port/fake với replacement note cho Epic 3.
-- [ ] Cập nhật BootstrapBoundary loading/recovery rendering tối thiểu.
-- [ ] Thêm order/single-flight/dispose integration tests.
+- [x] Định nghĩa async bootstrap phase/result contract.
+- [x] Tạo minimal bootstrap repositories/verifiers.
+- [x] Wire ordered boot pipeline trong composition root.
+- [x] Tạo readiness command gate.
+- [x] Tạo startup-reconciliation port/fake với replacement note cho Epic 3.
+- [x] Xác nhận/reuse BootstrapBoundary loading/recovery rendering tối thiểu.
+- [x] Thêm order/single-flight/dispose integration tests.
 
 **Evidence yêu cầu:**
 
@@ -512,6 +511,11 @@ onboarding gating, persistent Zustand và provider initialization làm điều k
 ---
 
 ### US-02-05 — Typed Repository và Mapper Integration
+
+**Implementation plan:**
+[`US-02-05_IMPLEMENTATION_PLAN.md`](./US-02-05_IMPLEMENTATION_PLAN.md) `0.4.0`
+`IN_PROGRESS` / `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`; production/host/probe/runbook
+`T01 → T08` hoàn tất, đang chờ owner `T09` native report.
 
 **Story statement**
 
@@ -540,28 +544,28 @@ review eligibility orchestration, PostHog delivery, Pet projection hoặc UI fea
 
 **Acceptance criteria:**
 
-- [ ] Mọi product/metadata table normative có owner và adapter/maintenance boundary rõ ràng; không có orphan durable table.
-- [ ] Application port không import `expo-sqlite`, SQL string, native type hoặc provider exception.
-- [ ] SQL chỉ nằm trong `apps/mobile/src/infrastructure/database` theo Project Structure.
-- [ ] Mapper chuyển `snake_case` row sang application-owned `camelCase` type và không rò raw row ra Presentation.
-- [ ] Invalid enum/null/timestamp/boolean/relationship shape trả typed corruption/invariant error; không silently coerce, clamp hoặc normalize.
-- [ ] Session repository hỗ trợ active read, insert running record và conditional transition primitive nhưng không quyết định status/reward.
-- [ ] Reward/purchase receipt normal repository không expose arbitrary update/delete; maintenance boundary tuân `EPIC02-INPUT-03`.
-- [ ] Transaction-scoped repository call tham gia transaction hiện tại, không tự commit riêng.
-- [ ] Catalog price read là authoritative storage fact; UI-supplied price không xuất hiện trong debit primitive contract.
-- [ ] Settings write primitive giữ atomic row update/range backstop; OS permission không được map thành setting truth.
-- [ ] Valid round-trip fixture cho mỗi entity giữ nguyên ID/timestamp/enum/nullable value.
-- [ ] Architecture/public-export/boundary tests pass.
+- [x] Mọi product/metadata table normative có owner và adapter/maintenance boundary rõ ràng; không có orphan durable table.
+- [x] Application port không import `expo-sqlite`, SQL string, native type hoặc provider exception.
+- [x] SQL chỉ nằm trong `apps/mobile/src/infrastructure/database` theo Project Structure.
+- [x] Mapper chuyển `snake_case` row sang application-owned `camelCase` type và không rò raw row ra Presentation.
+- [x] Invalid enum/null/timestamp/boolean/relationship shape trả typed corruption/invariant error; không silently coerce, clamp hoặc normalize.
+- [x] Session repository hỗ trợ active read, insert running record và conditional transition primitive nhưng không quyết định status/reward.
+- [x] Reward/purchase receipt normal repository không expose arbitrary update/delete; maintenance boundary tuân `EPIC02-INPUT-03`.
+- [x] Transaction-scoped repository call tham gia transaction hiện tại, không tự commit riêng.
+- [x] Catalog price read là authoritative storage fact; UI-supplied price không xuất hiện trong debit primitive contract.
+- [x] Settings write primitive giữ atomic row update/range backstop; OS permission không được map thành setting truth.
+- [x] Valid round-trip fixture cho mỗi entity giữ nguyên ID/timestamp/enum/nullable value trên host SQLite; exact Expo runtime chờ owner probe.
+- [x] Architecture/public-export/boundary tests pass.
 
 **Task checklist sơ bộ:**
 
-- [ ] Chia port theo capability owner, tránh generic CRUD repository.
-- [ ] Tạo persistence record/mapper types.
-- [ ] Implement singleton/reference/session/economy/metadata adapters.
-- [ ] Implement conditional and transaction-scoped primitives.
-- [ ] Add valid/corrupt round-trip fixtures.
-- [ ] Export public Application contract tối thiểu.
-- [ ] Wire concrete adapters tại composition root.
+- [x] Chia port theo capability owner, tránh generic CRUD repository.
+- [x] Tạo persistence record/mapper types.
+- [x] Implement singleton/reference/session/economy/metadata adapters.
+- [x] Implement conditional and transaction-scoped primitives.
+- [x] Add valid/corrupt round-trip fixtures.
+- [x] Export public Application contract tối thiểu.
+- [x] Wire concrete adapters tại composition root.
 
 **Evidence yêu cầu:**
 
@@ -893,9 +897,11 @@ Một Story chỉ được đánh dấu `[x]` khi:
 - **Story breakdown:** `READY_FOR_REVIEW`, chưa tự coi là owner-approved baseline.
 - **Implementation readiness:** `US-02-01`, `US-02-02` và `US-02-03` đã `DONE` với exact
   host/native evidence. `US-02-03` pass iOS `10/10` assertions trên SHA
-  `1b6a0427b3db20f4536a2b251101fa0e32b5c0ea`. Plan `US-02-04` `0.4.0` đang
-  `IN_PROGRESS` / `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`; host quality/fault matrix và
-  exact probe/runbook đã hoàn tất, Story chưa `DONE` và chưa mở `US-02-05/07` trước owner report.
+  `1b6a0427b3db20f4536a2b251101fa0e32b5c0ea`. `US-02-04` đã `DONE`; host quality và exact
+  iOS probe `9/9` pass trên SHA `b36bc45190129da07e42d046f2badf6fddcd99e4`.
+  `US-02-05` đang `IN_PROGRESS`: production/host implementation và dev-only probe/runbook đã
+  hoàn tất, full quality pass; Story chờ exact owner native report trước `DONE`. `US-02-06`
+  chưa mở; `US-02-07` vẫn phụ thuộc `US-02-06`.
 
 ### 8.2. Điều kiện chuyển `READY_FOR_IMPLEMENTATION`
 
@@ -920,6 +926,39 @@ Một Story chỉ được đánh dấu `[x]` khi:
 - [ ] Dũng Lư review và phê duyệt Story breakdown trước khi chuyển status sang `APPROVED`/`READY_FOR_IMPLEMENTATION`.
 
 ## 10. Change log
+
+### 1.12.0 — 2026-08-28
+
+- Ghi nhận `US-02-05` production contracts/mappers/repositories/composition và host evidence
+  `T01 → T08` hoàn tất theo approved plan.
+- Full quality pass gồm real host SQLite close/reopen/rollback matrix; thêm exact dev-only
+  `US-02-05_TYPED_REPOSITORIES` probe/runbook, không chạy native/EAS trong agent turn.
+- Chuyển implementation sang `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`; giữ `US-02-06`
+  blocked tới exact owner report và final closeout.
+
+### 1.11.0 — 2026-08-28
+
+- Ghi nhận owner duyệt `US0205-CONFIRM-01`–`04`; implementation plan `US-02-05` chuyển sang
+  `0.2.0` / `READY_FOR_IMPLEMENTATION`.
+- Khóa technical contract và execution order; implementation vẫn `NOT_STARTED`, chưa tự active
+  hoặc chỉnh production code.
+
+### 1.10.0 — 2026-08-28
+
+- Tạo và link implementation plan `US-02-05` `0.1.0` ở trạng thái `READY_FOR_REVIEW` /
+  `NOT_STARTED`.
+- Ghi rõ bốn owner confirmation cho port ownership, transaction-scoped API, capability matrix và
+  mapper/error boundary; không tự chốt hoặc bắt đầu implementation.
+- Khóa authoritative solo order `US0205-T00 → T10`; không kéo derived query, recovery/reset,
+  Product behavior hoặc native build vào planning turn.
+
+### 1.9.0 — 2026-08-28
+
+- Tiếp nhận exact iOS report `US-02-04_SAFE_BOOTSTRAP` `passed: true`, đủ `9/9` assertions
+  trên implementation SHA `b36bc45190129da07e42d046f2badf6fddcd99e4` khớp `HEAD`.
+- Re-run full quality `13` files / `75` tests pass; chuyển `US-02-04` sang `DONE`.
+- Mở dependency phía `US-02-04` cho `US-02-05/07`; `US-02-07` vẫn chờ `US-02-06`, không tự
+  active hoặc implement Story tiếp theo.
 
 ### 1.8.0 — 2026-08-28
 

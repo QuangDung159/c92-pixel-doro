@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_02_IMPLEMENTATION_EVIDENCE
 title: PixelDoro Mobile MVP — EPIC-02 Implementation Evidence
-version: 0.7.0
+version: 0.9.0
 status: IN_PROGRESS
 last_updated: 2026-08-28
 owner: Dũng Lư
@@ -15,6 +15,7 @@ us_02_01_plan: ./US-02-01_IMPLEMENTATION_PLAN.md
 us_02_02_plan: ./US-02-02_IMPLEMENTATION_PLAN.md
 us_02_03_plan: ./US-02-03_IMPLEMENTATION_PLAN.md
 us_02_04_plan: ./US-02-04_IMPLEMENTATION_PLAN.md
+us_02_05_plan: ./US-02-05_IMPLEMENTATION_PLAN.md
 ---
 
 # PixelDoro Mobile MVP — EPIC-02 Implementation Evidence
@@ -36,10 +37,15 @@ probe đều pass đủ `10/10` assertions trên implementation commit
 `1b6a0427b3db20f4536a2b251101fa0e32b5c0ea`; repository `HEAD` đã được đối chiếu đúng SHA
 này khi tiếp nhận report ngày 2026-08-28.
 
-`US-02-04 — Safe Bootstrap và Readiness Barrier` đã implement xong production slice và host
-quality/fault matrix. Trạng thái hiện tại là `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`;
-chưa `DONE`, chưa mở dependency gate `US-02-05/07` và final implementation SHA vẫn chờ owner
-commit trước khi chạy exact native probe.
+`US-02-04 — Safe Bootstrap và Readiness Barrier` đã `DONE`. Host quality/fault matrix và exact
+iOS native probe đều pass đủ `9/9` assertions trên implementation commit
+`b36bc45190129da07e42d046f2badf6fddcd99e4`; repository `HEAD` đã được đối chiếu đúng SHA
+này khi tiếp nhận report ngày 2026-08-28.
+
+`US-02-05 — Typed Repository và Mapper Integration` đã hoàn tất production implementation,
+host quality/fault/real-SQLite evidence và dev-only native probe/runbook. Story đang
+`IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`; chưa `DONE` và chưa mở `US-02-06` cho tới khi
+owner gửi exact `US-02-05_TYPED_REPOSITORIES` report trên final implementation SHA.
 
 Không có migration runner/history/checksum, production bootstrap migration,
 Timer/Session/Reward/Pet/Inventory/Settings use case, auto-reset, native/EAS build hoặc native
@@ -269,8 +275,7 @@ iOS + Android repeat vẫn thuộc `US-02-09`.
 **Current Story status:** `DONE`.
 
 Dependency gate sang `US-02-03` đã mở và toàn bộ `US0203-CONFIRM-01`–`03` đã được owner
-duyệt ngày 2026-08-28. `US-02-03` là Story active duy nhất; production bootstrap `US-02-04`
-chưa active.
+duyệt ngày 2026-08-28. Sau các closeout kế tiếp, `US-02-03` và `US-02-04` đều đã `DONE`.
 
 ## 9. `US-02-03` host implementation evidence — 2026-08-28
 
@@ -352,8 +357,9 @@ iOS + Android repeat vẫn thuộc `US-02-09`.
 
 **Current Story status:** `DONE`.
 
-Dependency gate `US-02-04` đã được mở từ closeout `US-02-03`; Story hiện là active slice duy
-nhất và production bootstrap đã implement, nhưng dependency gate sau vẫn đóng tới native closeout.
+Dependency gate `US-02-04` đã được mở từ closeout `US-02-03`; Story sau đó hoàn tất production,
+host và native evidence. Dependency phía `US-02-04` cho `US-02-05/07` đã đạt; `US-02-07`
+vẫn chờ `US-02-06` và chưa Story nào được tự active.
 
 ## 11. `US-02-04` host implementation evidence — 2026-08-28
 
@@ -368,7 +374,7 @@ nhất và production bootstrap đã implement, nhưng dependency gate sau vẫn
 | Lifecycle ownership | Real React Native AppState current-state read + one application-scoped subscription; lifecycle chỉ cập nhật projection | `PASS_HOST` |
 | Concurrency/dispose | Exact single-flight; ready/recovery rerun no-op; dispose từng deferred phase không late-ready, unsubscribe/close once | `PASS_HOST` |
 | Presentation boundary | Existing generic loading/recovery boundary chỉ render children tại `ready`; không Retry/reset/Product route mới | `PASS_HOST` |
-| Native probe harness | Dev-only isolated `US-02-04_SAFE_BOOTSTRAP`, reopen/invariant/fingerprint/readiness/cleanup assertions + owner runbook | `IMPLEMENTED_AWAITING_NATIVE` |
+| Native probe harness | Dev-only isolated `US-02-04_SAFE_BOOTSTRAP`, reopen/invariant/fingerprint/readiness/cleanup assertions + owner runbook | `PASS_NATIVE_IOS` |
 
 Automated checks dùng pinned Node.js `22.23.2` và pnpm `11.24.0`:
 
@@ -390,14 +396,98 @@ stop; command gate; lifecycle buffering; concurrent/repeated boot; deferred disp
 schema/FK/catalog/economy/singleton mismatch; sanitized provider error; no-write/fingerprint
 preservation và immutable durable snapshot.
 
-## 12. `US-02-04` native runtime acceptance — pending owner
+## 12. `US-02-04` native runtime acceptance — owner evidence received 2026-08-28
 
 Owner runbook:
 [`apps/mobile/test/device/safe-bootstrap-smoke.md`](../../apps/mobile/test/device/safe-bootstrap-smoke.md).
 
-Required report prefix `[PixelDoro][SafeBootstrapProbe]`, probe
-`US-02-04_SAFE_BOOTSTRAP`, `passed: true`, exact application ID/final commit SHA và đủ `9/9`
-named assertions. Cho tới khi report này được cung cấp và đối chiếu với final implementation
-commit, Story giữ `IN_PROGRESS` / `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
+Owner đã cung cấp structured report `[PixelDoro][SafeBootstrapProbe]`:
 
-**Current Story status:** `IN_PROGRESS`; host implementation complete, native evidence pending.
+| Field | Owner evidence |
+|---|---|
+| Platform / OS / device | iOS / 26.5 / target model không được cung cấp |
+| App version / application ID | `0.1.0` / `com.dragonc92team.pixeldoro` |
+| Evidence received | 2026-08-28; exact runtime timestamp không có trong report |
+| Final implementation commit SHA | `b36bc45190129da07e42d046f2badf6fddcd99e4` — khớp repository `HEAD` khi review |
+| Probe result | `PASS` — `passed: true`, đủ `9/9` named assertions |
+| Cleanup | `PASS` — report chỉ pass sau connections close và exact isolated probe DB cleanup |
+
+```json
+{
+  "probe": "US-02-04_SAFE_BOOTSTRAP",
+  "passed": true,
+  "platform": "ios",
+  "osVersion": "26.5",
+  "appVersion": "0.1.0",
+  "applicationId": "com.dragonc92team.pixeldoro",
+  "commitSha": "b36bc45190129da07e42d046f2badf6fddcd99e4",
+  "assertions": [
+    "empty_database_reached_ready_after_ordered_barrier",
+    "exact_durable_snapshot_hydrated",
+    "readiness_gate_opened_only_after_reconciliation",
+    "latest_reopen_preserved_snapshot_without_duplicate_seed",
+    "injected_invariant_mismatch_entered_typed_recovery",
+    "failed_bootstrap_kept_gate_closed_and_skipped_reconciliation",
+    "failed_bootstrap_preserved_database_fingerprint",
+    "repeated_boot_and_dispose_were_idempotent",
+    "probe_connections_closed_and_databases_cleaned"
+  ]
+}
+```
+
+Thiếu target model và exact runtime timestamp chỉ là audit metadata gap, không làm yếu behavior
+assertions hoặc SHA traceability. Một native target pass đóng gate `US-02-04`; both-platform
+repeat vẫn thuộc `US-02-09`.
+
+**Current Story status:** `DONE`.
+
+Dependency phía `US-02-04` cho `US-02-05/07` đã đạt; `US-02-05` là Story kế tiếp theo order,
+`US-02-07` vẫn chờ `US-02-06`, và không Story nào được tự active trong closeout này.
+
+## 13. `US-02-05` host implementation evidence — 2026-08-28
+
+| Capability | Repository evidence | Status |
+|---|---|---|
+| Application-owned contracts | Shared profile/session/reward/catalog/purchase/ownership ports; mobile installation/settings/review/analytics ports; stable sanitized persistence result/error | `PASS_HOST` |
+| Entity ownership | Exact `10` product/metadata tables có capability-specific owner/adapter; `schema_migrations` tiếp tục migration-owned | `PASS_HOST` |
+| Canonical mapping | Runtime exact type/null/enum/boolean/timestamp/conditional-shape mapping; bootstrap reuse foundation mappers; no snake_case/raw row outside Infrastructure | `PASS_HOST` |
+| Transaction participation | Explicit scoped/unscoped APIs; scoped methods resolve current transaction executor; wrong/stale scope fail typed; no repository-local commit | `PASS_HOST` |
+| Session persistence | Find-by-ID/active, prepared running insert, strict-background evidence và conditional terminal transition; không status/reward decision | `PASS_HOST` |
+| Economy/inventory | Atomic profile progression, catalog-authoritative debit by item ID, insert-only reward/purchase receipts, ownership/equip persistence | `PASS_HOST` |
+| Metadata | Typed store-review attempt và analytics properties serialization/basic persistence; no eligibility/TTL/drop-oldest/delivery/PostHog behavior | `PASS_HOST` |
+| Immutable API | Reward/purchase normal repositories không expose update/delete; catalog runtime không expose insert/update/delete | `PASS_HOST` |
+| Real SQLite evidence | Production migration `001`, cross-entity transaction commit, close/reopen exact values và returned-failure rollback trên Node SQLite | `PASS_HOST_SQLITE` |
+| Composition/boundary | Một application-scoped persistence graph dùng existing owner/transaction; graph không thuộc Presentation facade; SQL-location/generic-CRUD scans sạch | `PASS_HOST` |
+| Native probe harness | Dev-only isolated `US-02-05_TYPED_REPOSITORIES`, production graph/migration, reopen/rollback/conflict/wrong-scope/cleanup assertions + owner runbook | `READY_OWNER_RUN` |
+
+Automated checks dùng pinned Node.js `22.23.2` và pnpm `11.24.0`:
+
+- `pnpm quality`: `PASS`.
+  - Domain/Application/Mobile strict typecheck: `PASS`.
+  - ESLint workspace: `PASS`.
+  - Vitest: `16` files / `92` tests pass, gồm pure mapper corruption matrix, fake-provider
+    error/scope matrix và real host SQLite close/reopen/rollback integration.
+  - Device harness: `PASS`, gồm typed-repositories runbook/probe contract.
+  - Architecture boundary: `11` forbidden imports rejected, `3` valid imports accepted.
+  - Repository hygiene/checksum: `PASS`, một immutable production migration.
+- `git diff --check`: `PASS`.
+- SQL location scan: không SQL trong shared/Mobile Application, Presentation hoặc route.
+- Generic/destructive API scan: không base/generic CRUD, receipt update/delete hoặc catalog runtime
+  mutation capability.
+- Không chạy native/EAS build, prebuild hoặc tạo native artifact.
+
+Host evidence cover đủ mười entity groups, valid/corrupt row mapping, nullable/enum/boolean/time
+edge, provider conflict sanitization, inactive transaction scope, multi-repository returned/thrown
+rollback, catalog-authoritative debit và immutable API surface. Exact Expo SQLite runtime vẫn là
+manual owner gate theo
+[`apps/mobile/test/device/typed-repositories-smoke.md`](../../apps/mobile/test/device/typed-repositories-smoke.md).
+
+**Current Story status:** `IN_PROGRESS` /
+`IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
+
+Pending evidence:
+
+1. Owner chạy `US-02-05_TYPED_REPOSITORIES` trên existing development build với exact final SHA.
+2. Report `passed: true` đủ `10/10` assertions và cleanup.
+3. Đối chiếu SHA, rerun quality nếu cần, rồi thực hiện `US0205-T10` closeout và mới mở
+   dependency `US-02-06`.

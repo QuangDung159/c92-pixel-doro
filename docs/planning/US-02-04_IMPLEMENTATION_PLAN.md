@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_02_04_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-02-04 Implementation Plan
-version: 0.4.0
-status: IN_PROGRESS
-implementation_status: IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME
+version: 0.5.0
+status: DONE
+implementation_status: DONE
 last_updated: 2026-08-28
 owner: Dũng Lư
 reviewer: Dũng Lư
@@ -52,12 +52,12 @@ trên commit `1b6a0427b3db20f4536a2b251101fa0e32b5c0ea`; documentation closeout 
 **Blocks:** `US-02-05` và `US-02-07`. Repository integration không được xây trên graph chưa
 ready; recovery/Retry cần consume stable bootstrap phase/error contract của Story này.
 
-**Planning status:** `IN_PROGRESS`. **Implementation status:**
-`IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
+**Planning status:** `DONE`. **Implementation status:** `DONE`.
 
 `US0204-CONFIRM-01` đến `04` đã được Dũng Lư duyệt ngày 2026-08-28. Technical decision
-gate đã đóng; production/host implementation `T01 → T08` và host phần `T10` đã hoàn tất.
-Story đang chờ owner thực hiện `T09` trên exact final implementation SHA.
+gate đã đóng; production/host implementation và owner native evidence `T01 → T10` đã hoàn tất.
+Exact iOS probe pass `9/9` assertions trên implementation SHA
+`b36bc45190129da07e42d046f2badf6fddcd99e4`, khớp repository `HEAD` khi review.
 Không implement production Session reconciliation, repository suite, Retry UX hoặc reset.
 
 ### 0.1. Readiness gate hiện tại
@@ -73,7 +73,7 @@ Không implement production Session reconciliation, repository suite, Retry UX h
 - [x] `US0204-CONFIRM-04` reconciliation/lifecycle/readiness seam được owner duyệt ngày 2026-08-28.
 - [x] Plan chuyển `READY_FOR_IMPLEMENTATION`.
 - [x] `T01 → T08` implementation, host matrix, probe/runbook và host quality pass.
-- [ ] `T09` exact owner native report được tiếp nhận và đối chiếu final SHA.
+- [x] `T09` exact owner native report được tiếp nhận và đối chiếu final SHA.
 
 ## 1. Baseline và current-state review
 
@@ -485,11 +485,11 @@ Agent không chạy native/EAS build.
 
 **Outcome:** One exact native report trace được về final implementation commit.
 
-- [ ] Owner commit implementation và truyền exact SHA vào probe flag.
-- [ ] Owner chạy existing development build trên iOS hoặc Android.
-- [ ] Capture complete report/device model nếu biết.
-- [ ] Verify `passed: true`, assertion set, application ID và SHA.
-- [ ] Confirm exact probe cleanup; unset flag/stop Metro là local hygiene.
+- [x] Owner commit implementation và truyền exact SHA vào probe flag.
+- [x] Owner chạy existing development build trên iOS.
+- [x] Capture complete report; device model không được cung cấp và không block behavior evidence.
+- [x] Verify `passed: true`, `9/9` assertions, application ID và SHA.
+- [x] Confirm exact probe cleanup qua named assertion; unset flag/stop Metro là local hygiene.
 
 **Blocks:** `T10` Story closeout.
 
@@ -501,10 +501,10 @@ Agent không chạy native/EAS build.
 - [x] Run Expo public config check không tạo native artifact.
 - [x] Review diff/no-scope-creep/no-second-truth/no-destructive-recovery.
 - [x] Record host/failure evidence.
-- [ ] Record native evidence và final implementation SHA.
-- [ ] Mark Story acceptance only after exact evidence review.
+- [x] Record native evidence và final implementation SHA.
+- [x] Mark Story acceptance only after exact evidence review.
 - [x] Confirm no DB/native/secret/machine-local artifact trong implementation set.
-- [ ] Mark `US-02-04 DONE`; mở dependency gates, không active Story tiếp theo tự động.
+- [x] Mark `US-02-04 DONE`; mở dependency gates, không active Story tiếp theo tự động.
 
 ## 6. Planned file impact
 
@@ -671,7 +671,7 @@ assertions:
 
 ## 12. Definition of Done cho `US-02-04`
 
-- [ ] `T00 → T10` hoàn tất theo order.
+- [x] `T00 → T10` hoàn tất theo order.
 - [x] Bốn owner confirmations được resolve và sync vào Story baseline.
 - [x] Production exact order open → migrate → verify → hydrate → reconcile → ready.
 - [x] Ready snapshot đọc committed SQLite, không Clock/ID-generated hoặc hard-coded defaults.
@@ -683,9 +683,9 @@ assertions:
 - [x] Loading/recovery boundary never renders core children before ready.
 - [x] No Retry/reset/repair/full repository/Product behavior scope creep.
 - [x] Application/Presentation receives no SQL/SQLite/raw row/provider type/message.
-- [ ] Native exact Expo bootstrap probe pass on at least one platform/final SHA.
+- [x] Native exact Expo bootstrap probe pass trên iOS/final implementation SHA.
 - [x] No DB/native/secret/machine-local artifact committed.
-- [ ] Evidence accepted; `US-02-04 DONE` before active `US-02-05/07`.
+- [x] Evidence accepted; `US-02-04 DONE` before active `US-02-05/07`.
 
 ## 13. Owner confirmations cần chốt
 
@@ -728,6 +728,14 @@ Khi `US-02-04 DONE`, handoff gồm:
 - [ADR-004 — Domain and Platform Boundaries](../architecture/decisions/ADR-004-domain-and-platform-boundaries.md)
 
 ## 16. Change log
+
+### 0.5.0 — 2026-08-28
+
+- Tiếp nhận iOS report `US-02-04_SAFE_BOOTSTRAP` `passed: true`, đủ `9/9` assertions trên
+  SHA `b36bc45190129da07e42d046f2badf6fddcd99e4`, khớp repository `HEAD`.
+- Re-run `pnpm quality`: `13` files / `75` tests cùng device/boundary/checksum gates pass.
+- Chuyển `US-02-04` sang `DONE`, mở dependency phía Story này cho `US-02-05/07`; `US-02-07`
+  vẫn chờ `US-02-06`, không tự active hoặc implement Story tiếp theo.
 
 ### 0.4.0 — 2026-08-28
 
