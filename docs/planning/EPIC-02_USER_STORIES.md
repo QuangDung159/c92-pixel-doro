@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_02_USER_STORIES
 title: PixelDoro Mobile MVP — EPIC-02 User Stories
-version: 0.3.0
+version: 0.8.0
 status: READY_FOR_REVIEW
 last_updated: 2026-08-28
 owner: Dũng Lư
@@ -207,7 +207,7 @@ Các input này là technical implementation decision, không phải Product dec
 |---|---|---|---|---|
 | `EPIC02-INPUT-01` | `RESOLVED 2026-08-27` — authoritative strategy để chạy exact `expo-sqlite` migration/repository integration tests ngoài/ trong app runtime. | Dùng host unit tests với fake transaction/driver cho orchestration và Expo runtime integration harness cho exact SQLite behavior; không thêm SQLite driver thứ hai nếu chưa có compatibility need được chứng minh. | Đã đạt cho `US-02-01`; device half được audit ở `US-02-09`. | Dũng Lư — Tech Lead |
 | `EPIC02-INPUT-02` | Canonical checksum input/algorithm cho immutable migration artifact. | Dùng deterministic SHA-256 trên canonical migration descriptor/SQL payload được commit; test recompute checksum và fail khi released payload bị sửa. Không checksum runtime-transpiled bundle hoặc timestamp biến đổi. | Trước khi đóng `US-02-03`. | Dũng Lư — Tech Lead |
-| `EPIC02-INPUT-03` | Cách enforce immutable reward/purchase receipt trong normal path nhưng vẫn cho confirmed reset/approved migration delete theo explicit order. | Không expose update/delete trên normal repository; trigger chặn update và database backstop được thiết kế sao cho chỉ private maintenance executor có delete path. Không thêm durable “bypass flag” hoặc table ngoài normative schema nếu chưa review. | Trước khi đóng `US-02-02` và `US-02-08`. | Dũng Lư — Tech Lead |
+| `EPIC02-INPUT-03` | `RESOLVED 2026-08-28` — enforce immutable reward/purchase receipt trong normal path nhưng vẫn cho confirmed reset/approved migration delete theo explicit order. | Trigger chặn `UPDATE`; normal repository không expose update/delete; chỉ private maintenance executor hoặc approved migration có delete path. Không thêm durable bypass flag/table. | Đã đạt cho `US-02-02`; resolution là baseline cho `US-02-08`. | Dũng Lư — Tech Lead |
 
 Exact database filename, adapter class name, test command name và typed error-code
 spelling là Task-level configuration. Chúng phải ổn định/test được nhưng không cần
@@ -294,6 +294,13 @@ Data Model §2.3, §7.
 
 ### US-02-02 — Normative Schema, Constraints và Exact Seed
 
+**Implementation plan:**
+[`US-02-02_IMPLEMENTATION_PLAN.md`](./US-02-02_IMPLEMENTATION_PLAN.md) `1.1.0`
+`READY_FOR_IMPLEMENTATION`; implementation `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
+Host checks pass; acceptance checklist vẫn mở tới khi owner native report được review.
+`EPIC02-INPUT-03` và
+`US0202-CONFIRM-01` đến `03` đều đã được owner duyệt.
+
 **Story statement**
 
 > Với vai trò solo developer, tôi muốn database tự enforce durable invariants và seed
@@ -341,13 +348,13 @@ contribution colors, dynamic catalog, cloud/sync field và future nullable place
 
 **Task checklist sơ bộ:**
 
-- [ ] Resolve immutable-ledger reset enforcement theo `EPIC02-INPUT-03`.
-- [ ] Tạo migration `001` và canonical schema descriptor.
-- [ ] Implement table/check/FK/unique/index/trigger theo Data Model.
-- [ ] Implement singleton và catalog seed.
-- [ ] Tạo valid fixture cho từng entity shape.
-- [ ] Tạo negative fixture cho conditional checks, one-running, terminal mutation, reward và ownership mismatch.
-- [ ] Tạo normalized schema/seed verifier.
+- [x] Resolve immutable-ledger reset enforcement theo `EPIC02-INPUT-03`.
+- [x] Tạo migration `001` và canonical schema descriptor.
+- [x] Implement table/check/FK/unique/index/trigger theo Data Model.
+- [x] Implement singleton và catalog seed.
+- [x] Tạo valid fixture cho từng entity shape.
+- [x] Tạo negative fixture cho conditional checks, one-running, terminal mutation, reward và ownership mismatch.
+- [x] Tạo normalized schema/seed verifier.
 
 **Evidence yêu cầu:**
 
@@ -871,16 +878,18 @@ Một Story chỉ được đánh dấu `[x]` khi:
 - **Product blocker:** không có; ba Product decision còn `OPEN` đều nằm ngoài schema
   foundation và đã có explicit exclusion.
 - **Story breakdown:** `READY_FOR_REVIEW`, chưa tự coi là owner-approved baseline.
-- **Implementation readiness:** `US-02-01` đã `DONE`; dependency gate cho `US-02-02` đã
-  mở. Toàn Story breakdown của Epic vẫn `READY_FOR_REVIEW` cho tới khi Dũng duyệt đủ chín
-  Story/execution order; `EPIC02-INPUT-02` và `03` tiếp tục được resolve tại gate tương ứng.
+- **Implementation readiness:** `US-02-01` đã `DONE`; `US-02-02` đã implement production
+  artifact/host tests/probe và đang `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`. Story chưa
+  `DONE`, nên `US-02-03` chưa được active. `EPIC02-INPUT-03` đã `RESOLVED`;
+  `EPIC02-INPUT-02` tiếp tục chờ gate
+  `US-02-03`. Toàn Story breakdown vẫn `READY_FOR_REVIEW`.
 
 ### 8.2. Điều kiện chuyển `READY_FOR_IMPLEMENTATION`
 
 1. Dũng Lư review/approve chín Story, block graph và one-active-Story execution order.
 2. [Đã đạt 2026-08-27] Xác nhận `EPIC02-INPUT-01` trước khi khóa test task của `US-02-01`.
 3. Xác nhận `EPIC02-INPUT-02` trước khi khóa migration runner acceptance.
-4. Xác nhận `EPIC02-INPUT-03` trước khi khóa schema trigger/reset maintenance design.
+4. [Đã đạt 2026-08-28] Xác nhận `EPIC02-INPUT-03` trước khi khóa schema trigger/reset maintenance design.
 5. Tạo Task IDs theo Story; không cần estimate deadline để chuyển readiness.
 
 ## 9. Review checklist
@@ -898,6 +907,40 @@ Một Story chỉ được đánh dấu `[x]` khi:
 - [ ] Dũng Lư review và phê duyệt Story breakdown trước khi chuyển status sang `APPROVED`/`READY_FOR_IMPLEMENTATION`.
 
 ## 10. Change log
+
+### 0.8.0 — 2026-08-28
+
+- Ghi nhận `US-02-02` đã implement production initial schema artifact, exact manifest/seed,
+  host tests, native probe và manual runbook theo plan `1.1.0`.
+- Chuyển Story sang `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`; giữ acceptance checklist
+  mở và tiếp tục block `US-02-03` tới khi owner native report được review.
+- Không kéo migration runner/bootstrap/repository/Product behavior hoặc native build vào scope.
+
+### 0.7.0 — 2026-08-28
+
+- Ghi nhận owner duyệt `US0202-CONFIRM-03`; cả ba confirmation của `US-02-02` đã
+  `APPROVED`.
+- Chuyển implementation plan `US-02-02` sang `READY_FOR_IMPLEMENTATION`; implementation
+  vẫn `NOT_STARTED`.
+
+### 0.6.0 — 2026-08-28
+
+- Ghi nhận owner duyệt `US0202-CONFIRM-02` và khóa ranh giới artifact `001` với migration
+  runner/history/checksum của `US-02-03`.
+- Giữ `US0202-CONFIRM-03` chờ owner; implementation `US-02-02` chưa bắt đầu.
+
+### 0.5.0 — 2026-08-28
+
+- Ghi nhận owner duyệt `US0202-CONFIRM-01` và resolve `EPIC02-INPUT-03`.
+- Khóa delete boundary cho immutable receipts mà không thêm durable bypass state; giữ
+  `US0202-CONFIRM-02`/`03` chờ owner.
+
+### 0.4.0 — 2026-08-28
+
+- Link implementation plan `US-02-02` `0.1.0` và ghi rõ trạng thái `READY_FOR_REVIEW` /
+  `NOT_STARTED`.
+- Giữ `EPIC02-INPUT-03` cùng technical confirmations ở trạng thái chờ owner; không tự mở
+  implementation gate hoặc thay đổi Story acceptance.
 
 ### 0.3.0 — 2026-08-28
 

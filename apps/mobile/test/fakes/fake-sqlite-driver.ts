@@ -14,6 +14,9 @@ export class FakeSQLiteConnection {
   closeCalls = 0;
   closeError: unknown;
   readonly execErrors = new Map<string, unknown>();
+  readonly runErrors = new Map<string, unknown>();
+  readonly firstErrors = new Map<string, unknown>();
+  readonly allErrors = new Map<string, unknown>();
   readonly firstRows = new Map<string, unknown>();
   readonly allRows = new Map<string, unknown[]>();
 
@@ -37,6 +40,10 @@ export class FakeSQLiteConnection {
     parameters: SQLiteParameters,
   ): Promise<{ lastInsertRowId: number; changes: number }> {
     this.boundStatements.push({ sql, parameters });
+    const error = this.runErrors.get(sql);
+    if (error !== undefined) {
+      throw error;
+    }
     return { lastInsertRowId: 1, changes: 1 };
   }
 
@@ -45,6 +52,11 @@ export class FakeSQLiteConnection {
     parameters: SQLiteParameters,
   ): Promise<TRow | null> {
     this.boundStatements.push({ sql, parameters });
+
+    const error = this.firstErrors.get(sql);
+    if (error !== undefined) {
+      throw error;
+    }
 
     if (sql === 'PRAGMA foreign_keys') {
       return { foreign_keys: this.foreignKeys } as TRow;
@@ -58,6 +70,10 @@ export class FakeSQLiteConnection {
     parameters: SQLiteParameters,
   ): Promise<TRow[]> {
     this.boundStatements.push({ sql, parameters });
+    const error = this.allErrors.get(sql);
+    if (error !== undefined) {
+      throw error;
+    }
     return (this.allRows.get(sql) as TRow[] | undefined) ?? [];
   }
 

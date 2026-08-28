@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_02_IMPLEMENTATION_EVIDENCE
 title: PixelDoro Mobile MVP — EPIC-02 Implementation Evidence
-version: 0.2.0
+version: 0.3.0
 status: IN_PROGRESS
 last_updated: 2026-08-28
 owner: Dũng Lư
@@ -12,6 +12,7 @@ scope:
   - implementation_evidence
 baseline: ./EPIC-02_USER_STORIES.md
 us_02_01_plan: ./US-02-01_IMPLEMENTATION_PLAN.md
+us_02_02_plan: ./US-02-02_IMPLEMENTATION_PLAN.md
 ---
 
 # PixelDoro Mobile MVP — EPIC-02 Implementation Evidence
@@ -23,8 +24,17 @@ Expo native runtime probe đều pass trên implementation commit
 `a75ecc9112c2aa279bee9a818d9c97e586b84b21`; repository `HEAD` đã được đối chiếu đúng SHA
 này khi tiếp nhận report ngày 2026-08-28.
 
-Không có normative schema/migration, Timer/Session/Reward/Pet/Inventory/Settings behavior,
-auto-reset, native/EAS build hoặc native artifact nào được tạo trong implementation turn này.
+`US-02-02 — Normative Schema, Constraints và Exact Seed` đã hoàn tất production artifact,
+host tests và dev-only native probe trên working tree dựa trên repository `HEAD` `5951d3b`.
+Final implementation commit SHA và native runtime report chưa có, nên Story đang
+`IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`, chưa `DONE`, và chưa mở `US-02-03`.
+
+Không có migration runner/history/checksum, production bootstrap migration,
+Timer/Session/Reward/Pet/Inventory/Settings use case, auto-reset, native/EAS build hoặc native
+artifact nào được tạo trong implementation turn `US-02-02`.
+
+Repository có ignored native artifacts từ trước turn dưới `apps/mobile/android/` và
+`apps/mobile/artifacts/`; chúng không thuộc implementation diff/commit set và không bị sửa/xóa.
 
 ## 2. `US-02-01` implementation evidence
 
@@ -149,3 +159,92 @@ owner, không phải repository acceptance. Both-platform repeat vẫn thuộc `
 
 Dependency gate từ `US-02-01` sang `US-02-02` đã mở. `US-02-02` chỉ được active sau khi
 các input/plan riêng của Story đó đạt gate; không giữ đồng thời `US-02-01` active.
+
+## 6. `US-02-02` host implementation evidence — 2026-08-28
+
+| Capability | Repository evidence | Status |
+|---|---|---|
+| Production initial artifact | `001_initial-schema.migration.ts`, version `1`, stable name `initial-schema`; empty-database precondition; no `IF NOT EXISTS`/upsert/history write | `PASS_HOST` |
+| Exact schema surface | Canonical manifest: `11` tables, `86` columns, `11` FK rows, `14` indexes, `6` triggers | `PASS_HOST`; `PENDING_NATIVE` |
+| Exact seed | Installation/settings/profile singleton và exact `12` Vietnamese catalog rows; all values bound với injected timestamp/ID | `PASS_HOST`; `PENDING_NATIVE` |
+| Atomicity | Same-connection `BEGIN IMMEDIATE`; injected DDL, seed và post-verification failures rollback | `PASS_HOST`; `PENDING_NATIVE` |
+| Constraints/backstops | Focus/trial/Break/status shapes, one-running, FK `RESTRICT`, terminal/identity immutability, reward/purchase/equip backstops | `PASS_DDL_AUDIT`; `PENDING_NATIVE_BEHAVIOR` |
+| Native probe harness | Exact production artifact, deterministic fixtures, full-row before/after negative matrix, reopen, injected failure DB, exact cleanup | `READY_FOR_OWNER_RUN` |
+| Scope boundary | Không có production repository/use case/bootstrap/reset executor; SQL/driver không rò Domain/Application/Presentation | `PASS` |
+
+Automated checks dùng Node.js `22.23.2` và pnpm `11.24.0`:
+
+- `pnpm quality`: `PASS`.
+  - Domain/Application/Mobile strict typecheck: `PASS`.
+  - ESLint workspace: `PASS`.
+  - Vitest: `8` files, `32` tests pass.
+  - Device-harness validation: `PASS`.
+  - Architecture boundary validator: `11` forbidden imports rejected, `3` valid imports accepted.
+- Expo dependency check: local SDK 57 compatibility map báo dependencies up to date; network
+  disabled nên không dùng kết quả này thay native evidence.
+- Expo public config resolve: `PASS`; SDK `57.0.0`, `expo-sqlite` plugin hiện diện.
+- Initial DDL parse trên host SQLite `3.51.0`: `PASS` — `11` tables, `14` named indexes,
+  `6` triggers. Locked `expo-sqlite 57.0.2` source vendors SQLite `3.50.3` với JSON support;
+  exact packaged behavior vẫn do native probe xác nhận.
+- Exact `PRAGMA table_info` manifest so với DDL trên SQLite `3.51.0`: `PASS` — đủ type,
+  nullability, default và PK position cho `86` columns.
+- Exact flattened `PRAGMA foreign_key_list` surface: `PASS` — `11` source/target column rows,
+  toàn bộ `ON DELETE RESTRICT`.
+- `git diff --check`: `PASS` tại host closeout.
+
+Analytics ownership split được ghi explicit: SQLite enforce valid JSON object,
+text/non-null/default, payload `<= 2 KiB`, expiry arithmetic và state/count/time bounds.
+Event/property allowlist cùng tối đa `20` properties thuộc future typed adapter/repository
+`US-02-05/06`; `US-02-02` không thêm analytics delivery behavior.
+
+## 7. `US-02-02` native runtime gate — pending owner
+
+Owner chạy runbook
+[`apps/mobile/test/device/initial-schema-smoke.md`](../../apps/mobile/test/device/initial-schema-smoke.md)
+trên exact final implementation commit. Required report:
+
+```json
+{
+  "probe": "US-02-02_INITIAL_SCHEMA",
+  "passed": true,
+  "platform": "ios-or-android",
+  "osVersion": "<runtime>",
+  "appVersion": "0.1.0",
+  "commitSha": "<final-implementation-commit-sha>",
+  "assertions": [
+    "schema_probe_database_opened",
+    "initial_schema_applied_atomically",
+    "exact_schema_surface_verified",
+    "foreign_keys_restrict_and_valid_seed_verified",
+    "exact_seed_verified",
+    "valid_entity_shapes_committed",
+    "negative_write_matrix_rejected_without_partial_rows",
+    "schema_and_seed_survived_reopen",
+    "failure_probe_database_opened",
+    "injected_apply_failure_rolled_back_all_schema",
+    "probe_connections_closed_idempotently"
+  ]
+}
+```
+
+Không điền hoặc suy đoán report trước khi owner chạy. Một native target pass đóng gate
+`US-02-02`; iOS + Android repeat vẫn thuộc `US-02-09`.
+
+## 8. `US-02-02` acceptance status
+
+| Acceptance group | Host status | Native status |
+|---|---|---|
+| 11 tables / 86 columns / exact defaults/check surface | `PASS_MANIFEST_AND_DDL_AUDIT` | `PENDING` |
+| 11 FK rows / all product delete actions `RESTRICT` | `PASS_DDL_AUDIT` | `PENDING` |
+| Focus/trial/Break/status conditional shapes | `PASS_PROBE_MATRIX_IMPLEMENTED` | `PENDING` |
+| One-running + terminal/identity immutability | `PASS_PROBE_MATRIX_IMPLEMENTED` | `PENDING` |
+| Reward/purchase/ownership/equip backstops | `PASS_PROBE_MATRIX_IMPLEMENTED` | `PENDING` |
+| Singleton + exact deterministic seed | `PASS_HOST` | `PENDING` |
+| Exact indexes/triggers | `PASS_MANIFEST_AND_DDL_AUDIT` | `PENDING` |
+| Atomic apply/seed/failure rollback/reopen | `PASS_HOST_ORCHESTRATION` | `PENDING` |
+| No OPEN/DEFERRED field hoặc cross-layer scope creep | `PASS` | N/A |
+
+**Current Story status:** `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
+
+`US-02-03` vẫn `NOT_STARTED`/blocked. Gate chỉ mở sau khi native report khớp final commit,
+evidence được reviewer chấp nhận và `US-02-02` chuyển `DONE`.

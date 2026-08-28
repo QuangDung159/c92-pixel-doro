@@ -1,19 +1,19 @@
-import { CreateFoundationSnapshotUseCase } from '@pixeldoro/application';
+import { CreateFoundationSnapshotUseCase } from "@pixeldoro/application";
 
-import { MobileBootstrap } from '@/application';
-import { NoopAppLifecycleAdapter } from '@/infrastructure/platform/app-lifecycle/noop-app-lifecycle.adapter';
-import { DeviceClockAdapter } from '@/infrastructure/platform/clock/device-clock.adapter';
-import { DeviceIdAdapter } from '@/infrastructure/platform/id/device-id.adapter';
-import { SQLiteDatabaseOwner } from '@/infrastructure/database/sqlite-database-owner';
+import { MobileBootstrap } from "@/application";
+import { SQLiteDatabaseOwner } from "@/infrastructure/database/sqlite-database-owner";
 import {
   ExpoSQLiteDriver,
   type SQLiteDriver,
-} from '@/infrastructure/database/sqlite-driver';
-import { SQLiteTransaction } from '@/infrastructure/database/sqlite-transaction';
+} from "@/infrastructure/database/sqlite-driver";
+import { SQLiteTransaction } from "@/infrastructure/database/sqlite-transaction";
+import { NoopAppLifecycleAdapter } from "@/infrastructure/platform/app-lifecycle/noop-app-lifecycle.adapter";
+import { DeviceClockAdapter } from "@/infrastructure/platform/clock/device-clock.adapter";
+import { DeviceIdAdapter } from "@/infrastructure/platform/id/device-id.adapter";
 
-import type { MobileApplication } from './mobile-application';
+import type { MobileApplication } from "./mobile-application";
 
-const PIXELDORO_DATABASE_NAME = 'pixeldoro.db';
+const PIXELDORO_DATABASE_NAME = "pixeldoro.db";
 
 export interface CreateMobileApplicationOptions {
   readonly databaseName?: string;
@@ -31,31 +31,49 @@ export const createMobileApplication = (
     options.sqliteDriver ?? new ExpoSQLiteDriver(),
   );
   const transaction = new SQLiteTransaction(databaseOwner);
-  const createFoundationSnapshot = new CreateFoundationSnapshotUseCase({ clock, id });
+  const createFoundationSnapshot = new CreateFoundationSnapshotUseCase({
+    clock,
+    id,
+  });
   const bootstrap = new MobileBootstrap({
     appLifecycle,
     createFoundationSnapshot,
     databaseLifecycle: databaseOwner,
   });
-  const probeEnabled =
-    typeof __DEV__ !== 'undefined' &&
+  const sqliteKernelProbeEnabled =
+    typeof __DEV__ !== "undefined" &&
     __DEV__ &&
-    process.env.EXPO_PUBLIC_SQLITE_KERNEL_PROBE === '1';
+    process.env.EXPO_PUBLIC_SQLITE_KERNEL_PROBE === "1";
+  const initialSchemaProbeEnabled =
+    typeof __DEV__ !== "undefined" &&
+    __DEV__ &&
+    process.env.EXPO_PUBLIC_INITIAL_SCHEMA_PROBE === "1";
   let probePromise: Promise<void> | undefined;
 
   const runProbeIfEnabled = (): Promise<void> => {
-    if (!probeEnabled) {
+    if (!sqliteKernelProbeEnabled && !initialSchemaProbeEnabled) {
       return Promise.resolve();
     }
 
-    probePromise ??= import('./diagnostics/run-sqlite-kernel-probe').then(
-      async ({ runSQLiteKernelProbe }) => {
+    probePromise ??= (async () => {
+      if (sqliteKernelProbeEnabled) {
+        const { runSQLiteKernelProbe } =
+          await import("./diagnostics/run-sqlite-kernel-probe");
         const report = await runSQLiteKernelProbe(
           options.sqliteDriver ?? new ExpoSQLiteDriver(),
         );
-        console.info('[PixelDoro][SQLiteKernelProbe]', JSON.stringify(report));
-      },
-    );
+        console.info("[PixelDoro][SQLiteKernelProbe]", JSON.stringify(report));
+      }
+
+      if (initialSchemaProbeEnabled) {
+        const { runInitialSchemaProbe } =
+          await import("./diagnostics/run-initial-schema-probe");
+        const report = await runInitialSchemaProbe(
+          options.sqliteDriver ?? new ExpoSQLiteDriver(),
+        );
+        console.info("[PixelDoro][InitialSchemaProbe]", JSON.stringify(report));
+      }
+    })();
     return probePromise;
   };
 
