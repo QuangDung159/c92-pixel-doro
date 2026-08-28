@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_02_USER_STORIES
 title: PixelDoro Mobile MVP — EPIC-02 User Stories
-version: 0.8.0
+version: 0.9.0
 status: READY_FOR_REVIEW
 last_updated: 2026-08-28
 owner: Dũng Lư
@@ -295,9 +295,9 @@ Data Model §2.3, §7.
 ### US-02-02 — Normative Schema, Constraints và Exact Seed
 
 **Implementation plan:**
-[`US-02-02_IMPLEMENTATION_PLAN.md`](./US-02-02_IMPLEMENTATION_PLAN.md) `1.1.0`
-`READY_FOR_IMPLEMENTATION`; implementation `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
-Host checks pass; acceptance checklist vẫn mở tới khi owner native report được review.
+[`US-02-02_IMPLEMENTATION_PLAN.md`](./US-02-02_IMPLEMENTATION_PLAN.md) `1.2.0`
+`DONE`; host checks và exact iOS native probe pass trên commit
+`4996c7d6529d0a1578e2d052bdbaaf858d9e1a1d`.
 `EPIC02-INPUT-03` và
 `US0202-CONFIRM-01` đến `03` đều đã được owner duyệt.
 
@@ -329,22 +329,22 @@ contribution colors, dynamic catalog, cloud/sync field và future nullable place
 
 **Acceptance criteria:**
 
-- [ ] Initial artifact tạo đúng 11 table normative và mọi column/null/default/check rule trong Data Model §4.
-- [ ] Mọi product foreign key dùng `ON DELETE RESTRICT`; foreign-key check trả không có violation trên valid seed.
-- [ ] Session chỉ chấp nhận four statuses và conditional shape đúng cho standard Focus, onboarding trial, Short Break và Long Break.
-- [ ] Onboarding trial bắt buộc duration `5`, `mode = relax`, `work_tag IS NULL`, không có Strict evidence/failure shape.
-- [ ] Break bắt buộc mode/tag/focus variant/background evidence `NULL`, duration đúng type và không nhận reward fields.
-- [ ] Partial unique index reject running session thứ hai trên cùng local database.
-- [ ] Terminal status/immutable identity fields không thể bị update trái invariant.
-- [ ] Reward row chỉ hợp lệ cho completed Focus, unique theo `session_id`, delta/reason khớp session và không update trong normal path.
-- [ ] Purchase/ownership composite constraint ngăn receipt khác profile/item; balance/receipt semantics có database backstop phù hợp baseline.
-- [ ] Singleton installation/settings/profile chỉ cho `id = 1`.
-- [ ] Settings seed là duration `25`, Short `5`, Long `15`, mode `relax`; sound/haptic/notification preference/analytics đều `1`.
-- [ ] Profile seed có `total_xp = 0`, `coin_balance = 0`.
-- [ ] Catalog có đúng 12 row với exact ID/display name/category/price và không seed owned item.
-- [ ] Không có Pet species/name/stage/skin, `paused`, Pet visual state, contribution color, cloud ID/sync revision hoặc feature `DEFERRED`.
-- [ ] Required index/trigger set trong Data Model §5 tồn tại và được behavior test, không chỉ snapshot tên.
-- [ ] Seed timestamp đi qua deterministic/injected application clock contract; không dùng SQLite `CURRENT_TIMESTAMP` làm timestamp product.
+- [x] Initial artifact tạo đúng 11 table normative và mọi column/null/default/check rule trong Data Model §4.
+- [x] Mọi product foreign key dùng `ON DELETE RESTRICT`; foreign-key check trả không có violation trên valid seed.
+- [x] Session chỉ chấp nhận four statuses và conditional shape đúng cho standard Focus, onboarding trial, Short Break và Long Break.
+- [x] Onboarding trial bắt buộc duration `5`, `mode = relax`, `work_tag IS NULL`, không có Strict evidence/failure shape.
+- [x] Break bắt buộc mode/tag/focus variant/background evidence `NULL`, duration đúng type và không nhận reward fields.
+- [x] Partial unique index reject running session thứ hai trên cùng local database.
+- [x] Terminal status/immutable identity fields không thể bị update trái invariant.
+- [x] Reward row chỉ hợp lệ cho completed Focus, unique theo `session_id`, delta/reason khớp session và không update trong normal path.
+- [x] Purchase/ownership composite constraint ngăn receipt khác profile/item; balance/receipt semantics có database backstop phù hợp baseline.
+- [x] Singleton installation/settings/profile chỉ cho `id = 1`.
+- [x] Settings seed là duration `25`, Short `5`, Long `15`, mode `relax`; sound/haptic/notification preference/analytics đều `1`.
+- [x] Profile seed có `total_xp = 0`, `coin_balance = 0`.
+- [x] Catalog có đúng 12 row với exact ID/display name/category/price và không seed owned item.
+- [x] Không có Pet species/name/stage/skin, `paused`, Pet visual state, contribution color, cloud ID/sync revision hoặc feature `DEFERRED`.
+- [x] Required index/trigger set trong Data Model §5 tồn tại và được behavior test, không chỉ snapshot tên.
+- [x] Seed timestamp đi qua deterministic/injected application clock contract; không dùng SQLite `CURRENT_TIMESTAMP` làm timestamp product.
 
 **Task checklist sơ bộ:**
 
@@ -878,11 +878,11 @@ Một Story chỉ được đánh dấu `[x]` khi:
 - **Product blocker:** không có; ba Product decision còn `OPEN` đều nằm ngoài schema
   foundation và đã có explicit exclusion.
 - **Story breakdown:** `READY_FOR_REVIEW`, chưa tự coi là owner-approved baseline.
-- **Implementation readiness:** `US-02-01` đã `DONE`; `US-02-02` đã implement production
-  artifact/host tests/probe và đang `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`. Story chưa
-  `DONE`, nên `US-02-03` chưa được active. `EPIC02-INPUT-03` đã `RESOLVED`;
-  `EPIC02-INPUT-02` tiếp tục chờ gate
-  `US-02-03`. Toàn Story breakdown vẫn `READY_FOR_REVIEW`.
+- **Implementation readiness:** `US-02-01` và `US-02-02` đã `DONE`. Exact native report của
+  `US-02-02` pass trên implementation commit đã đối chiếu; dependency gate sang `US-02-03`
+  mở ở mức ready-for-planning. `EPIC02-INPUT-03` đã `RESOLVED`; `EPIC02-INPUT-02` vẫn chờ
+  owner confirmation trong plan riêng của `US-02-03`. Toàn Story breakdown vẫn
+  `READY_FOR_REVIEW`; Story sau chưa tự active.
 
 ### 8.2. Điều kiện chuyển `READY_FOR_IMPLEMENTATION`
 
@@ -907,6 +907,14 @@ Một Story chỉ được đánh dấu `[x]` khi:
 - [ ] Dũng Lư review và phê duyệt Story breakdown trước khi chuyển status sang `APPROVED`/`READY_FOR_IMPLEMENTATION`.
 
 ## 10. Change log
+
+### 0.9.0 — 2026-08-28
+
+- Tiếp nhận iOS native report `US-02-02_INITIAL_SCHEMA` `passed: true`, đủ `11/11`
+  assertions và exact SHA `4996c7d6529d0a1578e2d052bdbaaf858d9e1a1d`.
+- Hoàn tất acceptance checklist và chuyển `US-02-02` sang `DONE`.
+- Mở dependency gate `US-02-03` ở mức ready-for-planning; giữ `EPIC02-INPUT-02` chưa resolve
+  và không tự active Story tiếp theo.
 
 ### 0.8.0 — 2026-08-28
 

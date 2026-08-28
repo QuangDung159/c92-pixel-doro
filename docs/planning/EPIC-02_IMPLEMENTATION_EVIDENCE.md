@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_02_IMPLEMENTATION_EVIDENCE
 title: PixelDoro Mobile MVP — EPIC-02 Implementation Evidence
-version: 0.3.0
+version: 0.4.0
 status: IN_PROGRESS
 last_updated: 2026-08-28
 owner: Dũng Lư
@@ -24,10 +24,10 @@ Expo native runtime probe đều pass trên implementation commit
 `a75ecc9112c2aa279bee9a818d9c97e586b84b21`; repository `HEAD` đã được đối chiếu đúng SHA
 này khi tiếp nhận report ngày 2026-08-28.
 
-`US-02-02 — Normative Schema, Constraints và Exact Seed` đã hoàn tất production artifact,
-host tests và dev-only native probe trên working tree dựa trên repository `HEAD` `5951d3b`.
-Final implementation commit SHA và native runtime report chưa có, nên Story đang
-`IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`, chưa `DONE`, và chưa mở `US-02-03`.
+`US-02-02 — Normative Schema, Constraints và Exact Seed` đã `DONE`. Host evidence pass và
+owner iOS native runtime report `passed: true` đủ `11/11` assertions trên implementation
+commit `4996c7d6529d0a1578e2d052bdbaaf858d9e1a1d`; repository `HEAD` đã được đối chiếu đúng
+SHA này trước documentation closeout ngày 2026-08-28.
 
 Không có migration runner/history/checksum, production bootstrap migration,
 Timer/Session/Reward/Pet/Inventory/Settings use case, auto-reset, native/EAS build hoặc native
@@ -165,11 +165,11 @@ các input/plan riêng của Story đó đạt gate; không giữ đồng thời
 | Capability | Repository evidence | Status |
 |---|---|---|
 | Production initial artifact | `001_initial-schema.migration.ts`, version `1`, stable name `initial-schema`; empty-database precondition; no `IF NOT EXISTS`/upsert/history write | `PASS_HOST` |
-| Exact schema surface | Canonical manifest: `11` tables, `86` columns, `11` FK rows, `14` indexes, `6` triggers | `PASS_HOST`; `PENDING_NATIVE` |
-| Exact seed | Installation/settings/profile singleton và exact `12` Vietnamese catalog rows; all values bound với injected timestamp/ID | `PASS_HOST`; `PENDING_NATIVE` |
-| Atomicity | Same-connection `BEGIN IMMEDIATE`; injected DDL, seed và post-verification failures rollback | `PASS_HOST`; `PENDING_NATIVE` |
-| Constraints/backstops | Focus/trial/Break/status shapes, one-running, FK `RESTRICT`, terminal/identity immutability, reward/purchase/equip backstops | `PASS_DDL_AUDIT`; `PENDING_NATIVE_BEHAVIOR` |
-| Native probe harness | Exact production artifact, deterministic fixtures, full-row before/after negative matrix, reopen, injected failure DB, exact cleanup | `READY_FOR_OWNER_RUN` |
+| Exact schema surface | Canonical manifest: `11` tables, `86` columns, `11` FK rows, `14` indexes, `6` triggers | `PASS_HOST_AND_NATIVE_IOS` |
+| Exact seed | Installation/settings/profile singleton và exact `12` Vietnamese catalog rows; all values bound với injected timestamp/ID | `PASS_HOST_AND_NATIVE_IOS` |
+| Atomicity | Same-connection `BEGIN IMMEDIATE`; injected DDL, seed và post-verification failures rollback | `PASS_HOST_AND_NATIVE_IOS` |
+| Constraints/backstops | Focus/trial/Break/status shapes, one-running, FK `RESTRICT`, terminal/identity immutability, reward/purchase/equip backstops | `PASS_HOST_AND_NATIVE_IOS` |
+| Native probe harness | Exact production artifact, deterministic fixtures, full-row before/after negative matrix, reopen, injected failure DB, exact cleanup | `PASS_NATIVE_IOS` |
 | Scope boundary | Không có production repository/use case/bootstrap/reset executor; SQL/driver không rò Domain/Application/Presentation | `PASS` |
 
 Automated checks dùng Node.js `22.23.2` và pnpm `11.24.0`:
@@ -197,20 +197,29 @@ text/non-null/default, payload `<= 2 KiB`, expiry arithmetic và state/count/tim
 Event/property allowlist cùng tối đa `20` properties thuộc future typed adapter/repository
 `US-02-05/06`; `US-02-02` không thêm analytics delivery behavior.
 
-## 7. `US-02-02` native runtime gate — pending owner
+## 7. `US-02-02` native runtime acceptance — owner evidence received 2026-08-28
 
-Owner chạy runbook
+Owner đã chạy runbook
 [`apps/mobile/test/device/initial-schema-smoke.md`](../../apps/mobile/test/device/initial-schema-smoke.md)
-trên exact final implementation commit. Required report:
+trên exact final implementation commit:
+
+| Field | Owner evidence |
+|---|---|
+| Platform / OS / device | iOS / 26.5 / target model không được cung cấp |
+| App version | `0.1.0` |
+| Evidence received | 2026-08-28; exact runtime timestamp không có trong report |
+| Final implementation commit SHA | `4996c7d6529d0a1578e2d052bdbaaf858d9e1a1d` — khớp repository `HEAD` khi review |
+| Probe result | `PASS` — `passed: true`, đủ `11/11` named assertions |
+| Cleanup | `PASS` — report chỉ pass sau hai exact probe database close/delete thành công |
 
 ```json
 {
   "probe": "US-02-02_INITIAL_SCHEMA",
   "passed": true,
-  "platform": "ios-or-android",
-  "osVersion": "<runtime>",
+  "platform": "ios",
+  "osVersion": "26.5",
   "appVersion": "0.1.0",
-  "commitSha": "<final-implementation-commit-sha>",
+  "commitSha": "4996c7d6529d0a1578e2d052bdbaaf858d9e1a1d",
   "assertions": [
     "schema_probe_database_opened",
     "initial_schema_applied_atomically",
@@ -227,24 +236,25 @@ trên exact final implementation commit. Required report:
 }
 ```
 
-Không điền hoặc suy đoán report trước khi owner chạy. Một native target pass đóng gate
-`US-02-02`; iOS + Android repeat vẫn thuộc `US-02-09`.
+Thiếu target model và exact runtime timestamp chỉ là audit metadata gap, không làm yếu
+behavior assertions hoặc SHA traceability. Một native target pass đóng gate `US-02-02`;
+iOS + Android repeat vẫn thuộc `US-02-09`.
 
 ## 8. `US-02-02` acceptance status
 
 | Acceptance group | Host status | Native status |
 |---|---|---|
-| 11 tables / 86 columns / exact defaults/check surface | `PASS_MANIFEST_AND_DDL_AUDIT` | `PENDING` |
-| 11 FK rows / all product delete actions `RESTRICT` | `PASS_DDL_AUDIT` | `PENDING` |
-| Focus/trial/Break/status conditional shapes | `PASS_PROBE_MATRIX_IMPLEMENTED` | `PENDING` |
-| One-running + terminal/identity immutability | `PASS_PROBE_MATRIX_IMPLEMENTED` | `PENDING` |
-| Reward/purchase/ownership/equip backstops | `PASS_PROBE_MATRIX_IMPLEMENTED` | `PENDING` |
-| Singleton + exact deterministic seed | `PASS_HOST` | `PENDING` |
-| Exact indexes/triggers | `PASS_MANIFEST_AND_DDL_AUDIT` | `PENDING` |
-| Atomic apply/seed/failure rollback/reopen | `PASS_HOST_ORCHESTRATION` | `PENDING` |
+| 11 tables / 86 columns / exact defaults/check surface | `PASS_MANIFEST_AND_DDL_AUDIT` | `PASS_IOS` |
+| 11 FK rows / all product delete actions `RESTRICT` | `PASS_DDL_AUDIT` | `PASS_IOS` |
+| Focus/trial/Break/status conditional shapes | `PASS_PROBE_MATRIX_IMPLEMENTED` | `PASS_IOS` |
+| One-running + terminal/identity immutability | `PASS_PROBE_MATRIX_IMPLEMENTED` | `PASS_IOS` |
+| Reward/purchase/ownership/equip backstops | `PASS_PROBE_MATRIX_IMPLEMENTED` | `PASS_IOS` |
+| Singleton + exact deterministic seed | `PASS_HOST` | `PASS_IOS` |
+| Exact indexes/triggers | `PASS_MANIFEST_AND_DDL_AUDIT` | `PASS_IOS` |
+| Atomic apply/seed/failure rollback/reopen | `PASS_HOST_ORCHESTRATION` | `PASS_IOS` |
 | No OPEN/DEFERRED field hoặc cross-layer scope creep | `PASS` | N/A |
 
-**Current Story status:** `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
+**Current Story status:** `DONE`.
 
-`US-02-03` vẫn `NOT_STARTED`/blocked. Gate chỉ mở sau khi native report khớp final commit,
-evidence được reviewer chấp nhận và `US-02-02` chuyển `DONE`.
+Dependency gate sang `US-02-03` đã mở ở mức ready-for-planning. Story sau vẫn `NOT_STARTED`;
+`EPIC02-INPUT-02` chưa được resolve và không có Story thứ hai tự active trong closeout này.

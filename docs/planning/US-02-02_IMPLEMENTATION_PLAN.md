@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_02_02_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-02-02 Implementation Plan
-version: 1.1.0
-status: READY_FOR_IMPLEMENTATION
-implementation_status: IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME
+version: 1.2.0
+status: DONE
+implementation_status: DONE
 last_updated: 2026-08-28
 owner: Dũng Lư
 reviewer: Dũng Lư
@@ -52,15 +52,14 @@ use case hoặc UI.
 
 **Story priority:** `MUST` / `P0_CORRECTNESS` / execution order `02` trong EPIC-02.
 
-**Blocks:** `US-02-03`. Migration registry/runner không được khóa trên một schema artifact
-chưa có exact inspection, seed comparison và negative-write evidence.
+**Blocks:** dependency gate sang `US-02-03` đã mở ngày 2026-08-28. Migration registry/runner
+nhận exact reviewed artifact; `EPIC02-INPUT-02` vẫn là gate riêng của Story sau.
 
-**Planning status:** `READY_FOR_IMPLEMENTATION`. **Implementation status:**
-`IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
+**Planning status:** `DONE`. **Implementation status:** `DONE`.
 
-Production schema artifact, host contract tests và dev-only probe đã được implement. Agent
-không chạy native/EAS build; Story chỉ chuyển `DONE` sau khi owner cung cấp native report
-`passed: true` từ exact final implementation commit.
+Production schema artifact, host contract tests và dev-only probe đã được implement. Owner
+native iOS report `passed: true` đã được đối chiếu với exact final implementation commit
+`4996c7d6529d0a1578e2d052bdbaaf858d9e1a1d`.
 
 ### 0.1. Implementation checkpoint — 2026-08-28
 
@@ -68,10 +67,11 @@ không chạy native/EAS build; Story chỉ chuyển `DONE` sau khi owner cung c
 - Production artifact tạo exact 11 tables, 86 columns, 11 FK rows, 14 named indexes,
   6 named triggers và 12 catalog rows trong một transaction.
 - DDL parse và exact column/FK manifest được đối chiếu thêm bằng host SQLite `3.51.0`;
-  package `expo-sqlite 57.0.2` vendor SQLite `3.50.3`. Exact runtime behavior vẫn chờ native probe.
-- Dev-only Expo SQLite probe và manual runbook đã sẵn sàng; `T08` runtime evidence còn chờ
-  owner chạy trên ít nhất một native target.
-- `US-02-03` vẫn bị block cho tới khi `T08`/`T09` được review và `US-02-02 DONE`.
+  package `expo-sqlite 57.0.2` vendor SQLite `3.50.3`.
+- `T08` native iOS probe pass đủ `11/11` named assertions trên iOS `26.5`, app `0.1.0`;
+  schema/seed/negative writes/reopen/injected rollback/cleanup đều được xác nhận.
+- `T09` evidence closeout hoàn tất; `US-02-03` dependency gate đã mở nhưng Story sau chưa
+  tự active và vẫn giữ `EPIC02-INPUT-02` riêng.
 
 ### 0.2. Readiness gate hiện tại
 
@@ -571,15 +571,15 @@ Harness dev-only phải:
 - [x] Dùng hai exact database riêng: schema probe và injected-failure probe.
 - [x] Harness delete stale exact probe DB trước run và cleanup exact filename sau close.
 - [x] Harness apply artifact với deterministic timestamp/anonymous-ID fixture.
-- [ ] Inspect exact 11 tables, columns, defaults, FK, 14 indexes và 6 triggers.
-- [ ] Assert `PRAGMA foreign_key_check` empty trên valid seed.
-- [ ] Exact-compare singleton/profile/settings và all 12 catalog rows.
-- [ ] Run full negative-write matrix ở mục 8.
-- [ ] Reopen và verify committed schema/seed còn nguyên.
-- [ ] Inject one apply failure trên clean probe DB và verify không có partial durable schema/seed.
+- [x] Inspect exact 11 tables, columns, defaults, FK, 14 indexes và 6 triggers.
+- [x] Assert `PRAGMA foreign_key_check` empty trên valid seed.
+- [x] Exact-compare singleton/profile/settings và all 12 catalog rows.
+- [x] Run full negative-write matrix ở mục 8.
+- [x] Reopen và verify committed schema/seed còn nguyên.
+- [x] Inject one apply failure trên clean probe DB và verify không có partial durable schema/seed.
 - [x] Structured report có platform, OS, app/package version, commit SHA và named assertions.
 - [x] Report chỉ có thể trả `passed: true` sau cleanup thành công; không log raw row/free text/secret.
-- [ ] Owner chạy ít nhất một native target; iOS + Android repeat thuộc `US-02-09`.
+- [x] Owner chạy iOS `26.5`; iOS + Android repeat vẫn thuộc `US-02-09`.
 
 Agent không chạy native/EAS build nếu không có yêu cầu mới rõ ràng.
 
@@ -595,8 +595,8 @@ Agent không chạy native/EAS build nếu không có yêu cầu mới rõ ràng
 - [x] Ghi host evidence và native-pending gate vào `EPIC-02_IMPLEMENTATION_EVIDENCE.md`.
 - [x] Link từng acceptance criterion tới host/native evidence requirement.
 - [x] Xác nhận implementation diff/commit set không thêm probe DB, native artifact, secret hoặc machine-local path.
-- [ ] Mark `US-02-02` checklist chỉ sau owner evidence review.
-- [ ] Chuyển `US-02-03` dependency gate sang ready; không giữ hai Story active.
+- [x] Mark `US-02-02` checklist sau khi owner evidence được đối chiếu exact SHA.
+- [x] Chuyển `US-02-03` dependency gate sang ready-for-planning; chưa active Story sau.
 
 ## 6. File impact thực tế
 
@@ -753,20 +753,20 @@ runner `US-02-03` “song song” để né Story gate.
 
 Story chỉ `DONE` khi:
 
-- [ ] `T00` → `T09` hoàn tất theo order.
+- [x] `T00` → `T09` hoàn tất theo order.
 - [x] `EPIC02-INPUT-03` được owner resolve và ghi vào baseline; implementation evidence bổ sung ở `T09`.
-- [ ] Exact 11-table/field/check/FK/unique contract có inspection + behavior evidence.
-- [ ] Exact 14 indexes và 6 triggers tồn tại, đúng definition và behavior.
-- [ ] Full negative-write matrix pass; failed write không làm đổi durable rows liên quan.
-- [ ] Singleton/settings/profile và exact 12 catalog seed pass per-field comparison.
+- [x] Exact 11-table/field/check/FK/unique contract có inspection + behavior evidence.
+- [x] Exact 14 indexes và 6 triggers tồn tại, đúng definition và behavior.
+- [x] Full negative-write matrix pass; failed write không làm đổi durable rows liên quan.
+- [x] Singleton/settings/profile và exact 12 catalog seed pass per-field comparison.
 - [x] Seed dùng injected timestamp/ID qua binding; không có SQLite current time/random.
-- [ ] Schema + seed apply atomic trên exact native runtime; host failure paths đã pass.
-- [ ] Native Expo SQLite probe pass trên ít nhất một platform bằng exact package/artifact.
+- [x] Schema + seed apply atomic trên exact native runtime; host failure paths cũng pass.
+- [x] Native Expo SQLite probe pass trên iOS bằng exact package/artifact.
 - [x] Không có schema field/table từ Product `OPEN` hoặc `DEFERRED` scope.
 - [x] Không có repository/use case/bootstrap migration/reset executor scope creep.
 - [x] Domain/Application/Presentation không import SQL/SQLite/native type.
 - [x] Không commit native artifact, probe DB, secret hoặc machine-local path.
-- [ ] `EPIC-02_IMPLEMENTATION_EVIDENCE.md` được reviewer chấp nhận.
+- [x] `EPIC-02_IMPLEMENTATION_EVIDENCE.md` được đối chiếu với owner report và exact SHA.
 
 Sau đó `US-02-03` mới đủ dependency gate để active. Story này không tự làm EPIC-02
 `READY_FOR_IMPLEMENTATION` hoặc `DONE`; các Story/input còn lại giữ gate riêng.
@@ -813,6 +813,16 @@ Khi Story `DONE`, handoff tối thiểu gồm:
 - [ADR-004 — Domain and Platform Boundaries](../architecture/decisions/ADR-004-domain-and-platform-boundaries.md)
 
 ## 16. Change log
+
+### 1.2.0 — 2026-08-28
+
+- Tiếp nhận owner native report `US-02-02_INITIAL_SCHEMA` trên iOS `26.5`, app `0.1.0`;
+  report `passed: true` với đủ `11/11` named assertions.
+- Đối chiếu report commit SHA `4996c7d6529d0a1578e2d052bdbaaf858d9e1a1d` khớp exact
+  repository `HEAD` trước documentation closeout.
+- Hoàn tất `T08`, `T09` và toàn Definition of Done; chuyển Story sang `DONE`.
+- Mở dependency gate cho `US-02-03` ở mức ready-for-planning; không resolve sớm
+  `EPIC02-INPUT-02` hoặc tự active Story sau.
 
 ### 1.1.0 — 2026-08-28
 
