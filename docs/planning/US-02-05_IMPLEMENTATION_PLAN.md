@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_02_05_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-02-05 Implementation Plan
-version: 0.4.0
-status: IN_PROGRESS
-implementation_status: IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME
+version: 0.5.0
+status: DONE
+implementation_status: DONE
 last_updated: 2026-08-28
 owner: Dũng Lư
 reviewer: Dũng Lư
@@ -52,12 +52,12 @@ implementation SHA `b36bc45190129da07e42d046f2badf6fddcd99e4`.
 **Blocks:** `US-02-06`. Derived queries không được xây trực tiếp trên SQLite/raw row trước khi
 typed mapping, repository ownership và transaction participation có một contract ổn định.
 
-**Planning status:** `IN_PROGRESS`. **Implementation status:**
-`IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
+**Planning status:** `DONE`. **Implementation status:** `DONE`.
 
 Không có Product blocker. Bốn technical confirmation `US0205-CONFIRM-01` đến `04` đã được
-Dũng Lư duyệt ngày 2026-08-28. Decision gate đã đóng; `US0205-T01 → T08` đã hoàn tất,
-full host quality pass và `T09` đang chờ owner chạy exact native probe.
+Dũng Lư duyệt ngày 2026-08-28. Decision gate đã đóng; `US0205-T01 → T10` hoàn tất.
+Exact iOS probe pass `10/10` assertions trên implementation SHA
+`bdbed4d820caa2ad1648cba28679d76327eca1b0`; final host quality rerun pass.
 
 ### 0.1. Start gate
 
@@ -459,18 +459,18 @@ correctness block; số `Txx` dưới đây là exact execution order trong Stor
 
 ### US0205-T09 — Owner native evidence
 
-- [ ] Owner chạy iOS development runtime theo runbook trên exact implementation SHA.
-- [ ] Report có `passed: true`, platform, OS/app/application ID, full commit SHA và exact assertion set.
-- [ ] Đối chiếu SHA với implementation commit; rerun nếu code production/probe đổi sau report.
-- [ ] Android runtime evidence chỉ bắt buộc nếu Epic/device gate hiện hành yêu cầu ở Story này;
+- [x] Owner chạy iOS development runtime theo runbook trên exact implementation SHA.
+- [x] Report có `passed: true`, platform, OS/app/application ID, full commit SHA và exact assertion set.
+- [x] Đối chiếu SHA với implementation commit; final quality rerun pass.
+- [x] Android runtime evidence không bắt buộc tại Story này; both-platform repeat thuộc `US-02-09`,
   không giả lập pass bằng host SQLite.
 
 ### US0205-T10 — Closeout
 
-- [ ] Lưu automated/native outputs vào `EPIC-02_IMPLEMENTATION_EVIDENCE.md`.
-- [ ] Update plan/User Stories status/version/change log, exact implementation/evidence SHA.
-- [ ] Review diff xác nhận không Product behavior/schema scope creep.
-- [ ] Chỉ chuyển `DONE` và mở `US-02-06` khi exit checklist đầy đủ.
+- [x] Lưu automated/native outputs vào `EPIC-02_IMPLEMENTATION_EVIDENCE.md`.
+- [x] Update plan/User Stories status/version/change log, exact implementation/evidence SHA.
+- [x] Review diff xác nhận không Product behavior/schema scope creep.
+- [x] Chuyển `DONE` và mở dependency cho `US-02-06` sau khi exit checklist đầy đủ.
 
 ## 7. Planned file impact
 
@@ -586,9 +586,9 @@ dev-only diagnostic, không xuất hiện trong release UI và không thay host 
 - [x] Scoped multi-repository transaction, rollback và catalog-authoritative price evidence pass.
 - [x] Valid/corrupt mapper matrix và host SQLite close/reopen round-trip đủ mọi entity.
 - [x] Existing US01–US04 regression + full quality pass.
-- [ ] Owner native report pass trên exact SHA và được lưu vào evidence document.
+- [x] Owner native report pass `10/10` trên exact implementation SHA và được lưu vào evidence document.
 - [x] Không production Product behavior/UI/schema migration mới/native artifact ngoài policy.
-- [ ] Documentation closeout hoàn tất; `US-02-06` chỉ mở sau `US-02-05 DONE`.
+- [x] Documentation closeout hoàn tất; dependency `US-02-06` đã mở sau `US-02-05 DONE`.
 
 ## 11. Owner confirmations
 
@@ -625,6 +625,15 @@ dev-only diagnostic, không xuất hiện trong release UI và không thay host 
   và readiness boundary baseline.
 
 ## 14. Change log
+
+### 0.5.0 — 2026-08-28
+
+- Tiếp nhận iOS report `US-02-05_TYPED_REPOSITORIES` `passed: true`, đủ `10/10` assertions
+  trên implementation SHA `bdbed4d820caa2ad1648cba28679d76327eca1b0`, khớp repository
+  `HEAD` khi review.
+- Re-run `pnpm quality`: `16` files / `92` tests cùng device/boundary/hygiene gates pass.
+- Chuyển `US-02-05` sang `DONE` và mở dependency cho `US-02-06`; không tự active hoặc
+  implement Story tiếp theo.
 
 ### 0.4.0 — 2026-08-28
 

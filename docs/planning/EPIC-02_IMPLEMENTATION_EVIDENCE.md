@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_02_IMPLEMENTATION_EVIDENCE
 title: PixelDoro Mobile MVP — EPIC-02 Implementation Evidence
-version: 0.9.0
+version: 0.10.0
 status: IN_PROGRESS
 last_updated: 2026-08-28
 owner: Dũng Lư
@@ -42,10 +42,10 @@ iOS native probe đều pass đủ `9/9` assertions trên implementation commit
 `b36bc45190129da07e42d046f2badf6fddcd99e4`; repository `HEAD` đã được đối chiếu đúng SHA
 này khi tiếp nhận report ngày 2026-08-28.
 
-`US-02-05 — Typed Repository và Mapper Integration` đã hoàn tất production implementation,
-host quality/fault/real-SQLite evidence và dev-only native probe/runbook. Story đang
-`IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`; chưa `DONE` và chưa mở `US-02-06` cho tới khi
-owner gửi exact `US-02-05_TYPED_REPOSITORIES` report trên final implementation SHA.
+`US-02-05 — Typed Repository và Mapper Integration` đã `DONE`. Production/host quality,
+real-SQLite evidence và exact iOS native probe đều pass `10/10` assertions trên implementation
+commit `bdbed4d820caa2ad1648cba28679d76327eca1b0`; repository `HEAD` đã được đối chiếu đúng SHA
+này khi tiếp nhận report ngày 2026-08-28.
 
 Không có migration runner/history/checksum, production bootstrap migration,
 Timer/Session/Reward/Pet/Inventory/Settings use case, auto-reset, native/EAS build hoặc native
@@ -458,7 +458,7 @@ Dependency phía `US-02-04` cho `US-02-05/07` đã đạt; `US-02-05` là Story 
 | Immutable API | Reward/purchase normal repositories không expose update/delete; catalog runtime không expose insert/update/delete | `PASS_HOST` |
 | Real SQLite evidence | Production migration `001`, cross-entity transaction commit, close/reopen exact values và returned-failure rollback trên Node SQLite | `PASS_HOST_SQLITE` |
 | Composition/boundary | Một application-scoped persistence graph dùng existing owner/transaction; graph không thuộc Presentation facade; SQL-location/generic-CRUD scans sạch | `PASS_HOST` |
-| Native probe harness | Dev-only isolated `US-02-05_TYPED_REPOSITORIES`, production graph/migration, reopen/rollback/conflict/wrong-scope/cleanup assertions + owner runbook | `READY_OWNER_RUN` |
+| Native probe harness | Dev-only isolated `US-02-05_TYPED_REPOSITORIES`, production graph/migration, reopen/rollback/conflict/wrong-scope/cleanup assertions + owner runbook | `PASS_NATIVE_IOS` |
 
 Automated checks dùng pinned Node.js `22.23.2` và pnpm `11.24.0`:
 
@@ -482,12 +482,51 @@ rollback, catalog-authoritative debit và immutable API surface. Exact Expo SQLi
 manual owner gate theo
 [`apps/mobile/test/device/typed-repositories-smoke.md`](../../apps/mobile/test/device/typed-repositories-smoke.md).
 
-**Current Story status:** `IN_PROGRESS` /
-`IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
+## 14. `US-02-05` native runtime acceptance — owner evidence received 2026-08-28
 
-Pending evidence:
+Owner runbook:
+[`apps/mobile/test/device/typed-repositories-smoke.md`](../../apps/mobile/test/device/typed-repositories-smoke.md).
 
-1. Owner chạy `US-02-05_TYPED_REPOSITORIES` trên existing development build với exact final SHA.
-2. Report `passed: true` đủ `10/10` assertions và cleanup.
-3. Đối chiếu SHA, rerun quality nếu cần, rồi thực hiện `US0205-T10` closeout và mới mở
-   dependency `US-02-06`.
+| Field | Owner evidence |
+|---|---|
+| Platform / OS / device | iOS / 26.5 / target model không được cung cấp |
+| App version / application ID | `0.1.0` / `com.dragonc92team.pixeldoro` |
+| Evidence received | 2026-08-28; exact runtime timestamp không có trong report |
+| Final implementation commit SHA | `bdbed4d820caa2ad1648cba28679d76327eca1b0` — khớp repository `HEAD` khi review |
+| Probe result | `PASS` — `passed: true`, đủ `10/10` named assertions |
+| Cleanup | `PASS` — report chỉ pass sau application connections close và exact isolated database cleanup |
+
+```json
+{
+  "probe": "US-02-05_TYPED_REPOSITORIES",
+  "passed": true,
+  "platform": "ios",
+  "osVersion": "26.5",
+  "appVersion": "0.1.0",
+  "applicationId": "com.dragonc92team.pixeldoro",
+  "commitSha": "bdbed4d820caa2ad1648cba28679d76327eca1b0",
+  "assertions": [
+    "repository_probe_database_opened_and_migrated",
+    "all_durable_entity_groups_round_tripped",
+    "transaction_scoped_multi_repository_work_committed",
+    "catalog_authoritative_price_debit_was_verified",
+    "canonical_mappers_preserved_exact_values_after_reopen",
+    "returned_and_thrown_failures_rolled_back_all_repository_writes",
+    "session_conditional_conflict_was_deterministic",
+    "corrupt_or_constraint_failures_were_safely_mapped",
+    "immutable_receipt_mutation_was_not_exposed_or_committed",
+    "repository_graph_connections_closed_and_database_cleaned"
+  ]
+}
+```
+
+Thiếu target model và exact runtime timestamp chỉ là audit metadata gap, không làm yếu behavior
+assertions hoặc SHA traceability. Một native target pass đóng gate `US-02-05`; both-platform
+repeat vẫn thuộc `US-02-09`.
+
+Final `pnpm quality` rerun trên exact implementation SHA pass `16` files / `92` tests cùng
+device/boundary/hygiene gates.
+
+**Current Story status:** `DONE`.
+
+Dependency `US-02-06` đã mở theo authoritative execution order. Story tiếp theo chưa tự active.

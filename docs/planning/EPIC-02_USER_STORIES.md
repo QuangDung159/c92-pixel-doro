@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_02_USER_STORIES
 title: PixelDoro Mobile MVP — EPIC-02 User Stories
-version: 1.12.0
+version: 1.13.0
 status: READY_FOR_REVIEW
 last_updated: 2026-08-28
 owner: Dũng Lư
@@ -513,9 +513,9 @@ onboarding gating, persistent Zustand và provider initialization làm điều k
 ### US-02-05 — Typed Repository và Mapper Integration
 
 **Implementation plan:**
-[`US-02-05_IMPLEMENTATION_PLAN.md`](./US-02-05_IMPLEMENTATION_PLAN.md) `0.4.0`
-`IN_PROGRESS` / `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`; production/host/probe/runbook
-`T01 → T08` hoàn tất, đang chờ owner `T09` native report.
+[`US-02-05_IMPLEMENTATION_PLAN.md`](./US-02-05_IMPLEMENTATION_PLAN.md) `0.5.0` đã `DONE`.
+Host quality và exact iOS native probe `10/10` pass trên implementation SHA
+`bdbed4d820caa2ad1648cba28679d76327eca1b0`.
 
 **Story statement**
 
@@ -899,9 +899,9 @@ Một Story chỉ được đánh dấu `[x]` khi:
   host/native evidence. `US-02-03` pass iOS `10/10` assertions trên SHA
   `1b6a0427b3db20f4536a2b251101fa0e32b5c0ea`. `US-02-04` đã `DONE`; host quality và exact
   iOS probe `9/9` pass trên SHA `b36bc45190129da07e42d046f2badf6fddcd99e4`.
-  `US-02-05` đang `IN_PROGRESS`: production/host implementation và dev-only probe/runbook đã
-  hoàn tất, full quality pass; Story chờ exact owner native report trước `DONE`. `US-02-06`
-  chưa mở; `US-02-07` vẫn phụ thuộc `US-02-06`.
+  `US-02-05` đã `DONE`: full host quality và exact iOS probe `10/10` pass trên SHA
+  `bdbed4d820caa2ad1648cba28679d76327eca1b0`. Dependency `US-02-06` đã mở và đây là Story
+  kế tiếp theo authoritative order; chưa tự active. `US-02-07` vẫn phụ thuộc `US-02-06`.
 
 ### 8.2. Điều kiện chuyển `READY_FOR_IMPLEMENTATION`
 
@@ -926,6 +926,13 @@ Một Story chỉ được đánh dấu `[x]` khi:
 - [ ] Dũng Lư review và phê duyệt Story breakdown trước khi chuyển status sang `APPROVED`/`READY_FOR_IMPLEMENTATION`.
 
 ## 10. Change log
+
+### 1.13.0 — 2026-08-28
+
+- Tiếp nhận exact iOS report `US-02-05_TYPED_REPOSITORIES` `passed: true`, đủ `10/10`
+  assertions trên implementation SHA `bdbed4d820caa2ad1648cba28679d76327eca1b0` khớp `HEAD`.
+- Re-run full quality `16` files / `92` tests pass; chuyển `US-02-05` sang `DONE`.
+- Mở dependency `US-02-06` theo authoritative order; không tự active hoặc implement Story sau.
 
 ### 1.12.0 — 2026-08-28
 
