@@ -9,6 +9,7 @@ const schemaFlowPath = `${deviceDirectory}initial-schema-smoke.md`;
 const migrationFlowPath = `${deviceDirectory}forward-migration-smoke.md`;
 const bootstrapFlowPath = `${deviceDirectory}safe-bootstrap-smoke.md`;
 const repositoriesFlowPath = `${deviceDirectory}typed-repositories-smoke.md`;
+const derivedQueriesFlowPath = `${deviceDirectory}derived-queries-smoke.md`;
 
 await access(flowPath);
 await access(sqliteFlowPath);
@@ -16,12 +17,14 @@ await access(schemaFlowPath);
 await access(migrationFlowPath);
 await access(bootstrapFlowPath);
 await access(repositoriesFlowPath);
+await access(derivedQueriesFlowPath);
 const flow = await readFile(flowPath, 'utf8');
 const sqliteFlow = await readFile(sqliteFlowPath, 'utf8');
 const schemaFlow = await readFile(schemaFlowPath, 'utf8');
 const migrationFlow = await readFile(migrationFlowPath, 'utf8');
 const bootstrapFlow = await readFile(bootstrapFlowPath, 'utf8');
 const repositoriesFlow = await readFile(repositoriesFlowPath, 'utf8');
+const derivedQueriesFlow = await readFile(derivedQueriesFlowPath, 'utf8');
 
 const requiredLabels = [
   'Chào mừng đến PixelDoro',
@@ -146,6 +149,26 @@ for (const evidence of requiredRepositoryEvidence) {
 
 await access(
   `${mobileDirectory}/src/composition/diagnostics/run-typed-repositories-probe.ts`,
+);
+
+const requiredDerivedQueryEvidence = [
+  'EXPO_PUBLIC_DERIVED_QUERIES_PROBE=1',
+  'US-02-06_DERIVED_QUERIES',
+  'passed: true',
+  'pixeldoro-us-02-06-derived-queries-probe.db',
+  'economy_consistency_passed_and_mismatch_preserved_rows',
+  'analytics_queue_enforced_ttl_cap_dedupe_retry_and_privacy',
+  'EPIC-02_IMPLEMENTATION_EVIDENCE.md',
+];
+
+for (const evidence of requiredDerivedQueryEvidence) {
+  if (!derivedQueriesFlow.includes(evidence)) {
+    throw new Error(`Derived queries device probe is missing: ${evidence}`);
+  }
+}
+
+await access(
+  `${mobileDirectory}/src/composition/diagnostics/run-derived-queries-probe.ts`,
 );
 
 console.log(

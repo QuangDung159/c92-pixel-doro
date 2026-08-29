@@ -175,12 +175,12 @@ describe('SQLite repository durable round trip', () => {
       id: 'host-review-1', appVersion: '0.1.0', attemptedAt: resolvedAt + 2,
       createdAt: resolvedAt + 2,
     })).toMatchObject({ ok: true });
-    expect(await first.graph.analyticsEvents.insert({
-      eventId: 'host-event-1', eventName: 'focus_completed',
+    expect(await first.graph.analyticsQueue.enqueueBounded({
+      eventId: 'host-event-1', eventName: 'focus_session_completed',
       properties: { mode: 'strict', durationMinutes: 25 }, occurredAt: resolvedAt + 2,
       expiresAt: resolvedAt + 2 + 604_800_000, deliveryState: 'pending', attemptCount: 0,
       nextAttemptAt: null, createdAt: resolvedAt + 2,
-    })).toMatchObject({ ok: true });
+    }, resolvedAt + 2)).toMatchObject({ ok: true });
     await first.owner.close();
 
     const reopened = await createDatabase(driver, databaseName);

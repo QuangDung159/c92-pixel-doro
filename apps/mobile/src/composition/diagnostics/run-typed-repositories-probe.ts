@@ -209,9 +209,9 @@ export const runTypedRepositoriesProbe = async (
       attemptedAt: RESOLVED_AT + 2,
       createdAt: RESOLVED_AT + 2,
     });
-    const analyticsWrite = await first.persistence.analyticsEvents.insert({
+    const analyticsWrite = await first.persistence.analyticsQueue.enqueueBounded({
       eventId: 'repository-event-1',
-      eventName: 'focus_completed',
+      eventName: 'focus_session_completed',
       properties: { mode: 'strict', durationMinutes: 25 },
       occurredAt: RESOLVED_AT + 2,
       expiresAt: RESOLVED_AT + 2 + 604_800_000,
@@ -219,7 +219,7 @@ export const runTypedRepositoriesProbe = async (
       attemptCount: 0,
       nextAttemptAt: null,
       createdAt: RESOLVED_AT + 2,
-    });
+    }, RESOLVED_AT + 2);
     if (!settingsWrite.ok || !installationWrite.ok || !reviewWrite.ok || !analyticsWrite.ok) {
       throw new Error('metadata_or_singleton_write_failed');
     }

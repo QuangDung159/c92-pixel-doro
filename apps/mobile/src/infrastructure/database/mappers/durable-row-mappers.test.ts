@@ -179,19 +179,30 @@ describe('durable row mappers', () => {
       id: 'review-1', app_version: '0.1.0', attempted_at: timestamp, created_at: timestamp,
     })).toMatchObject({ ok: true, value: { appVersion: '0.1.0' } });
     expect(mapAnalyticsEventRow({
-      event_id: 'event-1', event_name: 'focus_started',
-      properties_json: '{"mode":"strict","duration":25}', occurred_at: timestamp,
+      event_id: 'event-1', event_name: 'focus_session_started',
+      properties_json: '{"mode":"strict","durationMinutes":25}', occurred_at: timestamp,
       expires_at: timestamp + 604_800_000, delivery_state: 'pending', attempt_count: 0,
       next_attempt_at: null, created_at: timestamp,
     })).toMatchObject({
       ok: true,
-      value: { properties: { mode: 'strict', duration: 25 }, nextAttemptAt: null },
+      value: { properties: { mode: 'strict', durationMinutes: 25 }, nextAttemptAt: null },
     });
+    expect(serializeAnalyticsProperties({
+      focusVariant: null,
+      isFirstSession: true,
+      durationMinutes: 25,
+    })).toMatchObject({ ok: true });
+    expect(mapAnalyticsEventRow({
+      event_id: 'event-retry', event_name: 'history_viewed', properties_json: '{}',
+      occurred_at: timestamp, expires_at: timestamp + 604_800_000,
+      delivery_state: 'retry_wait', attempt_count: 0,
+      next_attempt_at: timestamp + 1, created_at: timestamp,
+    })).toEqual({ ok: false, field: 'delivery_shape' });
   });
 
   it('rejects invalid JSON, nested values, excessive property count and payload bytes', () => {
     const base = {
-      event_id: 'event-1', event_name: 'focus_started', occurred_at: timestamp,
+      event_id: 'event-1', event_name: 'focus_session_started', occurred_at: timestamp,
       expires_at: timestamp + 604_800_000, delivery_state: 'pending', attempt_count: 0,
       next_attempt_at: null, created_at: timestamp,
     };

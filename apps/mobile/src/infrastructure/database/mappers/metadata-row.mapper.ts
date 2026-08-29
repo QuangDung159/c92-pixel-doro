@@ -1,4 +1,5 @@
 import type {
+  ApprovedAnalyticsEventName,
   AnalyticsEventRecord,
   AnalyticsProperties,
   StoreReviewAttemptRecord,
@@ -33,11 +34,75 @@ export interface AnalyticsEventRow {
   readonly created_at: unknown;
 }
 
-const isSafePropertyValue = (value: unknown): boolean =>
-  value === null ||
-  typeof value === 'string' ||
-  typeof value === 'boolean' ||
-  (typeof value === 'number' && Number.isFinite(value));
+const approvedEventNames: readonly ApprovedAnalyticsEventName[] = [
+  'onboarding_started',
+  'onboarding_completed',
+  'focus_setup_viewed',
+  'focus_session_started',
+  'focus_session_completed',
+  'focus_session_failed',
+  'focus_session_cancelled',
+  'break_started',
+  'break_completed',
+  'reward_granted',
+  'shop_viewed',
+  'item_unlocked',
+  'item_equipped',
+  'history_viewed',
+  'feedback_started',
+  'feedback_submitted',
+  'store_review_requested',
+];
+
+const approvedItemIds = new Set([
+  'desk-mug', 'tiny-plant', 'book-stack', 'desk-lamp', 'wall-calendar',
+  'floor-cushion', 'small-rug', 'wall-poster', 'bookshelf', 'standing-lamp',
+  'armchair', 'window-view',
+]);
+
+const isOneOf = (value: unknown, values: readonly string[]): value is string =>
+  typeof value === 'string' && values.includes(value);
+
+const isApprovedProperty = (key: string, value: unknown): boolean => {
+  switch (key) {
+    case 'sessionType':
+      return isOneOf(value, ['focus', 'short_break', 'long_break']);
+    case 'focusVariant':
+      return value === null || isOneOf(value, ['standard', 'onboarding_trial']);
+    case 'mode':
+      return value === null || isOneOf(value, ['relax', 'strict']);
+    case 'workTag':
+      return value === null || isOneOf(value, ['coding', 'study', 'writing', 'reading']);
+    case 'status':
+      return isOneOf(value, ['running', 'completed', 'failed', 'cancelled']);
+    case 'breakType':
+      return isOneOf(value, ['short_break', 'long_break']);
+    case 'rewardReason':
+      return isOneOf(value, ['focus_completed', 'onboarding_trial_completed']);
+    case 'category':
+      return value === 'furniture';
+    case 'itemId':
+      return typeof value === 'string' && approvedItemIds.has(value);
+    case 'configuredDurationMinutes':
+    case 'durationMinutes':
+      return typeof value === 'number' && Number.isSafeInteger(value) &&
+        value >= 5 && value <= 120;
+    case 'attemptCount':
+      return isNonNegativeSafeInteger(value);
+    case 'isFirstSession':
+    case 'isSecondSession':
+    case 'isReturningUser':
+      return typeof value === 'boolean';
+    default:
+      return false;
+  }
+};
+
+export const isApprovedAnalyticsEventName = (
+  value: unknown,
+): value is ApprovedAnalyticsEventName =>
+  typeof value === 'string' &&
+  approvedEventNames.includes(value as ApprovedAnalyticsEventName);
 
 export const validateAnalyticsProperties = (
   value: unknown,
@@ -50,7 +115,7 @@ export const validateAnalyticsProperties = (
   ) return false;
   const entries = Object.entries(value);
   return entries.length <= 20 &&
-    entries.every(([key, property]) => key.length > 0 && isSafePropertyValue(property));
+    entries.every(([key, property]) => isApprovedProperty(key, property));
 };
 
 export const serializeAnalyticsProperties = (
@@ -82,7 +147,7 @@ export const mapAnalyticsEventRow = (
   row: AnalyticsEventRow,
 ): RowMapping<AnalyticsEventRecord> => {
   if (!isNonEmptyString(row.event_id)) return corrupt('event_id');
-  if (!isNonEmptyString(row.event_name)) return corrupt('event_name');
+  if (!isApprovedAnalyticsEventName(row.event_name)) return corrupt('event_name');
   if (
     typeof row.properties_json !== 'string' ||
     utf8ByteLength(row.properties_json) > 2048
@@ -106,6 +171,12 @@ export const mapAnalyticsEventRow = (
   if (row.next_attempt_at !== null && !isSafeTimestamp(row.next_attempt_at)) {
     return corrupt('next_attempt_at');
   }
+  if (
+    (row.delivery_state === 'pending' &&
+      (row.attempt_count !== 0 || row.next_attempt_at !== null)) ||
+    (row.delivery_state === 'retry_wait' &&
+      (row.attempt_count === 0 || !isSafeTimestamp(row.next_attempt_at)))
+  ) return corrupt('delivery_shape');
   if (!isSafeTimestamp(row.created_at)) return corrupt('created_at');
   return mapped({
     eventId: row.event_id,

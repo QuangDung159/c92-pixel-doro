@@ -10,6 +10,21 @@ export type {
   CatalogRepository,
 } from './persistence/catalog.repository';
 export type {
+  CompletedLongBreakFact,
+  ContributionDayFact,
+  ContributionQuery,
+  ContributionRangeInput,
+  EconomyConsistencyQuery,
+  EconomyConsistencySnapshot,
+  LongBreakCadenceFacts,
+  LongBreakCadenceQuery,
+  StandardFocusHistoryCursor,
+  StandardFocusHistoryEntry,
+  StandardFocusHistoryInput,
+  StandardFocusHistoryPage,
+  StandardFocusHistoryQuery,
+} from './persistence/derived-query';
+export type {
   OwnedItemRecord,
   OwnedItemRepository,
   SetOwnedItemEquippedInput,

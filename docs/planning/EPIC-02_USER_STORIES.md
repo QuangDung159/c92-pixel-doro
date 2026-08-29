@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_EPIC_02_USER_STORIES
 title: PixelDoro Mobile MVP — EPIC-02 User Stories
-version: 1.13.0
+version: 1.16.0
 status: READY_FOR_REVIEW
-last_updated: 2026-08-28
+last_updated: 2026-08-29
 owner: Dũng Lư
 reviewer: Dũng Lư
 reviewer_role: Tech Lead
@@ -582,6 +582,12 @@ Data Model §3–7, §13; ADR-003, ADR-004.
 
 ### US-02-06 — Derived Queries và Consistency Evidence
 
+**Implementation plan:**
+[`US-02-06_IMPLEMENTATION_PLAN.md`](./US-02-06_IMPLEMENTATION_PLAN.md) `0.3.0` đang
+`IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`. Full host quality pass `17` files / `95` tests;
+dev-only native probe/runbook đã sẵn sàng và còn chờ exact owner report trên final implementation
+SHA trước closeout.
+
 **Story statement**
 
 > Với vai trò các Epic History, Break, Economy và Store Review sau này, tôi muốn nhận
@@ -900,8 +906,10 @@ Một Story chỉ được đánh dấu `[x]` khi:
   `1b6a0427b3db20f4536a2b251101fa0e32b5c0ea`. `US-02-04` đã `DONE`; host quality và exact
   iOS probe `9/9` pass trên SHA `b36bc45190129da07e42d046f2badf6fddcd99e4`.
   `US-02-05` đã `DONE`: full host quality và exact iOS probe `10/10` pass trên SHA
-  `bdbed4d820caa2ad1648cba28679d76327eca1b0`. Dependency `US-02-06` đã mở và đây là Story
-  kế tiếp theo authoritative order; chưa tự active. `US-02-07` vẫn phụ thuộc `US-02-06`.
+  `bdbed4d820caa2ad1648cba28679d76327eca1b0`. Dependency `US-02-06` đã mở và implementation
+  plan `0.3.0` đã implement contracts/query/economy/analytics/retention/index matrix; full host
+  quality pass `17` files / `95` tests. Story đang
+  `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`; `US-02-07` vẫn phụ thuộc `US-02-06 DONE`.
 
 ### 8.2. Điều kiện chuyển `READY_FOR_IMPLEMENTATION`
 
@@ -926,6 +934,32 @@ Một Story chỉ được đánh dấu `[x]` khi:
 - [ ] Dũng Lư review và phê duyệt Story breakdown trước khi chuyển status sang `APPROVED`/`READY_FOR_IMPLEMENTATION`.
 
 ## 10. Change log
+
+### 1.16.0 — 2026-08-29
+
+- Ghi nhận `US-02-06` production contracts/adapters, atomic analytics queue, host SQLite matrix,
+  retention/index audit và dev-only native probe/runbook đã hoàn tất theo plan `0.2.0`.
+- Full `pnpm quality` pass `17` files / `95` tests; device/boundary/hygiene gates pass, không thêm
+  migration `002`, Product UI/behavior, provider, Retry/reset hoặc native artifact.
+- Chuyển Story sang `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`; giữ acceptance/`US-02-07`
+  blocked tới exact owner report và final closeout.
+
+### 1.15.0 — 2026-08-28
+
+- Ghi nhận owner duyệt `US0206-CONFIRM-01`–`05` ngày 2026-08-28.
+- Cập nhật implementation plan `US-02-06` lên `0.2.0` / `READY_FOR_IMPLEMENTATION`, giữ
+  implementation `NOT_STARTED` và authoritative order `T01 → T11`.
+- Không mở rộng sang Retry/reset, feature UI, analytics provider, schema migration mới hoặc native
+  build; `US-02-07` tiếp tục chờ `US-02-06 DONE`.
+
+### 1.14.0 — 2026-08-28
+
+- Tạo và link implementation plan `US-02-06` `0.1.0` ở trạng thái `READY_FOR_REVIEW` /
+  `NOT_STARTED` sau khi `US-02-05 DONE`.
+- Ghi năm technical confirmation cho query ownership/projection, deterministic boundaries,
+  economy mismatch, atomic analytics queue/privacy và existing-index/no-migration policy.
+- Khóa authoritative execution order `T00 → T11`; giữ Product `OPEN`, Retry/reset, feature UI,
+  provider delivery, production implementation và native/EAS build ngoài planning turn.
 
 ### 1.13.0 — 2026-08-28
 

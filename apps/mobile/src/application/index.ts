@@ -53,6 +53,7 @@ export type {
   AnalyticsEventRepository,
   AnalyticsProperties,
   AnalyticsPropertyValue,
+  ApprovedAnalyticsEventName,
   AppDefaultMode,
   AppSettingsRecord,
   AppSettingsRepository,
@@ -62,4 +63,17 @@ export type {
   StoreReviewAttemptRecord,
   StoreReviewAttemptRepository,
   UpdateAnalyticsDeliveryInput,
+} from './persistence';
+export {
+  ANALYTICS_EVENT_TTL_MS,
+  ANALYTICS_QUEUE_CAPACITY,
+  BoundedAnalyticsQueue,
+} from './persistence';
+export type {
+  AnalyticsEnqueueOutcome,
+  AnalyticsQueue,
+  LatestStoreReviewAttemptFact,
+  StoreReviewFacts,
+  StoreReviewFactsInput,
+  StoreReviewFactsQuery,
 } from './persistence';

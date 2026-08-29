@@ -99,6 +99,11 @@ export const createMobileApplication = (
     typeof __DEV__ !== 'undefined' &&
     __DEV__ &&
     process.env.EXPO_PUBLIC_TYPED_REPOSITORIES_PROBE === '1';
+  const derivedQueriesProbeEnabled =
+    options.diagnosticsEnabled !== false &&
+    typeof __DEV__ !== 'undefined' &&
+    __DEV__ &&
+    process.env.EXPO_PUBLIC_DERIVED_QUERIES_PROBE === '1';
   let probePromise: Promise<void> | undefined;
 
   const runProbeIfEnabled = (): Promise<void> => {
@@ -107,7 +112,8 @@ export const createMobileApplication = (
       !initialSchemaProbeEnabled &&
       !forwardMigrationProbeEnabled &&
       !safeBootstrapProbeEnabled &&
-      !typedRepositoriesProbeEnabled
+      !typedRepositoriesProbeEnabled &&
+      !derivedQueriesProbeEnabled
     ) {
       return Promise.resolve();
     }
@@ -149,6 +155,13 @@ export const createMobileApplication = (
           await import('./diagnostics/run-typed-repositories-probe');
         const report = await runTypedRepositoriesProbe(driver);
         console.info('[PixelDoro][TypedRepositoriesProbe]', JSON.stringify(report));
+      }
+
+      if (derivedQueriesProbeEnabled) {
+        const { runDerivedQueriesProbe } =
+          await import('./diagnostics/run-derived-queries-probe');
+        const report = await runDerivedQueriesProbe(driver);
+        console.info('[PixelDoro][DerivedQueriesProbe]', JSON.stringify(report));
       }
     })();
     return probePromise;

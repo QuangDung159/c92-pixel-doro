@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_EPIC_02_IMPLEMENTATION_EVIDENCE
 title: PixelDoro Mobile MVP — EPIC-02 Implementation Evidence
-version: 0.10.0
+version: 0.11.0
 status: IN_PROGRESS
-last_updated: 2026-08-28
+last_updated: 2026-08-29
 owner: Dũng Lư
 language: vi
 scope:
@@ -16,6 +16,7 @@ us_02_02_plan: ./US-02-02_IMPLEMENTATION_PLAN.md
 us_02_03_plan: ./US-02-03_IMPLEMENTATION_PLAN.md
 us_02_04_plan: ./US-02-04_IMPLEMENTATION_PLAN.md
 us_02_05_plan: ./US-02-05_IMPLEMENTATION_PLAN.md
+us_02_06_plan: ./US-02-06_IMPLEMENTATION_PLAN.md
 ---
 
 # PixelDoro Mobile MVP — EPIC-02 Implementation Evidence
@@ -47,12 +48,17 @@ real-SQLite evidence và exact iOS native probe đều pass `10/10` assertions t
 commit `bdbed4d820caa2ad1648cba28679d76327eca1b0`; repository `HEAD` đã được đối chiếu đúng SHA
 này khi tiếp nhận report ngày 2026-08-28.
 
-Không có migration runner/history/checksum, production bootstrap migration,
-Timer/Session/Reward/Pet/Inventory/Settings use case, auto-reset, native/EAS build hoặc native
-artifact nào được tạo trong implementation turn `US-02-02`.
+`US-02-06 — Derived Queries và Consistency Evidence` đã hoàn tất production/host evidence và
+đang `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`. Full quality pass `17` files / `95` tests;
+exact native `US-02-06_DERIVED_QUERIES` report trên final implementation SHA chưa được owner cung
+cấp nên Story chưa `DONE` và `US-02-07` chưa mở.
 
-Repository có ignored native artifacts từ trước turn dưới `apps/mobile/android/` và
-`apps/mobile/artifacts/`; chúng không thuộc implementation diff/commit set và không bị sửa/xóa.
+Không có migration `002`, Product UI/Zustand behavior, analytics provider delivery,
+Retry/reset, native/EAS build hoặc generated native artifact nào được tạo trong implementation
+turn `US-02-06`.
+
+Repository có ignored/generated native paths từ trước turn; chúng không thuộc implementation
+diff/commit set và không bị sửa/xóa.
 
 ## 2. `US-02-01` implementation evidence
 
@@ -530,3 +536,51 @@ device/boundary/hygiene gates.
 **Current Story status:** `DONE`.
 
 Dependency `US-02-06` đã mở theo authoritative execution order. Story tiếp theo chưa tự active.
+
+## 15. `US-02-06` host implementation evidence — 2026-08-29
+
+| Capability | Repository evidence | Status |
+|---|---|---|
+| Application query ownership | Shared history/contribution/cadence/economy ports; mobile review-facts/analytics queue contracts; graph internal, không Presentation exposure | `PASS_HOST` |
+| Standard history | Exact `focus + standard`, terminal-only, failed/cancelled included, trial/running/Break excluded; deterministic `endsAt DESC, id ASC` keyset page | `PASS_HOST_SQLITE` |
+| Contribution | Sum configured minutes chỉ completed standard Focus; sparse persisted local-day grouping; invalid calendar/range reject | `PASS_HOST_SQLITE` |
+| Timezone durability | Persisted `scheduled_end_local_date` và original grouping survive close/reopen, không nhận current timezone input | `PASS_HOST_SQLITE` |
+| Long Break cadence | Latest completed Long Break marker; only later completed standard Focus count; cancelled Long Break/trial/failure/cancel excluded | `PASS_HOST_SQLITE` |
+| Store-review facts | Installation/completed standard/distinct persisted day/latest/current-version/rolling-365 facts; future attempts excluded from window; no feedback/native outcome | `PASS_HOST_SQLITE` |
+| Economy consistency | One transaction snapshot; empty/non-zero exact receipt sums; stable `PERSISTENCE_INVARIANT_MISMATCH`; before/after fingerprint proves no repair | `PASS_HOST_SQLITE` |
+| Bounded analytics | Approved event/privacy allowlist, exact 7-day TTL, cap/drop-oldest, dedupe, pending-first due retry, exact delete/clear primitives | `PASS_HOST_SQLITE` |
+| Queue atomicity | Injected insert failure after expired cleanup rolls back whole queue mutation; rejected payload/name leaves count unchanged | `PASS_HOST_SQLITE` |
+| Product retention | Queue cap/TTL/retry/rejection/rollback preserve singleton/catalog/session/reward/purchase/ownership/review table fingerprint | `PASS_HOST_SQLITE` |
+| Planner/index evidence | Representative plans use six approved `001` indexes; bounded oldest sort documented; no migration `002` | `PASS_HOST_SQLITE` |
+| Native harness | Isolated dev-only probe records platform/app/application ID/SHA/SQLite version, 11 stable assertions and exact DB cleanup | `READY_OWNER_RUN` |
+
+Automated checks dùng pinned Node.js `22.23.2` và pnpm `11.24.0`:
+
+- Targeted `derived-queries.integration.test.ts`: `PASS`, `3/3` vertical integration cases.
+- `pnpm quality`: `PASS`.
+  - Domain/Application/Mobile strict typecheck: `PASS`.
+  - ESLint workspace: `PASS`.
+  - Vitest: `17` files / `95` tests pass.
+  - Device harness: `PASS`, gồm `derived-queries-smoke.md` và diagnostic source contract.
+  - Architecture boundary: `11` forbidden imports rejected, `3` valid imports accepted.
+  - Repository hygiene/checksum: `PASS`, đúng một immutable production migration `001`.
+- `git diff --check`: `PASS`.
+- Retention audit: production `DELETE` mới chỉ target exact `analytics_events`; không generic table
+  delete, session/ledger/ownership/review prune hoặc automatic repair/reset.
+- Không có migration/schema `002`, Product screen/Zustand behavior, PostHog/native review call,
+  Retry/reset implementation, prebuild, native/EAS build hoặc generated native artifact.
+
+Host matrix dùng real Node SQLite để cover mixed standard/trial/Break/status fixtures, history
+cursor tie, two persisted local days với different UTC offsets, completed/cancelled Long Break,
+review boundary/future attempt, zero/non-zero/mismatch economy, `1000 → 1001` queue pressure,
+exact-expiry cleanup, duplicate ID, due/future retry, forbidden free text/event, injected rollback,
+full product-retention fingerprint và all approved representative index names.
+
+Manual owner gate:
+[`apps/mobile/test/device/derived-queries-smoke.md`](../../apps/mobile/test/device/derived-queries-smoke.md).
+
+**Current Story status:** `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
+
+Owner phải chạy probe trên final committed implementation SHA và gửi complete structured report.
+Code change sau report làm evidence stale. Một native platform pass đủ close Story; both-platform
+repeat vẫn thuộc `US-02-09`. `US-02-07` tiếp tục blocked cho tới `US-02-06 DONE`.

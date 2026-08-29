@@ -73,7 +73,7 @@ const rowForSql = (sql: string): unknown => {
     id: 'review-1', app_version: '0.1.0', attempted_at: timestamp, created_at: timestamp,
   };
   if (sql.includes('FROM analytics_events')) return {
-    event_id: 'event-1', event_name: 'focus_started', properties_json: '{"mode":"strict"}',
+    event_id: 'event-1', event_name: 'focus_session_started', properties_json: '{"mode":"strict"}',
     occurred_at: timestamp, expires_at: timestamp + 604_800_000, delivery_state: 'pending',
     attempt_count: 0, next_attempt_at: null, created_at: timestamp,
   };
@@ -113,7 +113,7 @@ describe('typed SQLite repositories', () => {
     expect(await graph.purchases.findById('purchase-1')).toMatchObject({ ok: true, value: { coinDelta: -10 } });
     expect(await graph.ownedItems.listByProfile(1)).toMatchObject({ ok: true, value: [{ isEquipped: false }] });
     expect(await graph.storeReviewAttempts.list()).toMatchObject({ ok: true, value: [{ appVersion: '0.1.0' }] });
-    expect(await graph.analyticsEvents.listPending(10)).toMatchObject({ ok: true, value: [{ properties: { mode: 'strict' } }] });
+    expect(await graph.analyticsEvents.findById('event-1')).toMatchObject({ ok: true, value: { properties: { mode: 'strict' } } });
 
     const installation = await graph.installation.find();
     expect(installation.ok && installation.value !== null && 'installed_at' in installation.value).toBe(false);

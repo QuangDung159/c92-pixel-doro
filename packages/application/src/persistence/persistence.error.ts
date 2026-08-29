@@ -5,7 +5,8 @@ export type PersistenceErrorCode =
   | 'PERSISTENCE_QUERY_FAILED'
   | 'PERSISTENCE_WRITE_FAILED'
   | 'PERSISTENCE_CONFLICT'
-  | 'PERSISTENCE_CORRUPT_DATA';
+  | 'PERSISTENCE_CORRUPT_DATA'
+  | 'PERSISTENCE_INVARIANT_MISMATCH';
 
 export interface PersistenceError {
   readonly kind: 'persistence_error';
