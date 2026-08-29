@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_02_IMPLEMENTATION_EVIDENCE
 title: PixelDoro Mobile MVP — EPIC-02 Implementation Evidence
-version: 0.15.0
+version: 0.18.0
 status: IN_PROGRESS
 last_updated: 2026-08-29
 owner: Dũng Lư
@@ -19,6 +19,7 @@ us_02_05_plan: ./US-02-05_IMPLEMENTATION_PLAN.md
 us_02_06_plan: ./US-02-06_IMPLEMENTATION_PLAN.md
 us_02_07_plan: ./US-02-07_IMPLEMENTATION_PLAN.md
 us_02_08_plan: ./US-02-08_IMPLEMENTATION_PLAN.md
+us_02_09_plan: ./US-02-09_IMPLEMENTATION_PLAN.md
 ---
 
 # PixelDoro Mobile MVP — EPIC-02 Implementation Evidence
@@ -63,10 +64,16 @@ same-database full-barrier Retry, safe UI/diagnostics và real SQLite rollback/f
 pass. Planning dependency `US-02-08` đã mở; reset implementation chưa được tự active trước khi
 owner duyệt technical confirmations của Story mới.
 
-`US-02-08 — Atomic Confirmed Full Local-data Reset` đã hoàn tất production implementation và host
-evidence. Full quality pass `24` files / `147` tests; private authority, exact atomic reset/reseed,
-post-reset bootstrap, notification/privacy boundary và per-statement rollback/fingerprint matrix
-đều pass. Story đang `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`; `US-02-09` vẫn bị block.
+`US-02-08 — Atomic Confirmed Full Local-data Reset` đã `DONE`. Full quality pass `24` files /
+`147` tests; exact iOS native report pass đủ `12/12` assertions với SQLite `3.50.3` trên
+implementation SHA `795c3cd59abf80225747e36fcc61e4d13afbaa14`. Private authority, exact
+atomic reset/reseed, post-reset bootstrap, notification/privacy boundary và per-statement
+rollback/fingerprint matrix đều pass. Planning dependency `US-02-09` đã mở.
+
+`US-02-09 — Cross-platform Evidence và Epic Exit Audit` có implementation plan `0.2.0` ở trạng
+thái `READY_FOR_IMPLEMENTATION`; implementation `NOT_STARTED`. Owner đã duyệt đủ năm technical
+confirmation. EPIC-02 chưa `DONE` và `EPIC-03` chưa được mở cho tới final host + iOS + Android
+evidence và explicit owner exit review.
 
 Không có migration `002`, Settings reset UI, reset-path database-file deletion, Product
 Session/Reward/Pet/Gamification behavior, analytics/notification provider delivery, native/EAS
@@ -713,16 +720,15 @@ tự active trong documentation/planning turn này.
 - `EPIC02-INPUT-03`, Data Model reset defaults/retention và anonymous identity policy đều đã
   `RESOLVED`; không có Product decision `OPEN` block Story.
 - Implementation plan authoritative:
-  [`US-02-08_IMPLEMENTATION_PLAN.md`](./US-02-08_IMPLEMENTATION_PLAN.md) `0.3.0` /
-  `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
+  [`US-02-08_IMPLEMENTATION_PLAN.md`](./US-02-08_IMPLEMENTATION_PLAN.md) `0.4.0` / `DONE`.
 - Plan khóa reset là private confirmed capability, không tự reachable từ recovery/current UI;
   Settings warning/confirmation UX tiếp tục thuộc EPIC-10.
 - Plan yêu cầu một existing SQLite transaction clear exact product rows/reseed singleton, atomic
   anonymous-ID rotation, preserve schema/history/catalog và full post-commit bootstrap.
 - Database-file delete/recreate, migration repair/`002`, partial reset, provider SDK, Product
   Session/Reward/Pet behavior và native/EAS build đều ngoài scope.
-- Owner đã duyệt `US0208-CONFIRM-01`–`05`; production/host/native harness implementation hoàn tất.
-  `US-02-09` vẫn bị block cho đến exact owner native report và `US-02-08 DONE`.
+- Owner đã duyệt `US0208-CONFIRM-01`–`05`; production/host/native harness implementation và exact
+  owner iOS report đã hoàn tất. Planning dependency `US-02-09` đã mở.
 
 ## 18. `US-02-08` host implementation evidence — 2026-08-29
 
@@ -740,7 +746,7 @@ tự active trong documentation/planning turn này.
 | Best-effort side effect | Active-session lookup/notification cleanup failures thành sanitized warnings; no provider call inside transaction | `PASS_HOST` |
 | Diagnostics/privacy | Fixed allowlisted event/error/warning envelope; no session ID, anonymous ID, SQL, stack, raw provider message or payload | `PASS_HOST` |
 | Scope audit | No migration `002`, partial/generic reset, reset-path `deleteDatabase`, Settings UI, provider SDK hoặc Product behavior | `PASS_HOST` |
-| Native harness | Isolated success/failure databases, production coordinator/adapter/bootstrap, 12 stable assertions và exact cleanup runbook | `AWAITING_OWNER_NATIVE` |
+| Native harness | Isolated success/failure databases, production coordinator/adapter/bootstrap, 12 stable assertions và exact cleanup runbook | `PASS_NATIVE_IOS` |
 
 Automated checks dùng pinned Node.js `22.23.2` và pnpm `11.24.0`:
 
@@ -760,10 +766,69 @@ Automated checks dùng pinned Node.js `22.23.2` và pnpm `11.24.0`:
 
 Manual owner gate:
 [`apps/mobile/test/device/confirmed-reset-smoke.md`](../../apps/mobile/test/device/confirmed-reset-smoke.md).
-Owner cần commit final implementation, chạy probe trên ít nhất một approved native target và gửi
-JSON `passed: true` với đủ `12/12` assertions cùng exact `commitSha`. Code change sau report làm
-evidence stale; both-platform process-kill/relaunch matrix vẫn thuộc `US-02-09`.
+### 18.1. Exact owner native report
 
-**Current Story status:** `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
+Owner-provided iOS report được tiếp nhận ngày 2026-08-29; `commitSha` khớp repository `HEAD` và
+report có SQLite runtime version cùng đủ stable assertions:
 
-`US-02-09` tiếp tục bị block cho đến exact native report và `US-02-08 DONE`.
+```json
+{
+  "probe": "US-02-08_CONFIRMED_RESET",
+  "passed": true,
+  "platform": "ios",
+  "osVersion": "26.5",
+  "appVersion": "0.1.0",
+  "applicationId": "com.dragonc92team.pixeldoro",
+  "commitSha": "795c3cd59abf80225747e36fcc61e4d13afbaa14",
+  "sqliteVersion": "3.50.3",
+  "assertions": [
+    "reset_probe_database_opened_and_migrated",
+    "complete_pre_reset_product_fixture_was_verified",
+    "unconfirmed_and_recovery_paths_could_not_invoke_reset",
+    "notification_cleanup_failure_was_best_effort",
+    "confirmed_reset_committed_atomically",
+    "product_history_economy_and_metadata_were_cleared",
+    "singletons_reseeded_and_anonymous_identity_rotated",
+    "schema_history_triggers_indexes_and_exact_catalog_were_preserved",
+    "post_reset_bootstrap_hydrated_fresh_defaults_before_ready",
+    "injected_mid_reset_failure_restored_complete_fingerprint",
+    "concurrent_repeated_reset_and_dispose_were_safe",
+    "probe_connections_closed_and_databases_cleaned"
+  ]
+}
+```
+
+Exact report cover real Expo SQLite open/migrate, full product fixture, no automatic invocation,
+best-effort cleanup, atomic commit, exact clear/reseed/identity rotation, retained schema/catalog,
+fresh bootstrap, injected rollback, concurrency/dispose safety và isolated cleanup. Các preceding
+`[PixelDoro][Recovery]` lines là expected probe trace cho recovery/no-auto-reset assertions, không
+phải probe failure. Documentation-only closeout không làm stale behavioral evidence.
+
+**Current Story status:** `DONE`.
+
+Planning dependency `US-02-09` đã mở theo authoritative solo order. Both-platform process-kill/
+relaunch và Epic exit audit vẫn thuộc Story đó; không tự active trong closeout này.
+
+## 19. `US-02-09` planning baseline — 2026-08-29
+
+- Start gate đạt: `US-02-01` đến `US-02-08` đều `DONE`; latest baseline SHA là
+  `795c3cd59abf80225747e36fcc61e4d13afbaa14` với host `24` files / `147` tests và exact iOS
+  reset report `12/12` assertions, SQLite `3.50.3`.
+- Implementation plan authoritative:
+  [`US-02-09_IMPLEMENTATION_PLAN.md`](./US-02-09_IMPLEMENTATION_PLAN.md) `0.2.0` /
+  `READY_FOR_IMPLEMENTATION` / implementation `NOT_STARTED`.
+- Current gap là final same-SHA both-platform parity và actual process relaunch; prior per-Story
+  iOS reports vẫn là supporting evidence nhưng không thay final US-02-09 iOS + Android pair.
+- Plan đề xuất một dev-only aggregate runner reuse tám existing probes và một two-phase isolated
+  sentinel: phase 1 commit rồi yêu cầu actual terminate/relaunch; phase 2 validate persistence,
+  component matrix, normal readiness và cleanup.
+- Deterministic injected unavailable/write/fingerprint evidence là bắt buộc. Physical disk-full
+  chỉ chạy khi an toàn/khả thi; nếu không, record explicit limitation, không giả native pass.
+- Required native pair là một iOS và một Android Development Build target trên exact same final
+  behavior/harness SHA. Agent không chạy native/EAS/prebuild; owner thực hiện thủ công.
+- `US0209-CONFIRM-01`–`05` đã `APPROVED 2026-08-29`: aggregate/SHA policy, actual relaunch,
+  failure limitation, target/runtime matrix và owner-controlled Epic exit authority.
+- Không planned migration `002`, Product Timer/Session/Pet/Gamification/UI behavior, provider SDK,
+  release artifact hoặc tracked native/generated credential material.
+- Chỉ sau host quality, two native reports, complete traceability và explicit owner approval mới
+  chuyển `US-02-09`/`EPIC-02` sang `DONE` và mở planning `EPIC-03`.

@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_02_08_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-02-08 Implementation Plan
-version: 0.3.0
-status: IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME
-implementation_status: IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME
+version: 0.4.0
+status: DONE
+implementation_status: DONE
 last_updated: 2026-08-29
 owner: Dũng Lư
 reviewer: Dũng Lư
@@ -50,14 +50,15 @@ commit rollback toàn bộ; không có reset dở dang hoặc success projection
 **Blocks:** `US-02-09`. Cross-platform/exit audit chỉ có ý nghĩa sau khi reset atomicity,
 retention, post-reset bootstrap và no-partial-state đã có host + native evidence.
 
-**Planning status:** `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
-**Implementation status:** `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
+**Planning status:** `DONE`.
+**Implementation status:** `DONE`.
 
-Không có Product decision `OPEN` nào block planning. Năm technical direction
-Owner đã duyệt đủ `US0208-CONFIRM-01`–`05` ngày 2026-08-29. Production private reset graph,
+Không có Product decision `OPEN` nào block Story. Owner đã duyệt đủ
+`US0208-CONFIRM-01`–`05` ngày 2026-08-29. Production private reset graph,
 atomic maintenance adapter, exclusive lifecycle/post-reset bootstrap, best-effort side effects,
 host failure matrix và dev-only native probe/runbook đã hoàn tất. Full `pnpm quality` pass `24`
-files / `147` tests; Story còn chờ exact owner native report trên final implementation SHA.
+files / `147` tests. Exact owner iOS report pass `12/12` assertions với SQLite `3.50.3` trên
+implementation SHA `795c3cd59abf80225747e36fcc61e4d13afbaa14`; Story đã closeout `DONE`.
 
 ### 0.1. Start gate
 
@@ -354,16 +355,18 @@ Chỉ một task/Story active tại một thời điểm. `MUST` là MVP require
 
 ### US0208-T09 — Owner native evidence
 
-- [ ] Owner chạy manual probe trên ít nhất một approved native target.
-- [ ] Report `passed: true`, exact assertions và exact final implementation SHA.
-- [ ] Agent review SHA/assertion completeness; code change sau report làm evidence stale.
+- [x] Owner chạy manual probe trên iOS `26.5` ngày 2026-08-29.
+- [x] Report `passed: true`, đủ `12/12` assertions, SQLite `3.50.3` trên exact SHA
+  `795c3cd59abf80225747e36fcc61e4d13afbaa14`.
+- [x] Agent review SHA/assertion completeness; documentation-only closeout không làm stale
+  behavioral evidence.
 
 ### US0208-T10 — Closeout
 
-- [ ] Map all Story acceptance criteria tới host/native evidence.
-- [ ] Update plan, Epic Story và consolidated implementation evidence.
-- [ ] Chỉ chuyển `DONE` khi host quality + exact native report pass.
-- [ ] Mở planning gate `US-02-09`; không tự chạy cross-platform/native build.
+- [x] Map all Story acceptance criteria tới host/native evidence.
+- [x] Update plan, Epic Story và consolidated implementation evidence.
+- [x] Chỉ chuyển `DONE` sau host quality + exact native report pass.
+- [x] Mở planning gate `US-02-09`; không tự chạy cross-platform/native build.
 
 ## 7. Planned file impact
 
@@ -456,16 +459,16 @@ happy path; native report chỉ cần representative injected rollback và real 
 - [x] Post-commit full bootstrap, readiness, recovery/retry và projection freshness pass.
 - [x] Notification cleanup failure best-effort; diagnostics/privacy allowlist pass.
 - [x] Root quality/boundary/hygiene và immutable migration checks pass.
-- [ ] Owner native report pass exact assertions trên exact implementation SHA.
+- [x] Owner native report pass exact assertions trên exact implementation SHA.
 - [x] Không migration `002`, reset-path database-file deletion, feature/provider/native artifact ngoài scope.
-- [ ] Documentation closeout hoàn tất; `US-02-08 DONE` rồi mới mở `US-02-09`.
+- [x] Documentation closeout hoàn tất; `US-02-08 DONE` rồi mới mở `US-02-09`.
 
 ## 11. Handoff sau planning
 
-1. `T00 → T08` đã hoàn tất; Story đang `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
-2. Owner commit final implementation, chạy manual probe và gửi exact structured report.
-3. Agent review exact SHA/assertions rồi thực hiện `T10` closeout.
-4. Chỉ sau `US-02-08 DONE` mới mở `US-02-09` cross-platform/exit audit.
+1. `T00 → T10` đã hoàn tất; Story `DONE` với host + exact iOS evidence.
+2. Planning dependency `US-02-09` đã mở theo authoritative solo order.
+3. Cross-platform/process-kill/exit audit vẫn phải có plan riêng trước implementation.
+4. Không tự chạy native/EAS build hoặc mở EPIC-03 trước `US-02-09` exit gate.
 
 ## 12. References
 
@@ -483,6 +486,15 @@ happy path; native report chỉ cần representative injected rollback và real 
 - `docs/architecture/decisions/ADR-008-posthog-analytics-and-cost-guardrails.md`
 
 ## 13. Change log
+
+### 0.4.0 — 2026-08-29
+
+- Tiếp nhận exact iOS `US-02-08_CONFIRMED_RESET` report `passed: true`, đủ `12/12`
+  assertions, SQLite `3.50.3`, trên implementation SHA
+  `795c3cd59abf80225747e36fcc61e4d13afbaa14`.
+- Xác nhận private invocation, atomic clear/reseed, identity rotation, schema/catalog retention,
+  post-reset bootstrap, injected rollback, concurrency/dispose và isolated cleanup trên native.
+- Hoàn tất `T09`–`T10`, chuyển Story sang `DONE` và mở planning dependency `US-02-09`.
 
 ### 0.3.0 — 2026-08-29
 

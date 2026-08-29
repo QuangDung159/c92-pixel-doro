@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_02_USER_STORIES
 title: PixelDoro Mobile MVP — EPIC-02 User Stories
-version: 1.21.0
+version: 1.24.0
 status: READY_FOR_REVIEW
 last_updated: 2026-08-29
 owner: Dũng Lư
@@ -723,11 +723,10 @@ automatic repair migration, cloud restore, Settings full reset confirmation UI.
 ### US-02-08 — Atomic Confirmed Full Local-data Reset
 
 **Implementation plan:**
-[`US-02-08_IMPLEMENTATION_PLAN.md`](./US-02-08_IMPLEMENTATION_PLAN.md) `0.3.0` đang
-`IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`. Owner đã duyệt đủ năm confirmation; private reset
-graph, atomic maintenance adapter, post-reset bootstrap, host rollback/fingerprint matrix và
-dev-only native probe/runbook đã hoàn tất. Full `pnpm quality` pass `24` files / `147` tests;
-còn exact owner native report trên final implementation SHA trước `DONE`.
+[`US-02-08_IMPLEMENTATION_PLAN.md`](./US-02-08_IMPLEMENTATION_PLAN.md) `0.4.0` đã `DONE`.
+Full `pnpm quality` pass `24` files / `147` tests; exact iOS
+`US-02-08_CONFIRMED_RESET` report pass `12/12` assertions với SQLite `3.50.3` trên SHA
+`795c3cd59abf80225747e36fcc61e4d13afbaa14`.
 
 **Story statement**
 
@@ -794,6 +793,12 @@ EPIC-02/EPIC-10 boundary.
 ---
 
 ### US-02-09 — Cross-platform Evidence và Epic Exit Audit
+
+**Implementation plan:**
+[`US-02-09_IMPLEMENTATION_PLAN.md`](./US-02-09_IMPLEMENTATION_PLAN.md) `0.2.0` đã
+`READY_FOR_IMPLEMENTATION`; implementation `NOT_STARTED`. Owner đã duyệt aggregate final-SHA
+probe, two-phase actual process relaunch, deterministic failure/physical-disk limitation boundary,
+one iOS + one Android Development Build target và explicit owner Epic-exit approval.
 
 **Story statement**
 
@@ -923,10 +928,11 @@ Một Story chỉ được đánh dấu `[x]` khi:
   `17` files / `95` tests và exact iOS probe `11/11` pass với SQLite `3.50.3` trên SHA
   `e1cd3a54b1a58e84a68518a6ac87ad751f422992`. `US-02-07` đã `DONE`: full host quality
   `21` files / `126` tests và exact iOS recovery probe `11/11` pass với SQLite `3.50.3` trên SHA
-  `b3c8421ef3a20934005711a571655265cf736091`. `US-02-08` plan `0.3.0` đang
-  `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`: production/host evidence pass `24` files / `147`
-  tests và native probe/runbook đã sẵn sàng. `US-02-09` tiếp tục bị block tới exact owner native
-  report và `US-02-08 DONE`.
+  `b3c8421ef3a20934005711a571655265cf736091`. `US-02-08` plan `0.4.0` đã
+  `DONE`: production/host evidence pass `24` files / `147` tests và exact iOS reset probe `12/12`
+  pass với SQLite `3.50.3` trên SHA `795c3cd59abf80225747e36fcc61e4d13afbaa14`.
+  `US-02-09` plan `0.2.0` đã `READY_FOR_IMPLEMENTATION` / implementation `NOT_STARTED`;
+  owner đã duyệt đủ `US0209-CONFIRM-01`–`05`.
 
 ### 8.2. Điều kiện chuyển `READY_FOR_IMPLEMENTATION`
 
@@ -951,6 +957,32 @@ Một Story chỉ được đánh dấu `[x]` khi:
 - [ ] Dũng Lư review và phê duyệt Story breakdown trước khi chuyển status sang `APPROVED`/`READY_FOR_IMPLEMENTATION`.
 
 ## 10. Change log
+
+### 1.24.0 — 2026-08-29
+
+- Ghi nhận owner duyệt đủ `US0209-CONFIRM-01`–`05`.
+- Khóa final same-SHA aggregate runner, two-phase force-stop/relaunch, injected failure + explicit
+  physical-disk limitation, one iOS + one Android target và owner-controlled Epic exit gate.
+- Chuyển plan `US-02-09` `0.2.0` sang `READY_FOR_IMPLEMENTATION`; implementation vẫn
+  `NOT_STARTED`, chưa chạy native/EAS build hoặc mở `EPIC-03`.
+
+### 1.23.0 — 2026-08-29
+
+- Tạo/link `US-02-09_IMPLEMENTATION_PLAN.md` `0.1.0` sau `US-02-08 DONE`.
+- Plan khóa final same-SHA aggregate evidence, two-phase actual process relaunch, safe
+  physical-disk limitation, one iOS + one Android Development Build target và owner-controlled
+  EPIC-02 exit gate.
+- Ghi `US0209-CONFIRM-01`–`05` ở trạng thái `OPEN`; không implement harness, chạy native/EAS
+  build hoặc mở `EPIC-03` trong planning turn.
+
+### 1.22.0 — 2026-08-29
+
+- Tiếp nhận exact iOS `US-02-08_CONFIRMED_RESET` report `passed: true`, đủ `12/12` assertions,
+  SQLite `3.50.3`, trên implementation SHA
+  `795c3cd59abf80225747e36fcc61e4d13afbaa14`; SHA khớp repository `HEAD` khi review.
+- Đánh dấu toàn bộ native/runtime acceptance hoàn tất và chuyển `US-02-08` sang `DONE`.
+- Mở planning dependency `US-02-09` theo authoritative solo order; không tự chạy cross-platform
+  audit, native/EAS build hoặc mở EPIC-03 trong closeout này.
 
 ### 1.21.0 — 2026-08-29
 
