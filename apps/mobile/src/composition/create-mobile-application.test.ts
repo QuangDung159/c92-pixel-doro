@@ -1,6 +1,6 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, expectTypeOf, it, vi } from 'vitest';
 
-import type { AppLifecyclePort } from '@/application';
+import type { AppLifecyclePort, MobileApplicationFacade } from '@/application';
 import { FakeSQLiteDriver } from '../../test/fakes/fake-sqlite-driver';
 
 import { createMobileApplication } from './create-mobile-application';
@@ -13,6 +13,10 @@ vi.mock('react-native', () => ({
 }));
 
 describe('mobile composition root', () => {
+  it('keeps confirmed reset outside the current Presentation facade', () => {
+    expectTypeOf<MobileApplicationFacade>().not.toHaveProperty('confirmedReset');
+  });
+
   it('boots and disposes one application-scoped graph', async () => {
     const driver = new FakeSQLiteDriver();
     const appLifecycle: AppLifecyclePort = {

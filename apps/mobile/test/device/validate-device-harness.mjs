@@ -11,6 +11,7 @@ const bootstrapFlowPath = `${deviceDirectory}safe-bootstrap-smoke.md`;
 const repositoriesFlowPath = `${deviceDirectory}typed-repositories-smoke.md`;
 const derivedQueriesFlowPath = `${deviceDirectory}derived-queries-smoke.md`;
 const failureRecoveryFlowPath = `${deviceDirectory}failure-recovery-smoke.md`;
+const confirmedResetFlowPath = `${deviceDirectory}confirmed-reset-smoke.md`;
 
 await access(flowPath);
 await access(sqliteFlowPath);
@@ -20,6 +21,7 @@ await access(bootstrapFlowPath);
 await access(repositoriesFlowPath);
 await access(derivedQueriesFlowPath);
 await access(failureRecoveryFlowPath);
+await access(confirmedResetFlowPath);
 const flow = await readFile(flowPath, 'utf8');
 const sqliteFlow = await readFile(sqliteFlowPath, 'utf8');
 const schemaFlow = await readFile(schemaFlowPath, 'utf8');
@@ -28,6 +30,7 @@ const bootstrapFlow = await readFile(bootstrapFlowPath, 'utf8');
 const repositoriesFlow = await readFile(repositoriesFlowPath, 'utf8');
 const derivedQueriesFlow = await readFile(derivedQueriesFlowPath, 'utf8');
 const failureRecoveryFlow = await readFile(failureRecoveryFlowPath, 'utf8');
+const confirmedResetFlow = await readFile(confirmedResetFlowPath, 'utf8');
 
 const requiredLabels = [
   'Chào mừng đến PixelDoro',
@@ -192,6 +195,27 @@ for (const evidence of requiredFailureRecoveryEvidence) {
 
 await access(
   `${mobileDirectory}/src/composition/diagnostics/run-failure-recovery-probe.ts`,
+);
+
+const requiredConfirmedResetEvidence = [
+  'EXPO_PUBLIC_CONFIRMED_RESET_PROBE=1',
+  'US-02-08_CONFIRMED_RESET',
+  'passed: true',
+  'pixeldoro-us-02-08-confirmed-reset-probe.db',
+  'pixeldoro-us-02-08-confirmed-reset-failure-probe.db',
+  'injected_mid_reset_failure_restored_complete_fingerprint',
+  'schema_history_triggers_indexes_and_exact_catalog_were_preserved',
+  'EPIC-02_IMPLEMENTATION_EVIDENCE.md',
+];
+
+for (const evidence of requiredConfirmedResetEvidence) {
+  if (!confirmedResetFlow.includes(evidence)) {
+    throw new Error(`Confirmed reset device probe is missing: ${evidence}`);
+  }
+}
+
+await access(
+  `${mobileDirectory}/src/composition/diagnostics/run-confirmed-reset-probe.ts`,
 );
 
 console.log(

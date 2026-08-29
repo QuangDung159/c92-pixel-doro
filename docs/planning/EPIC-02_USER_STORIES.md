@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_02_USER_STORIES
 title: PixelDoro Mobile MVP — EPIC-02 User Stories
-version: 1.19.0
+version: 1.21.0
 status: READY_FOR_REVIEW
 last_updated: 2026-08-29
 owner: Dũng Lư
@@ -656,11 +656,10 @@ case, review candidate/orchestration, final analytics taxonomy/provider, economy
 ### US-02-07 — Failure Recovery và Retry
 
 **Implementation plan:**
-[`US-02-07_IMPLEMENTATION_PLAN.md`](./US-02-07_IMPLEMENTATION_PLAN.md) `0.3.0` đang
-`IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`. Owner đã duyệt đủ năm technical confirmation;
-production recovery/Retry, UI/diagnostics, host fault/fingerprint matrix và dev-only native
-probe/runbook đã hoàn tất. Full `pnpm quality` pass `21` files / `126` tests; còn exact owner
-native report trên final implementation SHA trước khi chuyển Story sang `DONE`.
+[`US-02-07_IMPLEMENTATION_PLAN.md`](./US-02-07_IMPLEMENTATION_PLAN.md) `0.4.0` đã `DONE`.
+Full `pnpm quality` pass `21` files / `126` tests; exact iOS
+`US-02-07_FAILURE_RECOVERY` report pass `11/11` assertions với SQLite `3.50.3` trên SHA
+`b3c8421ef3a20934005711a571655265cf736091`.
 
 **Story statement**
 
@@ -723,6 +722,13 @@ automatic repair migration, cloud restore, Settings full reset confirmation UI.
 
 ### US-02-08 — Atomic Confirmed Full Local-data Reset
 
+**Implementation plan:**
+[`US-02-08_IMPLEMENTATION_PLAN.md`](./US-02-08_IMPLEMENTATION_PLAN.md) `0.3.0` đang
+`IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`. Owner đã duyệt đủ năm confirmation; private reset
+graph, atomic maintenance adapter, post-reset bootstrap, host rollback/fingerprint matrix và
+dev-only native probe/runbook đã hoàn tất. Full `pnpm quality` pass `24` files / `147` tests;
+còn exact owner native report trên final implementation SHA trước `DONE`.
+
 **Story statement**
 
 > Với vai trò người dùng đã xác nhận rõ ràng, tôi muốn xóa toàn bộ dữ liệu local trong
@@ -752,27 +758,27 @@ account/server deletion, cloud backup/restore và provider-specific analytics cl
 
 **Acceptance criteria:**
 
-- [ ] Không route/screen/recovery path hiện tại tự gọi reset executor; Epic 10 phải cung cấp explicit warning/confirmation UX trước invocation.
-- [ ] Reset barrier block core commands trước cleanup/transaction và release đúng sau failure hoặc post-reset rebootstrap.
-- [ ] Notification cleanup là best-effort trước transaction; failure không ngăn một otherwise-valid confirmed reset.
-- [ ] Một transaction xóa analytics queue, owned items, purchases, rewards, sessions và store-review attempts theo safe explicit order.
-- [ ] Settings/profile/installation được reset/reseed đúng initial defaults với injected `now`; anonymous analytics identity được rotate/create theo approved policy.
-- [ ] `schema_migrations`, tables/indexes/triggers và exact 12-item catalog vẫn hợp lệ sau reset.
-- [ ] Reset success clear/rebuild projection từ new durable state; không giữ stale XP/Coin/session/ownership trong memory.
-- [ ] Transaction failure/kill trước commit giữ toàn bộ pre-reset product data và không render success.
-- [ ] Retry sau committed reset không tạo duplicate singleton/catalog hoặc resurrect product rows cũ.
-- [ ] Không có partial reset API cho XP, Coin, inventory, session history hoặc progression.
-- [ ] Normal receipt repository vẫn immutable; chỉ private confirmed-reset/approved-migration maintenance path có delete authority theo `EPIC02-INPUT-03`.
+- [x] Không route/screen/recovery path hiện tại tự gọi reset executor; Epic 10 phải cung cấp explicit warning/confirmation UX trước invocation.
+- [x] Reset barrier block core commands trước cleanup/transaction và release đúng sau failure hoặc post-reset rebootstrap.
+- [x] Notification cleanup là best-effort trước transaction; failure không ngăn một otherwise-valid confirmed reset.
+- [x] Một transaction xóa analytics queue, owned items, purchases, rewards, sessions và store-review attempts theo safe explicit order.
+- [x] Settings/profile/installation được reset/reseed đúng initial defaults với injected `now`; anonymous analytics identity được rotate/create theo approved policy.
+- [x] `schema_migrations`, tables/indexes/triggers và exact 12-item catalog vẫn hợp lệ sau reset.
+- [x] Reset success clear/rebuild projection từ new durable state; không giữ stale XP/Coin/session/ownership trong memory.
+- [x] Transaction failure/kill trước commit giữ toàn bộ pre-reset product data và không render success.
+- [x] Retry sau committed reset không tạo duplicate singleton/catalog hoặc resurrect product rows cũ.
+- [x] Không có partial reset API cho XP, Coin, inventory, session history hoặc progression.
+- [x] Normal receipt repository vẫn immutable; chỉ private confirmed-reset/approved-migration maintenance path có delete authority theo `EPIC02-INPUT-03`.
 
 **Task checklist sơ bộ:**
 
-- [ ] Define reset barrier và private executor contract.
-- [ ] Implement notification cleanup port/fake boundary.
-- [ ] Implement ordered reset transaction/reseed.
-- [ ] Implement post-commit projection clear + rebootstrap.
-- [ ] Add rollback/kill/retry fixtures.
-- [ ] Add schema/catalog/post-reset verifier.
-- [ ] Document Epic 10 confirmation integration contract.
+- [x] Define reset barrier và private executor contract.
+- [x] Implement notification cleanup port/fake boundary.
+- [x] Implement ordered reset transaction/reseed.
+- [x] Implement post-commit projection clear + rebootstrap.
+- [x] Add rollback/kill/retry fixtures.
+- [x] Add schema/catalog/post-reset verifier.
+- [x] Document Epic 10 confirmation integration contract.
 
 **Evidence yêu cầu:**
 
@@ -915,10 +921,12 @@ Một Story chỉ được đánh dấu `[x]` khi:
   `US-02-05` đã `DONE`: full host quality và exact iOS probe `10/10` pass trên SHA
   `bdbed4d820caa2ad1648cba28679d76327eca1b0`. `US-02-06` đã `DONE`: full host quality
   `17` files / `95` tests và exact iOS probe `11/11` pass với SQLite `3.50.3` trên SHA
-  `e1cd3a54b1a58e84a68518a6ac87ad751f422992`. `US-02-07` plan `0.3.0` đang
-  `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`: owner đã duyệt đủ năm confirmation, production và
-  host evidence pass `21` files / `126` tests, native probe/runbook đã sẵn sàng. `US-02-08` tiếp tục
-  bị block cho đến exact owner native report và `US-02-07 DONE`.
+  `e1cd3a54b1a58e84a68518a6ac87ad751f422992`. `US-02-07` đã `DONE`: full host quality
+  `21` files / `126` tests và exact iOS recovery probe `11/11` pass với SQLite `3.50.3` trên SHA
+  `b3c8421ef3a20934005711a571655265cf736091`. `US-02-08` plan `0.3.0` đang
+  `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`: production/host evidence pass `24` files / `147`
+  tests và native probe/runbook đã sẵn sàng. `US-02-09` tiếp tục bị block tới exact owner native
+  report và `US-02-08 DONE`.
 
 ### 8.2. Điều kiện chuyển `READY_FOR_IMPLEMENTATION`
 
@@ -943,6 +951,29 @@ Một Story chỉ được đánh dấu `[x]` khi:
 - [ ] Dũng Lư review và phê duyệt Story breakdown trước khi chuyển status sang `APPROVED`/`READY_FOR_IMPLEMENTATION`.
 
 ## 10. Change log
+
+### 1.21.0 — 2026-08-29
+
+- Ghi nhận owner duyệt đủ `US0208-CONFIRM-01`–`05` và implementation private confirmed-reset
+  coordinator, exact atomic maintenance/reseed, post-reset bootstrap đã hoàn tất.
+- Ghi nhận per-statement real SQLite rollback/fingerprint, notification warning/privacy,
+  reset-vs-Retry/dispose evidence và full `pnpm quality` pass `24` files / `147` tests.
+- Add isolated dev-only `US-02-08_CONFIRMED_RESET` native probe/runbook; không thêm Settings UI,
+  migration `002`, reset-path database-file deletion, provider/Product behavior hoặc native artifact.
+- Chuyển Story sang `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`; giữ `US-02-09` blocked cho đến
+  exact owner native report trên final implementation SHA và closeout `US-02-08 DONE`.
+
+### 1.20.0 — 2026-08-29
+
+- Tiếp nhận exact iOS `US-02-07_FAILURE_RECOVERY` report `passed: true`, đủ `11/11` assertions,
+  SQLite `3.50.3`, trên implementation SHA
+  `b3c8421ef3a20934005711a571655265cf736091`; chuyển `US-02-07` sang `DONE`.
+- Tạo/link `US-02-08_IMPLEMENTATION_PLAN.md` `0.1.0` ở trạng thái `READY_FOR_REVIEW` /
+  implementation `NOT_STARTED` và mở dependency planning theo solo order.
+- Ghi năm technical confirmation cho private reset authority, exact atomic maintenance,
+  reset-vs-Retry/post-bootstrap lifecycle, best-effort side effects/identity và evidence split.
+- Giữ Settings confirmation UI, provider integration, database-file deletion, migration `002`,
+  Product behavior và native/EAS build ngoài planning turn.
 
 ### 1.19.0 — 2026-08-29
 

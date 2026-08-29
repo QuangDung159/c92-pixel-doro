@@ -17,6 +17,27 @@ export {
   recoveryReasonForPersistenceError,
   recoveryReasonForTransactionError,
 } from './recovery';
+export {
+  ConfirmedLocalDataReset,
+  type ConfirmedLocalDataResetDependencies,
+  type ConfirmedResetAvailabilityError,
+  type ConfirmedResetBootstrapError,
+  type ConfirmedResetBootstrapPort,
+  type ConfirmedResetDiagnostic,
+  type ConfirmedResetDiagnosticEventName,
+  type ConfirmedResetDiagnosticsPort,
+  type ConfirmedResetError,
+  type ConfirmedResetErrorCode,
+  type ConfirmedResetLease,
+  type ConfirmedResetPersistencePort,
+  type ConfirmedResetPersistenceSummary,
+  type ConfirmedResetSeed,
+  type ConfirmedResetSuccess,
+  type ConfirmedResetWarning,
+  type ConfirmedResetWarningCode,
+  type ResetNotificationCleanupError,
+  type ResetNotificationCleanupPort,
+} from './reset';
 export type {
   AppLifecyclePort,
   AppLifecycleState,

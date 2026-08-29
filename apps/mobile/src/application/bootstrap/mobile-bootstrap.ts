@@ -17,6 +17,10 @@ import type {
   RecoveryReasonCode,
   RuntimeRecoveryReasonCode,
 } from '../recovery';
+import type {
+  ConfirmedResetBootstrapPort,
+  ConfirmedResetLease,
+} from '../reset';
 
 export type BootstrapProjection =
   | { readonly status: 'idle' }
@@ -34,6 +38,7 @@ export type BootstrapProjection =
       readonly phase: RecoveryPhase;
       readonly error: { readonly code: RecoveryReasonCode };
     }
+  | { readonly status: 'maintenance' }
   | { readonly status: 'disposed' };
 
 export interface MobileBootstrapDependencies {
@@ -54,7 +59,9 @@ const migrationRecoveryReason = (
     ? error.code
     : 'MIGRATION_EXECUTION_FAILED';
 
-export class MobileBootstrap implements CriticalRecoveryPort {
+export class MobileBootstrap
+  implements CriticalRecoveryPort, ConfirmedResetBootstrapPort
+{
   private projection: BootstrapProjection = { status: 'idle' };
   private unsubscribeLifecycle: (() => void) | undefined;
   private listeners = new Set<() => void>();
@@ -63,6 +70,15 @@ export class MobileBootstrap implements CriticalRecoveryPort {
   private generation = 0;
   private attemptNumber = 0;
   private lifecycleState: AppLifecycleState = 'background';
+  private maintenance:
+    | {
+        readonly lease: ConfirmedResetLease;
+        readonly previousProjection: Extract<
+          BootstrapProjection,
+          { readonly status: 'ready' | 'recovery' }
+        >;
+      }
+    | undefined;
 
   constructor(private readonly dependencies: MobileBootstrapDependencies) {
     this.dependencies.readiness.close();
@@ -111,12 +127,88 @@ export class MobileBootstrap implements CriticalRecoveryPort {
     this.recover('runtime', reasonCode);
   }
 
+  beginConfirmedReset() {
+    if (
+      this.attemptPromise !== undefined ||
+      this.maintenance !== undefined ||
+      (this.projection.status !== 'ready' && this.projection.status !== 'recovery')
+    ) {
+      return {
+        ok: false as const,
+        error: {
+          kind: 'confirmed_reset_availability_error' as const,
+          code: 'RESET_NOT_AVAILABLE' as const,
+        },
+      };
+    }
+
+    this.generation += 1;
+    const lease: ConfirmedResetLease = { resetId: Symbol('confirmed-reset') };
+    this.maintenance = {
+      lease,
+      previousProjection: this.projection,
+    };
+    this.dependencies.readiness.close();
+    this.updateProjection({ status: 'maintenance' });
+    return { ok: true as const, value: lease };
+  }
+
+  restoreAfterFailedConfirmedReset(lease: ConfirmedResetLease): void {
+    const maintenance = this.takeMaintenance(lease);
+    if (maintenance === undefined || this.projection.status === 'disposed') return;
+
+    if (maintenance.previousProjection.status === 'ready') {
+      this.dependencies.readiness.open();
+    } else {
+      this.dependencies.readiness.close();
+    }
+    this.updateProjection(maintenance.previousProjection);
+  }
+
+  enterRecoveryAfterUncertainConfirmedReset(lease: ConfirmedResetLease): void {
+    if (this.takeMaintenance(lease) === undefined || this.projection.status === 'disposed') {
+      return;
+    }
+    this.recover('runtime', 'DATABASE_WRITE_FAILED');
+  }
+
+  async rebootstrapAfterCommittedConfirmedReset(lease: ConfirmedResetLease) {
+    if (this.takeMaintenance(lease) === undefined || this.projection.status === 'disposed') {
+      return {
+        ok: false as const,
+        error: {
+          kind: 'confirmed_reset_bootstrap_error' as const,
+          code: 'DATABASE_UNAVAILABLE' as const,
+        },
+      };
+    }
+
+    this.updateProjection({ status: 'idle' });
+    await this.startAttempt(false);
+    const projection = this.projection;
+    if (projection.status === 'ready') {
+      return { ok: true as const, value: projection.snapshot };
+    }
+
+    return {
+      ok: false as const,
+      error: {
+        kind: 'confirmed_reset_bootstrap_error' as const,
+        code:
+          projection.status === 'recovery'
+            ? projection.error.code
+            : 'DATABASE_UNAVAILABLE' as const,
+      },
+    };
+  }
+
   dispose(): Promise<void> {
     if (this.disposePromise !== undefined) {
       return this.disposePromise;
     }
 
     this.generation += 1;
+    this.maintenance = undefined;
     this.dependencies.readiness.close();
     this.updateProjection({ status: 'disposed' });
     const operation = this.runDispose();
@@ -323,6 +415,13 @@ export class MobileBootstrap implements CriticalRecoveryPort {
 
   private isCurrent(generation: number): boolean {
     return generation === this.generation;
+  }
+
+  private takeMaintenance(lease: ConfirmedResetLease) {
+    const maintenance = this.maintenance;
+    if (maintenance?.lease.resetId !== lease.resetId) return undefined;
+    this.maintenance = undefined;
+    return maintenance;
   }
 
   private updateProjection(projection: BootstrapProjection): void {

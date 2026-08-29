@@ -1,13 +1,18 @@
 import {
+  ConfirmedLocalDataReset,
   MobileBootstrap,
   ReadinessGate,
   type AppLifecyclePort,
   type BootstrapDataPort,
   type BootstrapVerifierPort,
+  type ConfirmedResetDiagnosticsPort,
+  type ConfirmedResetPersistencePort,
   type MigrationPort,
   type RecoveryDiagnosticsPort,
+  type ResetNotificationCleanupPort,
   type StartupReconciliationPort,
 } from '@/application';
+import type { ClockPort, IdPort } from '@pixeldoro/application';
 import { SQLiteBootstrapDataAdapter } from '@/infrastructure/database/bootstrap/sqlite-bootstrap-data.adapter';
 import { SQLiteBootstrapVerifier } from '@/infrastructure/database/bootstrap/sqlite-bootstrap-verifier';
 import { MigrationRunner } from '@/infrastructure/database/migration-runner';
@@ -19,10 +24,13 @@ import {
   type SQLiteDriver,
 } from '@/infrastructure/database/sqlite-driver';
 import { SQLiteTransaction } from '@/infrastructure/database/sqlite-transaction';
+import { SQLiteConfirmedResetAdapter } from '@/infrastructure/database/reset/sqlite-confirmed-reset.adapter';
 import { ReactNativeAppLifecycleAdapter } from '@/infrastructure/platform/app-lifecycle/react-native-app-lifecycle.adapter';
 import { DeviceClockAdapter } from '@/infrastructure/platform/clock/device-clock.adapter';
 import { DeviceIdAdapter } from '@/infrastructure/platform/id/device-id.adapter';
 import { SafeConsoleRecoveryDiagnosticsAdapter } from '@/infrastructure/platform/diagnostics/safe-console-recovery-diagnostics.adapter';
+import { SafeConsoleConfirmedResetDiagnosticsAdapter } from '@/infrastructure/platform/diagnostics/safe-console-confirmed-reset-diagnostics.adapter';
+import { NoopResetNotificationCleanupAdapter } from '@/infrastructure/platform/notifications/noop-reset-notification-cleanup.adapter';
 
 import type { MobileApplication } from './mobile-application';
 import { NoopStartupReconciliationAdapter } from './startup/noop-startup-reconciliation.adapter';
@@ -33,10 +41,15 @@ export interface CreateMobileApplicationOptions {
   readonly appLifecycle?: AppLifecyclePort;
   readonly bootstrapData?: BootstrapDataPort;
   readonly bootstrapVerifier?: BootstrapVerifierPort;
+  readonly clock?: ClockPort;
+  readonly confirmedResetDiagnostics?: ConfirmedResetDiagnosticsPort;
+  readonly confirmedResetPersistence?: ConfirmedResetPersistencePort;
   readonly databaseName?: string;
   readonly diagnosticsEnabled?: boolean;
   readonly migration?: MigrationPort;
+  readonly id?: IdPort;
   readonly recoveryDiagnostics?: RecoveryDiagnosticsPort;
+  readonly resetNotificationCleanup?: ResetNotificationCleanupPort;
   readonly sqliteDriver?: SQLiteDriver;
   readonly startupReconciliation?: StartupReconciliationPort;
 }
@@ -45,8 +58,8 @@ export const createMobileApplication = (
   options: CreateMobileApplicationOptions = {},
 ): MobileApplication => {
   const driver = options.sqliteDriver ?? new ExpoSQLiteDriver();
-  const clock = new DeviceClockAdapter();
-  const id = new DeviceIdAdapter();
+  const clock = options.clock ?? new DeviceClockAdapter();
+  const id = options.id ?? new DeviceIdAdapter();
   const databaseOwner = new SQLiteDatabaseOwner(
     options.databaseName ?? PIXELDORO_DATABASE_NAME,
     driver,
@@ -79,6 +92,22 @@ export const createMobileApplication = (
     startupReconciliation:
       options.startupReconciliation ??
       new NoopStartupReconciliationAdapter(),
+  });
+  const confirmedReset = new ConfirmedLocalDataReset({
+    activeSessions: persistence.sessions,
+    bootstrap,
+    clock,
+    diagnostics:
+      options.confirmedResetDiagnostics ??
+      new SafeConsoleConfirmedResetDiagnosticsAdapter(),
+    id,
+    notificationCleanup:
+      options.resetNotificationCleanup ??
+      new NoopResetNotificationCleanupAdapter(),
+    persistence:
+      options.confirmedResetPersistence ??
+      new SQLiteConfirmedResetAdapter(transaction),
+    transaction,
   });
   const sqliteKernelProbeEnabled =
     options.diagnosticsEnabled !== false &&
@@ -115,6 +144,11 @@ export const createMobileApplication = (
     typeof __DEV__ !== 'undefined' &&
     __DEV__ &&
     process.env.EXPO_PUBLIC_FAILURE_RECOVERY_PROBE === '1';
+  const confirmedResetProbeEnabled =
+    options.diagnosticsEnabled !== false &&
+    typeof __DEV__ !== 'undefined' &&
+    __DEV__ &&
+    process.env.EXPO_PUBLIC_CONFIRMED_RESET_PROBE === '1';
   let probePromise: Promise<void> | undefined;
 
   const runProbeIfEnabled = (): Promise<void> => {
@@ -125,7 +159,8 @@ export const createMobileApplication = (
       !safeBootstrapProbeEnabled &&
       !typedRepositoriesProbeEnabled &&
       !derivedQueriesProbeEnabled &&
-      !failureRecoveryProbeEnabled
+      !failureRecoveryProbeEnabled &&
+      !confirmedResetProbeEnabled
     ) {
       return Promise.resolve();
     }
@@ -182,12 +217,20 @@ export const createMobileApplication = (
         const report = await runFailureRecoveryProbe(driver);
         console.info('[PixelDoro][FailureRecoveryProbe]', JSON.stringify(report));
       }
+
+      if (confirmedResetProbeEnabled) {
+        const { runConfirmedResetProbe } =
+          await import('./diagnostics/run-confirmed-reset-probe');
+        const report = await runConfirmedResetProbe(driver);
+        console.info('[PixelDoro][ConfirmedResetProbe]', JSON.stringify(report));
+      }
     })();
     return probePromise;
   };
 
   return {
     bootstrap,
+    confirmedReset,
     criticalRecovery: bootstrap,
     persistence,
     readiness,

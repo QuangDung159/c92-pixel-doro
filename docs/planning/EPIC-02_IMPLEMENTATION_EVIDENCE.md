@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_02_IMPLEMENTATION_EVIDENCE
 title: PixelDoro Mobile MVP — EPIC-02 Implementation Evidence
-version: 0.13.0
+version: 0.15.0
 status: IN_PROGRESS
 last_updated: 2026-08-29
 owner: Dũng Lư
@@ -18,6 +18,7 @@ us_02_04_plan: ./US-02-04_IMPLEMENTATION_PLAN.md
 us_02_05_plan: ./US-02-05_IMPLEMENTATION_PLAN.md
 us_02_06_plan: ./US-02-06_IMPLEMENTATION_PLAN.md
 us_02_07_plan: ./US-02-07_IMPLEMENTATION_PLAN.md
+us_02_08_plan: ./US-02-08_IMPLEMENTATION_PLAN.md
 ---
 
 # PixelDoro Mobile MVP — EPIC-02 Implementation Evidence
@@ -54,16 +55,22 @@ này khi tiếp nhận report ngày 2026-08-28.
 SQLite `3.50.3` trên final implementation SHA
 `e1cd3a54b1a58e84a68518a6ac87ad751f422992`; repository `HEAD` khớp SHA khi tiếp nhận report.
 
-`US-02-07 — Failure Recovery và Retry` đã hoàn tất production implementation và host evidence.
+`US-02-07 — Failure Recovery và Retry` đã `DONE`. Production/host quality pass `21` files /
+`126` tests; exact iOS native report pass đủ `11/11` assertions với SQLite `3.50.3` trên
+implementation SHA `b3c8421ef3a20934005711a571655265cf736091`.
 Full quality pass `21` files / `126` tests; stable typed recovery, critical-vs-side-effect boundary,
 same-database full-barrier Retry, safe UI/diagnostics và real SQLite rollback/fingerprint matrix đều
-pass. Dev-only native probe/runbook đã sẵn sàng; Story đang
-`IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME` cho đến khi owner gửi exact report trên final
-implementation SHA. `US-02-08` vẫn bị block.
+pass. Planning dependency `US-02-08` đã mở; reset implementation chưa được tự active trước khi
+owner duyệt technical confirmations của Story mới.
 
-Không có migration `002`, reset executor, Product Session/Reward/Pet/Gamification behavior,
-analytics provider delivery, native/EAS build hoặc generated native artifact nào được tạo trong
-implementation turn `US-02-07`.
+`US-02-08 — Atomic Confirmed Full Local-data Reset` đã hoàn tất production implementation và host
+evidence. Full quality pass `24` files / `147` tests; private authority, exact atomic reset/reseed,
+post-reset bootstrap, notification/privacy boundary và per-statement rollback/fingerprint matrix
+đều pass. Story đang `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`; `US-02-09` vẫn bị block.
+
+Không có migration `002`, Settings reset UI, reset-path database-file deletion, Product
+Session/Reward/Pet/Gamification behavior, analytics/notification provider delivery, native/EAS
+build hoặc generated native artifact nào được tạo trong implementation turn `US-02-08`.
 
 Repository có ignored/generated native paths từ trước turn; chúng không thuộc implementation
 diff/commit set và không bị sửa/xóa.
@@ -640,7 +647,7 @@ Retry/reset không được implement trong closeout này.
 | Recovery UI | Friendly unavailable message and accessible `Thử lại` action; no raw code, exception, SQL, row or stale authoritative snapshot is rendered | `PASS_HOST` |
 | Diagnostics | Fixed allowlisted event envelope with safe default adapter; diagnostic adapter failure cannot change recovery/readiness behavior | `PASS_HOST` |
 | Scope/retention audit | No automatic reset/reseed/recreate/repair, session terminal/reward path, catalog overwrite or `US-02-08` capability is reachable from recovery | `PASS_HOST` |
-| Native harness | Isolated dev-only `US-02-07_FAILURE_RECOVERY` probe covers typed failure, gate, same DB, concurrent Retry, fresh hydration, side-effect isolation, no destructive path and cleanup | `AWAITING_OWNER_NATIVE` |
+| Native harness | Isolated dev-only `US-02-07_FAILURE_RECOVERY` probe covers typed failure, gate, same DB, concurrent Retry, fresh hydration, side-effect isolation, no destructive path and cleanup | `PASS_NATIVE_IOS` |
 
 Automated checks dùng pinned Node.js `22.23.2` và pnpm `11.24.0`:
 
@@ -659,11 +666,104 @@ Automated checks dùng pinned Node.js `22.23.2` và pnpm `11.24.0`:
 
 Manual owner gate:
 [`apps/mobile/test/device/failure-recovery-smoke.md`](../../apps/mobile/test/device/failure-recovery-smoke.md).
-Owner cần commit final implementation trước, chạy probe trên ít nhất một approved native target và
-gửi JSON `passed: true` với đủ stable assertions cùng exact `commitSha`. Code change sau report làm
-evidence stale; both-platform repeat và broader kill/disk-full matrix vẫn thuộc `US-02-09`.
+### 16.1. Exact owner native report
+
+Owner-provided iOS report được tiếp nhận ngày 2026-08-29; `commitSha` khớp exact implementation
+commit và report có SQLite runtime version cùng đủ stable assertions:
+
+```json
+{
+  "probe": "US-02-07_FAILURE_RECOVERY",
+  "passed": true,
+  "platform": "ios",
+  "osVersion": "26.5",
+  "appVersion": "0.1.0",
+  "applicationId": "com.dragonc92team.pixeldoro",
+  "commitSha": "b3c8421ef3a20934005711a571655265cf736091",
+  "sqliteVersion": "3.50.3",
+  "assertions": [
+    "recovery_probe_database_opened_and_migrated",
+    "typed_failure_reason_was_sanitized",
+    "failure_closed_readiness_and_hid_core_projection",
+    "durable_rows_survived_injected_failure",
+    "concurrent_retry_coalesced_to_one_attempt",
+    "retry_reused_same_database_and_reran_ordered_barrier",
+    "successful_retry_hydrated_fresh_snapshot_before_ready",
+    "side_effect_failure_did_not_enter_core_recovery",
+    "no_reset_repair_terminal_or_reward_path_was_invoked",
+    "repeated_retry_and_dispose_were_safe",
+    "probe_connections_closed_and_database_cleaned"
+  ]
+}
+```
+
+Exact report cover typed/sanitized recovery, readiness lock, product-row retention, Retry
+single-flight trên same database, fresh hydration, side-effect isolation, no destructive/Product
+mutation path và isolated cleanup. Documentation-only closeout sau report không làm stale behavior
+evidence. Both-platform repeat và broader kill/disk-full matrix vẫn thuộc `US-02-09`.
+
+**Current Story status:** `DONE`.
+
+Planning dependency `US-02-08` đã mở theo authoritative solo order. Reset implementation chưa được
+tự active trong documentation/planning turn này.
+
+## 17. `US-02-08` planning baseline — 2026-08-29
+
+- Start gate đạt sau `US-02-07 DONE` với exact host/native evidence.
+- `EPIC02-INPUT-03`, Data Model reset defaults/retention và anonymous identity policy đều đã
+  `RESOLVED`; không có Product decision `OPEN` block Story.
+- Implementation plan authoritative:
+  [`US-02-08_IMPLEMENTATION_PLAN.md`](./US-02-08_IMPLEMENTATION_PLAN.md) `0.3.0` /
+  `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
+- Plan khóa reset là private confirmed capability, không tự reachable từ recovery/current UI;
+  Settings warning/confirmation UX tiếp tục thuộc EPIC-10.
+- Plan yêu cầu một existing SQLite transaction clear exact product rows/reseed singleton, atomic
+  anonymous-ID rotation, preserve schema/history/catalog và full post-commit bootstrap.
+- Database-file delete/recreate, migration repair/`002`, partial reset, provider SDK, Product
+  Session/Reward/Pet behavior và native/EAS build đều ngoài scope.
+- Owner đã duyệt `US0208-CONFIRM-01`–`05`; production/host/native harness implementation hoàn tất.
+  `US-02-09` vẫn bị block cho đến exact owner native report và `US-02-08 DONE`.
+
+## 18. `US-02-08` host implementation evidence — 2026-08-29
+
+| Capability | Repository evidence | Status |
+|---|---|---|
+| Private authority | Confirmed reset chỉ có trên concrete composition graph; current `MobileApplicationFacade`, context, route và recovery action không expose capability | `PASS_HOST` |
+| Reset barrier | Bootstrap maintenance lease đóng readiness trước cleanup/write; only ready/recovery entry; boot/Retry/reset/dispose conflicts deterministic | `PASS_HOST` |
+| Single-flight/lifecycle | Concurrent reset trả cùng operation; Retry không tranh transaction; dispose thắng trước transaction và không resurrect graph | `PASS_HOST_SQLITE` |
+| Atomic maintenance | Narrow Application port + static parameterized SQLite adapter dùng existing `BEGIN IMMEDIATE`; exact FK-safe delete/reseed order | `PASS_HOST_SQLITE` |
+| Exact fresh defaults | Installation/settings/profile reseed với injected time, `relax`, `25/5/15`, all preferences enabled, zero XP/Coin và new anonymous ID | `PASS_HOST_SQLITE` |
+| Retained surface | Full schema objects, migration history, indexes/triggers và exact 12-item catalog validated before/after reset | `PASS_HOST_SQLITE` |
+| Durable rollback | Complete product/schema fingerprint unchanged khi provider failure được inject tại từng destructive/singleton reseed statement | `PASS_HOST_SQLITE` |
+| Projection/bootstrap | Commit invalidates stale projection; same-DB open/migrate/verify/hydrate/reconcile runs before readiness and returns fresh snapshot | `PASS_HOST` |
+| Post-commit failure | Bootstrap failure sau commit maps `RESET_COMMITTED_BOOTSTRAP_FAILED`, giữ gate closed và existing recovery Retry; không giả rollback/success | `PASS_HOST` |
+| Best-effort side effect | Active-session lookup/notification cleanup failures thành sanitized warnings; no provider call inside transaction | `PASS_HOST` |
+| Diagnostics/privacy | Fixed allowlisted event/error/warning envelope; no session ID, anonymous ID, SQL, stack, raw provider message or payload | `PASS_HOST` |
+| Scope audit | No migration `002`, partial/generic reset, reset-path `deleteDatabase`, Settings UI, provider SDK hoặc Product behavior | `PASS_HOST` |
+| Native harness | Isolated success/failure databases, production coordinator/adapter/bootstrap, 12 stable assertions và exact cleanup runbook | `AWAITING_OWNER_NATIVE` |
+
+Automated checks dùng pinned Node.js `22.23.2` và pnpm `11.24.0`:
+
+- Targeted reset contracts/diagnostics/real-SQLite suites: `PASS`, `20/20` cases trong final run.
+- `pnpm quality`: `PASS`.
+  - Domain/Application/Mobile strict typecheck: `PASS`.
+  - ESLint workspace: `PASS`.
+  - Vitest: `24` files / `147` tests pass.
+  - Device harness: `PASS`, gồm confirmed-reset runbook/probe source contract.
+  - Architecture boundary: `11` forbidden imports rejected, `3` valid imports accepted.
+  - Repository hygiene/checksum: `PASS`, đúng một immutable production migration `001`.
+- `git diff --check`: `PASS` tại host implementation verification.
+- Migration diff audit: không có migration/schema `002`.
+- Production reset SQL audit: exact static maintenance adapter; database-file deletion chỉ tồn tại
+  ở driver capability và isolated diagnostic cleanup, không reachable từ confirmed reset.
+- Không chạy native/EAS build, prebuild hoặc tạo native artifact.
+
+Manual owner gate:
+[`apps/mobile/test/device/confirmed-reset-smoke.md`](../../apps/mobile/test/device/confirmed-reset-smoke.md).
+Owner cần commit final implementation, chạy probe trên ít nhất một approved native target và gửi
+JSON `passed: true` với đủ `12/12` assertions cùng exact `commitSha`. Code change sau report làm
+evidence stale; both-platform process-kill/relaunch matrix vẫn thuộc `US-02-09`.
 
 **Current Story status:** `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
 
-`US-02-08` tiếp tục bị block cho đến khi exact native report được review và `US-02-07` chuyển
-`DONE`; reset không được tự active trong implementation turn này.
+`US-02-09` tiếp tục bị block cho đến exact native report và `US-02-08 DONE`.

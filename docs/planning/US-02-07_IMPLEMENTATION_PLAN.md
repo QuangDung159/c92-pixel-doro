@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_02_07_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-02-07 Implementation Plan
-version: 0.3.0
-status: IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME
-implementation_status: IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME
+version: 0.4.0
+status: DONE
+implementation_status: DONE
 last_updated: 2026-08-29
 owner: Dũng Lư
 reviewer: Dũng Lư
@@ -49,14 +49,15 @@ cùng database và chỉ mở core flow sau khi toàn bộ bootstrap barrier pas
 **Blocks:** `US-02-08`. Confirmed full reset chỉ được xây trên một recovery boundary đã chứng minh
 không tự gọi reset, không repair và không để Retry chạy đồng thời.
 
-**Planning status:** `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
-**Implementation status:** `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
+**Planning status:** `DONE`.
+**Implementation status:** `DONE`.
 
 Năm technical direction `US0207-CONFIRM-01`–`05` đã được owner duyệt ngày 2026-08-29.
 Production recovery contracts, full-barrier Retry, critical ingress, friendly UI, sanitized
 diagnostics, host fault/fingerprint matrix và dev-only native probe/runbook đã hoàn tất. Full
-`pnpm quality` pass `21` files / `126` tests; Story còn chờ exact owner native report trên final
-implementation SHA trước closeout `DONE`.
+`pnpm quality` pass `21` files / `126` tests. Exact owner iOS report pass `11/11` assertions với
+SQLite `3.50.3` trên implementation SHA
+`b3c8421ef3a20934005711a571655265cf736091`; Story đã closeout `DONE`.
 
 ### 0.1. Start gate
 
@@ -349,16 +350,18 @@ Chỉ một task/Story active tại một thời điểm. `MUST` là MVP require
 
 ### US0207-T09 — Owner native evidence
 
-- [ ] Owner chạy manual probe trên ít nhất một approved native target.
-- [ ] Report `passed: true`, exact assertions và exact final implementation SHA.
-- [ ] Agent review SHA/assertion completeness; code change sau report làm evidence stale.
+- [x] Owner chạy manual probe trên iOS `26.5` ngày 2026-08-29.
+- [x] Report `passed: true`, đủ `11/11` assertions, SQLite `3.50.3` trên exact SHA
+  `b3c8421ef3a20934005711a571655265cf736091`.
+- [x] Agent review SHA/assertion completeness; documentation-only closeout không làm stale
+  behavioral evidence.
 
 ### US0207-T10 — Closeout
 
-- [ ] Map all Story acceptance criteria tới host/native evidence.
-- [ ] Update plan, Epic Story và consolidated implementation evidence.
-- [ ] Chỉ chuyển `DONE` khi host quality + exact native report pass.
-- [ ] Mở planning gate `US-02-08`; không tự implement reset.
+- [x] Map all Story acceptance criteria tới host/native evidence.
+- [x] Update plan, Epic Story và consolidated implementation evidence.
+- [x] Chỉ chuyển `DONE` sau host quality + exact native report pass.
+- [x] Mở planning gate `US-02-08`; không tự implement reset trong closeout.
 
 ## 7. Planned file impact
 
@@ -450,16 +453,16 @@ happy-path report; native report không cần tái tạo mọi synthetic migrati
 - [x] Recovery UI có accessible Retry, không render raw technical data.
 - [x] Full fault/fingerprint matrix chứng minh no partial state/reset/repair/terminal/reward.
 - [x] Root quality/boundary/hygiene và immutable migration checks pass.
-- [ ] Owner native report pass exact assertions trên exact implementation SHA.
+- [x] Owner native report pass exact assertions trên exact implementation SHA.
 - [x] Không migration `002`, reset executor, feature behavior, provider hoặc native artifact ngoài scope.
-- [ ] Documentation closeout hoàn tất; `US-02-07 DONE` rồi mới mở planning `US-02-08`.
+- [x] Documentation closeout hoàn tất; `US-02-07 DONE` rồi mới mở planning `US-02-08`.
 
 ## 11. Handoff sau implementation
 
-1. `T00 → T08` đã hoàn tất; Story đang `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
-2. Owner commit final implementation, chạy manual probe theo runbook và gửi exact JSON report.
-3. Agent review exact SHA/assertions rồi thực hiện `T10` closeout.
-4. Chỉ sau `US-02-07 DONE` mới mở planning `US-02-08`; không tự implement reset.
+1. `T00 → T10` đã hoàn tất; Story `DONE` với host + exact iOS evidence.
+2. Planning dependency `US-02-08` đã mở theo authoritative solo order.
+3. Reset implementation vẫn phải chờ owner duyệt technical confirmations của plan `US-02-08`.
+4. Both-platform recovery repeat và broader kill/disk-full matrix vẫn thuộc `US-02-09`.
 
 ## 12. References
 
@@ -478,6 +481,15 @@ happy-path report; native report không cần tái tạo mọi synthetic migrati
 - `docs/architecture/decisions/ADR-004-domain-and-platform-boundaries.md`
 
 ## 13. Change log
+
+### 0.4.0 — 2026-08-29
+
+- Tiếp nhận exact iOS `US-02-07_FAILURE_RECOVERY` report `passed: true`, đủ `11/11`
+  assertions, SQLite `3.50.3`, trên implementation SHA
+  `b3c8421ef3a20934005711a571655265cf736091`.
+- Xác nhận typed failure, closed readiness, durable-row retention, same-DB full-barrier Retry,
+  single-flight, side-effect isolation, no reset/repair/terminal/reward và cleanup trên native.
+- Hoàn tất `T09`–`T10`, chuyển Story sang `DONE` và mở planning dependency `US-02-08`.
 
 ### 0.3.0 — 2026-08-29
 
