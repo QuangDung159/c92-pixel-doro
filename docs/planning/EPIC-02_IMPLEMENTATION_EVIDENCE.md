@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_02_IMPLEMENTATION_EVIDENCE
 title: PixelDoro Mobile MVP — EPIC-02 Implementation Evidence
-version: 0.11.0
+version: 0.12.0
 status: IN_PROGRESS
 last_updated: 2026-08-29
 owner: Dũng Lư
@@ -48,10 +48,11 @@ real-SQLite evidence và exact iOS native probe đều pass `10/10` assertions t
 commit `bdbed4d820caa2ad1648cba28679d76327eca1b0`; repository `HEAD` đã được đối chiếu đúng SHA
 này khi tiếp nhận report ngày 2026-08-28.
 
-`US-02-06 — Derived Queries và Consistency Evidence` đã hoàn tất production/host evidence và
-đang `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`. Full quality pass `17` files / `95` tests;
-exact native `US-02-06_DERIVED_QUERIES` report trên final implementation SHA chưa được owner cung
-cấp nên Story chưa `DONE` và `US-02-07` chưa mở.
+`US-02-06 — Derived Queries và Consistency Evidence` đã `DONE`. Full quality pass `17` files /
+`95` tests; exact iOS native `US-02-06_DERIVED_QUERIES` report pass đủ `11/11` assertions với
+SQLite `3.50.3` trên final implementation SHA
+`e1cd3a54b1a58e84a68518a6ac87ad751f422992`; repository `HEAD` khớp SHA khi tiếp nhận report.
+Planning dependency cho `US-02-07` đã mở nhưng Story tiếp theo chưa tự active.
 
 Không có migration `002`, Product UI/Zustand behavior, analytics provider delivery,
 Retry/reset, native/EAS build hoặc generated native artifact nào được tạo trong implementation
@@ -552,7 +553,7 @@ Dependency `US-02-06` đã mở theo authoritative execution order. Story tiếp
 | Queue atomicity | Injected insert failure after expired cleanup rolls back whole queue mutation; rejected payload/name leaves count unchanged | `PASS_HOST_SQLITE` |
 | Product retention | Queue cap/TTL/retry/rejection/rollback preserve singleton/catalog/session/reward/purchase/ownership/review table fingerprint | `PASS_HOST_SQLITE` |
 | Planner/index evidence | Representative plans use six approved `001` indexes; bounded oldest sort documented; no migration `002` | `PASS_HOST_SQLITE` |
-| Native harness | Isolated dev-only probe records platform/app/application ID/SHA/SQLite version, 11 stable assertions and exact DB cleanup | `READY_OWNER_RUN` |
+| Native harness | Isolated dev-only probe records platform/app/application ID/SHA/SQLite version, 11 stable assertions and exact DB cleanup | `PASS_IOS_RUNTIME` |
 
 Automated checks dùng pinned Node.js `22.23.2` và pnpm `11.24.0`:
 
@@ -579,8 +580,42 @@ full product-retention fingerprint và all approved representative index names.
 Manual owner gate:
 [`apps/mobile/test/device/derived-queries-smoke.md`](../../apps/mobile/test/device/derived-queries-smoke.md).
 
-**Current Story status:** `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
+### 15.1. Exact owner native report
 
-Owner phải chạy probe trên final committed implementation SHA và gửi complete structured report.
-Code change sau report làm evidence stale. Một native platform pass đủ close Story; both-platform
-repeat vẫn thuộc `US-02-09`. `US-02-07` tiếp tục blocked cho tới `US-02-06 DONE`.
+Owner-provided iOS report được tiếp nhận ngày 2026-08-29; `commitSha` khớp repository `HEAD`:
+
+```json
+{
+  "probe": "US-02-06_DERIVED_QUERIES",
+  "passed": true,
+  "platform": "ios",
+  "osVersion": "26.5",
+  "appVersion": "0.1.0",
+  "applicationId": "com.dragonc92team.pixeldoro",
+  "commitSha": "e1cd3a54b1a58e84a68518a6ac87ad751f422992",
+  "sqliteVersion": "3.50.3",
+  "assertions": [
+    "query_probe_database_opened_and_migrated",
+    "mixed_standard_history_excluded_trial_running_and_breaks",
+    "contribution_grouped_by_persisted_local_date",
+    "timezone_change_did_not_regroup_contribution",
+    "cadence_used_completed_long_break_reset_only",
+    "store_review_facts_excluded_trial_status_and_feedback",
+    "economy_consistency_passed_and_mismatch_preserved_rows",
+    "analytics_queue_enforced_ttl_cap_dedupe_retry_and_privacy",
+    "product_retention_rows_survived_queue_maintenance",
+    "critical_query_plans_used_or_documented_approved_indexes",
+    "probe_connections_closed_and_database_cleaned"
+  ]
+}
+```
+
+Exact report cover đủ native acceptance: real Expo SQLite open/migrate, mixed durable projections,
+persisted local-day stability, cadence/review facts, economy no-repair, bounded/privacy queue,
+product retention, planner evidence và isolated cleanup. Một native platform pass đủ gate Story;
+both-platform repeat vẫn thuộc `US-02-09`.
+
+**Current Story status:** `DONE`.
+
+Planning dependency `US-02-07` đã mở theo authoritative order. Story tiếp theo chưa tự active;
+Retry/reset không được implement trong closeout này.

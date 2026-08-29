@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_02_USER_STORIES
 title: PixelDoro Mobile MVP — EPIC-02 User Stories
-version: 1.16.0
+version: 1.18.0
 status: READY_FOR_REVIEW
 last_updated: 2026-08-29
 owner: Dũng Lư
@@ -583,10 +583,10 @@ Data Model §3–7, §13; ADR-003, ADR-004.
 ### US-02-06 — Derived Queries và Consistency Evidence
 
 **Implementation plan:**
-[`US-02-06_IMPLEMENTATION_PLAN.md`](./US-02-06_IMPLEMENTATION_PLAN.md) `0.3.0` đang
-`IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`. Full host quality pass `17` files / `95` tests;
-dev-only native probe/runbook đã sẵn sàng và còn chờ exact owner report trên final implementation
-SHA trước closeout.
+[`US-02-06_IMPLEMENTATION_PLAN.md`](./US-02-06_IMPLEMENTATION_PLAN.md) `0.4.0` đã
+`DONE`. Full host quality pass `17` files / `95` tests; exact iOS native probe pass đủ `11/11`
+assertions với SQLite `3.50.3` trên implementation SHA
+`e1cd3a54b1a58e84a68518a6ac87ad751f422992`.
 
 **Story statement**
 
@@ -616,29 +616,29 @@ case, review candidate/orchestration, final analytics taxonomy/provider, economy
 
 **Acceptance criteria:**
 
-- [ ] Standard history filter bắt buộc `session_type = focus AND focus_variant = standard`.
-- [ ] Contribution chỉ sum `configured_duration_minutes` của completed standard Focus và group bằng persisted `scheduled_end_local_date`.
-- [ ] Failed/cancelled standard Focus có thể ở history nhưng đóng góp `0`; onboarding trial bị loại khỏi history/contribution.
-- [ ] Cadence count chỉ gồm completed standard Focus sau completed Long Break gần nhất; trial/failed/cancelled bị loại.
-- [ ] Cancelled Long Break không reset cadence facts; completed Long Break là reset marker.
-- [ ] Store-review facts loại trial, dùng distinct persisted local-day key và không đọc/join feedback data.
-- [ ] Attempt facts hỗ trợ one-per-app-version và time-window query nhưng không gọi native API hoặc suy diễn review outcome.
-- [ ] `total_xp` bằng sum reward XP và `coin_balance` bằng reward Coin + purchase debit trên valid fixture.
-- [ ] Economy mismatch trả typed recovery/invariant result và giữ rows; verifier không tự cộng/trừ/insert/delete để repair.
-- [ ] Analytics queue không vượt 1.000 row, expired row được xóa theo TTL, full queue drop oldest side-effect row và không đụng product truth.
-- [ ] Analytics payload/property bounds được enforce trước/ở persistence boundary; free text/raw database row không được queue.
-- [ ] Không có background job/prune path xóa session, reward/purchase receipt, ownership hoặc store-review attempt.
-- [ ] Critical query dùng required index hoặc có documented planner evidence/justification trên runtime đã duyệt.
+- [x] Standard history filter bắt buộc `session_type = focus AND focus_variant = standard`.
+- [x] Contribution chỉ sum `configured_duration_minutes` của completed standard Focus và group bằng persisted `scheduled_end_local_date`.
+- [x] Failed/cancelled standard Focus có thể ở history nhưng đóng góp `0`; onboarding trial bị loại khỏi history/contribution.
+- [x] Cadence count chỉ gồm completed standard Focus sau completed Long Break gần nhất; trial/failed/cancelled bị loại.
+- [x] Cancelled Long Break không reset cadence facts; completed Long Break là reset marker.
+- [x] Store-review facts loại trial, dùng distinct persisted local-day key và không đọc/join feedback data.
+- [x] Attempt facts hỗ trợ one-per-app-version và time-window query nhưng không gọi native API hoặc suy diễn review outcome.
+- [x] `total_xp` bằng sum reward XP và `coin_balance` bằng reward Coin + purchase debit trên valid fixture.
+- [x] Economy mismatch trả typed recovery/invariant result và giữ rows; verifier không tự cộng/trừ/insert/delete để repair.
+- [x] Analytics queue không vượt 1.000 row, expired row được xóa theo TTL, full queue drop oldest side-effect row và không đụng product truth.
+- [x] Analytics payload/property bounds được enforce trước/ở persistence boundary; free text/raw database row không được queue.
+- [x] Không có background job/prune path xóa session, reward/purchase receipt, ownership hoặc store-review attempt.
+- [x] Critical query dùng required index hoặc có documented planner evidence/justification trên runtime đã duyệt.
 
 **Task checklist sơ bộ:**
 
-- [ ] Implement history/contribution queries.
-- [ ] Implement cadence facts query.
-- [ ] Implement store-review facts/attempt queries.
-- [ ] Implement economy consistency verifier.
-- [ ] Implement bounded analytics queue repository behavior.
-- [ ] Add retention guard/tests.
-- [ ] Add mixed standard/trial/status/timezone fixture matrix.
+- [x] Implement history/contribution queries.
+- [x] Implement cadence facts query.
+- [x] Implement store-review facts/attempt queries.
+- [x] Implement economy consistency verifier.
+- [x] Implement bounded analytics queue repository behavior.
+- [x] Add retention guard/tests.
+- [x] Add mixed standard/trial/status/timezone fixture matrix.
 
 **Evidence yêu cầu:**
 
@@ -654,6 +654,12 @@ case, review candidate/orchestration, final analytics taxonomy/provider, economy
 ---
 
 ### US-02-07 — Failure Recovery và Retry
+
+**Implementation plan:**
+[`US-02-07_IMPLEMENTATION_PLAN.md`](./US-02-07_IMPLEMENTATION_PLAN.md) `0.1.0` đang
+`READY_FOR_REVIEW` / implementation `NOT_STARTED`. Plan đề xuất năm technical confirmation cho
+recovery taxonomy, critical-failure ingress, Retry lifecycle, UI/diagnostics và native evidence;
+không có Product blocker.
 
 **Story statement**
 
@@ -906,10 +912,11 @@ Một Story chỉ được đánh dấu `[x]` khi:
   `1b6a0427b3db20f4536a2b251101fa0e32b5c0ea`. `US-02-04` đã `DONE`; host quality và exact
   iOS probe `9/9` pass trên SHA `b36bc45190129da07e42d046f2badf6fddcd99e4`.
   `US-02-05` đã `DONE`: full host quality và exact iOS probe `10/10` pass trên SHA
-  `bdbed4d820caa2ad1648cba28679d76327eca1b0`. Dependency `US-02-06` đã mở và implementation
-  plan `0.3.0` đã implement contracts/query/economy/analytics/retention/index matrix; full host
-  quality pass `17` files / `95` tests. Story đang
-  `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`; `US-02-07` vẫn phụ thuộc `US-02-06 DONE`.
+  `bdbed4d820caa2ad1648cba28679d76327eca1b0`. `US-02-06` đã `DONE`: full host quality
+  `17` files / `95` tests và exact iOS probe `11/11` pass với SQLite `3.50.3` trên SHA
+  `e1cd3a54b1a58e84a68518a6ac87ad751f422992`. Implementation plan `US-02-07` `0.1.0`
+  đã được tạo ở trạng thái `READY_FOR_REVIEW` / `NOT_STARTED`; chờ owner duyệt năm technical
+  confirmation trước khi chuyển `READY_FOR_IMPLEMENTATION`.
 
 ### 8.2. Điều kiện chuyển `READY_FOR_IMPLEMENTATION`
 
@@ -934,6 +941,23 @@ Một Story chỉ được đánh dấu `[x]` khi:
 - [ ] Dũng Lư review và phê duyệt Story breakdown trước khi chuyển status sang `APPROVED`/`READY_FOR_IMPLEMENTATION`.
 
 ## 10. Change log
+
+### 1.18.0 — 2026-08-29
+
+- Tạo và link implementation plan `US-02-07` `0.1.0` ở trạng thái `READY_FOR_REVIEW` /
+  implementation `NOT_STARTED` sau `US-02-06 DONE`.
+- Ghi năm technical confirmation cho recovery taxonomy, critical-vs-side-effect ingress,
+  full-barrier same-DB Retry, friendly/sanitized recovery UI và host/native evidence split.
+- Khóa authoritative solo order `T00 → T10`; giữ reset executor, corrupt-session cancel,
+  feature behavior, migration `002`, provider và native/EAS build ngoài planning turn.
+
+### 1.17.0 — 2026-08-29
+
+- Tiếp nhận exact iOS report `US-02-06_DERIVED_QUERIES` `passed: true`, đủ `11/11` assertions,
+  SQLite `3.50.3`, trên implementation SHA
+  `e1cd3a54b1a58e84a68518a6ac87ad751f422992`; SHA khớp repository `HEAD` khi review.
+- Đánh dấu toàn bộ acceptance/task checklist `US-02-06` hoàn tất và chuyển Story sang `DONE`.
+- Mở planning dependency cho `US-02-07`; không tự active hoặc implement Retry/recovery.
 
 ### 1.16.0 — 2026-08-29
 

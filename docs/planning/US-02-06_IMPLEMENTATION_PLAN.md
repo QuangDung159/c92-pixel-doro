@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_02_06_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-02-06 Implementation Plan
-version: 0.3.0
-status: IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME
-implementation_status: IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME
+version: 0.4.0
+status: DONE
+implementation_status: DONE
 last_updated: 2026-08-29
 owner: Dũng Lư
 reviewer: Dũng Lư
@@ -54,12 +54,14 @@ files / `92` tests.
 **Blocks:** `US-02-07` và `US-02-08`. Recovery cần stable economy/query invariant result; reset
 cần analytics cleanup/retention boundary đã được kiểm chứng.
 
-**Planning status:** `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
-**Implementation status:** `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
+**Planning status:** `DONE`.
+**Implementation status:** `DONE`.
 
 Production contracts/adapters, host SQLite evidence, retention/index audit và dev-only native probe
-đã hoàn tất ngày 2026-08-29. Full `pnpm quality` pass `17` files / `95` tests; Story còn chờ owner
-chạy exact native report trên final implementation SHA trước khi closeout `DONE`.
+đã hoàn tất ngày 2026-08-29. Full `pnpm quality` pass `17` files / `95` tests; exact iOS native
+report pass đủ `11/11` assertions với SQLite `3.50.3` trên final implementation SHA
+`e1cd3a54b1a58e84a68518a6ac87ad751f422992`. Story đã closeout `DONE` và planning dependency
+cho `US-02-07` đã mở; Story tiếp theo chưa tự active.
 
 Không có Product blocker nghiêm trọng. `OPEN-006` contribution color threshold vẫn giữ nguyên
 `OPEN` nhưng nằm ngoài outcome của Story này; `OPEN-001`/`OPEN-009` về Pet cũng không liên quan.
@@ -413,16 +415,17 @@ Chỉ một task/Story active tại một thời điểm. `MUST` biểu thị MV
 
 ### US0206-T10 — Owner native evidence
 
-- [ ] Owner chạy manual probe trên ít nhất một target đã duyệt.
-- [ ] Report `passed: true`, đủ exact assertion IDs và exact final implementation SHA.
-- [ ] Agent review SHA/assertion completeness; code change sau report làm evidence cũ stale.
+- [x] Owner chạy manual probe trên iOS `26.5` với SQLite `3.50.3`.
+- [x] Report `passed: true`, đủ `11/11` exact assertion IDs trên final implementation SHA
+  `e1cd3a54b1a58e84a68518a6ac87ad751f422992`.
+- [x] Agent review SHA/assertion completeness; repository `HEAD` khớp report khi tiếp nhận.
 
 ### US0206-T11 — Closeout
 
-- [ ] Map mọi acceptance criterion tới host/native evidence.
-- [ ] Update plan, Epic Story và consolidated evidence record.
-- [ ] Chỉ chuyển `DONE` khi host quality + exact native report đều pass.
-- [ ] Mở planning gate `US-02-07`; không tự implement Retry/reset.
+- [x] Map mọi acceptance criterion tới host/native evidence.
+- [x] Update plan, Epic Story và consolidated evidence record.
+- [x] Chỉ chuyển `DONE` sau khi host quality + exact native report đều pass.
+- [x] Mở planning gate `US-02-07`; không tự implement Retry/reset.
 
 ## 7. Planned file impact
 
@@ -506,11 +509,11 @@ SHA. Native report không thay host fault matrix; host report không thay Expo S
 - [x] Năm owner confirmations được duyệt và phản ánh trong plan.
 - [x] Tất cả `T01`–`T09` hoàn tất theo authoritative order.
 - [x] Mọi acceptance criteria trong Epic Story có automated evidence traceable.
-- [x] Full root quality/boundary/hygiene pass trên implementation awaiting native report.
-- [ ] Owner native report pass đủ exact assertions trên exact final implementation SHA.
+- [x] Full root quality/boundary/hygiene pass trên exact implementation SHA.
+- [x] Owner native report pass đủ `11/11` assertions trên exact final implementation SHA.
 - [x] Không migration `002`, Product UI/behavior, provider delivery, Retry/reset hoặc native artifact
   ngoài scope.
-- [ ] Planning/evidence docs closeout và `US-02-06 DONE` chỉ sau review.
+- [x] Planning/evidence docs closeout hoàn tất và `US-02-06 DONE` sau review.
 
 ## 11. Owner confirmations
 
@@ -526,14 +529,13 @@ Không còn Product input nào bắt buộc owner chốt để implement Story s
 confirmation trên được duyệt. `OPEN-001`, `OPEN-006` và `OPEN-009` tiếp tục giữ nguyên trạng thái
 theo authority và không block Story này.
 
-## 12. Handoff sau khi plan được duyệt
+## 12. Handoff sau closeout
 
-1. Decision gate `US0206-CONFIRM-01`–`05` đã hoàn tất và plan đã
-   `READY_FOR_IMPLEMENTATION`.
-2. Khi owner yêu cầu triển khai, implementation chạy tuần tự `T01 → T09`; owner chỉ cần tham gia
-   lại nếu phát sinh schema gate ngoài plan.
-3. Agent bàn giao manual runbook; owner chạy native probe và gửi exact JSON report.
-4. Agent closeout `T10 → T11`, sau đó mới tạo implementation plan `US-02-07`.
+1. `T00 → T11` đã hoàn tất; `US-02-06` là `DONE`.
+2. Exact iOS report `US-02-06_DERIVED_QUERIES` pass `11/11` trên SHA
+   `e1cd3a54b1a58e84a68518a6ac87ad751f422992` và SQLite `3.50.3`.
+3. Planning dependency cho `US-02-07` đã mở theo authoritative order; không tự active hoặc
+   implement Retry/reset trong closeout này.
 
 ## 13. References
 
@@ -554,6 +556,15 @@ theo authority và không block Story này.
 - `docs/planning/EPIC-02_IMPLEMENTATION_EVIDENCE.md`
 
 ## 14. Change log
+
+### 0.4.0 — 2026-08-29
+
+- Tiếp nhận exact iOS report `US-02-06_DERIVED_QUERIES` `passed: true`, đủ `11/11` assertions,
+  SQLite `3.50.3`, trên final implementation SHA
+  `e1cd3a54b1a58e84a68518a6ac87ad751f422992`; SHA khớp repository `HEAD` khi review.
+- Re-run full `pnpm quality`: `17` files / `95` tests cùng device/boundary/hygiene gates pass.
+- Chuyển `T10`–`T11` và Definition of Done sang hoàn tất, close Story `DONE`.
+- Mở planning dependency cho `US-02-07`; không tự active hoặc implement Story tiếp theo.
 
 ### 0.3.0 — 2026-08-29
 
