@@ -1,5 +1,6 @@
 import {
   bootstrapVerificationError,
+  type BootstrapVerificationErrorCode,
   type BootstrapVerifierPort,
 } from '@/application';
 
@@ -211,6 +212,13 @@ const validCatalog = (rows: BootstrapRows): boolean =>
     );
   });
 
+const validSeedSurface = (rows: BootstrapRows): boolean =>
+  rows.migrations.length === productionMigrationRegistry.length &&
+  rows.installations.length === 1 &&
+  rows.settings.length === 1 &&
+  rows.profiles.length === 1 &&
+  validCatalog(rows);
+
 const validEconomy = (row: EconomyRow | null): boolean => {
   if (row === null) {
     return false;
@@ -235,7 +243,7 @@ export class SQLiteBootstrapVerifier implements BootstrapVerifierPort {
 
   async verify(): ReturnType<BootstrapVerifierPort['verify']> {
     try {
-      const structural = await this.owner.withConnection(async (connection) => {
+      const structuralError = await this.owner.withConnection(async (connection) => {
         const executor = new SQLiteExecutor(connection);
         const integrity = await executor.getAll<IntegrityRow>(
           bootstrapVerificationSql.integrity,
@@ -258,30 +266,50 @@ export class SQLiteBootstrapVerifier implements BootstrapVerifierPort {
           [],
         );
 
-        return (
-          integrity.length === 1 &&
-          integrity[0]?.integrity_check === 'ok' &&
-          foreignKeyViolations.length === 0 &&
-          validSchemaObjects(objects) &&
-          validHistory(history) &&
-          validEconomy(economy) &&
-          (await validColumns(executor)) &&
-          (await validForeignKeys(executor))
-        );
+        if (
+          integrity.length !== 1 ||
+          integrity[0]?.integrity_check !== 'ok' ||
+          foreignKeyViolations.length !== 0 ||
+          !validSchemaObjects(objects) ||
+          !validHistory(history) ||
+          !(await validColumns(executor)) ||
+          !(await validForeignKeys(executor))
+        ) {
+          return 'BOOTSTRAP_SCHEMA_INVARIANT_FAILED' as const;
+        }
+
+        if (!validEconomy(economy)) {
+          return 'BOOTSTRAP_ECONOMY_INVARIANT_FAILED' as const;
+        }
+
+        return undefined;
       });
 
-      if (!structural) {
-        return { ok: false, error: bootstrapVerificationError() };
+      if (structuralError !== undefined) {
+        return {
+          ok: false,
+          error: bootstrapVerificationError(structuralError),
+        };
       }
 
       const rows = await readBootstrapRows(this.owner);
-      if (mapBootstrapRows(rows) === undefined || !validCatalog(rows)) {
-        return { ok: false, error: bootstrapVerificationError() };
+      if (!validSeedSurface(rows)) {
+        return {
+          ok: false,
+          error: bootstrapVerificationError('BOOTSTRAP_SEED_INVALID'),
+        };
+      }
+      if (mapBootstrapRows(rows) === undefined) {
+        return {
+          ok: false,
+          error: bootstrapVerificationError('DURABLE_DATA_CORRUPT'),
+        };
       }
 
       return { ok: true, value: undefined };
     } catch {
-      return { ok: false, error: bootstrapVerificationError() };
+      const code: BootstrapVerificationErrorCode = 'DATABASE_READ_FAILED';
+      return { ok: false, error: bootstrapVerificationError(code) };
     }
   }
 }

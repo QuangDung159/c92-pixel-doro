@@ -225,7 +225,8 @@ export const runSafeBootstrapProbe = async (
     assertProbe(
       failedProjection.status === 'recovery' &&
         failedProjection.phase === 'verifying' &&
-        failedProjection.error.code === 'BOOTSTRAP_INVARIANT_FAILED',
+        failedProjection.error.code ===
+          'BOOTSTRAP_ECONOMY_INVARIANT_FAILED',
       'injected_invariant_mismatch_entered_typed_recovery',
       assertions,
     );

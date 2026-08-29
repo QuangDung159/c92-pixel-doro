@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_02_IMPLEMENTATION_EVIDENCE
 title: PixelDoro Mobile MVP — EPIC-02 Implementation Evidence
-version: 0.12.0
+version: 0.13.0
 status: IN_PROGRESS
 last_updated: 2026-08-29
 owner: Dũng Lư
@@ -17,6 +17,7 @@ us_02_03_plan: ./US-02-03_IMPLEMENTATION_PLAN.md
 us_02_04_plan: ./US-02-04_IMPLEMENTATION_PLAN.md
 us_02_05_plan: ./US-02-05_IMPLEMENTATION_PLAN.md
 us_02_06_plan: ./US-02-06_IMPLEMENTATION_PLAN.md
+us_02_07_plan: ./US-02-07_IMPLEMENTATION_PLAN.md
 ---
 
 # PixelDoro Mobile MVP — EPIC-02 Implementation Evidence
@@ -52,11 +53,17 @@ này khi tiếp nhận report ngày 2026-08-28.
 `95` tests; exact iOS native `US-02-06_DERIVED_QUERIES` report pass đủ `11/11` assertions với
 SQLite `3.50.3` trên final implementation SHA
 `e1cd3a54b1a58e84a68518a6ac87ad751f422992`; repository `HEAD` khớp SHA khi tiếp nhận report.
-Planning dependency cho `US-02-07` đã mở nhưng Story tiếp theo chưa tự active.
 
-Không có migration `002`, Product UI/Zustand behavior, analytics provider delivery,
-Retry/reset, native/EAS build hoặc generated native artifact nào được tạo trong implementation
-turn `US-02-06`.
+`US-02-07 — Failure Recovery và Retry` đã hoàn tất production implementation và host evidence.
+Full quality pass `21` files / `126` tests; stable typed recovery, critical-vs-side-effect boundary,
+same-database full-barrier Retry, safe UI/diagnostics và real SQLite rollback/fingerprint matrix đều
+pass. Dev-only native probe/runbook đã sẵn sàng; Story đang
+`IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME` cho đến khi owner gửi exact report trên final
+implementation SHA. `US-02-08` vẫn bị block.
+
+Không có migration `002`, reset executor, Product Session/Reward/Pet/Gamification behavior,
+analytics provider delivery, native/EAS build hoặc generated native artifact nào được tạo trong
+implementation turn `US-02-07`.
 
 Repository có ignored/generated native paths từ trước turn; chúng không thuộc implementation
 diff/commit set và không bị sửa/xóa.
@@ -619,3 +626,44 @@ both-platform repeat vẫn thuộc `US-02-09`.
 
 Planning dependency `US-02-07` đã mở theo authoritative order. Story tiếp theo chưa tự active;
 Retry/reset không được implement trong closeout này.
+
+## 16. `US-02-07` host implementation evidence — 2026-08-29
+
+| Capability | Repository evidence | Status |
+|---|---|---|
+| Recovery taxonomy | Application-owned phase/reason contracts map database, migration, schema, seed, data and economy failures without provider exception leakage | `PASS_HOST` |
+| Critical boundary | Explicit critical ingress closes readiness and publishes unavailable recovery; analytics/best-effort failures do not enter global recovery | `PASS_HOST` |
+| Safe Retry | Explicit user Retry reopens the same database owner, reruns open → migrate → verify → hydrate → reconcile and opens readiness only after success | `PASS_HOST_SQLITE` |
+| Retry concurrency/lifecycle | Concurrent Retry coalesces to one attempt; repeated boot, Retry and dispose remain deterministic without connection or subscription resurrection | `PASS_HOST` |
+| Durable safety | Real SQLite injected failure rolls back uncommitted core writes; before/after fingerprint preserves schema and product rows across recovery and Retry | `PASS_HOST_SQLITE` |
+| Migration mapping | Exact history/checksum/gap/newer/execution codes are preserved; retry reinspects durable history without migration `002` or destructive repair | `PASS_HOST` |
+| Recovery UI | Friendly unavailable message and accessible `Thử lại` action; no raw code, exception, SQL, row or stale authoritative snapshot is rendered | `PASS_HOST` |
+| Diagnostics | Fixed allowlisted event envelope with safe default adapter; diagnostic adapter failure cannot change recovery/readiness behavior | `PASS_HOST` |
+| Scope/retention audit | No automatic reset/reseed/recreate/repair, session terminal/reward path, catalog overwrite or `US-02-08` capability is reachable from recovery | `PASS_HOST` |
+| Native harness | Isolated dev-only `US-02-07_FAILURE_RECOVERY` probe covers typed failure, gate, same DB, concurrent Retry, fresh hydration, side-effect isolation, no destructive path and cleanup | `AWAITING_OWNER_NATIVE` |
+
+Automated checks dùng pinned Node.js `22.23.2` và pnpm `11.24.0`:
+
+- `pnpm quality`: `PASS`.
+  - Domain/Application/Mobile strict typecheck: `PASS`.
+  - ESLint workspace: `PASS`.
+  - Vitest: `21` files / `126` tests pass, gồm pure exhaustive recovery mapping, bootstrap phase
+    fault/retry matrix, friendly UI/diagnostic contract và real host SQLite rollback/fingerprint.
+  - Device harness: `PASS`, gồm failure-recovery runbook/probe source contract.
+  - Architecture boundary: `11` forbidden imports rejected, `3` valid imports accepted.
+  - Repository hygiene/checksum: `PASS`, đúng một immutable production migration `001`.
+- `git diff --check`: `PASS` tại host implementation verification.
+- Migration diff audit: không có migration/schema `002`; recovery không có production database
+  delete/reset/repair path. Database deletion chỉ tồn tại trong isolated diagnostic cleanup.
+- Không chạy native/EAS build, prebuild hoặc tạo native artifact.
+
+Manual owner gate:
+[`apps/mobile/test/device/failure-recovery-smoke.md`](../../apps/mobile/test/device/failure-recovery-smoke.md).
+Owner cần commit final implementation trước, chạy probe trên ít nhất một approved native target và
+gửi JSON `passed: true` với đủ stable assertions cùng exact `commitSha`. Code change sau report làm
+evidence stale; both-platform repeat và broader kill/disk-full matrix vẫn thuộc `US-02-09`.
+
+**Current Story status:** `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
+
+`US-02-08` tiếp tục bị block cho đến khi exact native report được review và `US-02-07` chuyển
+`DONE`; reset không được tự active trong implementation turn này.

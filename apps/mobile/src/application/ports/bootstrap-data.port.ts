@@ -31,14 +31,20 @@ export interface BootstrapDurableSnapshot {
   }[];
 }
 
+export type BootstrapDataErrorCode =
+  | 'DATABASE_READ_FAILED'
+  | 'BOOTSTRAP_DATA_INVALID';
+
 export interface BootstrapDataError {
   readonly kind: 'bootstrap_data_error';
-  readonly code: 'BOOTSTRAP_DATA_INVALID';
+  readonly code: BootstrapDataErrorCode;
 }
 
-export const bootstrapDataError = (): BootstrapDataError => ({
+export const bootstrapDataError = (
+  code: BootstrapDataErrorCode,
+): BootstrapDataError => ({
   kind: 'bootstrap_data_error',
-  code: 'BOOTSTRAP_DATA_INVALID',
+  code,
 });
 
 export interface BootstrapDataPort {

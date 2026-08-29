@@ -1,23 +1,51 @@
 import type { PropsWithChildren } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
-import { useBootstrapProjection } from '@/presentation/providers/mobile-application-context';
+import {
+  useBootstrapProjection,
+  useRecoveryRetry,
+} from '@/presentation/providers/mobile-application-context';
 import { palette } from '@/presentation/theme/palette';
+
+export interface RecoveryBoundaryContentProps {
+  readonly onRetry: () => void;
+}
+
+export const RecoveryBoundaryContent = ({
+  onRetry,
+}: RecoveryBoundaryContentProps) => (
+  <View
+    accessibilityRole="alert"
+    accessibilityLabel="Không thể khởi động PixelDoro"
+    style={styles.centered}
+  >
+    <Text style={styles.title}>PixelDoro chưa thể sẵn sàng</Text>
+    <Text style={styles.body}>
+      Dữ liệu của bạn vẫn được giữ nguyên. Hãy thử lại để tiếp tục.
+    </Text>
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel="Thử lại khởi động PixelDoro"
+      onPress={onRetry}
+      style={styles.retryButton}
+    >
+      <Text style={styles.retryButtonText}>Thử lại</Text>
+    </Pressable>
+  </View>
+);
 
 export const BootstrapBoundary = ({ children }: PropsWithChildren) => {
   const projection = useBootstrapProjection();
+  const retryRecovery = useRecoveryRetry();
 
   if (projection.status === 'recovery') {
-    return (
-      <View
-        accessibilityRole="alert"
-        accessibilityLabel="Không thể khởi động PixelDoro"
-        style={styles.centered}
-      >
-        <Text style={styles.title}>PixelDoro cần được khôi phục</Text>
-        <Text style={styles.body}>Mã lỗi: {projection.error.code}</Text>
-      </View>
-    );
+    return <RecoveryBoundaryContent onRetry={() => void retryRecovery()} />;
   }
 
   if (projection.status !== 'ready') {
@@ -56,5 +84,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
   },
+  retryButton: {
+    backgroundColor: palette.border,
+    borderRadius: 12,
+    minHeight: 48,
+    minWidth: 160,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+  },
+  retryButtonText: {
+    color: palette.background,
+    fontSize: 16,
+    fontWeight: '700',
+    textAlign: 'center',
+  },
 });
-

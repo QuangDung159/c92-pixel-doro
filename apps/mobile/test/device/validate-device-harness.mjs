@@ -10,6 +10,7 @@ const migrationFlowPath = `${deviceDirectory}forward-migration-smoke.md`;
 const bootstrapFlowPath = `${deviceDirectory}safe-bootstrap-smoke.md`;
 const repositoriesFlowPath = `${deviceDirectory}typed-repositories-smoke.md`;
 const derivedQueriesFlowPath = `${deviceDirectory}derived-queries-smoke.md`;
+const failureRecoveryFlowPath = `${deviceDirectory}failure-recovery-smoke.md`;
 
 await access(flowPath);
 await access(sqliteFlowPath);
@@ -18,6 +19,7 @@ await access(migrationFlowPath);
 await access(bootstrapFlowPath);
 await access(repositoriesFlowPath);
 await access(derivedQueriesFlowPath);
+await access(failureRecoveryFlowPath);
 const flow = await readFile(flowPath, 'utf8');
 const sqliteFlow = await readFile(sqliteFlowPath, 'utf8');
 const schemaFlow = await readFile(schemaFlowPath, 'utf8');
@@ -25,6 +27,7 @@ const migrationFlow = await readFile(migrationFlowPath, 'utf8');
 const bootstrapFlow = await readFile(bootstrapFlowPath, 'utf8');
 const repositoriesFlow = await readFile(repositoriesFlowPath, 'utf8');
 const derivedQueriesFlow = await readFile(derivedQueriesFlowPath, 'utf8');
+const failureRecoveryFlow = await readFile(failureRecoveryFlowPath, 'utf8');
 
 const requiredLabels = [
   'Chào mừng đến PixelDoro',
@@ -169,6 +172,26 @@ for (const evidence of requiredDerivedQueryEvidence) {
 
 await access(
   `${mobileDirectory}/src/composition/diagnostics/run-derived-queries-probe.ts`,
+);
+
+const requiredFailureRecoveryEvidence = [
+  'EXPO_PUBLIC_FAILURE_RECOVERY_PROBE=1',
+  'US-02-07_FAILURE_RECOVERY',
+  'passed: true',
+  'pixeldoro-us-02-07-failure-recovery-probe.db',
+  'retry_reused_same_database_and_reran_ordered_barrier',
+  'no_reset_repair_terminal_or_reward_path_was_invoked',
+  'EPIC-02_IMPLEMENTATION_EVIDENCE.md',
+];
+
+for (const evidence of requiredFailureRecoveryEvidence) {
+  if (!failureRecoveryFlow.includes(evidence)) {
+    throw new Error(`Failure recovery device probe is missing: ${evidence}`);
+  }
+}
+
+await access(
+  `${mobileDirectory}/src/composition/diagnostics/run-failure-recovery-probe.ts`,
 );
 
 console.log(

@@ -194,11 +194,14 @@ export class SQLiteBootstrapDataAdapter implements BootstrapDataPort {
     try {
       const snapshot = mapBootstrapRows(await readBootstrapRows(this.owner));
       if (snapshot === undefined) {
-        return { ok: false, error: bootstrapDataError() };
+        return {
+          ok: false,
+          error: bootstrapDataError('BOOTSTRAP_DATA_INVALID'),
+        };
       }
       return { ok: true, value: snapshot };
     } catch {
-      return { ok: false, error: bootstrapDataError() };
+      return { ok: false, error: bootstrapDataError('DATABASE_READ_FAILED') };
     }
   }
 }

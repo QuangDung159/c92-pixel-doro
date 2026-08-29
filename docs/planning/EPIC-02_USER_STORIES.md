@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_02_USER_STORIES
 title: PixelDoro Mobile MVP — EPIC-02 User Stories
-version: 1.18.0
+version: 1.19.0
 status: READY_FOR_REVIEW
 last_updated: 2026-08-29
 owner: Dũng Lư
@@ -656,10 +656,11 @@ case, review candidate/orchestration, final analytics taxonomy/provider, economy
 ### US-02-07 — Failure Recovery và Retry
 
 **Implementation plan:**
-[`US-02-07_IMPLEMENTATION_PLAN.md`](./US-02-07_IMPLEMENTATION_PLAN.md) `0.1.0` đang
-`READY_FOR_REVIEW` / implementation `NOT_STARTED`. Plan đề xuất năm technical confirmation cho
-recovery taxonomy, critical-failure ingress, Retry lifecycle, UI/diagnostics và native evidence;
-không có Product blocker.
+[`US-02-07_IMPLEMENTATION_PLAN.md`](./US-02-07_IMPLEMENTATION_PLAN.md) `0.3.0` đang
+`IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`. Owner đã duyệt đủ năm technical confirmation;
+production recovery/Retry, UI/diagnostics, host fault/fingerprint matrix và dev-only native
+probe/runbook đã hoàn tất. Full `pnpm quality` pass `21` files / `126` tests; còn exact owner
+native report trên final implementation SHA trước khi chuyển Story sang `DONE`.
 
 **Story statement**
 
@@ -688,25 +689,25 @@ automatic repair migration, cloud restore, Settings full reset confirmation UI.
 
 **Acceptance criteria:**
 
-- [ ] Open/read/write/migration/checksum/gap/newer-schema/seed/invariant/economy failure map sang stable typed category; raw exception/message không rò ra UI.
-- [ ] Recovery projection là Application/UI state, không persist như session status hoặc database row.
-- [ ] Recovery screen có Retry action khả dụng/accessibility label; không chỉ hiện error code dead-end.
-- [ ] Trong recovery, readiness gate chặn mọi future core mutation và giữ last safe projection hoặc explicit unavailable state.
-- [ ] Không failure path nào tự delete/recreate database, reset singleton, overwrite catalog, repair balance/ledger hoặc terminal/reward session.
-- [ ] Retry dùng cùng durable database, re-inspect history và chỉ chuyển ready sau toàn bộ barrier pass.
-- [ ] Concurrent Retry coalesce/serialize; không mở nhiều connection hoặc apply migration trùng.
-- [ ] Failure sau partial uncommitted write chứng minh rollback/no committed half-state theo transaction contract.
-- [ ] Failure diagnostic được sanitize, không log raw session payload, Pet name, feedback text hoặc database dump.
-- [ ] Reset executor của `US-02-08` không được tự gọi từ recovery; chỉ có thể xuất hiện sau external explicit confirmation flow ở Epic 10.
+- [x] Open/read/write/migration/checksum/gap/newer-schema/seed/invariant/economy failure map sang stable typed category; raw exception/message không rò ra UI.
+- [x] Recovery projection là Application/UI state, không persist như session status hoặc database row.
+- [x] Recovery screen có Retry action khả dụng/accessibility label; không chỉ hiện error code dead-end.
+- [x] Trong recovery, readiness gate chặn mọi future core mutation và giữ last safe projection hoặc explicit unavailable state.
+- [x] Không failure path nào tự delete/recreate database, reset singleton, overwrite catalog, repair balance/ledger hoặc terminal/reward session.
+- [x] Retry dùng cùng durable database, re-inspect history và chỉ chuyển ready sau toàn bộ barrier pass.
+- [x] Concurrent Retry coalesce/serialize; không mở nhiều connection hoặc apply migration trùng.
+- [x] Failure sau partial uncommitted write chứng minh rollback/no committed half-state theo transaction contract.
+- [x] Failure diagnostic được sanitize, không log raw session payload, Pet name, feedback text hoặc database dump.
+- [x] Reset executor của `US-02-08` không được tự gọi từ recovery; chỉ có thể xuất hiện sau external explicit confirmation flow ở Epic 10.
 
 **Task checklist sơ bộ:**
 
-- [ ] Define typed database/migration/recovery errors và UI mapping contract.
-- [ ] Add Retry command vào bootstrap facade/projection.
-- [ ] Implement command gate behavior trong recovery.
-- [ ] Add fault injectors cho từng bootstrap/transaction phase.
-- [ ] Add sanitized diagnostic policy/tests.
-- [ ] Add no-reset/no-repair/no-terminal assertions.
+- [x] Define typed database/migration/recovery errors và UI mapping contract.
+- [x] Add Retry command vào bootstrap facade/projection.
+- [x] Implement command gate behavior trong recovery.
+- [x] Add fault injectors cho từng bootstrap/transaction phase.
+- [x] Add sanitized diagnostic policy/tests.
+- [x] Add no-reset/no-repair/no-terminal assertions.
 
 **Evidence yêu cầu:**
 
@@ -914,9 +915,10 @@ Một Story chỉ được đánh dấu `[x]` khi:
   `US-02-05` đã `DONE`: full host quality và exact iOS probe `10/10` pass trên SHA
   `bdbed4d820caa2ad1648cba28679d76327eca1b0`. `US-02-06` đã `DONE`: full host quality
   `17` files / `95` tests và exact iOS probe `11/11` pass với SQLite `3.50.3` trên SHA
-  `e1cd3a54b1a58e84a68518a6ac87ad751f422992`. Implementation plan `US-02-07` `0.1.0`
-  đã được tạo ở trạng thái `READY_FOR_REVIEW` / `NOT_STARTED`; chờ owner duyệt năm technical
-  confirmation trước khi chuyển `READY_FOR_IMPLEMENTATION`.
+  `e1cd3a54b1a58e84a68518a6ac87ad751f422992`. `US-02-07` plan `0.3.0` đang
+  `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`: owner đã duyệt đủ năm confirmation, production và
+  host evidence pass `21` files / `126` tests, native probe/runbook đã sẵn sàng. `US-02-08` tiếp tục
+  bị block cho đến exact owner native report và `US-02-07 DONE`.
 
 ### 8.2. Điều kiện chuyển `READY_FOR_IMPLEMENTATION`
 
@@ -941,6 +943,17 @@ Một Story chỉ được đánh dấu `[x]` khi:
 - [ ] Dũng Lư review và phê duyệt Story breakdown trước khi chuyển status sang `APPROVED`/`READY_FOR_IMPLEMENTATION`.
 
 ## 10. Change log
+
+### 1.19.0 — 2026-08-29
+
+- Ghi nhận owner duyệt đủ `US0207-CONFIRM-01`–`05` và implementation recovery taxonomy,
+  critical ingress, full-barrier same-DB Retry, single-flight/dispose safety đã hoàn tất.
+- Ghi nhận friendly accessible Retry UI, fixed sanitized diagnostics, exhaustive fake/real SQLite
+  failure/rollback/fingerprint evidence và full `pnpm quality` pass `21` files / `126` tests.
+- Add isolated dev-only `US-02-07_FAILURE_RECOVERY` native probe/runbook; không thêm migration
+  `002`, reset executor, Product feature behavior, provider hoặc native artifact.
+- Chuyển Story sang `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`; giữ `US-02-08` blocked cho đến
+  exact owner native report trên final implementation SHA và closeout `US-02-07 DONE`.
 
 ### 1.18.0 — 2026-08-29
 

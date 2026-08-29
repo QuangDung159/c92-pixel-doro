@@ -1,10 +1,22 @@
 export {
   MobileBootstrap,
-  type BootstrapErrorCode,
-  type BootstrapPhase,
   type BootstrapProjection,
   type MobileBootstrapDependencies,
 } from './bootstrap/mobile-bootstrap';
+export type {
+  BootstrapPhase,
+  CriticalRecoveryPort,
+  RecoveryDiagnostic,
+  RecoveryDiagnosticEventName,
+  RecoveryDiagnosticsPort,
+  RecoveryPhase,
+  RecoveryReasonCode,
+  RuntimeRecoveryReasonCode,
+} from './recovery';
+export {
+  recoveryReasonForPersistenceError,
+  recoveryReasonForTransactionError,
+} from './recovery';
 export type {
   AppLifecyclePort,
   AppLifecycleState,
@@ -12,6 +24,7 @@ export type {
 export {
   bootstrapDataError,
   type BootstrapDataError,
+  type BootstrapDataErrorCode,
   type BootstrapDataPort,
   type BootstrapDefaultMode,
   type BootstrapDurableSnapshot,
@@ -19,6 +32,7 @@ export {
 export {
   bootstrapVerificationError,
   type BootstrapVerificationError,
+  type BootstrapVerificationErrorCode,
   type BootstrapVerifierPort,
 } from './ports/bootstrap-verifier.port';
 export {

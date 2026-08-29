@@ -235,7 +235,12 @@ describe('SQLite safe bootstrap verifier and hydration', () => {
       ok: false,
       error: {
         kind: 'bootstrap_verification_error',
-        code: 'BOOTSTRAP_INVARIANT_FAILED',
+        code:
+          mismatch === 'economy'
+            ? 'BOOTSTRAP_ECONOMY_INVARIANT_FAILED'
+            : mismatch === 'catalog' || mismatch === 'singleton'
+              ? 'BOOTSTRAP_SEED_INVALID'
+              : 'BOOTSTRAP_SCHEMA_INVARIANT_FAILED',
       },
     });
     expect(driver.connection.controlStatements).toEqual([]);
@@ -277,7 +282,7 @@ describe('SQLite safe bootstrap verifier and hydration', () => {
     const result = await thrown.adapter.read();
     expect(result).toMatchObject({
       ok: false,
-      error: { code: 'BOOTSTRAP_DATA_INVALID' },
+      error: { code: 'DATABASE_READ_FAILED' },
     });
     expect(JSON.stringify(result)).not.toContain('sqlite row detail');
   });

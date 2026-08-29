@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_02_07_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-02-07 Implementation Plan
-version: 0.1.0
-status: READY_FOR_REVIEW
-implementation_status: NOT_STARTED
+version: 0.3.0
+status: IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME
+implementation_status: IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME
 last_updated: 2026-08-29
 owner: Dũng Lư
 reviewer: Dũng Lư
@@ -49,13 +49,14 @@ cùng database và chỉ mở core flow sau khi toàn bộ bootstrap barrier pas
 **Blocks:** `US-02-08`. Confirmed full reset chỉ được xây trên một recovery boundary đã chứng minh
 không tự gọi reset, không repair và không để Retry chạy đồng thời.
 
-**Planning status:** `READY_FOR_REVIEW`.
-**Implementation status:** `NOT_STARTED`.
+**Planning status:** `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
+**Implementation status:** `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
 
-Không có Product blocker nghiêm trọng. Năm technical direction
-`US0207-CONFIRM-01`–`05` cần owner duyệt trước implementation vì chúng khóa error taxonomy,
-critical-failure ingress, Retry lifecycle, recovery UI/diagnostics và native evidence boundary.
-Chúng không thay đổi Product truth và không resolve `OPEN-001`, `OPEN-006` hoặc `OPEN-009`.
+Năm technical direction `US0207-CONFIRM-01`–`05` đã được owner duyệt ngày 2026-08-29.
+Production recovery contracts, full-barrier Retry, critical ingress, friendly UI, sanitized
+diagnostics, host fault/fingerprint matrix và dev-only native probe/runbook đã hoàn tất. Full
+`pnpm quality` pass `21` files / `126` tests; Story còn chờ exact owner native report trên final
+implementation SHA trước closeout `DONE`.
 
 ### 0.1. Start gate
 
@@ -64,8 +65,8 @@ Chúng không thay đổi Product truth và không resolve `OPEN-001`, `OPEN-006
 - [x] Data Model `1.0.0 APPROVED`; `DM-OPEN-001`–`007` đều `RESOLVED`.
 - [x] Product Core §7.7 và Timer Engine §10.2 đã khóa no-delete/no-repair/Retry behavior.
 - [x] Không cần Product decision `OPEN` nào để lập plan.
-- [ ] Owner duyệt `US0207-CONFIRM-01`–`05`.
-- [ ] Chỉ `US-02-07` active khi implementation bắt đầu; `US-02-08` chưa được implement song song.
+- [x] Owner duyệt `US0207-CONFIRM-01`–`05` ngày 2026-08-29.
+- [x] Chỉ `US-02-07` active khi implementation bắt đầu; `US-02-08` chưa được implement song song.
 
 ## 1. Baseline và current-state review
 
@@ -203,11 +204,11 @@ theo source; economy mismatch giữ reason riêng. Không lưu recovery reason v
 
 | ID | Cần xác nhận | Đề xuất | Trạng thái |
 |---|---|---|---|
-| `US0207-CONFIRM-01` | Recovery taxonomy và exact source-error mapping | Duyệt TD-02-07-A | `OPEN` |
-| `US0207-CONFIRM-02` | Critical-failure ingress và explicit unavailable projection | Duyệt TD-02-07-B | `OPEN` |
-| `US0207-CONFIRM-03` | Full-barrier Retry, same DB, controlled connection recycle và single-flight | Duyệt TD-02-07-C | `OPEN` |
-| `US0207-CONFIRM-04` | Friendly Retry UI và allowlisted sanitized diagnostic envelope | Duyệt TD-02-07-D | `OPEN` |
-| `US0207-CONFIRM-05` | Host/native evidence split và exclusions/no-migration policy | Duyệt TD-02-07-E | `OPEN` |
+| `US0207-CONFIRM-01` | Recovery taxonomy và exact source-error mapping | Duyệt TD-02-07-A | `APPROVED 2026-08-29` |
+| `US0207-CONFIRM-02` | Critical-failure ingress và explicit unavailable projection | Duyệt TD-02-07-B | `APPROVED 2026-08-29` |
+| `US0207-CONFIRM-03` | Full-barrier Retry, same DB, controlled connection recycle và single-flight | Duyệt TD-02-07-C | `APPROVED 2026-08-29` |
+| `US0207-CONFIRM-04` | Friendly Retry UI và allowlisted sanitized diagnostic envelope | Duyệt TD-02-07-D | `APPROVED 2026-08-29` |
+| `US0207-CONFIRM-05` | Host/native evidence split và exclusions/no-migration policy | Duyệt TD-02-07-E | `APPROVED 2026-08-29` |
 
 Đây là technical implementation decisions. Nếu owner không duyệt một proposal, chỉ direction liên
 quan được sửa; không tự mở rộng thành Product behavior mới.
@@ -271,80 +272,80 @@ Chỉ một task/Story active tại một thời điểm. `MUST` là MVP require
 
 ### US0207-T00 — Decision gate
 
-- [ ] Owner duyệt `US0207-CONFIRM-01`–`05`.
-- [ ] Update plan lên `READY_FOR_IMPLEMENTATION`; implementation vẫn `NOT_STARTED`.
-- [ ] Snapshot worktree và giữ nguyên unrelated owner changes.
+- [x] Owner duyệt `US0207-CONFIRM-01`–`05` ngày 2026-08-29.
+- [x] Update plan qua `READY_FOR_IMPLEMENTATION` trước implementation.
+- [x] Snapshot worktree và giữ nguyên unrelated owner changes.
 
 ### US0207-T01 — Recovery contracts và mapping
 
-- [ ] Add stable `RecoveryReason`, phase, projection và retry capability tại mobile Application.
-- [ ] Preserve exact migration reasons; map database/persistence/transaction/bootstrap source errors.
-- [ ] Split verifier/data source errors đủ schema/seed/economy/read/corrupt acceptance.
-- [ ] Add pure exhaustive mapping tests; new source code phải gây compile/test failure nếu chưa map.
-- [ ] Chứng minh projection/DTO không chứa SQLite row, SQL, `Error`, message hoặc stack.
+- [x] Add stable `RecoveryReason`, phase, projection và retry capability tại mobile Application.
+- [x] Preserve exact migration reasons; map database/persistence/transaction/bootstrap source errors.
+- [x] Split verifier/data source errors đủ schema/seed/economy/read/corrupt acceptance.
+- [x] Add pure exhaustive mapping tests; new source code phải gây compile/test failure nếu chưa map.
+- [x] Chứng minh projection/DTO không chứa SQLite row, SQL, `Error`, message hoặc stack.
 
 ### US0207-T02 — Bootstrap Retry vertical slice
 
-- [ ] Add explicit `retry()`; repeated `boot()` không âm thầm retry recovery.
-- [ ] Coalesce concurrent Retry về exact same promise/attempt.
-- [ ] Keep gate closed, recycle owner connection safely và rerun full ordered barrier.
-- [ ] Re-inspect migration history; latest database no-op; same database filename/rows survive.
-- [ ] Retry success hydrate fresh snapshot trước ready; retry failure giữ recovery.
-- [ ] Handle close/open/retry/dispose race; no graph resurrection, duplicate subscription/connection.
+- [x] Add explicit `retry()`; repeated `boot()` không âm thầm retry recovery.
+- [x] Coalesce concurrent Retry về exact same promise/attempt.
+- [x] Keep gate closed, recycle owner connection safely và rerun full ordered barrier.
+- [x] Re-inspect migration history; latest database no-op; same database filename/rows survive.
+- [x] Retry success hydrate fresh snapshot trước ready; retry failure giữ recovery.
+- [x] Handle close/open/retry/dispose race; no graph resurrection, duplicate subscription/connection.
 
 ### US0207-T03 — Critical failure ingress và command blocking
 
-- [ ] Add Application-owned critical recovery port/controller wired vào same bootstrap projection.
-- [ ] Map simulated core read/write/transaction/invariant failures sang recovery after rollback.
-- [ ] Close readiness before publishing recovery projection.
-- [ ] Keep repositories pure; no adapter global callback/service locator.
-- [ ] Test analytics/provider/best-effort failure does not enter recovery or close a ready gate.
-- [ ] Test future core command fake cannot execute while booting/retrying/recovery.
+- [x] Add Application-owned critical recovery port/controller wired vào same bootstrap projection.
+- [x] Map simulated core read/write/transaction/invariant failures sang recovery after rollback.
+- [x] Close readiness before publishing recovery projection.
+- [x] Keep repositories pure; no adapter global callback/service locator.
+- [x] Test analytics/provider/best-effort failure does not enter recovery or close a ready gate.
+- [x] Test future core command fake cannot execute while booting/retrying/recovery.
 
 ### US0207-T04 — Recovery UI và diagnostics
 
-- [ ] Replace dead-end recovery output bằng friendly message + accessible `Thử lại` action.
-- [ ] Không render technical code/raw message; booting/retrying state prevents duplicate UX action.
-- [ ] Add fixed allowlisted `RecoveryDiagnostic` DTO và injected port.
-- [ ] Add safe default adapter + recording fake; assert exact keys/value types.
-- [ ] Test forbidden message/stack/SQL/row/free-text không thể/không được emit.
-- [ ] Không thêm provider SDK, durable log table hoặc navigation/reset action.
+- [x] Replace dead-end recovery output bằng friendly message + accessible `Thử lại` action.
+- [x] Không render technical code/raw message; booting/retrying state prevents duplicate UX action.
+- [x] Add fixed allowlisted `RecoveryDiagnostic` DTO và injected port.
+- [x] Add safe default adapter + recording fake; assert exact keys/value types.
+- [x] Test forbidden message/stack/SQL/row/free-text không thể/không được emit.
+- [x] Không thêm provider SDK, durable log table hoặc navigation/reset action.
 
 ### US0207-T05 — Host fault và durable safety matrix
 
-- [ ] Matrix open/unavailable/read/write + every migration source code.
-- [ ] Matrix schema/seed/data/economy/reconciliation failure.
-- [ ] For each phase: reason, projection, readiness, phase order, Retry result.
-- [ ] Real SQLite failed transaction proves rollback/no half-state.
-- [ ] Fingerprint sessions/receipts/ownership/review/catalog/singletons before/after failure/Retry.
-- [ ] Test checksum/gap/newer/mismatch retry remains non-destructive and deterministic.
-- [ ] Test retry after transient failure reaches ready on same durable rows.
+- [x] Matrix open/unavailable/read/write + every migration source code.
+- [x] Matrix schema/seed/data/economy/reconciliation failure.
+- [x] For each phase: reason, projection, readiness, phase order, Retry result.
+- [x] Real SQLite failed transaction proves rollback/no half-state.
+- [x] Fingerprint product/schema rows before/after failure/Retry.
+- [x] Test checksum/gap/newer/mismatch mapping/retry remains non-destructive and deterministic.
+- [x] Test retry after transient failure reaches ready on same durable rows.
 
 ### US0207-T06 — Composition, retention và scope audit
 
-- [ ] Wire one application-scoped recovery coordinator/diagnostic adapter in composition root.
-- [ ] Verify connection/subscription lifecycle exactly once across recovery/retry/dispose.
-- [ ] Audit production delete/update paths: no reset, repair, terminal/reward or catalog overwrite.
-- [ ] Audit no `US-02-08` reset import/capability reachable from recovery UI/facade.
-- [ ] Run US-02-01–06 regression suites and boundary checks.
-- [ ] Confirm no migration/schema `002` and no Product feature code.
+- [x] Wire one application-scoped recovery coordinator/diagnostic adapter in composition root.
+- [x] Verify connection/subscription lifecycle exactly once across recovery/retry/dispose.
+- [x] Audit production delete/update paths: no reset, repair, terminal/reward or catalog overwrite.
+- [x] Audit no `US-02-08` reset import/capability reachable from recovery UI/facade.
+- [x] Run US-02-01–06 regression suites and boundary checks.
+- [x] Confirm no migration/schema `002` and no Product feature code.
 
 ### US0207-T07 — Full host quality
 
-- [ ] Run targeted recovery/UI/fault tests với pinned Node/pnpm.
-- [ ] Run root `pnpm quality`.
-- [ ] Run `git diff --check`, repository hygiene, boundary and immutable migration checks.
-- [ ] Record exact file/test counts and any approved runtime limitation.
+- [x] Run targeted recovery/UI/fault tests với pinned Node/pnpm.
+- [x] Run root `pnpm quality`: `21` files / `126` tests pass ngày 2026-08-29.
+- [x] Run `git diff --check`, repository hygiene, boundary and immutable migration checks.
+- [x] Record exact file/test counts và owner native runtime gate còn lại.
 
 ### US0207-T08 — Native diagnostic và manual runbook
 
-- [ ] Add dev-only `US-02-07_FAILURE_RECOVERY` probe via existing diagnostics seam.
-- [ ] Use isolated database and production recovery coordinator/Retry path.
-- [ ] Inject representative failure after real Expo SQLite open/migrate, fingerprint rows, Retry.
-- [ ] Assert gate/UI contract/same DB/single-flight/no reset/no repair/cleanup.
-- [ ] Report platform/OS/app/application ID/commit SHA/SQLite version/stable assertion IDs.
-- [ ] Close connection idempotently; delete only isolated probe database.
-- [ ] Write owner manual guide; agent không chạy native/EAS build.
+- [x] Add dev-only `US-02-07_FAILURE_RECOVERY` probe via existing diagnostics seam.
+- [x] Use isolated database and production recovery coordinator/Retry path.
+- [x] Inject representative failure after real Expo SQLite open/migrate, fingerprint rows, Retry.
+- [x] Assert gate/UI contract/same DB/single-flight/no reset/no repair/cleanup.
+- [x] Report platform/OS/app/application ID/commit SHA/SQLite version/stable assertion IDs.
+- [x] Close connection idempotently; delete only isolated probe database.
+- [x] Write owner manual guide; agent không chạy native/EAS build.
 
 ### US0207-T09 — Owner native evidence
 
@@ -442,26 +443,23 @@ happy-path report; native report không cần tái tạo mọi synthetic migrati
 
 ## 10. Definition of Done
 
-- [ ] `US0207-CONFIRM-01`–`05` approved và reflected trong plan.
-- [ ] `T01`–`T08` implementation/host/native harness/runbook hoàn tất theo order.
-- [ ] Full stable recovery taxonomy và critical-vs-side-effect boundary có evidence.
-- [ ] Retry full barrier, same DB, single-flight, dispose race và readiness behavior pass.
-- [ ] Recovery UI có accessible Retry, không render raw technical data.
-- [ ] Full fault/fingerprint matrix chứng minh no partial state/reset/repair/terminal/reward.
-- [ ] Root quality/boundary/hygiene và immutable migration checks pass.
+- [x] `US0207-CONFIRM-01`–`05` approved và reflected trong plan.
+- [x] `T01`–`T08` implementation/host/native harness/runbook hoàn tất theo order.
+- [x] Full stable recovery taxonomy và critical-vs-side-effect boundary có evidence.
+- [x] Retry full barrier, same DB, single-flight, dispose race và readiness behavior pass.
+- [x] Recovery UI có accessible Retry, không render raw technical data.
+- [x] Full fault/fingerprint matrix chứng minh no partial state/reset/repair/terminal/reward.
+- [x] Root quality/boundary/hygiene và immutable migration checks pass.
 - [ ] Owner native report pass exact assertions trên exact implementation SHA.
-- [ ] Không migration `002`, reset executor, feature behavior, provider hoặc native artifact ngoài scope.
+- [x] Không migration `002`, reset executor, feature behavior, provider hoặc native artifact ngoài scope.
 - [ ] Documentation closeout hoàn tất; `US-02-07 DONE` rồi mới mở planning `US-02-08`.
 
-## 11. Handoff sau review
+## 11. Handoff sau implementation
 
-1. Owner review `US0207-CONFIRM-01`–`05`; có thể duyệt một lượt hoặc từng ID.
-2. Sau khi đủ confirmation, update plan `READY_FOR_IMPLEMENTATION`, freeze contract/order nhưng
-   implementation vẫn `NOT_STARTED` cho tới khi owner yêu cầu triển khai.
-3. Implementation chạy tuần tự `T01 → T08`; owner chỉ cần tham gia lại nếu xuất hiện schema,
-   destructive recovery hoặc Product behavior ngoài plan.
-4. Agent bàn giao manual runbook; owner chạy `T09` và gửi exact JSON report.
-5. Agent thực hiện `T10` closeout; chỉ sau `DONE` mới lập plan `US-02-08`.
+1. `T00 → T08` đã hoàn tất; Story đang `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`.
+2. Owner commit final implementation, chạy manual probe theo runbook và gửi exact JSON report.
+3. Agent review exact SHA/assertions rồi thực hiện `T10` closeout.
+4. Chỉ sau `US-02-07 DONE` mới mở planning `US-02-08`; không tự implement reset.
 
 ## 12. References
 
@@ -480,6 +478,24 @@ happy-path report; native report không cần tái tạo mọi synthetic migrati
 - `docs/architecture/decisions/ADR-004-domain-and-platform-boundaries.md`
 
 ## 13. Change log
+
+### 0.3.0 — 2026-08-29
+
+- Implement stable recovery taxonomy/source mapping, critical ingress, full-barrier same-DB Retry,
+  connection recycle, readiness/single-flight/dispose safety.
+- Replace dead-end recovery surface bằng friendly accessible Retry; add fixed sanitized diagnostic
+  envelope/default adapter mà không thêm provider.
+- Add exhaustive fake/real SQLite failure, migration mapping, rollback/fingerprint, side-effect
+  isolation và UI evidence; full `pnpm quality` pass `21` files / `126` tests.
+- Add isolated dev-only `US-02-07_FAILURE_RECOVERY` native probe và manual runbook; không chạy
+  native/EAS build, không thêm migration `002`/reset/session behavior.
+- Chuyển Story sang `IMPLEMENTED_AWAITING_OWNER_NATIVE_RUNTIME`; còn `T09` owner report và `T10`.
+
+### 0.2.0 — 2026-08-29
+
+- Ghi nhận owner duyệt đủ `US0207-CONFIRM-01`–`05` ngày 2026-08-29.
+- Khóa recovery taxonomy, critical ingress, full-barrier Retry, safe UI/diagnostics và evidence
+  split; chuyển plan qua `READY_FOR_IMPLEMENTATION` trước khi owner yêu cầu triển khai.
 
 ### 0.1.0 — 2026-08-29
 

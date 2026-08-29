@@ -5,5 +5,6 @@ export interface MobileApplicationFacade {
   readonly bootstrap: MobileBootstrap;
   readonly readiness: CommandReadinessPort;
   boot(): Promise<void>;
+  retryRecovery(): Promise<void>;
   dispose(): Promise<void>;
 }

@@ -4,31 +4,26 @@ import type {
   BootstrapDurableSnapshot,
 } from '../ports/bootstrap-data.port';
 import type { BootstrapVerifierPort } from '../ports/bootstrap-verifier.port';
-import type {
-  DatabaseLifecycleErrorCode,
-  DatabaseLifecyclePort,
-} from '../ports/database-lifecycle.port';
-import type { MigrationPort } from '../ports/migration.port';
+import type { DatabaseLifecyclePort } from '../ports/database-lifecycle.port';
+import type { MigrationPort, MigrationRunError } from '../ports/migration.port';
 import type { StartupReconciliationPort } from '../ports/startup-reconciliation.port';
 import type { ReadinessController } from '../readiness/readiness-gate';
-
-export type BootstrapPhase =
-  | 'opening'
-  | 'migrating'
-  | 'verifying'
-  | 'hydrating'
-  | 'reconciling';
-
-export type BootstrapErrorCode =
-  | DatabaseLifecycleErrorCode
-  | 'BOOTSTRAP_MIGRATION_FAILED'
-  | 'BOOTSTRAP_INVARIANT_FAILED'
-  | 'BOOTSTRAP_DATA_INVALID'
-  | 'STARTUP_RECONCILIATION_FAILED';
+import type {
+  BootstrapPhase,
+  CriticalRecoveryPort,
+  RecoveryDiagnostic,
+  RecoveryDiagnosticsPort,
+  RecoveryPhase,
+  RecoveryReasonCode,
+  RuntimeRecoveryReasonCode,
+} from '../recovery';
 
 export type BootstrapProjection =
   | { readonly status: 'idle' }
-  | { readonly status: 'booting'; readonly phase: BootstrapPhase }
+  | {
+      readonly status: 'booting';
+      readonly phase: BootstrapPhase;
+    }
   | {
       readonly status: 'ready';
       readonly snapshot: BootstrapDurableSnapshot;
@@ -36,8 +31,8 @@ export type BootstrapProjection =
     }
   | {
       readonly status: 'recovery';
-      readonly phase: BootstrapPhase;
-      readonly error: { readonly code: BootstrapErrorCode };
+      readonly phase: RecoveryPhase;
+      readonly error: { readonly code: RecoveryReasonCode };
     }
   | { readonly status: 'disposed' };
 
@@ -46,18 +41,27 @@ export interface MobileBootstrapDependencies {
   readonly bootstrapData: BootstrapDataPort;
   readonly bootstrapVerifier: BootstrapVerifierPort;
   readonly databaseLifecycle: DatabaseLifecyclePort;
+  readonly diagnostics: RecoveryDiagnosticsPort;
   readonly migration: MigrationPort;
   readonly readiness: ReadinessController;
   readonly startupReconciliation: StartupReconciliationPort;
 }
 
-export class MobileBootstrap {
+const migrationRecoveryReason = (
+  error: MigrationRunError,
+): RecoveryReasonCode =>
+  error.kind === 'migration_error'
+    ? error.code
+    : 'MIGRATION_EXECUTION_FAILED';
+
+export class MobileBootstrap implements CriticalRecoveryPort {
   private projection: BootstrapProjection = { status: 'idle' };
   private unsubscribeLifecycle: (() => void) | undefined;
   private listeners = new Set<() => void>();
-  private bootPromise: Promise<void> | undefined;
+  private attemptPromise: Promise<void> | undefined;
   private disposePromise: Promise<void> | undefined;
   private generation = 0;
+  private attemptNumber = 0;
   private lifecycleState: AppLifecycleState = 'background';
 
   constructor(private readonly dependencies: MobileBootstrapDependencies) {
@@ -72,28 +76,39 @@ export class MobileBootstrap {
   };
 
   boot(): Promise<void> {
-    if (this.bootPromise !== undefined) {
-      return this.bootPromise;
+    if (this.attemptPromise !== undefined) {
+      return this.attemptPromise;
     }
 
     if (this.projection.status !== 'idle') {
       return Promise.resolve();
     }
 
-    const generation = ++this.generation;
-    this.dependencies.readiness.close();
-    this.updateProjection({ status: 'booting', phase: 'opening' });
-    const operation = this.runAttempt(generation);
-    this.bootPromise = operation;
+    return this.startAttempt(false);
+  }
 
-    const clearBootPromise = () => {
-      if (this.bootPromise === operation) {
-        this.bootPromise = undefined;
-      }
+  retry(): Promise<void> {
+    if (this.attemptPromise !== undefined) {
+      return this.attemptPromise;
+    }
+
+    if (this.projection.status !== 'recovery') {
+      return Promise.resolve();
+    }
+
+    const previousFailure = {
+      phase: this.projection.phase,
+      reasonCode: this.projection.error.code,
     };
-    void operation.then(clearBootPromise, clearBootPromise);
+    return this.startAttempt(true, previousFailure);
+  }
 
-    return operation;
+  enterRecovery(reasonCode: RuntimeRecoveryReasonCode): void {
+    if (this.projection.status !== 'ready') {
+      return;
+    }
+
+    this.recover('runtime', reasonCode);
   }
 
   dispose(): Promise<void> {
@@ -109,24 +124,79 @@ export class MobileBootstrap {
     return operation;
   }
 
-  private async runAttempt(generation: number): Promise<void> {
+  private startAttempt(
+    recycleConnection: boolean,
+    previousFailure?: {
+      readonly phase: RecoveryPhase;
+      readonly reasonCode: RecoveryReasonCode;
+    },
+  ): Promise<void> {
+    const generation = ++this.generation;
+    this.attemptNumber += 1;
+    const attemptNumber = this.attemptNumber;
+    this.dependencies.readiness.close();
+
+    if (previousFailure !== undefined) {
+      this.recordDiagnostic({
+        eventName: 'recovery_retry_started',
+        attemptNumber,
+        phase: previousFailure.phase,
+        reasonCode: previousFailure.reasonCode,
+      });
+    }
+
+    this.updateProjection({
+      status: 'booting',
+      phase: 'opening',
+    });
+    const operation = this.runAttempt(
+      generation,
+      attemptNumber,
+      recycleConnection,
+    );
+    this.attemptPromise = operation;
+
+    const clearAttemptPromise = () => {
+      if (this.attemptPromise === operation) {
+        this.attemptPromise = undefined;
+      }
+    };
+    void operation.then(clearAttemptPromise, clearAttemptPromise);
+
+    return operation;
+  }
+
+  private async runAttempt(
+    generation: number,
+    attemptNumber: number,
+    recycleConnection: boolean,
+  ): Promise<void> {
     try {
+      if (recycleConnection) {
+        const closeResult = await this.dependencies.databaseLifecycle.close();
+        if (!this.isCurrent(generation)) return;
+        if (!closeResult.ok) {
+          this.recover('opening', 'DATABASE_UNAVAILABLE');
+          return;
+        }
+      }
+
       const databaseResult = await this.dependencies.databaseLifecycle.open();
       if (!this.isCurrent(generation)) return;
       if (!databaseResult.ok) {
-        this.recover('opening', databaseResult.error.code);
+        this.recover('opening', 'DATABASE_OPEN_FAILED');
         return;
       }
 
-      this.updateProjection({ status: 'booting', phase: 'migrating' });
+      this.updateBooting('migrating');
       const migrationResult = await this.dependencies.migration.migrate();
       if (!this.isCurrent(generation)) return;
       if (!migrationResult.ok) {
-        this.recover('migrating', 'BOOTSTRAP_MIGRATION_FAILED');
+        this.recover('migrating', migrationRecoveryReason(migrationResult.error));
         return;
       }
 
-      this.updateProjection({ status: 'booting', phase: 'verifying' });
+      this.updateBooting('verifying');
       const verificationResult =
         await this.dependencies.bootstrapVerifier.verify();
       if (!this.isCurrent(generation)) return;
@@ -135,7 +205,7 @@ export class MobileBootstrap {
         return;
       }
 
-      this.updateProjection({ status: 'booting', phase: 'hydrating' });
+      this.updateBooting('hydrating');
       const dataResult = await this.dependencies.bootstrapData.read();
       if (!this.isCurrent(generation)) return;
       if (!dataResult.ok) {
@@ -143,7 +213,7 @@ export class MobileBootstrap {
         return;
       }
 
-      this.updateProjection({ status: 'booting', phase: 'reconciling' });
+      this.updateBooting('reconciling');
       this.startLifecycleSubscription();
       const reconciliationResult =
         await this.dependencies.startupReconciliation.reconcileAtStartup();
@@ -159,12 +229,25 @@ export class MobileBootstrap {
         snapshot: dataResult.value,
         lifecycleState: this.lifecycleState,
       });
+
+      if (recycleConnection) {
+        this.recordDiagnostic({
+          eventName: 'recovery_retry_succeeded',
+          attemptNumber,
+          phase: 'reconciling',
+          reasonCode: null,
+        });
+      }
     } catch {
       if (!this.isCurrent(generation)) return;
       const current = this.projection;
       const phase = current.status === 'booting' ? current.phase : 'opening';
-      this.recover(phase, this.errorCodeFor(phase));
+      this.recover(phase, this.unexpectedReasonFor(phase));
     }
+  }
+
+  private updateBooting(phase: BootstrapPhase): void {
+    this.updateProjection({ status: 'booting', phase });
   }
 
   private startLifecycleSubscription(): void {
@@ -184,7 +267,7 @@ export class MobileBootstrap {
 
   private async runDispose(): Promise<void> {
     try {
-      await this.bootPromise;
+      await this.attemptPromise;
     } catch {
       // Bootstrap maps provider failures to recovery; cleanup still proceeds.
     }
@@ -201,23 +284,40 @@ export class MobileBootstrap {
     }
   }
 
-  private recover(phase: BootstrapPhase, code: BootstrapErrorCode): void {
+  private recover(phase: RecoveryPhase, code: RecoveryReasonCode): void {
     this.dependencies.readiness.close();
-    this.updateProjection({ status: 'recovery', phase, error: { code } });
+    this.updateProjection({
+      status: 'recovery',
+      phase,
+      error: { code },
+    });
+    this.recordDiagnostic({
+      eventName: 'recovery_entered',
+      attemptNumber: this.attemptNumber,
+      phase,
+      reasonCode: code,
+    });
   }
 
-  private errorCodeFor(phase: BootstrapPhase): BootstrapErrorCode {
+  private unexpectedReasonFor(phase: BootstrapPhase): RecoveryReasonCode {
     switch (phase) {
       case 'opening':
         return 'DATABASE_OPEN_FAILED';
       case 'migrating':
-        return 'BOOTSTRAP_MIGRATION_FAILED';
+        return 'MIGRATION_EXECUTION_FAILED';
       case 'verifying':
-        return 'BOOTSTRAP_INVARIANT_FAILED';
       case 'hydrating':
-        return 'BOOTSTRAP_DATA_INVALID';
+        return 'DATABASE_READ_FAILED';
       case 'reconciling':
         return 'STARTUP_RECONCILIATION_FAILED';
+    }
+  }
+
+  private recordDiagnostic(diagnostic: RecoveryDiagnostic): void {
+    try {
+      this.dependencies.diagnostics.record(diagnostic);
+    } catch {
+      // Diagnostics are best effort and never change durable readiness/recovery truth.
     }
   }
 

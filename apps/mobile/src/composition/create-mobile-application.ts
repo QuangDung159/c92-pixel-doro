@@ -5,6 +5,7 @@ import {
   type BootstrapDataPort,
   type BootstrapVerifierPort,
   type MigrationPort,
+  type RecoveryDiagnosticsPort,
   type StartupReconciliationPort,
 } from '@/application';
 import { SQLiteBootstrapDataAdapter } from '@/infrastructure/database/bootstrap/sqlite-bootstrap-data.adapter';
@@ -21,6 +22,7 @@ import { SQLiteTransaction } from '@/infrastructure/database/sqlite-transaction'
 import { ReactNativeAppLifecycleAdapter } from '@/infrastructure/platform/app-lifecycle/react-native-app-lifecycle.adapter';
 import { DeviceClockAdapter } from '@/infrastructure/platform/clock/device-clock.adapter';
 import { DeviceIdAdapter } from '@/infrastructure/platform/id/device-id.adapter';
+import { SafeConsoleRecoveryDiagnosticsAdapter } from '@/infrastructure/platform/diagnostics/safe-console-recovery-diagnostics.adapter';
 
 import type { MobileApplication } from './mobile-application';
 import { NoopStartupReconciliationAdapter } from './startup/noop-startup-reconciliation.adapter';
@@ -34,6 +36,7 @@ export interface CreateMobileApplicationOptions {
   readonly databaseName?: string;
   readonly diagnosticsEnabled?: boolean;
   readonly migration?: MigrationPort;
+  readonly recoveryDiagnostics?: RecoveryDiagnosticsPort;
   readonly sqliteDriver?: SQLiteDriver;
   readonly startupReconciliation?: StartupReconciliationPort;
 }
@@ -68,6 +71,9 @@ export const createMobileApplication = (
     bootstrapVerifier:
       options.bootstrapVerifier ?? new SQLiteBootstrapVerifier(databaseOwner),
     databaseLifecycle: databaseOwner,
+    diagnostics:
+      options.recoveryDiagnostics ??
+      new SafeConsoleRecoveryDiagnosticsAdapter(),
     migration,
     readiness,
     startupReconciliation:
@@ -104,6 +110,11 @@ export const createMobileApplication = (
     typeof __DEV__ !== 'undefined' &&
     __DEV__ &&
     process.env.EXPO_PUBLIC_DERIVED_QUERIES_PROBE === '1';
+  const failureRecoveryProbeEnabled =
+    options.diagnosticsEnabled !== false &&
+    typeof __DEV__ !== 'undefined' &&
+    __DEV__ &&
+    process.env.EXPO_PUBLIC_FAILURE_RECOVERY_PROBE === '1';
   let probePromise: Promise<void> | undefined;
 
   const runProbeIfEnabled = (): Promise<void> => {
@@ -113,7 +124,8 @@ export const createMobileApplication = (
       !forwardMigrationProbeEnabled &&
       !safeBootstrapProbeEnabled &&
       !typedRepositoriesProbeEnabled &&
-      !derivedQueriesProbeEnabled
+      !derivedQueriesProbeEnabled &&
+      !failureRecoveryProbeEnabled
     ) {
       return Promise.resolve();
     }
@@ -163,12 +175,20 @@ export const createMobileApplication = (
         const report = await runDerivedQueriesProbe(driver);
         console.info('[PixelDoro][DerivedQueriesProbe]', JSON.stringify(report));
       }
+
+      if (failureRecoveryProbeEnabled) {
+        const { runFailureRecoveryProbe } =
+          await import('./diagnostics/run-failure-recovery-probe');
+        const report = await runFailureRecoveryProbe(driver);
+        console.info('[PixelDoro][FailureRecoveryProbe]', JSON.stringify(report));
+      }
     })();
     return probePromise;
   };
 
   return {
     bootstrap,
+    criticalRecovery: bootstrap,
     persistence,
     readiness,
     transaction,
@@ -176,6 +196,7 @@ export const createMobileApplication = (
       await runProbeIfEnabled();
       await bootstrap.boot();
     },
+    retryRecovery: () => bootstrap.retry(),
     dispose: () => bootstrap.dispose(),
   };
 };
