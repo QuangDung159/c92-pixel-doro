@@ -5,10 +5,10 @@ import {
   PixelCompanion,
   PixelPanel,
   PrimaryButton,
-  PrototypeBadge,
   PrototypeScreen,
   ScreenHeader,
-} from '@/presentation/components/prototype-ui';
+} from '@/presentation/components';
+import { PrototypeBadge } from '@/presentation/prototype/components';
 import { palette } from '@/presentation/theme/palette';
 
 export const OnboardingScreen = ({ onStartTrial }: { readonly onStartTrial: () => void }) => (

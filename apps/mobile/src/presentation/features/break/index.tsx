@@ -3,18 +3,20 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import {
   ConfirmationModal,
-  ControlButton,
   ErrorState,
   InlineNotice,
   PixelCompanion,
   PixelPanel,
   PrimaryButton,
-  PrototypeBadge,
-  PrototypeControls,
   PrototypeScreen,
   ScreenHeader,
   SecondaryButton,
-} from '@/presentation/components/prototype-ui';
+} from '@/presentation/components';
+import {
+  ControlButton,
+  PrototypeBadge,
+  PrototypeControls,
+} from '@/presentation/prototype/components';
 import type {
   BreakOutcome,
   PrototypeBreakResult,

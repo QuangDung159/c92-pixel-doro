@@ -4,12 +4,12 @@ import { StyleSheet, Switch, Text, View } from 'react-native';
 import {
   ChoiceChip,
   PixelPanel,
-  PrototypeBadge,
   PrototypeScreen,
   ScreenHeader,
   SecondaryButton,
   SectionLabel,
-} from '@/presentation/components/prototype-ui';
+} from '@/presentation/components';
+import { PrototypeBadge } from '@/presentation/prototype/components';
 import type { BreakKind } from '@/presentation/prototype/prototype-state';
 import { palette } from '@/presentation/theme/palette';
 

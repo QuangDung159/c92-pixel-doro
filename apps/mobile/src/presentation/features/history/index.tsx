@@ -2,16 +2,18 @@ import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import {
-  ControlButton,
   EmptyState,
   ErrorState,
   LoadingState,
   PixelPanel,
-  PrototypeBadge,
-  PrototypeControls,
   PrototypeScreen,
   ScreenHeader,
-} from '@/presentation/components/prototype-ui';
+} from '@/presentation/components';
+import {
+  ControlButton,
+  PrototypeBadge,
+  PrototypeControls,
+} from '@/presentation/prototype/components';
 import { palette } from '@/presentation/theme/palette';
 
 type HistoryReviewState = 'empty' | 'sample' | 'loading' | 'error';

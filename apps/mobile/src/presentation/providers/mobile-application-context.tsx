@@ -4,6 +4,10 @@ import {
   useContext,
   useSyncExternalStore,
 } from 'react';
+import {
+  createHomeProfileProjection,
+  type HomeProfileProjection,
+} from '@pixeldoro/application';
 
 import type {
   BootstrapProjection,
@@ -48,4 +52,10 @@ export const useBootstrapProjection = (): BootstrapProjection => {
 export const useRecoveryRetry = (): (() => Promise<void>) => {
   const { retryRecovery } = useMobileApplication();
   return retryRecovery;
+};
+
+export const useHomeProfileProjection = (): HomeProfileProjection | null => {
+  const projection = useBootstrapProjection();
+  if (projection.status !== 'ready') return null;
+  return createHomeProfileProjection(projection.snapshot.profile);
 };

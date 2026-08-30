@@ -4,21 +4,23 @@ import { StyleSheet, Text, View } from 'react-native';
 import {
   ChoiceChip,
   ConfirmationModal,
-  ControlButton,
   ErrorState,
   InlineNotice,
   LoadingState,
   PixelCompanion,
   PixelPanel,
   PrimaryButton,
-  PrototypeBadge,
-  PrototypeControls,
   PrototypeScreen,
   ScreenHeader,
   SecondaryButton,
   SectionLabel,
   Stat,
-} from '@/presentation/components/prototype-ui';
+} from '@/presentation/components';
+import {
+  ControlButton,
+  PrototypeBadge,
+  PrototypeControls,
+} from '@/presentation/prototype/components';
 import type {
   BreakKind,
   FocusConfiguration,
