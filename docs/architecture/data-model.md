@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_DATA_MODEL
 title: PixelDoro Mobile MVP — Data Model
-version: 1.0.0
+version: 1.1.0
 status: APPROVED
-last_updated: 2026-08-27
+last_updated: 2026-08-30
 owner: Dũng Lư
 owner_roles:
   - Tech Lead
@@ -15,6 +15,8 @@ reviewed_at: 2026-08-27
 approved_by: Dũng Lư
 approver_role: Tech Lead / Product Owner
 approved_at: 2026-08-27
+amended_at: 2026-08-30
+amendment_approved_by: Dũng Lư
 language: vi
 scope:
   - mobile_mvp
@@ -65,6 +67,14 @@ Tài liệu này không quyết định lại product behavior, timer/session/Pe
 | `DEFERRED` | Không thuộc Mobile MVP. |
 
 Phiên bản `1.0.0` đã được Dũng Lư — Tech Lead/Product Owner review và phê duyệt ngày 2026-08-27. `DM-OPEN-001` đến `DM-OPEN-007` đều `RESOLVED`; authority sync cần thiết cho `DM-OPEN-006` đã hoàn tất. Không còn Data Model decision `OPEN` ảnh hưởng trực tiếp đến Mobile MVP. Schema, constraint, index, transaction, migration, retention và test boundary trong bản hiện tại là normative baseline cho implementation.
+
+Từ re-baseline `1.1.0` ngày 2026-08-30, “normative” không có nghĩa schema được quyền drive UX.
+Schema `001` là existing durable/safety baseline đã implement; Product Epic mới phải validate
+clickable UI/user flow bằng mock data/fake navigation trước. Sau owner UX approval mới lập map
+`screen/state → action → domain fact → persist/derive → schema tối thiểu`. Nếu approved experience
+mâu thuẫn field/topology hiện tại, team update Data Model và forward migration; không bẻ UI để bảo
+vệ sunk schema. Không thêm column/table chỉ vì một giá trị xuất hiện trên screen: transient
+presentation state và derived projection phải được phân loại trước khi persist.
 
 ### 0.2. Authority/dependency audit
 
@@ -1154,6 +1164,15 @@ Data Model `1.0.0 APPROVED` và Technical Documentation Checklist được phát
 Ngày 2026-08-27, Dũng Lư xác nhận đã review và duyệt toàn bộ Data Model; cả sáu điều kiện trên đã hoàn tất. Implementation acceptance checkbox ở mục 14 vẫn để trống cho tới khi có migration/test/device evidence và không làm giảm hiệu lực của specification baseline.
 
 ## 16. Change log
+
+### 1.1.0 — 2026-08-30
+
+- Owner re-baseline product delivery sang UI/user-flow first; mock data và fake navigation được
+  phép trước production Domain/DB integration.
+- Giữ schema `001` làm existing durable/safety baseline, nhưng hủy cách hiểu database-first:
+  approved UX có thể yêu cầu update Data Model và forward migration.
+- Bắt buộc data-needs mapping sau UX approval và phân biệt durable fact, transient state, derived
+  projection trước khi thêm table/column/repository.
 
 ### 1.0.0 — 2026-08-27
 

@@ -1,12 +1,14 @@
 ---
 document_id: PIXELDORO_EPIC_02_USER_STORIES
 title: PixelDoro Mobile MVP — EPIC-02 User Stories
-version: 1.25.0
-status: READY_FOR_REVIEW
+version: 1.26.0
+status: DONE
 last_updated: 2026-08-30
 owner: Dũng Lư
 reviewer: Dũng Lư
 reviewer_role: Tech Lead
+approved_by: Dũng Lư
+approved_at: 2026-08-30
 language: vi
 scope:
   - mobile_mvp
@@ -36,7 +38,7 @@ adr_directory: ../architecture/decisions
 **MVP Priority:** `MUST`  
 **Delivery Wave:** `W1_FOUNDATION`  
 **Execution Order:** `02`  
-**Start Gate:** `EPIC-01 DONE` — đã đạt theo `MVP_EPICS.md` 1.0.0.  
+**Start Gate:** `EPIC-01 DONE` — đã đạt; closeout theo `MVP_EPICS.md` 1.1.0.
 **Dependency:** `EPIC-01`.
 
 **Epic outcome đã hiệu chỉnh để kiểm chứng được:** Ứng dụng có SQLite làm durable
@@ -75,8 +77,13 @@ boundary ứng dụng có thể kiểm soát:
    auto-reset, auto-terminal hoặc auto-repair.
 9. Confirmed full reset engine atomic, giữ schema/catalog hợp lệ, reseed defaults và
    không tạo partial reset khi thất bại.
-10. Automated integration evidence và iOS/Android runtime evidence phù hợp đã được
-    lưu; owner thực hiện native/development-build step thủ công.
+10. Automated integration evidence và per-Story iOS runtime evidence phù hợp đã được lưu.
+    Owner re-baseline ngày 2026-08-30 chuyển final same-SHA iOS/Android aggregate parity sang
+    `EPIC-12`; phần chưa chạy không được ghi thành platform pass.
+
+Owner đã phê duyệt điều chỉnh exit gate ngày 2026-08-30 để không tiếp tục chặn product/UX
+validation bằng infrastructure audit. Điều chỉnh này thay thế yêu cầu native pair của Story 09
+như EPIC-02 blocker, nhưng giữ nguyên harness/runbook để dùng ở release-hardening.
 
 ### 0.2. Scope boundary với Epic sau
 
@@ -86,9 +93,10 @@ foundation. Cụ thể:
 - `EPIC-02` sở hữu SQLite connection, transaction implementation, schema, migration,
   seed, mapper, repository, persistence-level query, bootstrap/readiness, database
   recovery và reset engine.
-- `EPIC-03` sở hữu Domain/Application behavior để start/cancel/reconcile/resolve
-  Focus/Break và automatic reward grant. `EPIC-02` chỉ cung cấp persistence contract,
-  constraint và test fixture; không tạo production Timer/Session use case.
+- `EPIC-03` sở hữu clickable MVP experience prototype bằng mock data/fake navigation, không sở hữu
+  production Timer/Session behavior. Timer/Reward/Break correctness chỉ được triển khai sau UX
+  approval trong vertical slices `EPIC-05`–`07`. `EPIC-02` chỉ cung cấp existing persistence
+  contract; schema hiện tại không được ép ngược approved UX.
 - `EPIC-04` sở hữu Pet projection/animation. `EPIC-02` không persist Pet state hoặc
   animation receipt.
 - `EPIC-07` sở hữu product behavior chọn/start Short/Long Break. `EPIC-02` chỉ cung
@@ -115,16 +123,16 @@ Không có production code của `EPIC-02` được triển khai trong lượt t
 | Dependency | `EPIC-02` chỉ phụ thuộc `EPIC-01`; toolchain/composition/test foundation đã có. | Start gate đã đạt. |
 | Start Gate | `MVP_EPICS.md` 1.0.0 ghi `EPIC-01 DONE`. | Cho phép refine và bắt đầu `US-02-01` sau khi breakdown được owner duyệt. |
 | Exit Gate | Baseline có checklist đúng nhưng chưa gắn từng criterion với Story/evidence. | Mục 2, 4 và 5 của tài liệu này tạo mapping authoritative. |
-| Device evidence | Data Model yêu cầu iOS/Android evidence nhưng lượt planning không được chạy native/EAS build. | `US-02-09` giữ gate này; owner chạy thủ công khi implementation hoàn tất. |
+| Device evidence | Data Model yêu cầu runtime evidence nhưng agent không chạy native/EAS build. | Per-Story iOS evidence được giữ; final aggregate native pair chuyển sang `EPIC-12` theo owner re-baseline. |
 
 ### 1.2. Mâu thuẫn/ambiguity đã được phân giải trong planning
 
 | ID | Finding | Cách xử lý, không thay Product truth |
 |---|---|---|
-| `REVIEW-02-01` | “Startup migration + reconciliation barrier” có thể bị hiểu là kéo session reconciliation vào Epic 2. | Epic 2 dựng readiness order và injectable startup-reconciliation boundary/fake để chứng minh không thể bypass; terminal decision/reward behavior chỉ bắt đầu ở Epic 3. |
+| `REVIEW-02-01` | “Startup migration + reconciliation barrier” có thể bị hiểu là kéo session reconciliation vào Epic 2. | Epic 2 dựng readiness order và injectable startup-reconciliation boundary/fake; terminal decision/reward behavior chỉ bắt đầu trong approved vertical slices `EPIC-05`–`07`. |
 | `REVIEW-02-02` | Full reset xuất hiện ở cả Epic 2 và Epic 10. | Epic 2: atomic executor, barrier, rollback và post-reset bootstrap. Epic 10: warning/confirmation UX và Settings entry. Recovery không tự gọi reset. |
 | `REVIEW-02-03` | Data Model chứa schema cho analytics/store review trong khi provider behavior thuộc Epic 11. | Epic 2 triển khai schema, bounded persistence và query facts; không gọi provider/native review, không khóa event taxonomy ngoài approved fields. |
-| `REVIEW-02-04` | Data Model mô tả transaction reward/purchase nhưng implementation behavior thuộc Epic 3/8. | Epic 2 enforce constraint, transaction-scoped repository primitives và fault/race fixtures; không tạo production `CompleteFocus`/`PurchaseItem` use case hoặc tự tính Product decision mới. |
+| `REVIEW-02-04` | Data Model mô tả transaction reward/purchase nhưng implementation behavior thuộc Product slices sau UX approval. | Epic 2 enforce constraint, transaction-scoped repository primitives và fault/race fixtures; không tạo production `CompleteFocus`/`PurchaseItem` use case hoặc tự tính Product decision mới. |
 | `REVIEW-02-05` | Product Core §14 có sketch `PetProfile` chứa name/type/stage, nhưng các decision tương ứng còn `OPEN`/`DEFERRED`. | Data Model 1.0.0 là normative schema detail: chỉ `total_xp`/`coin_balance`; không thêm Pet species/name/stage/skin. |
 | `REVIEW-02-06` | “Migration rollback” có thể bị hiểu là hỗ trợ downgrade. | Chỉ rollback transaction của migration thất bại. Không automatic downgrade; binary cũ gặp schema mới phải fail safely. |
 
@@ -166,7 +174,7 @@ Không finding nào yêu cầu chốt `OPEN-001`, `OPEN-006` hoặc `OPEN-009` �
 | `06` | `US-02-06` — Derived Queries và Consistency Evidence | `MUST` | `P1_DURABILITY` | `US-02-05` | `US-02-07`, `US-02-08` | Query facts/exclusions/consistency và bounded metadata persistence đúng durable truth. |
 | `07` | `US-02-07` — Failure Recovery và Retry | `MUST` | `P2_RECOVERY` | `US-02-04`, `US-02-06` | DB/migration/invariant failure giữ dữ liệu, block command và Retry an toàn. |
 | `08` | `US-02-08` — Atomic Confirmed Full Reset | `MUST` | `P2_RECOVERY` | `US-02-07` | `US-02-09` | Confirmed reset atomically clear/reseed product data, giữ schema/catalog và rebootstrap. |
-| `09` | `US-02-09` — Cross-platform Evidence và Epic Exit Audit | `MUST` | `P3_EVIDENCE` | `US-02-01` → `US-02-08` | `EPIC-03` | Automated + iOS/Android evidence chứng minh Epic exit gate; không có native artifact trong repo. |
+| `09` | `US-02-09` — Cross-platform Evidence và Epic Exit Audit | `MUST` | `P3_EVIDENCE` | `US-02-01` → `US-02-08` | `EPIC-03` | Host aggregate/evidence complete; missing final native pair explicit và chuyển `EPIC-12`. |
 
 ### 2.3. Authoritative execution graph
 
@@ -468,7 +476,7 @@ thể gửi future core mutation trong lúc boot/recovery.
 - Single-flight/idempotent boot và application-scoped lifecycle subscription ownership.
 - Typed bootstrap projection đủ phân biệt booting/ready/recovery và failure phase.
 - Injectable startup-reconciliation boundary/fake để chứng minh order; production
-  Session reconciliation behavior chờ `EPIC-03`.
+  Production session reconciliation behavior chờ approved vertical slices `EPIC-05`–`07`.
 - Command gate/facade không expose future core mutation trước readiness.
 
 **Out of scope:** Resolve running session, Strict precedence, reward, product navigation,
@@ -493,7 +501,7 @@ onboarding gating, persistent Zustand và provider initialization làm điều k
 - [x] Tạo minimal bootstrap repositories/verifiers.
 - [x] Wire ordered boot pipeline trong composition root.
 - [x] Tạo readiness command gate.
-- [x] Tạo startup-reconciliation port/fake với replacement note cho Epic 3.
+- [x] Tạo startup-reconciliation port/fake với replacement note cho approved production slice.
 - [x] Xác nhận/reuse BootstrapBoundary loading/recovery rendering tối thiểu.
 - [x] Thêm order/single-flight/dispose integration tests.
 
@@ -535,7 +543,7 @@ tests chứng minh adapter dùng normative schema mà chưa triển khai Product
 - SQLite mapper/adapter cho installation, settings, profile, sessions, rewards,
   catalog, purchases, ownership, store-review attempts và analytics queue.
 - Migration history tiếp tục thuộc migration infrastructure, không export như product repository.
-- Transaction-scoped repository access và conditional mutation primitive cần cho Epic 3/8.
+- Transaction-scoped repository access và conditional mutation primitive có thể được dùng sau UX approval.
 - Stable mapping/error khi row vi phạm enum, nullability, timestamp hoặc relationship expectation.
 - Parameter binding và no-deep-import/public API integration.
 
@@ -681,7 +689,7 @@ automatic reset/reseed/repair/terminal mutation.
 - Retry single-flight, re-run safe bootstrap stage theo durable state còn lại.
 - Command blocking trong recovery.
 - Fault injection matrix và no-destructive-side-effect assertions.
-- Corrupt active-session/storage fact được surface cho `EPIC-03`; không resolve ở Epic 2.
+- Corrupt active-session/storage fact được surface cho future production session slice; không resolve ở Epic 2.
 
 **Out of scope:** Product-specific corrupt-session cancel, terminal reconciliation,
 automatic repair migration, cloud restore, Settings full reset confirmation UI.
@@ -795,16 +803,16 @@ EPIC-02/EPIC-10 boundary.
 ### US-02-09 — Cross-platform Evidence và Epic Exit Audit
 
 **Implementation plan:**
-[`US-02-09_IMPLEMENTATION_PLAN.md`](./US-02-09_IMPLEMENTATION_PLAN.md) `0.3.0` đang
-`IMPLEMENTED_AWAITING_OWNER_CROSS_PLATFORM_RUNTIME`. Aggregate two-phase probe, full-component
-contract validation, host tests/runbook và final normal-bootstrap gate đã hoàn tất. Full
-`pnpm quality` pass `25` files / `153` tests; còn owner iOS + Android reports trên cùng final SHA.
+[`US-02-09_IMPLEMENTATION_PLAN.md`](./US-02-09_IMPLEMENTATION_PLAN.md) `0.4.0` đã `DONE` theo
+owner scope re-baseline. Aggregate two-phase probe, full-component contract validation, host
+tests/runbook và final normal-bootstrap gate đã hoàn tất; full `pnpm quality` pass `25` files /
+`153` tests. Final same-SHA iOS/Android pair chưa được claim và đã chuyển sang `EPIC-12`.
 
 **Story statement**
 
 > Với vai trò solo developer, tôi muốn bằng chứng tự động và runtime trên iOS/Android
-> cho durable foundation để chỉ mở Timer/Session implementation khi migration,
-> bootstrap, persistence, recovery và reset thực sự hoạt động trên target platform.
+> cho durable foundation để product discovery có thể tiếp tục mà vẫn biết rõ phần host/runtime nào
+> đã pass và phần native parity nào còn phải hoàn tất trước release.
 
 **Outcome:** Một evidence record trace mọi Epic criterion tới automated run hoặc
 owner-run iOS/Android scenario; repository quality pass và không có known blocker trong
@@ -820,7 +828,7 @@ durable-data/bootstrap outcome.
 - Persistence qua app restart/relaunch, empty → latest migration, recovery Retry và reset.
 - Constraint/failure smoke scenarios có rủi ro platform-specific.
 - Consolidated `EPIC-02_IMPLEMENTATION_EVIDENCE.md` hoặc equivalent review record.
-- Epic exit audit và handoff contract cho `EPIC-03`.
+- Epic exit audit và handoff contract cho `EPIC-03` UI/user-flow prototype.
 
 **Out of scope:** EAS/native build trong lượt planning hiện tại, Timer/Session device
 behavior, closed-beta artifact, PostHog/provider delivery và full `EPIC-12` matrix.
@@ -832,24 +840,24 @@ behavior, closed-beta artifact, PostHog/provider delivery và full `EPIC-12` mat
 - [x] Automated constraint matrix cover FK, singleton, conditional session shape, one-running, terminal/identity immutability, reward/purchase/ownership backstop.
 - [x] Automated repository/query matrix cover every durable entity, trial exclusions, local-day grouping, cadence/review facts, economy consistency và analytics queue bounds.
 - [x] Automated recovery/reset matrix chứng minh no automatic destruction, Retry và atomic reset rollback/success.
-- [ ] iOS target mở app, migrate/bootstrap ready, persist/reopen data và confirmed-reset harness theo scenario đã duyệt.
-- [ ] Android target chạy cùng scenario và kết quả tương đương về durable truth.
-- [ ] Write/disk/database-unavailable failure được kiểm thử trên runtime nơi khả thi; limitation không deterministic được ghi rõ, không giả evidence.
-- [ ] Native dependency change dẫn tới development-build refresh do owner thực hiện; không commit generated native build artifact/credential.
+- [ ] iOS final aggregate target report — `TRANSFERRED_TO_EPIC_12`; phase 1 pass, phase 2 chưa ghi nhận.
+- [ ] Android final aggregate target report — `TRANSFERRED_TO_EPIC_12`; chưa có platform pass.
+- [x] Write/database-unavailable deterministic evidence pass; physical disk limitation được ghi rõ, không giả evidence.
+- [x] Không có native dependency change hoặc generated native build artifact/credential trong Story.
 - [x] Không có `OPEN-001`, `OPEN-006`, `OPEN-009` hoặc feature `DEFERRED` trong schema/evidence fixture.
-- [ ] Evidence record map đủ toàn bộ EPIC-02 completion checklist và không dùng documentation approval thay implementation evidence.
-- [ ] Không còn known blocker khiến migration/bootstrap unsafe; `EPIC-03` chỉ được mở sau owner review exit audit.
+- [x] Evidence record map đủ EPIC-02 host/per-Story evidence và ghi rõ native pair chưa có.
+- [x] Không có known host/iOS per-Story blocker khiến migration/bootstrap unsafe; owner mở
+  `EPIC-03` cho UI prototype, không cho production Timer/Session implementation.
 
 **Task checklist sơ bộ:**
 
 - [x] Consolidate automated test matrix và stable commands.
 - [x] Prepare non-destructive iOS/Android scenario checklist.
-- [ ] Owner refresh development build sau SQLite native dependency change.
-- [ ] Owner chạy iOS evidence.
-- [ ] Owner chạy Android evidence.
-- [ ] Record artifact references/output/screenshots cần thiết, không commit secret/binary.
-- [ ] Create implementation evidence record và traceability audit.
-- [ ] Review Epic exit gate; chỉ sau đó cập nhật planning status.
+- [ ] Final iOS aggregate run — `TRANSFERRED_TO_EPIC_12`; phase 1 đã ghi nhận.
+- [ ] Final Android aggregate run — `TRANSFERRED_TO_EPIC_12`.
+- [x] Record available output, SHA và limitation; không commit secret/binary.
+- [x] Create implementation evidence record và traceability audit.
+- [x] Owner review/re-baseline Epic exit gate ngày 2026-08-30.
 
 **Evidence yêu cầu:**
 
@@ -880,7 +888,7 @@ of Epic Done.
 | Repository/mappers/transaction boundary đúng architecture | `US-02-01`, `US-02-05` |
 | Durable history/cadence/store-review/economy queries | `US-02-06` |
 | Migration/constraint/reset integration evidence | `US-02-02`, `US-02-03`, `US-02-08`, `US-02-09` |
-| Startup migration/readiness/reconciliation barrier order | `US-02-04`, `US-02-09`; real session reconciliation thuộc `EPIC-03` |
+| Startup migration/readiness/reconciliation barrier order | `US-02-04`, `US-02-09`; real session reconciliation thuộc approved vertical slice sau prototype |
 
 ## 6. Definition of Ready trước khi tạo Task
 
@@ -911,14 +919,14 @@ Một Story chỉ được đánh dấu `[x]` khi:
 
 ## 8. EPIC-02 readiness assessment
 
-### 8.1. Trạng thái hiện tại
+### 8.1. Trạng thái closeout
 
 - **Documentation baseline:** đủ và nhất quán; Data Model 1.0.0 đã `APPROVED`, toàn bộ
   `DM-OPEN-001` đến `DM-OPEN-007` đã `RESOLVED`.
 - **Epic start gate:** đã đạt vì `EPIC-01 DONE`.
 - **Product blocker:** không có; ba Product decision còn `OPEN` đều nằm ngoài schema
   foundation và đã có explicit exclusion.
-- **Story breakdown:** `READY_FOR_REVIEW`, chưa tự coi là owner-approved baseline.
+- **Story breakdown:** `DONE`, owner close/re-baseline ngày 2026-08-30.
 - **Implementation readiness:** `US-02-01`, `US-02-02` và `US-02-03` đã `DONE` với exact
   host/native evidence. `US-02-03` pass iOS `10/10` assertions trên SHA
   `1b6a0427b3db20f4536a2b251101fa0e32b5c0ea`. `US-02-04` đã `DONE`; host quality và exact
@@ -931,9 +939,12 @@ Một Story chỉ được đánh dấu `[x]` khi:
   `b3c8421ef3a20934005711a571655265cf736091`. `US-02-08` plan `0.4.0` đã
   `DONE`: production/host evidence pass `24` files / `147` tests và exact iOS reset probe `12/12`
   pass với SQLite `3.50.3` trên SHA `795c3cd59abf80225747e36fcc61e4d13afbaa14`.
-  `US-02-09` plan `0.3.0` đang `IMPLEMENTED_AWAITING_OWNER_CROSS_PLATFORM_RUNTIME`: full host
-  quality `25` files / `153` tests và aggregate two-phase/full-component harness pass; còn owner
-  iOS + Android reports trên exact same final SHA trước Epic exit audit.
+  `US-02-09` plan `0.4.0` `DONE` theo revised scope: full host quality `25` files / `153` tests,
+  aggregate two-phase/full-component harness pass và exact iOS phase 1 pass trên SHA
+  `79f6e4dcea8965810f190011f507fa73732eb6a2`. iOS phase 2 + Android final pair chưa được claim;
+  chúng đã chuyển sang `EPIC-12` release-hardening.
+- **Epic status:** `DONE`. `EPIC-03 — MVP Experience Prototype và User-flow Validation` được mở
+  cho planning/UI mock; production Timer/Session technical plan vẫn block đến owner UX approval.
 
 ### 8.2. Điều kiện chuyển `READY_FOR_IMPLEMENTATION`
 
@@ -945,19 +956,30 @@ Một Story chỉ được đánh dấu `[x]` khi:
 
 ## 9. Review checklist
 
-- [ ] Chín Story cover đủ EPIC-02 completion criteria và Data Model implementation acceptance thuộc phạm vi foundation.
-- [ ] Mọi Story là outcome/evidence slice; layer chỉ xuất hiện trong Task responsibility.
-- [ ] `MUST`, dependency priority và execution order được phân biệt rõ.
-- [ ] Solo developer chỉ có một active Story theo order `01 → 09`.
-- [ ] Correctness/invariant đứng trước migration/bootstrap; adapter/query đứng trước recovery/reset/device audit.
-- [ ] `OPEN-001`, `OPEN-006`, `OPEN-009` không bị chốt ngầm.
-- [ ] Session reconciliation/reward behavior, Pet animation, purchase UX và Product UI của Epic sau không lọt vào implementation.
-- [ ] Reset executor và Settings confirmation UX có owner Epic riêng, không duplicate scope.
-- [ ] Recovery có Retry và no-auto-reset/no-repair evidence.
-- [ ] Native/EAS build không được chạy trong planning turn; owner-run evidence nằm ở `US-02-09`.
-- [ ] Dũng Lư review và phê duyệt Story breakdown trước khi chuyển status sang `APPROVED`/`READY_FOR_IMPLEMENTATION`.
+- [x] Chín Story cover đủ revised EPIC-02 completion criteria và Data Model foundation scope.
+- [x] Mọi Story có independent evidence; layer nằm trong Task responsibility.
+- [x] `MUST`, dependency priority và execution order được phân biệt rõ.
+- [x] Solo developer thực hiện một Story theo order `01 → 09`.
+- [x] Correctness/invariant đứng trước migration/bootstrap; adapter/query đứng trước recovery/reset/audit.
+- [x] `OPEN-001`, `OPEN-006`, `OPEN-009` không bị chốt ngầm.
+- [x] Production Session/reward, Pet animation, purchase UX và Product UI không lọt vào EPIC-02.
+- [x] Reset executor và Settings confirmation UX có owner Epic riêng, không duplicate scope.
+- [x] Recovery có Retry và no-auto-reset/no-repair evidence.
+- [x] Agent không chạy native/EAS build; available owner runtime evidence được ghi đúng phạm vi.
+- [x] Dũng Lư review, phê duyệt closeout và re-baseline ngày 2026-08-30.
 
 ## 10. Change log
+
+### 1.26.0 — 2026-08-30
+
+- Owner đóng `EPIC-02` và chuyển final same-SHA iOS/Android aggregate parity sang `EPIC-12`; không
+  claim iOS phase 2 hoặc Android pass chưa có.
+- Ghi nhận exact iOS aggregate phase 1 pass trên SHA
+  `79f6e4dcea8965810f190011f507fa73732eb6a2`, SQLite `3.50.3` và isolated sentinel closed.
+- Chuyển `US-02-09` sang `DONE` theo revised scope; giữ unchecked native items với nhãn
+  `TRANSFERRED_TO_EPIC_12` để không biến documentation approval thành runtime evidence.
+- Mở `EPIC-03` mới cho UI/user-flow prototype bằng mock data/fake navigation; schema EPIC-02 không
+  được dùng để ép UX và production Timer/Session vẫn chờ owner UX approval.
 
 ### 1.25.0 — 2026-08-30
 

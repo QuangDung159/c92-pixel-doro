@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_02_09_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-02-09 Implementation Plan
-version: 0.3.0
-status: IMPLEMENTED_AWAITING_OWNER_CROSS_PLATFORM_RUNTIME
-implementation_status: IMPLEMENTED_AWAITING_OWNER_CROSS_PLATFORM_RUNTIME
+version: 0.4.0
+status: DONE
+implementation_status: DONE
 last_updated: 2026-08-30
 owner: Dũng Lư
 reviewer: Dũng Lư
@@ -37,10 +37,10 @@ adr_delivery_pipeline: ../architecture/decisions/ADR-007-eas-delivery-pipeline.m
 Tài liệu này là implementation plan authoritative dự kiến cho Story cuối của
 `EPIC-02 — Durable Local Data, Migration và Safe Bootstrap`.
 
-**Story outcome:** Một final committed graph có full automated evidence và một exact structured
-runtime report trên cả iOS lẫn Android, gồm actual process relaunch persistence, migration/
-constraint/repository/query/bootstrap/recovery/reset coverage và traceability tới toàn bộ Epic exit
-gate. `EPIC-03` chỉ được mở sau khi owner review evidence và xác nhận không còn known blocker.
+**Revised Story outcome:** Final committed graph có full automated/host evidence, aggregate
+two-phase runtime harness và honest traceability tới available/missing evidence. Original exact
+iOS + Android final pair remains required before closed beta but moved to `EPIC-12`. Owner review
+found no known host/per-Story durable blocker and opened `EPIC-03` only for UI/user-flow prototype.
 
 **Dependencies:** `US-02-01` đến `US-02-08` đều `DONE`. Latest implementation baseline là
 `US-02-08` SHA `795c3cd59abf80225747e36fcc61e4d13afbaa14`, full `pnpm quality` pass
@@ -48,18 +48,19 @@ gate. `EPIC-03` chỉ được mở sau khi owner review evidence và xác nhậ
 
 **Priority:** `MUST` / `P3_EVIDENCE` / execution order `09` trong EPIC-02.
 
-**Blocks:** `EPIC-02 DONE` và planning gate của `EPIC-03`. Story này không tạo Timer/Session
-behavior; nó chỉ quyết định durable foundation hiện tại có đủ evidence để handoff hay chưa.
+**Blocks:** Không còn block Product discovery. Final iOS/Android aggregate parity được chuyển sang
+`EPIC-12`; Story này không tạo Timer/Session behavior.
 
-**Planning status:** `IMPLEMENTED_AWAITING_OWNER_CROSS_PLATFORM_RUNTIME`.
-**Implementation status:** `IMPLEMENTED_AWAITING_OWNER_CROSS_PLATFORM_RUNTIME`.
+**Planning status:** `DONE`.
+**Implementation status:** `DONE` theo owner scope re-baseline ngày 2026-08-30.
 
 Không có Product decision `OPEN` hoặc technical confirmation nào còn block implementation. Owner
 đã duyệt đủ `US0209-CONFIRM-01`–`05` ngày 2026-08-29. Aggregate two-phase runner, exact component
 contract validation, final normal-bootstrap gate, host integration tests, device validator và
 cross-platform runbook đã hoàn tất ngày 2026-08-30. Full `pnpm quality` pass `25` files / `153`
-tests. Story còn chờ owner chạy exact same-SHA scenario trên iOS và Android; agent không chạy
-native/EAS build, prebuild, development client hoặc tạo native artifact.
+tests. Owner đã đóng EPIC-02 để ưu tiên UI/user-flow validation và chuyển exact same-SHA final
+iOS/Android scenario sang `EPIC-12`. Available iOS phase 1 được ghi đúng là phase 1, không phải
+final pass; agent không chạy native/EAS build, prebuild, development client hoặc tạo native artifact.
 
 ### 0.1. Start gate
 
@@ -195,14 +196,14 @@ native/EAS build, prebuild, development client hoặc tạo native artifact.
 
 - Consolidated evidence maps từng EPIC-02 completion criterion, Story acceptance và relevant Data
   Model test row tới exact host/native evidence or explicit limitation.
-- `US-02-09` chỉ `DONE` khi host quality pass trên final graph, iOS + Android final reports pass,
-  repository audit sạch và không còn known durable/bootstrap blocker.
-- Owner review/approve exit audit là explicit close gate. Agent không tự đổi `EPIC-02 DONE` chỉ dựa
-  documentation hoặc một platform report.
-- Khi approved: update `US-02-09`, `EPIC-02_USER_STORIES`, consolidated evidence và EPIC-02
-  checklist/status trong `MVP_EPICS.md`; sau đó mới mở planning `EPIC-03`.
-- Nếu một platform khác biệt hoặc criterion thiếu evidence, giữ Story/Epic incomplete, classify
-  blocker và sửa upstream/harness tối thiểu; không waive ngầm hoặc mở Timer/Session implementation.
+- Original gate required host + final iOS/Android pair. Owner revised this scheduling decision ngày
+  2026-08-30: host/per-Story evidence closes EPIC-02; missing native pair moves to `EPIC-12` and
+  remains explicit rather than being waived or marked pass.
+- Owner review/approve exit audit remains the close authority; this gate was explicitly exercised.
+- Closeout updates `US-02-09`, Story/evidence records and `MVP_EPICS.md`, then opens `EPIC-03`
+  for UI/user-flow prototype only.
+- A future platform mismatch remains an `EPIC-12` release blocker. It does not authorize production
+  Timer/Session work before clickable mock + owner UX approval.
 
 ## 3. Owner confirmations
 
@@ -273,7 +274,9 @@ authoritative duy nhất cho solo workflow.
 4. Freeze report rồi mới chạy final quality; SHA sau `T06` là behavior/harness baseline cho cả hai
    platform.
 5. iOS/Android reports là input cho exit audit, không phải nghi thức sau khi Epic đã được đóng.
-6. EPIC-03 chỉ mở sau explicit owner review để không chuyển known durable blocker sang Timer/Session.
+6. Owner review ngày 2026-08-30 không phát hiện known host/per-Story durable blocker và mở
+   `EPIC-03` cho UI prototype; production Timer/Session vẫn chờ UX approval, native parity chuyển
+   sang `EPIC-12`.
 
 ## 6. Task checklist chi tiết
 
@@ -346,38 +349,37 @@ authoritative duy nhất cho solo workflow.
 
 ### US0209-T07 — Owner iOS final evidence
 
-- [ ] Owner dùng compatible iOS Development Build; refresh manually only if required.
-- [ ] Run phase 1, terminate actual app process, reopen and obtain final `passed: true` report.
-- [ ] Report metadata/assertions/component probes complete và `commitSha` equals frozen SHA.
-- [ ] Record target kind/OS/runtime/SQLite version and any safe failure limitation.
-- [ ] Verify cleanup/default UI after probe; send structured reports to review.
+- [x] Phase 1 pass trên iOS simulator/OS `26.5`, SQLite `3.50.3`, exact SHA
+  `79f6e4dcea8965810f190011f507fa73732eb6a2`; sentinel commit và connection close.
+- [ ] Phase 2 final `passed: true` report — `TRANSFERRED_TO_EPIC_12`.
+- [ ] Final component/assertion reconciliation — `TRANSFERRED_TO_EPIC_12`.
+- [x] Record target/runtime/SHA/SQLite metadata và không suy diễn phase 1 thành final pass.
+- [ ] Final cleanup/default UI evidence — `TRANSFERRED_TO_EPIC_12`; owner có thể hoàn tất relaunch
+  hiện tại để cleanup isolated probe DB nhưng việc đó không còn block EPIC-03 prototype planning.
 
 ### US0209-T08 — Owner Android final evidence
 
-- [ ] Owner dùng compatible Android Development Build; refresh manually only if required.
-- [ ] Run exact same two-phase process-relaunch scenario on same frozen SHA.
-- [ ] Final assertions/component probes equivalent to iOS; platform-specific metadata may differ.
-- [ ] Record target kind/API/OS/runtime/SQLite version and any safe failure limitation.
-- [ ] Verify cleanup/default UI after probe; send structured reports to review.
-- [ ] Any Android-only failure is blocker/gap, không được waive bằng iOS pass.
+- [ ] Entire Android final aggregate scenario — `TRANSFERRED_TO_EPIC_12`.
+- [ ] Same release-candidate SHA and equivalent assertions — `TRANSFERRED_TO_EPIC_12`.
+- [x] Không ghi Android pass giả; absence được giữ explicit trong evidence register.
 
 ### US0209-T09 — Consolidated Epic exit audit
 
-- [ ] Reconcile both final reports against frozen SHA and exact assertion contract.
-- [ ] Populate criterion-to-host/iOS/Android evidence table and limitation register.
-- [ ] Confirm every `US-02-01`–`09` Story `DONE` and all mandatory acceptance mapped.
-- [ ] Confirm no known migration/bootstrap/persistence/recovery/reset blocker or crash.
-- [ ] Confirm architecture, offline, recovery, accessibility/privacy boundary evidence proportional
-  to EPIC-02 scope.
-- [ ] Present `PASS_READY_TO_CLOSE` or explicit blocker list to owner; request exit approval.
+- [x] Reconcile host/per-Story evidence và available iOS phase 1; final native pair ghi `MISSING`.
+- [x] Populate criterion-to-evidence table và explicit transfer/limitation register.
+- [x] Confirm `US-02-01`–`08` `DONE`; `US-02-09` host/harness scope complete.
+- [x] Confirm no known host/iOS per-Story migration/bootstrap/persistence/recovery/reset blocker.
+- [x] Confirm architecture/offline/recovery/privacy boundary evidence proportional to revised scope.
+- [x] Owner quyết định close/re-baseline thay vì giữ Product discovery blocked bởi native parity.
 
 ### US0209-T10 — Closeout và EPIC-03 handoff
 
-- [ ] Owner explicitly approves EPIC-02 exit audit.
-- [ ] Mark `US-02-09 DONE`; update plan, Story baseline and consolidated evidence.
-- [ ] Check EPIC-02 completion checklist/status in `MVP_EPICS.md` only after evidence approval.
-- [ ] Record documentation-only closeout does not stale frozen behavioral reports.
-- [ ] Open planning gate `EPIC-03`; do not implement Timer/Session in closeout turn.
+- [x] Owner explicitly approves EPIC-02 close/re-baseline ngày 2026-08-30.
+- [x] Mark `US-02-09 DONE`; update plan, Story baseline and consolidated evidence.
+- [x] Check revised EPIC-02 completion checklist/status in `MVP_EPICS.md`.
+- [x] Record documentation-only closeout không tạo native pass và không stale behavior SHA.
+- [x] Open planning gate cho `EPIC-03 — MVP Experience Prototype & User-flow Validation`; không
+  implement production Timer/Session trước clickable mock + owner UX approval.
 
 ## 7. Planned file impact
 
@@ -510,23 +512,23 @@ chỉ report pass atomically sau normal bootstrap `ready` + cleanup.
 - [x] `T01`–`T06` implementation/host/harness/runbook complete theo order.
 - [x] Final root quality/boundary/hygiene/checksum pass trên frozen behavior SHA.
 - [x] Aggregate probe reuses all eight component contracts without production exposure.
-- [ ] Actual process relaunch sentinel pass on one iOS and one Android target.
-- [ ] Both final reports pass exact contract trên same frozen SHA.
+- [ ] Actual process relaunch sentinel pass on one iOS and one Android target —
+  `TRANSFERRED_TO_EPIC_12`, không phải revised Story blocker.
+- [ ] Both final reports pass exact contract trên same frozen SHA — `TRANSFERRED_TO_EPIC_12`.
 - [x] Deterministic unavailable/write/fingerprint evidence pass; physical disk-full limitation ghi rõ.
 - [x] No migration `002`, Product behavior, provider/native dependency hoặc tracked native artifact.
-- [ ] Consolidated audit maps all Epic criteria/Story acceptance/Data Model rows.
-- [ ] Không còn known blocker/crash trong migration/bootstrap/durable-data outcome.
-- [ ] Owner explicitly approves Epic exit; `US-02-09` và `EPIC-02` closeout hoàn tất.
-- [ ] `EPIC-03` chỉ mở planning sau `EPIC-02 DONE`.
+- [x] Consolidated audit maps revised Epic criteria/Story acceptance/Data Model rows và limitations.
+- [x] Không còn known blocker/crash trong host + available per-Story runtime evidence.
+- [x] Owner explicitly approves revised Epic exit; `US-02-09` và `EPIC-02` closeout hoàn tất.
+- [x] `EPIC-03` mở planning cho UI prototype only; technical behavior chờ UX approval.
 
 ## 11. Handoff sau planning
 
-1. `T00 → T06` đã hoàn tất; host quality pass và final behavior/harness commit được freeze.
-2. Owner chạy two-phase probe theo
-   `apps/mobile/test/device/epic-02-exit-smoke.md` trên iOS rồi Android bằng exact same SHA.
-3. Agent không chạy native/EAS build; owner gửi hai final structured reports để review.
-4. Agent reconcile evidence và trình exit audit; owner quyết định `PASS_READY_TO_CLOSE` hoặc blocker.
-5. Chỉ sau explicit exit approval mới update `EPIC-02 DONE` và mở planning `EPIC-03`.
+1. `T00 → T06` đã hoàn tất; host quality pass và behavior/harness SHA được freeze.
+2. iOS phase 1 đã pass; phase 2 iOS và Android pair được chuyển sang `EPIC-12` release-hardening.
+3. `EPIC-02`/`US-02-09` `DONE` theo explicit owner scope re-baseline; không claim missing runtime pass.
+4. `EPIC-03` tiếp theo chỉ lập user flow/clickable UI mock bằng fake data/fake navigation.
+5. Production Timer/Session/domain/schema planning chỉ bắt đầu sau explicit owner UX approval.
 
 ## 12. References
 
@@ -544,6 +546,15 @@ chỉ report pass atomically sau normal bootstrap `ready` + cleanup.
 - `docs/architecture/decisions/ADR-007-eas-delivery-pipeline.md`
 
 ## 13. Change log
+
+### 0.4.0 — 2026-08-30
+
+- Ghi nhận valid iOS phase-1 `AWAITING_RELAUNCH` report trên SHA
+  `79f6e4dcea8965810f190011f507fa73732eb6a2`, simulator iOS `26.5`, SQLite `3.50.3`.
+- Owner re-baseline exit: chuyển missing iOS phase 2 + Android final aggregate parity sang
+  `EPIC-12`; giữ unchecked/explicit, không biến approval thành evidence giả.
+- Đóng `US-02-09` và `EPIC-02`; mở `EPIC-03` mới cho UI/user-flow prototype, mock data và fake
+  navigation trước production technical depth.
 
 ### 0.3.0 — 2026-08-30
 
