@@ -17,6 +17,7 @@ export default defineConfig({
       'packages/**/*.test.tsx',
       'apps/mobile/**/*.test.ts',
       'apps/mobile/**/*.test.tsx',
+      'scripts/**/*.test.ts',
     ],
     passWithNoTests: false,
   },

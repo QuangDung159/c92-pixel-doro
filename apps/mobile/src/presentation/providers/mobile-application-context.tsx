@@ -44,3 +44,8 @@ export const useBootstrapProjection = (): BootstrapProjection => {
     bootstrap.getSnapshot,
   );
 };
+
+export const useRecoveryRetry = (): (() => Promise<void>) => {
+  const { retryRecovery } = useMobileApplication();
+  return retryRecovery;
+};

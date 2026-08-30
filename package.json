@@ -15,7 +15,7 @@
     "test": "vitest run && pnpm --filter @pixeldoro/mobile run test:device",
     "test:coverage": "vitest run --coverage",
     "test:boundaries": "node scripts/validate-boundaries.mjs",
-    "quality": "pnpm run typecheck && pnpm run lint && pnpm run test && pnpm run test:boundaries",
+    "quality": "pnpm run typecheck && pnpm run lint && pnpm run test && pnpm run test:boundaries && pnpm run check:repository",
     "start": "pnpm --filter @pixeldoro/mobile start",
     "prebuild": "pnpm --filter @pixeldoro/mobile exec expo prebuild --platform ios",
     "ios": "pnpm --filter @pixeldoro/mobile ios",

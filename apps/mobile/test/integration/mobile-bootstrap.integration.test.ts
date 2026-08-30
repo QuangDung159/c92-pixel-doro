@@ -1,134 +1,482 @@
-import { CreateFoundationSnapshotUseCase } from '@pixeldoro/application';
 import { describe, expect, it, vi } from 'vitest';
 
 import {
   MobileBootstrap,
+  ReadinessGate,
   type AppLifecyclePort,
   type AppLifecycleState,
-  type DatabaseLifecyclePort,
+  type BootstrapDurableSnapshot,
+  type BootstrapPhase,
+  type MigrationRunError,
+  type MobileBootstrapDependencies,
+  type RecoveryDiagnostic,
 } from '@/application';
+
+const snapshot: BootstrapDurableSnapshot = {
+  migrationVersion: 1,
+  installation: { installedAt: 42, onboardingCompletedAt: null },
+  settings: {
+    focusDurationMinutes: 25,
+    shortBreakMinutes: 5,
+    longBreakMinutes: 15,
+    defaultMode: 'relax',
+    soundEnabled: true,
+    hapticsEnabled: true,
+    notificationsEnabled: true,
+    analyticsEnabled: true,
+  },
+  profile: { totalXp: 0, coinBalance: 0 },
+  catalog: [],
+};
 
 class FakeLifecycle implements AppLifecyclePort {
   private listener: ((state: AppLifecycleState) => void) | undefined;
-  readonly unsubscribe = vi.fn();
-
-  subscribe(listener: (state: AppLifecycleState) => void): () => void {
+  readonly subscribe = vi.fn((listener: (state: AppLifecycleState) => void) => {
     this.listener = listener;
     return this.unsubscribe;
+  });
+  readonly unsubscribe = vi.fn();
+
+  constructor(private state: AppLifecycleState = 'active') {}
+
+  getCurrentState(): AppLifecycleState {
+    return this.state;
   }
 
   emit(state: AppLifecycleState): void {
+    this.state = state;
     this.listener?.(state);
   }
 }
 
-describe('mobile bootstrap integration', () => {
-  it('opens the database before ready and cleans up both lifecycles', async () => {
-    const lifecycle = new FakeLifecycle();
-    const databaseLifecycle: DatabaseLifecyclePort = {
-      open: vi.fn(async () => ({ ok: true as const, value: undefined })),
-      close: vi.fn(async () => ({ ok: true as const, value: undefined })),
-    };
-    const bootstrap = new MobileBootstrap({
-      appLifecycle: lifecycle,
-      createFoundationSnapshot: new CreateFoundationSnapshotUseCase({
-        clock: { nowMs: () => 42 },
-        id: { nextId: () => 'mobile-foundation' },
-      }),
-      databaseLifecycle,
-    });
+interface HarnessOptions {
+  readonly failAt?: BootstrapPhase;
+  readonly failOnceAt?: BootstrapPhase;
+  readonly migrationError?: MigrationRunError;
+  readonly throwAt?: BootstrapPhase;
+  readonly deferredAt?: BootstrapPhase;
+}
 
-    await bootstrap.boot();
-    lifecycle.emit('background');
-
-    expect(bootstrap.getSnapshot()).toMatchObject({
-      status: 'ready',
-      lifecycleState: 'background',
-    });
-
-    await bootstrap.dispose();
-    expect(databaseLifecycle.open).toHaveBeenCalledOnce();
-    expect(databaseLifecycle.close).toHaveBeenCalledOnce();
-    expect(lifecycle.unsubscribe).toHaveBeenCalledOnce();
+const deferred = () => {
+  let resolve: () => void = () => undefined;
+  const promise = new Promise<void>((release) => {
+    resolve = release;
   });
+  return { promise, resolve };
+};
 
-  it('maps database open failure without exposing a provider exception', async () => {
-    const bootstrap = new MobileBootstrap({
-      appLifecycle: new FakeLifecycle(),
-      createFoundationSnapshot: new CreateFoundationSnapshotUseCase({
-        clock: { nowMs: () => 42 },
-        id: { nextId: () => 'mobile-foundation' },
+const createHarness = (options: HarnessOptions = {}) => {
+  const trace: string[] = [];
+  const gate = new ReadinessGate();
+  const lifecycle = new FakeLifecycle('background');
+  const phaseGate = deferred();
+  const phaseCalls = new Map<BootstrapPhase, number>();
+  const diagnostics: RecoveryDiagnostic[] = [];
+  const run = async <TValue>(
+    phase: BootstrapPhase,
+    success: TValue,
+    failure: TValue,
+  ): Promise<TValue> => {
+    trace.push(phase);
+    const call = (phaseCalls.get(phase) ?? 0) + 1;
+    phaseCalls.set(phase, call);
+    if (options.deferredAt === phase) await phaseGate.promise;
+    if (options.throwAt === phase) throw new Error('raw provider detail');
+    return options.failAt === phase ||
+      (options.failOnceAt === phase && call === 1)
+      ? failure
+      : success;
+  };
+
+  const dependencies: MobileBootstrapDependencies = {
+    appLifecycle: lifecycle,
+    diagnostics: {
+      record: vi.fn((diagnostic: RecoveryDiagnostic) => {
+        diagnostics.push(diagnostic);
       }),
-      databaseLifecycle: {
-        open: async () => ({
-          ok: false,
-          error: {
-            kind: 'database_lifecycle_error',
-            code: 'DATABASE_OPEN_FAILED',
+    },
+    databaseLifecycle: {
+      open: vi.fn(() =>
+        run(
+          'opening',
+          { ok: true as const, value: undefined },
+          {
+            ok: false as const,
+            error: {
+              kind: 'database_lifecycle_error' as const,
+              code: 'DATABASE_OPEN_FAILED' as const,
+            },
           },
-        }),
-        close: async () => ({ ok: true, value: undefined }),
-      },
-    });
-
-    await bootstrap.boot();
-
-    expect(bootstrap.getSnapshot()).toEqual({
-      status: 'recovery',
-      error: { code: 'DATABASE_OPEN_FAILED' },
-    });
-  });
-
-  it('does not publish a late ready state when disposed during open', async () => {
-    let releaseOpen: () => void = () => undefined;
-    const openGate = new Promise<void>((resolve) => {
-      releaseOpen = resolve;
-    });
-    const databaseLifecycle: DatabaseLifecyclePort = {
-      open: vi.fn(async () => {
-        await openGate;
+        ),
+      ),
+      close: vi.fn(async () => {
+        trace.push('close');
         return { ok: true as const, value: undefined };
       }),
-      close: vi.fn(async () => ({ ok: true as const, value: undefined })),
-    };
-    const bootstrap = new MobileBootstrap({
-      appLifecycle: new FakeLifecycle(),
-      createFoundationSnapshot: new CreateFoundationSnapshotUseCase({
-        clock: { nowMs: () => 42 },
-        id: { nextId: () => 'mobile-foundation' },
-      }),
-      databaseLifecycle,
+    },
+    migration: {
+      migrate: vi.fn(() =>
+        run(
+          'migrating',
+          {
+            ok: true as const,
+            value: { fromVersion: 0, toVersion: 1, appliedVersions: [1] },
+          },
+          {
+            ok: false as const,
+            error:
+              options.migrationError ??
+              ({
+                kind: 'migration_error' as const,
+                code: 'MIGRATION_APPLY_FAILED' as const,
+              } satisfies MigrationRunError),
+          },
+        ),
+      ),
+    },
+    bootstrapVerifier: {
+      verify: vi.fn(() =>
+        run(
+          'verifying',
+          { ok: true as const, value: undefined },
+          {
+            ok: false as const,
+            error: {
+              kind: 'bootstrap_verification_error' as const,
+              code: 'BOOTSTRAP_SCHEMA_INVARIANT_FAILED' as const,
+            },
+          },
+        ),
+      ),
+    },
+    bootstrapData: {
+      read: vi.fn(() =>
+        run(
+          'hydrating',
+          { ok: true as const, value: snapshot },
+          {
+            ok: false as const,
+            error: {
+              kind: 'bootstrap_data_error' as const,
+              code: 'BOOTSTRAP_DATA_INVALID' as const,
+            },
+          },
+        ),
+      ),
+    },
+    startupReconciliation: {
+      reconcileAtStartup: vi.fn(() =>
+        run(
+          'reconciling',
+          { ok: true as const, value: undefined },
+          {
+            ok: false as const,
+            error: {
+              kind: 'startup_reconciliation_error' as const,
+              code: 'STARTUP_RECONCILIATION_FAILED' as const,
+            },
+          },
+        ),
+      ),
+    },
+    readiness: gate,
+  };
+
+  return {
+    bootstrap: new MobileBootstrap(dependencies),
+    dependencies,
+    diagnostics,
+    gate,
+    lifecycle,
+    phaseGate,
+    trace,
+  };
+};
+
+describe('mobile bootstrap integration', () => {
+  it('publishes ready only after the exact durable barrier order', async () => {
+    const { bootstrap, gate, lifecycle, trace } = createHarness();
+    const projections: string[] = [];
+    bootstrap.subscribe(() => {
+      const current = bootstrap.getSnapshot();
+      projections.push(
+        current.status === 'booting'
+          ? `${current.status}:${current.phase}`
+          : current.status,
+      );
     });
+    const guardedWork = vi.fn(() => 'ran');
 
-    const boot = bootstrap.boot();
-    const dispose = bootstrap.dispose();
-    releaseOpen();
-    await boot;
-    await dispose;
+    expect(gate.run(guardedWork)).toMatchObject({
+      ok: false,
+      error: { code: 'CORE_COMMANDS_NOT_READY' },
+    });
+    await bootstrap.boot();
 
-    expect(bootstrap.getSnapshot()).toEqual({ status: 'idle' });
-    expect(databaseLifecycle.close).toHaveBeenCalledOnce();
+    expect(trace).toEqual([
+      'opening',
+      'migrating',
+      'verifying',
+      'hydrating',
+      'reconciling',
+    ]);
+    expect(projections).toEqual([
+      'booting:opening',
+      'booting:migrating',
+      'booting:verifying',
+      'booting:hydrating',
+      'booting:reconciling',
+      'ready',
+    ]);
+    expect(bootstrap.getSnapshot()).toEqual({
+      status: 'ready',
+      snapshot,
+      lifecycleState: 'background',
+    });
+    expect(gate.run(guardedWork)).toEqual({ ok: true, value: 'ran' });
+    expect(guardedWork).toHaveBeenCalledOnce();
+
+    lifecycle.emit('active');
+    expect(bootstrap.getSnapshot()).toMatchObject({
+      status: 'ready',
+      lifecycleState: 'active',
+    });
   });
 
-  it('maps a thrown database exception to the stable recovery code', async () => {
-    const bootstrap = new MobileBootstrap({
-      appLifecycle: new FakeLifecycle(),
-      createFoundationSnapshot: new CreateFoundationSnapshotUseCase({
-        clock: { nowMs: () => 42 },
-        id: { nextId: () => 'mobile-foundation' },
-      }),
-      databaseLifecycle: {
-        open: async () => {
-          throw new Error('raw native provider detail');
-        },
-        close: async () => ({ ok: true, value: undefined }),
+  it.each<BootstrapPhase>([
+    'opening',
+    'migrating',
+    'verifying',
+    'hydrating',
+    'reconciling',
+  ])('fails closed at %s and never invokes the remaining suffix', async (phase) => {
+    const { bootstrap, dependencies, gate, trace } = createHarness({
+      failAt: phase,
+    });
+
+    await bootstrap.boot();
+
+    expect(bootstrap.getSnapshot()).toMatchObject({
+      status: 'recovery',
+      phase,
+    });
+    expect(gate.run(() => 'forbidden')).toMatchObject({
+      ok: false,
+      error: { code: 'CORE_COMMANDS_NOT_READY' },
+    });
+    expect(trace.at(-1)).toBe(phase);
+    expect(dependencies.databaseLifecycle.close).not.toHaveBeenCalled();
+  });
+
+  it.each<BootstrapPhase>([
+    'opening',
+    'migrating',
+    'verifying',
+    'hydrating',
+    'reconciling',
+  ])('maps a thrown %s provider failure without leaking raw detail', async (phase) => {
+    const { bootstrap } = createHarness({ throwAt: phase });
+
+    await expect(bootstrap.boot()).resolves.toBeUndefined();
+    const projection = bootstrap.getSnapshot();
+    expect(projection).toMatchObject({ status: 'recovery', phase });
+    expect(JSON.stringify(projection)).not.toContain('provider detail');
+  });
+
+  it('coalesces concurrent boot and makes ready/recovery reruns no-ops', async () => {
+    const readyHarness = createHarness({ deferredAt: 'migrating' });
+    const first = readyHarness.bootstrap.boot();
+    const second = readyHarness.bootstrap.boot();
+    expect(second).toBe(first);
+    readyHarness.phaseGate.resolve();
+    await Promise.all([first, second]);
+    await readyHarness.bootstrap.boot();
+    expect(readyHarness.trace.filter((item) => item === 'opening')).toHaveLength(1);
+
+    const recoveryHarness = createHarness({ failAt: 'verifying' });
+    await recoveryHarness.bootstrap.boot();
+    await recoveryHarness.bootstrap.boot();
+    expect(recoveryHarness.trace.filter((item) => item === 'opening')).toHaveLength(1);
+  });
+
+  it.each<BootstrapPhase>([
+    'opening',
+    'migrating',
+    'verifying',
+    'hydrating',
+    'reconciling',
+  ])('prevents late ready and closes once when disposed during %s', async (phase) => {
+    const { bootstrap, dependencies, gate, lifecycle, phaseGate } = createHarness({
+      deferredAt: phase,
+    });
+    const boot = bootstrap.boot();
+    while (true) {
+      const current = bootstrap.getSnapshot();
+      if (current.status !== 'booting' || current.phase === phase) break;
+      await Promise.resolve();
+    }
+    expect(gate.run(() => 'forbidden')).toMatchObject({
+      ok: false,
+      error: { code: 'CORE_COMMANDS_NOT_READY' },
+    });
+
+    const firstDispose = bootstrap.dispose();
+    const secondDispose = bootstrap.dispose();
+    expect(secondDispose).toBe(firstDispose);
+    expect(bootstrap.getSnapshot()).toEqual({ status: 'disposed' });
+    phaseGate.resolve();
+    await Promise.all([boot, firstDispose, secondDispose]);
+
+    expect(bootstrap.getSnapshot()).toEqual({ status: 'disposed' });
+    expect(dependencies.databaseLifecycle.close).toHaveBeenCalledOnce();
+    expect(lifecycle.unsubscribe).toHaveBeenCalledTimes(
+      phase === 'reconciling' ? 1 : 0,
+    );
+    expect(gate.run(() => 'forbidden')).toMatchObject({ ok: false });
+  });
+
+  it('buffers lifecycle changes during reconciliation without opening readiness', async () => {
+    const { bootstrap, gate, lifecycle, phaseGate } = createHarness({
+      deferredAt: 'reconciling',
+    });
+    const boot = bootstrap.boot();
+    while (true) {
+      const current = bootstrap.getSnapshot();
+      if (current.status === 'booting' && current.phase === 'reconciling') break;
+      await Promise.resolve();
+    }
+
+    lifecycle.emit('active');
+    expect(bootstrap.getSnapshot()).toEqual({
+      status: 'booting',
+      phase: 'reconciling',
+    });
+    expect(gate.run(() => 'forbidden')).toMatchObject({ ok: false });
+
+    phaseGate.resolve();
+    await boot;
+    expect(bootstrap.getSnapshot()).toMatchObject({
+      status: 'ready',
+      lifecycleState: 'active',
+    });
+  });
+
+  it.each<BootstrapPhase>([
+    'opening',
+    'migrating',
+    'verifying',
+    'hydrating',
+    'reconciling',
+  ])(
+    'retries a transient %s failure through the full barrier with one in-flight attempt',
+    async (phase) => {
+      const { bootstrap, dependencies, diagnostics, gate, trace } =
+        createHarness({ failOnceAt: phase });
+
+      await bootstrap.boot();
+      expect(bootstrap.getSnapshot()).toMatchObject({
+        status: 'recovery',
+        phase,
+      });
+
+      const first = bootstrap.retry();
+      const second = bootstrap.retry();
+      expect(second).toBe(first);
+      expect(gate.run(() => 'forbidden')).toMatchObject({ ok: false });
+      await Promise.all([first, second]);
+
+      expect(bootstrap.getSnapshot()).toMatchObject({ status: 'ready' });
+      expect(dependencies.databaseLifecycle.close).toHaveBeenCalledOnce();
+      expect(trace.filter((item) => item === 'opening')).toHaveLength(2);
+      expect(diagnostics.map(({ eventName }) => eventName)).toEqual([
+        'recovery_entered',
+        'recovery_retry_started',
+        'recovery_retry_succeeded',
+      ]);
+      expect(gate.run(() => 'safe')).toEqual({ ok: true, value: 'safe' });
+    },
+  );
+
+  it.each([
+    'MIGRATION_REGISTRY_INVALID',
+    'MIGRATION_HISTORY_MISSING',
+    'MIGRATION_HISTORY_INVALID',
+    'MIGRATION_VERSION_GAP',
+    'MIGRATION_UNKNOWN_APPLIED',
+    'MIGRATION_CHECKSUM_MISMATCH',
+    'DATABASE_SCHEMA_NEWER_THAN_BINARY',
+    'MIGRATION_APPLY_FAILED',
+    'MIGRATION_HISTORY_WRITE_FAILED',
+  ] as const)('preserves the exact migration reason %s', async (code) => {
+    const { bootstrap } = createHarness({
+      failAt: 'migrating',
+      migrationError: { kind: 'migration_error', code },
+    });
+
+    await bootstrap.boot();
+    expect(bootstrap.getSnapshot()).toMatchObject({
+      status: 'recovery',
+      phase: 'migrating',
+      error: { code },
+    });
+  });
+
+  it('maps migration transaction failures to one stable execution reason', async () => {
+    const { bootstrap } = createHarness({
+      failAt: 'migrating',
+      migrationError: {
+        kind: 'transaction_technical_error',
+        code: 'TRANSACTION_COMMIT_FAILED',
       },
     });
 
-    await expect(bootstrap.boot()).resolves.toBeUndefined();
-    expect(bootstrap.getSnapshot()).toEqual({
+    await bootstrap.boot();
+    expect(bootstrap.getSnapshot()).toMatchObject({
       status: 'recovery',
-      error: { code: 'DATABASE_OPEN_FAILED' },
+      phase: 'migrating',
+      error: { code: 'MIGRATION_EXECUTION_FAILED' },
     });
+  });
+
+  it('enters explicit unavailable recovery after a critical runtime failure', async () => {
+    const { bootstrap, diagnostics, gate, trace } = createHarness();
+    await bootstrap.boot();
+
+    bootstrap.enterRecovery('DATABASE_WRITE_FAILED');
+    const recovery = bootstrap.getSnapshot();
+    expect(recovery).toEqual({
+      status: 'recovery',
+      phase: 'runtime',
+      error: { code: 'DATABASE_WRITE_FAILED' },
+    });
+    expect('snapshot' in recovery).toBe(false);
+    expect(gate.run(() => 'forbidden')).toMatchObject({ ok: false });
+
+    await bootstrap.retry();
+    expect(bootstrap.getSnapshot()).toMatchObject({ status: 'ready' });
+    expect(trace.filter((item) => item === 'opening')).toHaveLength(2);
+    expect(diagnostics.at(-1)).toEqual({
+      eventName: 'recovery_retry_succeeded',
+      attemptNumber: 2,
+      phase: 'reconciling',
+      reasonCode: null,
+    });
+  });
+
+  it('keeps recovery safe when the diagnostic adapter itself throws', async () => {
+    const harness = createHarness({ throwAt: 'hydrating' });
+    vi.mocked(harness.dependencies.diagnostics.record).mockImplementation(() => {
+      throw new Error('diagnostic provider detail');
+    });
+
+    await expect(harness.bootstrap.boot()).resolves.toBeUndefined();
+    expect(harness.bootstrap.getSnapshot()).toMatchObject({
+      status: 'recovery',
+      phase: 'hydrating',
+      error: { code: 'DATABASE_READ_FAILED' },
+    });
+    expect(JSON.stringify(harness.bootstrap.getSnapshot())).not.toContain(
+      'provider detail',
+    );
   });
 });

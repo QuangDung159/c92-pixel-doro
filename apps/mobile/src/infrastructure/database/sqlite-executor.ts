@@ -7,6 +7,10 @@ import type {
 export class SQLiteExecutor {
   constructor(private readonly connection: SQLiteConnection) {}
 
+  executeStatic(sql: string): Promise<void> {
+    return this.connection.execAsync(sql);
+  }
+
   run(sql: string, parameters: SQLiteParameters): Promise<SQLiteWriteResult> {
     return this.connection.runAsync(sql, parameters);
   }

@@ -1,6 +1,14 @@
-import type { MobileApplicationFacade } from '@/application';
+import type {
+  ConfirmedLocalDataReset,
+  CriticalRecoveryPort,
+  MobileApplicationFacade,
+} from '@/application';
+import type { MobilePersistenceGraph } from '@/infrastructure/database/persistence-graph';
 import type { SQLiteTransaction } from '@/infrastructure/database/sqlite-transaction';
 
 export interface MobileApplication extends MobileApplicationFacade {
+  readonly confirmedReset: ConfirmedLocalDataReset;
+  readonly criticalRecovery: CriticalRecoveryPort;
+  readonly persistence: MobilePersistenceGraph;
   readonly transaction: SQLiteTransaction;
 }

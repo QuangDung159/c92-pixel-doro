@@ -1,0 +1,16 @@
+{
+  "formatVersion": 1,
+  "algorithm": "sha256",
+  "migrations": [
+    {
+      "version": 1,
+      "name": "initial-schema",
+      "filename": "001_initial-schema.migration.ts",
+      "sourcePaths": [
+        "apps/mobile/src/infrastructure/database/migrations/001_initial-schema.migration.ts",
+        "apps/mobile/src/infrastructure/database/migrations/schema-manifest.ts"
+      ],
+      "checksum": "07106b3b95278af48dfc1272710b4df79cb7039fd59a7debc51bf39604961f39"
+    }
+  ]
+}

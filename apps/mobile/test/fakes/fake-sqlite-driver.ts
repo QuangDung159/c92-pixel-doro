@@ -14,8 +14,23 @@ export class FakeSQLiteConnection {
   closeCalls = 0;
   closeError: unknown;
   readonly execErrors = new Map<string, unknown>();
+  readonly runErrors = new Map<string, unknown>();
+  readonly firstErrors = new Map<string, unknown>();
+  readonly allErrors = new Map<string, unknown>();
   readonly firstRows = new Map<string, unknown>();
   readonly allRows = new Map<string, unknown[]>();
+  firstRowHandler:
+    | ((sql: string, parameters: SQLiteParameters) => unknown)
+    | undefined;
+  allRowsHandler:
+    | ((sql: string, parameters: SQLiteParameters) => unknown[])
+    | undefined;
+  runHandler:
+    | ((sql: string, parameters: SQLiteParameters) => {
+        lastInsertRowId: number;
+        changes: number;
+      })
+    | undefined;
 
   async closeAsync(): Promise<void> {
     this.closeCalls += 1;
@@ -37,6 +52,13 @@ export class FakeSQLiteConnection {
     parameters: SQLiteParameters,
   ): Promise<{ lastInsertRowId: number; changes: number }> {
     this.boundStatements.push({ sql, parameters });
+    const error = this.runErrors.get(sql);
+    if (error !== undefined) {
+      throw error;
+    }
+    if (this.runHandler !== undefined) {
+      return this.runHandler(sql, parameters);
+    }
     return { lastInsertRowId: 1, changes: 1 };
   }
 
@@ -46,8 +68,17 @@ export class FakeSQLiteConnection {
   ): Promise<TRow | null> {
     this.boundStatements.push({ sql, parameters });
 
+    const error = this.firstErrors.get(sql);
+    if (error !== undefined) {
+      throw error;
+    }
+
     if (sql === 'PRAGMA foreign_keys') {
       return { foreign_keys: this.foreignKeys } as TRow;
+    }
+
+    if (this.firstRowHandler !== undefined) {
+      return (this.firstRowHandler(sql, parameters) as TRow | null) ?? null;
     }
 
     return (this.firstRows.get(sql) as TRow | undefined) ?? null;
@@ -58,6 +89,13 @@ export class FakeSQLiteConnection {
     parameters: SQLiteParameters,
   ): Promise<TRow[]> {
     this.boundStatements.push({ sql, parameters });
+    const error = this.allErrors.get(sql);
+    if (error !== undefined) {
+      throw error;
+    }
+    if (this.allRowsHandler !== undefined) {
+      return this.allRowsHandler(sql, parameters) as TRow[];
+    }
     return (this.allRows.get(sql) as TRow[] | undefined) ?? [];
   }
 
