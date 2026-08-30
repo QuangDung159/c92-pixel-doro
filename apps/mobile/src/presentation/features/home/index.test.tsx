@@ -1,7 +1,11 @@
 import { Children, Fragment, isValidElement, type ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { PetStage, ScreenHeader, StatDisplay } from '@/presentation/components';
+import {
+  PetCompanionStatus,
+  ScreenHeader,
+  StatDisplay,
+} from '@/presentation/components';
 
 import { HomeScreen } from './index';
 
@@ -30,6 +34,12 @@ describe('HomeScreen', () => {
     const onStartFocus = vi.fn();
     const tree = HomeScreen({
       onStartFocus,
+      onRetryPet: vi.fn(),
+      pet: {
+        status: 'ready',
+        baseState: 'idle',
+        activeSessionId: null,
+      },
       profile: {
         level: 1,
         totalXp: 30,
@@ -44,7 +54,7 @@ describe('HomeScreen', () => {
       .map((node) => typeof node.type === 'function' ? node.type.name : String(node.type));
 
     expect(componentNames).toContain(ScreenHeader.name);
-    expect(componentNames).toContain(PetStage.name);
+    expect(componentNames).toContain(PetCompanionStatus.name);
     expect(componentNames.filter((name) => name === StatDisplay.name)).toHaveLength(3);
     expect(componentNames).not.toContain('PrototypeBadge');
     expect(componentNames).not.toContain('PrototypeControls');

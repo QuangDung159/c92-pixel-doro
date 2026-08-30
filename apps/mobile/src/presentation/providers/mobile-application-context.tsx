@@ -7,6 +7,7 @@ import {
 import {
   createHomeProfileProjection,
   type HomeProfileProjection,
+  type PetCompanionProjection,
 } from '@pixeldoro/application';
 
 import type {
@@ -58,4 +59,18 @@ export const useHomeProfileProjection = (): HomeProfileProjection | null => {
   const projection = useBootstrapProjection();
   if (projection.status !== 'ready') return null;
   return createHomeProfileProjection(projection.snapshot.profile);
+};
+
+export const usePetCompanionProjection = (): PetCompanionProjection => {
+  const { petCompanion } = useMobileApplication();
+  return useSyncExternalStore(
+    petCompanion.subscribe,
+    petCompanion.getSnapshot,
+    petCompanion.getSnapshot,
+  );
+};
+
+export const usePetCompanionRefresh = (): (() => Promise<void>) => {
+  const { refreshPetCompanion } = useMobileApplication();
+  return refreshPetCompanion;
 };

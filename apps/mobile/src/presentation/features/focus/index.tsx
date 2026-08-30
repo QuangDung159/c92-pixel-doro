@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { PetCompanionProjection } from '@pixeldoro/application';
 import { StyleSheet, Text, View } from 'react-native';
 
 import {
@@ -7,6 +8,7 @@ import {
   ErrorState,
   InlineNotice,
   LoadingState,
+  PetCompanionStatus,
   PixelCompanion,
   PixelPanel,
   PrimaryButton,
@@ -134,11 +136,15 @@ export const FocusSessionScreen = ({
   session,
   onResolve,
   onMissingSession,
+  onRetryPet,
+  pet,
   cancelRequestToken = 0,
 }: {
   readonly session: FocusSession | null;
   readonly onResolve: (outcome: FocusOutcome) => void;
   readonly onMissingSession: () => void;
+  readonly onRetryPet: () => void;
+  readonly pet: PetCompanionProjection;
   readonly cancelRequestToken?: number;
 }) => {
   const [showCancel, setShowCancel] = useState(false);
@@ -186,7 +192,7 @@ export const FocusSessionScreen = ({
         <Text style={styles.timerValue}>{String(session.durationMinutes).padStart(2, '0')}:00</Text>
         <Text style={styles.timerCaption}>CỨ BẮT ĐẦU, RỒI NHỊP SẼ ĐẾN.</Text>
       </View>
-      <PixelCompanion state="working" />
+      <PetCompanionStatus onRetry={onRetryPet} projection={pet} />
       <InlineNotice>
         {isStrict
           ? 'Strict Lite: rời PixelDoro quá 10 giây trước deadline sẽ làm phiên thất bại.'

@@ -13,6 +13,7 @@ const derivedQueriesFlowPath = `${deviceDirectory}derived-queries-smoke.md`;
 const failureRecoveryFlowPath = `${deviceDirectory}failure-recovery-smoke.md`;
 const confirmedResetFlowPath = `${deviceDirectory}confirmed-reset-smoke.md`;
 const epic02ExitFlowPath = `${deviceDirectory}epic-02-exit-smoke.md`;
+const petBaseStateFlowPath = `${deviceDirectory}pet-base-state-smoke.md`;
 
 await access(flowPath);
 await access(sqliteFlowPath);
@@ -24,6 +25,7 @@ await access(derivedQueriesFlowPath);
 await access(failureRecoveryFlowPath);
 await access(confirmedResetFlowPath);
 await access(epic02ExitFlowPath);
+await access(petBaseStateFlowPath);
 const flow = await readFile(flowPath, 'utf8');
 const sqliteFlow = await readFile(sqliteFlowPath, 'utf8');
 const schemaFlow = await readFile(schemaFlowPath, 'utf8');
@@ -34,6 +36,7 @@ const derivedQueriesFlow = await readFile(derivedQueriesFlowPath, 'utf8');
 const failureRecoveryFlow = await readFile(failureRecoveryFlowPath, 'utf8');
 const confirmedResetFlow = await readFile(confirmedResetFlowPath, 'utf8');
 const epic02ExitFlow = await readFile(epic02ExitFlowPath, 'utf8');
+const petBaseStateFlow = await readFile(petBaseStateFlowPath, 'utf8');
 
 const requiredLabels = [
   'Chào mừng đến PixelDoro',
@@ -244,6 +247,25 @@ for (const evidence of requiredEpic02ExitEvidence) {
 
 await access(
   `${mobileDirectory}/src/composition/diagnostics/run-epic-02-exit-probe.ts`,
+);
+
+const requiredPetBaseStateEvidence = [
+  'EXPO_PUBLIC_EPIC_04_PET_BASE_FIXTURE=idle',
+  'EXPO_PUBLIC_EPIC_04_PET_BASE_FIXTURE=focus',
+  'EXPO_PUBLIC_EPIC_04_PET_BASE_FIXTURE=short_break',
+  'EXPO_PUBLIC_EPIC_04_PET_BASE_FIXTURE=long_break',
+  'EXPO_PUBLIC_EPIC_04_PET_BASE_FIXTURE=error',
+  'unset EXPO_PUBLIC_EPIC_04_PET_BASE_FIXTURE',
+];
+
+for (const evidence of requiredPetBaseStateEvidence) {
+  if (!petBaseStateFlow.includes(evidence)) {
+    throw new Error(`Pet base-state device guide is missing: ${evidence}`);
+  }
+}
+
+await access(
+  `${mobileDirectory}/src/composition/review/pet-base-review-fixture.ts`,
 );
 
 console.log(

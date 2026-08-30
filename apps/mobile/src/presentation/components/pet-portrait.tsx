@@ -9,26 +9,61 @@ export type CompanionState =
   | 'celebrating'
   | 'bugged';
 
-export const PetPortrait = ({ state }: { readonly state: CompanionState }) => (
-  <View
-    accessibilityElementsHidden
-    importantForAccessibility="no-hide-descendants"
-    style={[
-      styles.glow,
-      state === 'celebrating' && styles.gold,
-      state === 'bugged' && styles.danger,
-    ]}
-  >
-    <View style={styles.head}>
-      <View style={styles.eyes}>
-        <View style={styles.eye} />
-        <View style={styles.eye} />
+export const PetPortrait = ({ state }: { readonly state: CompanionState }) => {
+  const working = state === 'working';
+  const breaking = state === 'breaking';
+
+  return (
+    <View
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+      style={[
+        styles.glow,
+        working && styles.glowWorking,
+        breaking && styles.glowBreaking,
+        state === 'celebrating' && styles.gold,
+        state === 'bugged' && styles.danger,
+      ]}
+    >
+      <View
+        style={[
+          styles.head,
+          working && styles.headWorking,
+          breaking && styles.headBreaking,
+        ]}
+      >
+        <View style={styles.eyes}>
+          <View
+            style={[
+              styles.eye,
+              working && styles.eyeWorking,
+              breaking && styles.eyeBreaking,
+            ]}
+          />
+          <View
+            style={[
+              styles.eye,
+              working && styles.eyeWorking,
+              breaking && styles.eyeBreaking,
+            ]}
+          />
+        </View>
+        <View style={[styles.mouth, breaking && styles.mouthBreaking]} />
       </View>
-      <View style={styles.mouth} />
+      <View
+        style={[
+          styles.body,
+          working && styles.bodyWorking,
+          breaking && styles.bodyBreaking,
+        ]}
+      />
+      {working ? <View style={styles.focusDesk} testID="pet-working-desk" /> : null}
+      {breaking ? (
+        <View style={styles.restCushion} testID="pet-breaking-cushion" />
+      ) : null}
     </View>
-    <View style={styles.body} />
-  </View>
-);
+  );
+};
 
 const styles = StyleSheet.create({
   glow: {
@@ -39,6 +74,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 130,
   },
+  glowWorking: { backgroundColor: '#B9D9DE' },
+  glowBreaking: { backgroundColor: '#E9D9A7' },
   gold: { backgroundColor: palette.accentGold },
   danger: { backgroundColor: '#E99A82' },
   head: {
@@ -49,14 +86,48 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 72,
   },
+  headWorking: { transform: [{ translateX: -5 }, { rotate: '-4deg' }] },
+  headBreaking: { transform: [{ translateY: 8 }] },
   eyes: { flexDirection: 'row', gap: 18 },
   eye: { backgroundColor: palette.accentGold, height: 9, width: 9 },
+  eyeWorking: { height: 6, width: 13 },
+  eyeBreaking: { borderRadius: 2, height: 3, width: 15 },
   mouth: { backgroundColor: palette.white, height: 5, marginTop: 11, width: 18 },
+  mouthBreaking: { marginTop: 9, width: 10 },
   body: {
     backgroundColor: palette.accentDark,
     borderBottomLeftRadius: 8,
     borderBottomRightRadius: 8,
     height: 42,
     width: 52,
+  },
+  bodyWorking: { transform: [{ translateX: -2 }], width: 58 },
+  bodyBreaking: {
+    borderRadius: 8,
+    height: 32,
+    transform: [{ translateY: 8 }],
+    width: 62,
+  },
+  focusDesk: {
+    backgroundColor: palette.accentBlue,
+    borderColor: palette.border,
+    borderRadius: 3,
+    borderWidth: 2,
+    bottom: 17,
+    height: 10,
+    position: 'absolute',
+    right: 11,
+    transform: [{ rotate: '-5deg' }],
+    width: 76,
+  },
+  restCushion: {
+    backgroundColor: palette.accentGold,
+    borderColor: palette.border,
+    borderRadius: 16,
+    borderWidth: 2,
+    bottom: 9,
+    height: 18,
+    position: 'absolute',
+    width: 88,
   },
 });

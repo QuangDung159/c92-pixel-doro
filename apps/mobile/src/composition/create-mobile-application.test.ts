@@ -80,6 +80,11 @@ describe('mobile composition root', () => {
 
     await application.boot();
     expect(application.bootstrap.getSnapshot().status).toBe('ready');
+    expect(application.petCompanion.getSnapshot()).toEqual({
+      status: 'ready',
+      baseState: 'idle',
+      activeSessionId: null,
+    });
     expect(application.readiness.run(() => 'safe')).toEqual({
       ok: true,
       value: 'safe',

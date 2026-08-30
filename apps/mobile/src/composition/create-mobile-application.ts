@@ -12,7 +12,12 @@ import {
   type ResetNotificationCleanupPort,
   type StartupReconciliationPort,
 } from '@/application';
-import type { ClockPort, IdPort } from '@pixeldoro/application';
+import {
+  PetCompanionController,
+  type ClockPort,
+  type IdPort,
+  type PetCompanionSessionReader,
+} from '@pixeldoro/application';
 import { SQLiteBootstrapDataAdapter } from '@/infrastructure/database/bootstrap/sqlite-bootstrap-data.adapter';
 import { SQLiteBootstrapVerifier } from '@/infrastructure/database/bootstrap/sqlite-bootstrap-verifier';
 import { MigrationRunner } from '@/infrastructure/database/migration-runner';
@@ -34,6 +39,7 @@ import { NoopResetNotificationCleanupAdapter } from '@/infrastructure/platform/n
 
 import type { MobileApplication } from './mobile-application';
 import type { Epic02ExitCompletionCandidate } from './diagnostics/run-epic-02-exit-probe';
+import { createPetBaseReviewSessionReader } from './review/pet-base-review-fixture';
 import { NoopStartupReconciliationAdapter } from './startup/noop-startup-reconciliation.adapter';
 
 const PIXELDORO_DATABASE_NAME = 'pixeldoro.db';
@@ -49,6 +55,7 @@ export interface CreateMobileApplicationOptions {
   readonly diagnosticsEnabled?: boolean;
   readonly migration?: MigrationPort;
   readonly id?: IdPort;
+  readonly petCompanionSessions?: PetCompanionSessionReader;
   readonly recoveryDiagnostics?: RecoveryDiagnosticsPort;
   readonly resetNotificationCleanup?: ResetNotificationCleanupPort;
   readonly sqliteDriver?: SQLiteDriver;
@@ -61,6 +68,8 @@ export const createMobileApplication = (
   const driver = options.sqliteDriver ?? new ExpoSQLiteDriver();
   const clock = options.clock ?? new DeviceClockAdapter();
   const id = options.id ?? new DeviceIdAdapter();
+  const appLifecycle =
+    options.appLifecycle ?? new ReactNativeAppLifecycleAdapter();
   const databaseOwner = new SQLiteDatabaseOwner(
     options.databaseName ?? PIXELDORO_DATABASE_NAME,
     driver,
@@ -78,8 +87,7 @@ export const createMobileApplication = (
       id,
     });
   const bootstrap = new MobileBootstrap({
-    appLifecycle:
-      options.appLifecycle ?? new ReactNativeAppLifecycleAdapter(),
+    appLifecycle,
     bootstrapData:
       options.bootstrapData ?? new SQLiteBootstrapDataAdapter(databaseOwner),
     bootstrapVerifier:
@@ -110,6 +118,18 @@ export const createMobileApplication = (
       new SQLiteConfirmedResetAdapter(transaction),
     transaction,
   });
+  const petReviewFixturesEnabled =
+    options.diagnosticsEnabled !== false &&
+    typeof __DEV__ !== 'undefined' &&
+    __DEV__;
+  const petCompanion = new PetCompanionController(
+    options.petCompanionSessions ??
+      createPetBaseReviewSessionReader(
+        process.env.EXPO_PUBLIC_EPIC_04_PET_BASE_FIXTURE,
+        petReviewFixturesEnabled,
+      ) ??
+      persistence.sessions,
+  );
   const sqliteKernelProbeEnabled =
     options.diagnosticsEnabled !== false &&
     typeof __DEV__ !== 'undefined' &&
@@ -157,6 +177,29 @@ export const createMobileApplication = (
     process.env.EXPO_PUBLIC_EPIC_02_EXIT_PROBE === '1';
   let probePromise: Promise<void> | undefined;
   let epic02ExitCompletion: Epic02ExitCompletionCandidate | undefined;
+  let unsubscribePetLifecycle: (() => void) | undefined;
+  let retryRecoveryPromise: Promise<void> | undefined;
+
+  const refreshPetCompanion = async (): Promise<void> => {
+    if (bootstrap.getSnapshot().status !== 'ready') return;
+    await petCompanion.refresh();
+  };
+
+  const startPetLifecycleRefresh = (): void => {
+    unsubscribePetLifecycle ??= appLifecycle.subscribe((state) => {
+      if (state === 'active') void refreshPetCompanion();
+    });
+  };
+
+  const retryRecovery = (): Promise<void> => {
+    if (retryRecoveryPromise !== undefined) return retryRecoveryPromise;
+    const operation = bootstrap.retry().then(refreshPetCompanion);
+    retryRecoveryPromise = operation;
+    void operation.finally(() => {
+      if (retryRecoveryPromise === operation) retryRecoveryPromise = undefined;
+    });
+    return operation;
+  };
 
   const runProbeIfEnabled = (): Promise<void> => {
     if (
@@ -255,6 +298,7 @@ export const createMobileApplication = (
     bootstrap,
     confirmedReset,
     criticalRecovery: bootstrap,
+    petCompanion,
     persistence,
     readiness,
     transaction,
@@ -273,8 +317,18 @@ export const createMobileApplication = (
         );
         console.info('[PixelDoro][Epic02ExitProbe]', JSON.stringify(report));
       }
+      if (bootstrap.getSnapshot().status === 'ready') {
+        startPetLifecycleRefresh();
+        await petCompanion.refresh();
+      }
     },
-    retryRecovery: () => bootstrap.retry(),
-    dispose: () => bootstrap.dispose(),
+    refreshPetCompanion,
+    retryRecovery,
+    dispose: () => {
+      unsubscribePetLifecycle?.();
+      unsubscribePetLifecycle = undefined;
+      petCompanion.dispose();
+      return bootstrap.dispose();
+    },
   };
 };

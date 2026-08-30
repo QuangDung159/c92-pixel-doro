@@ -1,13 +1,13 @@
 ---
 document_id: PIXELDORO_EPIC_04_USER_STORIES
 title: PixelDoro EPIC-04 — Home/Pet Room và Pet Companion Projection User Stories
-version: 0.2.0
+version: 0.3.0
 status: APPROVED_FOR_SEQUENTIAL_IMPLEMENTATION
 last_updated: 2026-08-30
 owner: Dũng Lư
 approved_by: Dũng Lư
 approved_at: 2026-08-30
-implementation_status: US_04_01_IMPLEMENTED_AWAITING_OWNER_MANUAL_EVIDENCE
+implementation_status: US_04_02_IMPLEMENTED_AWAITING_OWNER_MANUAL_EVIDENCE
 language: vi
 scope:
   - mobile_mvp
@@ -31,9 +31,9 @@ Người dùng luôn nhìn thấy Pet phản ánh đúng trạng thái đã comm
 trong khi animation không được làm chậm, block hoặc thay đổi core Focus flow.
 
 Story list đã được owner duyệt toàn bộ trong một lượt ngày 2026-08-30. Solo developer chỉ được có
-**một Story active tại một thời điểm** và đi theo execution order ở mục 8. `US-04-01` đã hoàn tất
-implementation và automated gates, đang chờ owner manual Development Build evidence; các Story sau
-chưa được active.
+**một Story active tại một thời điểm** và đi theo execution order ở mục 8. Owner xác nhận đã test
+`US-04-01` và yêu cầu tiến hành Story tiếp theo; `US-04-02` đã hoàn tất implementation/automated
+gates và đang chờ owner manual Development Build evidence. Các Story 03–07 chưa được active.
 
 ### 0.2. Baseline đã xác minh
 
@@ -412,7 +412,7 @@ quán để tôi biết tiến trình của mình và bắt đầu phiên Focus 
 | Blocks | `US-04-02` đến `US-04-07` |
 | Gate | `OWNER-STORY-APPROVAL`; không cần `OPEN-001` |
 | Initial status | `NOT_STARTED` |
-| Current status | `IMPLEMENTED_AWAITING_OWNER_MANUAL_EVIDENCE` |
+| Current status | `DONE_OWNER_ACCEPTED` |
 
 #### Outcome và output
 
@@ -444,20 +444,20 @@ bootstrap profile snapshot. **Cố ý chưa làm:** active-session Pet derivatio
 
 #### Acceptance criteria
 
-- [ ] Home giữ đúng hierarchy Pet → stats → Focus CTA → room progress và là resting root.
-- [ ] Loading/recovery không hiển thị mock data như committed truth; Retry vẫn friendly và safe.
-- [ ] Neutral portrait không chốt Cat, Dog hoặc Robot.
-- [ ] Header/button/stat/status có role, label, disabled/busy state phù hợp và focus order hợp lý.
-- [ ] State không chỉ truyền bằng màu; neutral Pet có semantic status text.
-- [ ] Reduced motion chưa animate; neutral static shell an toàn.
-- [ ] Không mutate durable truth, không gọi repository từ screen/component.
-- [ ] Không replay hoặc terminal behavior nào được thêm ngầm.
-- [ ] `OPEN-001` giữ `OPEN`.
-- [ ] Common component không import feature/repository; mỗi component <300 dòng và một trách nhiệm.
-- [ ] Approved primary journey/component consumer không regression.
-- [ ] Automated tests pass.
-- [ ] Manual guide pass.
-- [ ] Evidence được ghi lại.
+- [x] Home giữ đúng hierarchy Pet → stats → Focus CTA → room progress và là resting root.
+- [x] Loading/recovery không hiển thị mock data như committed truth; Retry vẫn friendly và safe.
+- [x] Neutral portrait không chốt Cat, Dog hoặc Robot.
+- [x] Header/button/stat/status có role, label, disabled/busy state phù hợp và focus order hợp lý.
+- [x] State không chỉ truyền bằng màu; neutral Pet có semantic status text.
+- [x] Reduced motion chưa animate; neutral static shell an toàn.
+- [x] Không mutate durable truth, không gọi repository từ screen/component.
+- [x] Không replay hoặc terminal behavior nào được thêm ngầm.
+- [x] `OPEN-001` giữ `OPEN`.
+- [x] Common component không import feature/repository; mỗi component <300 dòng và một trách nhiệm.
+- [x] Approved primary journey/component consumer không regression.
+- [x] Automated tests pass.
+- [x] Manual guide pass.
+- [x] Evidence được ghi lại.
 
 #### Implementation boundary
 
@@ -523,8 +523,9 @@ change, profile mutation.
   `prototype-ui.tsx` 399 dòng đã được loại bỏ và không có component mới vượt 300 dòng.
 - Root quality pass: typecheck, lint, `31` test files / `174` tests, device harness, boundary checks
   (`11` forbidden rejected / `3` valid accepted) và repository hygiene.
-- Chưa chạy native/EAS/prebuild. Owner manual Development Build evidence ở guide trên vẫn `PENDING`,
-  vì vậy Story chưa `DONE` và `US-04-02` chưa được active.
+- Không chạy native/EAS/prebuild. Owner xác nhận “Đã test” và yêu cầu tiến hành Story tiếp theo ngày
+  2026-08-30, nên `US-04-01` được đóng và `US-04-02` được active. Platform/device/screenshot metadata
+  không được cung cấp trong turn xác nhận và không được tài liệu này tự suy diễn.
 
 ---
 
@@ -541,6 +542,7 @@ phiên thật đã commit để người bạn luôn phản ánh đúng việc t
 | Blocks | `US-04-03` đến `US-04-07` |
 | Gate | `COMMITTED-PROJECTION-CONTRACT` |
 | Initial status | `NOT_STARTED` |
+| Current status | `IMPLEMENTED_AWAITING_OWNER_MANUAL_EVIDENCE` |
 
 #### Outcome và output
 
@@ -563,17 +565,17 @@ composition root/lifecycle. **Chưa làm:** terminal event handoff.
 
 #### Acceptance criteria
 
-- [ ] No active committed session render `idle`.
-- [ ] Running Focus (standard/trial) render `working`.
-- [ ] Running Short/Long Break render `breaking`.
-- [ ] Cancelled Focus/Break hoặc completed Break với no active render base `idle`.
-- [ ] Countdown `0`, route hoặc notification không tự đổi Pet state.
-- [ ] Invalid/corrupt/unavailable truth render recovery, không chọn Pet state an toàn giả.
-- [ ] Semantic text nói rõ state; không chỉ màu/pose.
-- [ ] Presentation không mutate durable truth và không gọi repository.
-- [ ] Không terminal replay/request trong Story này; `OPEN-001` không bị chốt.
-- [ ] Common components giữ single responsibility và <300 dòng.
-- [ ] Automated mapping/provider/integration tests pass.
+- [x] No active committed session render `idle`.
+- [x] Running Focus (standard/trial) render `working`.
+- [x] Running Short/Long Break render `breaking`.
+- [x] Cancelled Focus/Break hoặc completed Break với no active render base `idle`.
+- [x] Countdown `0`, route hoặc notification không tự đổi Pet state.
+- [x] Invalid/corrupt/unavailable truth render recovery, không chọn Pet state an toàn giả.
+- [x] Semantic text nói rõ state; không chỉ màu/pose.
+- [x] Presentation không mutate durable truth và không gọi repository.
+- [x] Không terminal replay/request trong Story này; `OPEN-001` không bị chốt.
+- [x] Common components giữ single responsibility và <300 dòng.
+- [x] Automated mapping/provider/integration tests pass.
 - [ ] Manual guide pass.
 - [ ] Evidence được ghi lại.
 
@@ -626,6 +628,25 @@ committed Long Break, unavailable/corrupt read.
 **Evidence:** state screenshots, committed fixture IDs/status table, recovery result, device/SHA.
 **Không được xảy ra:** screen queries DB, fake reducer considered truth, countdown-driven state, Break
 Bugged/celebration, new schema.
+
+#### Implementation evidence — 2026-08-30
+
+- Domain pure mapper quyết định `idle` / `working` / `breaking` chỉ từ minimal committed active-session
+  fact; invalid/impossible fact trả typed failure thay vì đoán state.
+- Application controller đọc `SessionRepository.findActive`, publish immutable
+  `loading/ready/recovery` projection, coalesce concurrent refresh và bỏ stale result sau dispose.
+- Composition inject repository vào application-scoped controller, hydrate sau bootstrap, refresh khi
+  app active hoặc Pet Room được focus; Presentation facade không expose repository.
+- Home, Focus Running và Break Running dùng cùng projection/provider. Countdown, route và prototype
+  reducer không được truyền vào mapper; Result one-shot vẫn chờ `US-04-03`.
+- Neutral code-rendered Pet có pose tĩnh riêng cho Idle/Working/Breaking; không chốt species và không
+  thêm animation trước Story 05. Semantic status text vẫn là nguồn diễn đạt chính.
+- SQLite repository → Application controller integration pass; explicit Development Build review
+  fixtures `idle/focus/short_break/long_break/error` chỉ bật bằng
+  `EXPO_PUBLIC_EPIC_04_PET_BASE_FIXTURE` trong dev và không ghi `pixeldoro.db`.
+- Root quality pass: typecheck, lint, `38` test files / `205` tests, device harness, boundary checks và
+  repository hygiene. Manual guide `apps/mobile/test/device/pet-base-state-smoke.md` vẫn `PENDING`.
+- Không thêm schema/migration, production Start/Resolve/Reward, terminal event hoặc Pet identity.
 
 ---
 
@@ -1255,6 +1276,16 @@ Approval Story list không đồng nghĩa resolve `OPEN-001`, approve artwork ho
 | `RISK-04-08` | Final iOS/Android evidence missing/fabricated | Invalid Epic exit | Frozen SHA and explicit per-platform owner record | OPEN until 07 |
 
 ## 19. Change log
+
+### 0.3.0 — 2026-08-30
+
+- Ghi nhận owner đã test/chấp nhận `US-04-01` và yêu cầu mở Story tiếp theo; không tự điền metadata
+  platform/device/screenshot chưa được cung cấp.
+- Implement `US-04-02`: committed Pet base mapper, read-only Application controller/provider,
+  lifecycle/focus refresh, recovery không đoán state và Home/Focus/Break integration.
+- Thêm SQLite integration evidence cùng Development Build review fixture/guide không mutate database;
+  `US-04-02` đang chờ owner manual evidence trước khi active `US-04-03`.
+- Giữ `OPEN-001` nguyên trạng; không thêm production Timer/Reward/terminal behavior hoặc schema.
 
 ### 0.2.0 — 2026-08-30
 

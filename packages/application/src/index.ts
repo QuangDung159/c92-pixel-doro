@@ -7,6 +7,12 @@ export {
   createHomeProfileProjection,
   type HomeProfileProjection,
 } from './home/create-home-profile.projection';
+export {
+  loadPetCompanionProjection,
+  type PetCompanionProjection,
+  type PetCompanionSessionReader,
+} from './pet/load-pet-companion.projection';
+export { PetCompanionController } from './pet/pet-companion.controller';
 export type { ClockPort } from './ports/clock.port';
 export type { IdPort } from './ports/id.port';
 export type {

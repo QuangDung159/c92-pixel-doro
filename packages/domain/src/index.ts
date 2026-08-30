@@ -8,3 +8,9 @@ export {
   levelThresholdXp,
   type LevelProgression,
 } from './progression/level-progression';
+export {
+  derivePetBaseState,
+  type CommittedActiveSessionFact,
+  type PetBaseState,
+  type PetBaseStateDecision,
+} from './pet/pet-base-state';

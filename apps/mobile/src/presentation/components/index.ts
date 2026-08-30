@@ -7,6 +7,7 @@ export {
 } from './confirmation-dialog';
 export { InlineNotice } from './inline-notice';
 export { Panel, Panel as PixelPanel, type PanelTone } from './panel';
+export { PetCompanionStatus } from './pet-companion-status';
 export { PetPortrait, type CompanionState } from './pet-portrait';
 export { PetStage, PixelCompanion, type PetStageProps } from './pet-stage';
 export { ScreenHeader, type ScreenHeaderProps } from './screen-header';
