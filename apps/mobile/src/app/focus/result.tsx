@@ -3,11 +3,12 @@ import { useRouter } from 'expo-router';
 
 import { FocusResultScreen } from '@/presentation/features/focus';
 import {
+  useDiscardPetTerminalFeedback,
   useDismissPetTerminalFeedbackError,
-  usePetCompanionProjection,
   usePetCompanionRefresh,
-  usePetTerminalFeedbackProjection,
   usePetTerminalReviewFixture,
+  usePetTerminalReviewFixtureAvailable,
+  usePetVisualProjection,
 } from '@/presentation/providers/mobile-application-context';
 import { usePrototype } from '@/presentation/prototype/prototype-context';
 
@@ -15,10 +16,12 @@ import { usePrototypeBack } from '../use-prototype-back';
 
 export default function FocusResultRoute() {
   const router = useRouter();
-  const pet = usePetCompanionProjection();
-  const petFeedback = usePetTerminalFeedbackProjection();
+  const pet = usePetVisualProjection();
   const refreshPet = usePetCompanionRefresh();
   const triggerPetTerminalReviewFixture = usePetTerminalReviewFixture();
+  const terminalReviewFixtureAvailable =
+    usePetTerminalReviewFixtureAvailable();
+  const discardPetTerminalFeedback = useDiscardPetTerminalFeedback();
   const dismissPetFeedbackError = useDismissPetTerminalFeedbackError();
   const {
     focusResult,
@@ -29,8 +32,8 @@ export default function FocusResultRoute() {
   } = usePrototype();
 
   useEffect(() => {
-    triggerPetTerminalReviewFixture();
-  }, [triggerPetTerminalReviewFixture]);
+    return discardPetTerminalFeedback;
+  }, [discardPetTerminalFeedback]);
 
   const goHome = () => router.replace('/(tabs)');
   usePrototypeBack(goHome);
@@ -46,14 +49,17 @@ export default function FocusResultRoute() {
         startTrial();
         router.replace('/focus/session');
       }}
+      onTriggerTerminalReviewFixture={() => {
+        void triggerPetTerminalReviewFixture();
+      }}
       onSetNextBreakKind={setNextBreakKind}
       onStartBreak={() => {
         startBreak();
         router.replace('/break/session');
       }}
       pet={pet}
-      petFeedback={petFeedback}
       result={focusResult}
+      terminalReviewFixtureAvailable={terminalReviewFixtureAvailable}
     />
   );
 }

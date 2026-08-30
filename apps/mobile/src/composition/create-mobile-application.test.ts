@@ -8,6 +8,10 @@ import {
   runEpic02ExitProbe,
 } from './diagnostics/run-epic-02-exit-probe';
 import { createMobileApplication } from './create-mobile-application';
+import {
+  createPetBaseReviewSessionReader,
+  type PetBaseReviewScenario,
+} from './review/pet-base-review-fixture';
 
 vi.mock('./diagnostics/run-epic-02-exit-probe', () => ({
   runEpic02ExitProbe: vi.fn(),
@@ -34,9 +38,14 @@ describe('mobile composition root', () => {
 
   it('boots and disposes one application-scoped graph', async () => {
     const driver = new FakeSQLiteDriver();
+    let lifecycleListener: ((state: 'active' | 'background') => void) | undefined;
+    let petScenario: PetBaseReviewScenario = 'idle';
     const appLifecycle: AppLifecyclePort = {
       getCurrentState: () => 'active',
-      subscribe: () => vi.fn(),
+      subscribe: (listener) => {
+        lifecycleListener = listener;
+        return vi.fn();
+      },
     };
     const application = createMobileApplication({
       appLifecycle,
@@ -74,6 +83,13 @@ describe('mobile composition root', () => {
       startupReconciliation: {
         reconcileAtStartup: async () => ({ ok: true, value: undefined }),
       },
+      petCompanionSessions: {
+        findActive: () => {
+          const reader = createPetBaseReviewSessionReader(petScenario, true);
+          if (reader === undefined) throw new Error('Missing Pet test reader');
+          return reader.findActive();
+        },
+      },
     });
 
     expect(application.bootstrap.getSnapshot()).toEqual({ status: 'idle' });
@@ -88,6 +104,59 @@ describe('mobile composition root', () => {
     expect(application.readiness.run(() => 'safe')).toEqual({
       ok: true,
       value: 'safe',
+    });
+
+    const completed = {
+      sessionId: 'completed-focus',
+      committedAtMs: 100,
+      sessionType: 'focus' as const,
+      focusVariant: 'standard' as const,
+      mode: 'relax' as const,
+      terminalStatus: 'completed' as const,
+      rewardCommitted: true,
+    };
+    application.petTerminalFeedback.requestFreshTransition(completed, {
+      currentResultSessionId: completed.sessionId,
+      activeSessionId: null,
+    });
+    expect(application.petVisual.getSnapshot()).toMatchObject({
+      status: 'ready',
+      source: 'terminal',
+      state: 'celebrating',
+    });
+
+    petScenario = 'short_break';
+    await application.refreshPetCompanion();
+    expect(application.petVisual.getSnapshot()).toMatchObject({
+      status: 'ready',
+      source: 'base',
+      state: 'breaking',
+    });
+    expect(application.petTerminalFeedback.getSnapshot()).toEqual({ status: 'idle' });
+
+    petScenario = 'idle';
+    await application.refreshPetCompanion();
+    const backgrounded = {
+      ...completed,
+      sessionId: 'backgrounded-focus',
+      committedAtMs: 200,
+    };
+    application.petTerminalFeedback.requestFreshTransition(backgrounded, {
+      currentResultSessionId: backgrounded.sessionId,
+      activeSessionId: null,
+    });
+    lifecycleListener?.('background');
+    expect(application.petVisual.getSnapshot()).toMatchObject({
+      status: 'ready',
+      source: 'base',
+      state: 'idle',
+    });
+    expect(application.petTerminalFeedback.requestFreshTransition(backgrounded, {
+      currentResultSessionId: backgrounded.sessionId,
+      activeSessionId: null,
+    })).toEqual({
+      accepted: false,
+      reason: 'duplicate_terminal_transition',
     });
 
     await application.boot();

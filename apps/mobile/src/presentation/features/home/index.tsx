@@ -1,13 +1,13 @@
 import type {
   HomeProfileProjection,
-  PetCompanionProjection,
+  PetVisualProjection,
 } from '@pixeldoro/application';
 import { StyleSheet, Text, View } from 'react-native';
 
 import {
   LoadingState,
   Panel,
-  PetCompanionStatus,
+  PetVisualStatus,
   PrimaryButton,
   ScreenHeader,
   ScreenShell,
@@ -17,7 +17,8 @@ import { palette } from '@/presentation/theme/palette';
 
 export interface HomeScreenProps {
   readonly profile: HomeProfileProjection | null;
-  readonly pet: PetCompanionProjection;
+  readonly pet: PetVisualProjection;
+  readonly onDismissPetFeedbackError: () => void;
   readonly onRetryPet: () => void;
   readonly onStartFocus: () => void;
 }
@@ -26,6 +27,7 @@ export const HomeScreen = ({
   profile,
   pet,
   onRetryPet,
+  onDismissPetFeedbackError,
   onStartFocus,
 }: HomeScreenProps) => {
   const progressWidth = `${profile?.levelProgressPercent ?? 0}%` as `${number}%`;
@@ -42,7 +44,11 @@ export const HomeScreen = ({
         <LoadingState label="Đang mở Pet Room…" />
       ) : (
         <>
-          <PetCompanionStatus onRetry={onRetryPet} projection={pet} />
+          <PetVisualStatus
+            onDismissTerminalError={onDismissPetFeedbackError}
+            onRetryBase={onRetryPet}
+            projection={pet}
+          />
           <View accessibilityRole="summary" style={styles.statsRow}>
             <StatDisplay label="Level" value={String(profile.level)} />
             <StatDisplay label="XP" value={String(profile.totalXp)} />

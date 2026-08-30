@@ -9,6 +9,7 @@ const focusTransition = (
   overrides: Partial<FreshCommittedTerminalTransition> = {},
 ): FreshCommittedTerminalTransition => ({
   sessionId: 'focus-1',
+  committedAtMs: 100,
   sessionType: 'focus',
   focusVariant: 'standard',
   mode: 'relax',
@@ -56,6 +57,7 @@ describe('decidePetTerminalFeedback', () => {
     focusTransition({ terminalStatus: 'cancelled', rewardCommitted: false }),
     {
       sessionId: 'break-1',
+      committedAtMs: 100,
       sessionType: 'short_break',
       focusVariant: null,
       mode: null,

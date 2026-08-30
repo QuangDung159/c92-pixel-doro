@@ -29,7 +29,9 @@ export class PetCompanionController {
     if (this.refreshPromise !== undefined) return this.refreshPromise;
 
     const generation = ++this.generation;
-    this.publish(loadingProjection());
+    if (this.projection.status !== 'ready') {
+      this.publish(loadingProjection());
+    }
     const operation = loadPetCompanionProjection(this.sessions).then((projection) => {
       if (!this.disposed && generation === this.generation) {
         this.publish(projection);

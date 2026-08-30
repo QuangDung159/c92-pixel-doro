@@ -1,13 +1,13 @@
 ---
 document_id: PIXELDORO_EPIC_04_USER_STORIES
 title: PixelDoro EPIC-04 — Home/Pet Room và Pet Companion Projection User Stories
-version: 0.4.0
+version: 0.5.0
 status: APPROVED_FOR_SEQUENTIAL_IMPLEMENTATION
 last_updated: 2026-08-30
 owner: Dũng Lư
 approved_by: Dũng Lư
 approved_at: 2026-08-30
-implementation_status: US_04_03_IMPLEMENTED_AWAITING_OWNER_MANUAL_EVIDENCE
+implementation_status: US_04_04_IMPLEMENTED_AWAITING_OWNER_MANUAL_EVIDENCE
 language: vi
 scope:
   - mobile_mvp
@@ -32,8 +32,8 @@ trong khi animation không được làm chậm, block hoặc thay đổi core F
 
 Story list đã được owner duyệt toàn bộ trong một lượt ngày 2026-08-30. Solo developer chỉ được có
 **một Story active tại một thời điểm** và đi theo execution order ở mục 8. Owner xác nhận đã test
-`US-04-01` và `US-04-02`. Owner sau đó yêu cầu tiến hành `US-04-03`; implementation/automated gates
-của Story 03 đã hoàn tất và đang chờ owner manual Development Build evidence. Các Story 04–07 chưa
+`US-04-01` đến `US-04-03`. Owner sau đó yêu cầu tiến hành `US-04-04`; implementation/automated gates
+của Story 04 đã hoàn tất và đang chờ owner manual Development Build evidence. Các Story 05–07 chưa
 được active.
 
 ### 0.2. Baseline đã xác minh
@@ -665,7 +665,7 @@ Pet ngắn và đúng outcome để nỗ lực được công nhận mà không 
 | Blocks | `US-04-04`–`07` |
 | Gate | `FRESH-TERMINAL-HANDOFF` |
 | Initial status | `NOT_STARTED` |
-| Current status | `IMPLEMENTED_AWAITING_OWNER_MANUAL_EVIDENCE` |
+| Current status | `DONE_OWNER_ACCEPTED` |
 
 #### Outcome và output
 
@@ -697,8 +697,8 @@ session/reward types/repositories; no direct database polling to invent freshnes
 - [x] Reduced-motion full policy deferred to 06 nhưng renderer có static-capable contract.
 - [x] Không chốt `OPEN-001`; component rules đạt.
 - [x] Automated tests pass.
-- [ ] Manual guide pass.
-- [ ] Evidence được ghi lại.
+- [x] Manual guide pass.
+- [x] Evidence được ghi lại.
 
 #### Implementation boundary
 
@@ -767,8 +767,9 @@ guilt copy, Break celebration, persisted receipt.
   `43` test files / `232` tests, device harness, boundary checks (`11` forbidden rejected / `3` valid
   accepted) và repository hygiene.
 - Report: `docs/planning/US-04-03_IMPLEMENTATION_REPORT.md`; manual guide:
-  `apps/mobile/test/device/pet-terminal-feedback-smoke.md`. Manual owner evidence vẫn `PENDING`, nên
-  `US-04-04` chưa active.
+  `apps/mobile/test/device/pet-terminal-feedback-smoke.md`. Owner xác nhận “Đã test done US-04-03”
+  ngày 2026-08-30; platform/device/screenshot metadata không được cung cấp và không được tài liệu này
+  tự suy diễn.
 - Không thêm schema/migration, durable replay receipt, production resolver/reward caller, Reanimated,
   native/EAS/prebuild artifact hoặc quyết định Pet identity.
 
@@ -787,6 +788,7 @@ việc đang diễn ra thay vì phát lại kết quả cũ gây nhầm lẫn.
 | Blocks | `US-04-05`–`07` |
 | Gate | Fresh event provenance reviewed |
 | Initial status | `NOT_STARTED` |
+| Current status | `IMPLEMENTED_AWAITING_OWNER_MANUAL_EVIDENCE` |
 
 #### Outcome và output
 
@@ -802,17 +804,17 @@ việc đang diễn ra thay vì phát lại kết quả cũ gây nhầm lẫn.
 
 #### Acceptance criteria
 
-- [ ] Safety/recovery gate > active committed session > accepted fresh terminal request > Idle.
-- [ ] New active Focus/Break after commit preempts old one-shot immediately.
-- [ ] Current committed Result context + recency resolves terminal tie; impossible same-session terminal
+- [x] Safety/recovery gate > active committed session > accepted fresh terminal request > Idle.
+- [x] New active Focus/Break after commit preempts old one-shot immediately.
+- [x] Current committed Result context + recency resolves terminal tie; impossible same-session terminal
   combination enters safe error/recovery rather than arbitrary Bugged/Celebrate priority.
-- [ ] Hydrate terminal row on relaunch, reopen Result, rerender/reconcile read không replay.
-- [ ] Backgrounded one-shot is discarded; resume derive base and does not replay.
-- [ ] Idle does not prematurely preempt a valid one-shot absent higher truth.
-- [ ] Arbiter only selects visual state; no durable mutation/reward decision.
-- [ ] Accessibility announcement follows accepted render state once; component <300 dòng.
-- [ ] `OPEN-001` remains open; component/reuse rules đạt.
-- [ ] Automated tests pass.
+- [x] Hydrate terminal row on relaunch, reopen Result, rerender/reconcile read không replay.
+- [x] Backgrounded one-shot is discarded; resume derive base and does not replay.
+- [x] Idle does not prematurely preempt a valid one-shot absent higher truth.
+- [x] Arbiter only selects visual state; no durable mutation/reward decision.
+- [x] Accessibility announcement follows accepted render state once; component <300 dòng.
+- [x] `OPEN-001` remains open; component/reuse rules đạt.
+- [x] Automated tests pass.
 - [ ] Manual guide pass.
 - [ ] Evidence được ghi lại.
 
@@ -861,6 +863,31 @@ ability to terminate/relaunch app process.
 **Evidence:** recordings of two preemptions, relaunch/reopen/resume table, SHA/device.
 **Không được xảy ra:** queued old animations, fixed Bugged-over-Celebrate guess, `resultViewed` write,
 session/reward mutation.
+
+#### Implementation evidence — 2026-08-30
+
+- Domain có pure priority decision và pure freshness decision. Candidate phải khớp current Result
+  context, không đứng sau active committed session, dùng committed timestamp thay vì enum priority và
+  đưa conflicting same-session terminal truth vào typed recovery.
+- Application-scoped `PetVisualController` kết hợp base + terminal projection theo safety → active
+  Focus/Break → fresh terminal → Idle. Active truth preempt/cancel timer vĩnh viễn; last accepted
+  committed timestamp tiếp tục drop out-of-order request ngay cả sau one-shot kết thúc.
+- Base refresh giữ safe ready projection đến khi replacement read hoàn tất, nên transition
+  Celebrate/Bugged → Working/Breaking không chèn loading/Idle flash.
+- App background và Result unmount discard active one-shot nhưng giữ runtime dedupe. Foreground chỉ
+  refresh committed base. New application runtime khởi tạo terminal controller ở Idle và không
+  hydrate terminal row/receipt.
+- Shared `PetVisualProjection`/provider/status được dùng ở Home, Focus Running, Break Running và
+  Focus Result. Result mount không emit event; dev-only `Emit Pet review fixture` là explicit action.
+  Stale/drop state không publish terminal projection hoặc duplicate live-region announcement.
+- Development-only six-scenario arbitration fixture không ghi SQLite/reward. Manual guide:
+  `apps/mobile/test/device/pet-arbitration-smoke.md`; report:
+  `docs/planning/US-04-04_IMPLEMENTATION_REPORT.md`.
+- Root quality pass tại baseline `8e9690e123e7e9e12e1166ff23bfc45db324edd1`: typecheck, lint,
+  `47` test files / `255` tests, device harness, boundary checks (`11` forbidden rejected / `3` valid
+  accepted) và repository hygiene. Manual owner evidence vẫn `PENDING`, nên `US-04-05` chưa active.
+- Không thêm schema/migration, durable receipt, production resolver/reward emitter, Reanimated
+  playback, native/EAS/prebuild artifact hoặc quyết định Pet identity.
 
 ---
 
@@ -1301,6 +1328,17 @@ Approval Story list không đồng nghĩa resolve `OPEN-001`, approve artwork ho
 | `RISK-04-08` | Final iOS/Android evidence missing/fabricated | Invalid Epic exit | Frozen SHA and explicit per-platform owner record | OPEN until 07 |
 
 ## 19. Change log
+
+### 0.5.0 — 2026-08-30
+
+- Ghi nhận owner đã test/chấp nhận `US-04-03` và yêu cầu triển khai `US-04-04`; không tự điền
+  platform/device/screenshot metadata chưa được cung cấp.
+- Implement pure priority/freshness decisions, application-scoped visual arbiter, committed active
+  preemption, out-of-order/conflict handling và no-replay lifecycle discard.
+- Result mount không còn tự emit fixture; thêm explicit review control, six-scenario arbitration
+  fixture, device guide và report. Root quality pass `47` files / `255` tests.
+- `US-04-04` đang chờ owner manual evidence; giữ `US-04-05` chưa active và không thêm animation,
+  schema/durable receipt, production Timer/Reward emitter hoặc resolve `OPEN-001`.
 
 ### 0.4.0 — 2026-08-30
 

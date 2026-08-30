@@ -1,8 +1,5 @@
 import { useState } from 'react';
-import type {
-  PetCompanionProjection,
-  PetTerminalFeedbackProjection,
-} from '@pixeldoro/application';
+import type { PetVisualProjection } from '@pixeldoro/application';
 import { StyleSheet, Text, View } from 'react-native';
 
 import {
@@ -11,8 +8,7 @@ import {
   ErrorState,
   InlineNotice,
   LoadingState,
-  PetCompanionStatus,
-  PetTerminalFeedbackStatus,
+  PetVisualStatus,
   PixelPanel,
   PrimaryButton,
   PrototypeScreen,
@@ -140,6 +136,7 @@ export const FocusSessionScreen = ({
   onResolve,
   onMissingSession,
   onRetryPet,
+  onDismissPetFeedbackError,
   pet,
   cancelRequestToken = 0,
 }: {
@@ -147,7 +144,8 @@ export const FocusSessionScreen = ({
   readonly onResolve: (outcome: FocusOutcome) => void;
   readonly onMissingSession: () => void;
   readonly onRetryPet: () => void;
-  readonly pet: PetCompanionProjection;
+  readonly pet: PetVisualProjection;
+  readonly onDismissPetFeedbackError: () => void;
   readonly cancelRequestToken?: number;
 }) => {
   const [showCancel, setShowCancel] = useState(false);
@@ -195,7 +193,11 @@ export const FocusSessionScreen = ({
         <Text style={styles.timerValue}>{String(session.durationMinutes).padStart(2, '0')}:00</Text>
         <Text style={styles.timerCaption}>CỨ BẮT ĐẦU, RỒI NHỊP SẼ ĐẾN.</Text>
       </View>
-      <PetCompanionStatus onRetry={onRetryPet} projection={pet} />
+      <PetVisualStatus
+        onDismissTerminalError={onDismissPetFeedbackError}
+        onRetryBase={onRetryPet}
+        projection={pet}
+      />
       <InlineNotice>
         {isStrict
           ? 'Strict Lite: rời PixelDoro quá 10 giây trước deadline sẽ làm phiên thất bại.'
@@ -234,7 +236,8 @@ export const FocusResultScreen = ({
   onRetryPet,
   onDismissPetFeedbackError,
   pet,
-  petFeedback,
+  terminalReviewFixtureAvailable = false,
+  onTriggerTerminalReviewFixture,
 }: {
   readonly result: PrototypeFocusResult | null;
   readonly nextBreakKind: BreakKind;
@@ -245,8 +248,9 @@ export const FocusResultScreen = ({
   readonly onRetryTrial: () => void;
   readonly onRetryPet: () => void;
   readonly onDismissPetFeedbackError: () => void;
-  readonly pet: PetCompanionProjection;
-  readonly petFeedback: PetTerminalFeedbackProjection;
+  readonly pet: PetVisualProjection;
+  readonly terminalReviewFixtureAvailable?: boolean;
+  readonly onTriggerTerminalReviewFixture: () => void;
 }) => {
   if (result === null) {
     return (
@@ -281,12 +285,19 @@ export const FocusResultScreen = ({
         eyebrow={completed ? 'FOCUS COMPLETE' : failed ? 'STRICT INTERRUPTED' : 'FOCUS CANCELLED'}
         title={title}
       />
-      <PetTerminalFeedbackStatus
-        baseProjection={pet}
-        feedbackProjection={petFeedback}
-        onDismissFeedbackError={onDismissPetFeedbackError}
+      <PetVisualStatus
+        onDismissTerminalError={onDismissPetFeedbackError}
         onRetryBase={onRetryPet}
+        projection={pet}
       />
+      {terminalReviewFixtureAvailable ? (
+        <PrototypeControls>
+          <ControlButton
+            label="Emit Pet review fixture"
+            onPress={onTriggerTerminalReviewFixture}
+          />
+        </PrototypeControls>
+      ) : null}
       {completed ? (
         <PixelPanel tone="gold">
           <Text style={styles.rewardEyebrow}>REWARD FEEDBACK · MOCK</Text>

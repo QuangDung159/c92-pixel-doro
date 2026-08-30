@@ -15,6 +15,7 @@ const confirmedResetFlowPath = `${deviceDirectory}confirmed-reset-smoke.md`;
 const epic02ExitFlowPath = `${deviceDirectory}epic-02-exit-smoke.md`;
 const petBaseStateFlowPath = `${deviceDirectory}pet-base-state-smoke.md`;
 const petTerminalFeedbackFlowPath = `${deviceDirectory}pet-terminal-feedback-smoke.md`;
+const petArbitrationFlowPath = `${deviceDirectory}pet-arbitration-smoke.md`;
 
 await access(flowPath);
 await access(sqliteFlowPath);
@@ -28,6 +29,7 @@ await access(confirmedResetFlowPath);
 await access(epic02ExitFlowPath);
 await access(petBaseStateFlowPath);
 await access(petTerminalFeedbackFlowPath);
+await access(petArbitrationFlowPath);
 const flow = await readFile(flowPath, 'utf8');
 const sqliteFlow = await readFile(sqliteFlowPath, 'utf8');
 const schemaFlow = await readFile(schemaFlowPath, 'utf8');
@@ -43,6 +45,7 @@ const petTerminalFeedbackFlow = await readFile(
   petTerminalFeedbackFlowPath,
   'utf8',
 );
+const petArbitrationFlow = await readFile(petArbitrationFlowPath, 'utf8');
 
 const requiredLabels = [
   'Chào mừng đến PixelDoro',
@@ -294,6 +297,27 @@ for (const evidence of requiredPetTerminalFeedbackEvidence) {
 
 await access(
   `${mobileDirectory}/src/composition/review/pet-terminal-review-fixture.ts`,
+);
+
+const requiredPetArbitrationEvidence = [
+  'EXPO_PUBLIC_EPIC_04_ARBITRATION_FIXTURE=preempt_break',
+  'EXPO_PUBLIC_EPIC_04_ARBITRATION_FIXTURE=preempt_focus',
+  'EXPO_PUBLIC_EPIC_04_ARBITRATION_FIXTURE=stale_after_active',
+  'EXPO_PUBLIC_EPIC_04_ARBITRATION_FIXTURE=conflicting_terminal',
+  'EXPO_PUBLIC_EPIC_04_ARBITRATION_FIXTURE=reopen_relaunch',
+  'EXPO_PUBLIC_EPIC_04_ARBITRATION_FIXTURE=background_discard',
+  'Emit Pet review fixture',
+  'unset EXPO_PUBLIC_EPIC_04_ARBITRATION_FIXTURE',
+];
+
+for (const evidence of requiredPetArbitrationEvidence) {
+  if (!petArbitrationFlow.includes(evidence)) {
+    throw new Error(`Pet arbitration device guide is missing: ${evidence}`);
+  }
+}
+
+await access(
+  `${mobileDirectory}/src/composition/review/pet-arbitration-review-fixture.ts`,
 );
 
 console.log(

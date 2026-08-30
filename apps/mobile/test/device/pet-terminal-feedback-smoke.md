@@ -14,9 +14,11 @@ EXPO_PUBLIC_EPIC_04_PET_BASE_FIXTURE=idle EXPO_PUBLIC_EPIC_04_TERMINAL_FIXTURE=c
 ```
 
 `node -v` must print `v22.23.2`. Open the installed PixelDoro Development Build, tap
-`Thử phiên 5 phút`, then use the `Complete` prototype control to reach `Kết quả phiên`. The Result
-screen is only the review shell; the terminal fixture, not the mock reward card, is the feedback
-event under review. Do not judge terminal feedback on the `FIRST USE` screen.
+`Thử phiên 5 phút`, then use the `Complete` prototype control to reach `Kết quả phiên`. Press
+`Emit Pet review fixture` once. The explicit control proves that merely mounting/reopening Result does
+not emit or replay an event. The Result screen is only the review shell; the terminal fixture, not the
+mock reward card, is the feedback event under review. Do not judge terminal feedback on the
+`FIRST USE` screen.
 
 Expected for `completed`:
 
@@ -29,6 +31,7 @@ Expected for `completed`:
 
 Stop Metro between scenarios, change the terminal fixture, restart Metro, and repeat the short trial
 flow to Result.
+Press `Emit Pet review fixture` once after each fresh app runtime reaches Result.
 
 ```sh
 EXPO_PUBLIC_EPIC_04_PET_BASE_FIXTURE=idle EXPO_PUBLIC_EPIC_04_TERMINAL_FIXTURE=strict_failed pnpm start --clear

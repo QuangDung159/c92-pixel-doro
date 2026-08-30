@@ -20,3 +20,16 @@ export {
   type PetTerminalFeedbackDecision,
   type PetTerminalState,
 } from './pet/pet-terminal-feedback';
+export {
+  decidePetTerminalFreshness,
+  type PetTerminalCandidate,
+  type PetTerminalCurrentFeedback,
+  type PetTerminalFreshnessContext,
+  type PetTerminalFreshnessDecision,
+} from './pet/pet-terminal-freshness';
+export {
+  decidePetVisualState,
+  type PetVisualArbitrationDecision,
+  type PetVisualBaseInput,
+  type PetVisualTerminalInput,
+} from './pet/pet-visual-arbitration';

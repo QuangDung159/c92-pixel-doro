@@ -28,4 +28,28 @@ describe('PetCompanionController', () => {
 
     expect(findActive).toHaveBeenCalledOnce();
   });
+
+  it('keeps the last safe ready projection until refresh commits a replacement', async () => {
+    let resolveRead: ((value: { readonly ok: true; readonly value: null }) => void) | undefined;
+    const controller = new PetCompanionController({
+      findActive: vi.fn(() => new Promise<{
+        readonly ok: true;
+        readonly value: null;
+      }>((resolve) => {
+        resolveRead = resolve;
+      })),
+    });
+    const initial = controller.refresh();
+    resolveRead?.({ ok: true, value: null });
+    await initial;
+
+    const refresh = controller.refresh();
+    expect(controller.getSnapshot()).toEqual({
+      status: 'ready',
+      baseState: 'idle',
+      activeSessionId: null,
+    });
+    resolveRead?.({ ok: true, value: null });
+    await refresh;
+  });
 });

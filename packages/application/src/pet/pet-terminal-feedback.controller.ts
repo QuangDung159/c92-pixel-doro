@@ -1,6 +1,8 @@
 import {
   decidePetTerminalFeedback,
+  decidePetTerminalFreshness,
   type FreshCommittedTerminalTransition,
+  type PetTerminalCurrentFeedback,
   type PetTerminalState,
 } from '@pixeldoro/domain';
 
@@ -10,11 +12,19 @@ export interface PetFeedbackScheduler {
   schedule(callback: () => void, delayMs: number): () => void;
 }
 
+export interface PetTerminalFeedbackRequestContext {
+  readonly currentResultSessionId: string;
+  readonly activeSessionId: string | null;
+}
+
 export type PetTerminalFeedbackProjection =
   | Readonly<{ status: 'idle' }>
   | Readonly<{
       status: 'active';
       feedbackId: string;
+      sessionId: string;
+      terminalStatus: 'completed' | 'failed';
+      committedAtMs: number;
       state: PetTerminalState;
       startedAtMs: number;
       endsAtMs: number;
@@ -22,7 +32,10 @@ export type PetTerminalFeedbackProjection =
     }>
   | Readonly<{
       status: 'recovery';
-      reason: 'invalid_terminal_transition' | 'feedback_runtime_unavailable';
+      reason:
+        | 'invalid_terminal_transition'
+        | 'feedback_runtime_unavailable'
+        | 'conflicting_committed_truth';
     }>;
 
 export type PetTerminalFeedbackRequestResult =
@@ -31,10 +44,11 @@ export type PetTerminalFeedbackRequestResult =
       accepted: false;
       reason:
         | 'duplicate_terminal_transition'
-        | 'feedback_in_progress'
+        | 'stale_terminal_transition'
         | 'terminal_result_has_no_pet_feedback'
         | 'invalid_terminal_transition'
-        | 'feedback_runtime_unavailable';
+        | 'feedback_runtime_unavailable'
+        | 'conflicting_committed_truth';
     }>;
 
 export interface PetTerminalFeedbackControllerDependencies {
@@ -48,6 +62,11 @@ export class PetTerminalFeedbackController {
   private projection: PetTerminalFeedbackProjection = idle();
   private readonly listeners = new Set<() => void>();
   private readonly seenFeedbackIds = new Set<string>();
+  private readonly terminalStatusBySessionId = new Map<
+    string,
+    FreshCommittedTerminalTransition['terminalStatus']
+  >();
+  private latestAcceptedTerminal: PetTerminalCurrentFeedback | undefined;
   private cancelScheduledEnd: (() => void) | undefined;
   private disposed = false;
 
@@ -65,61 +84,121 @@ export class PetTerminalFeedbackController {
 
   requestFreshTransition(
     transition: FreshCommittedTerminalTransition,
+    context: PetTerminalFeedbackRequestContext,
   ): PetTerminalFeedbackRequestResult {
     if (this.disposed) {
       return Object.freeze({ accepted: false, reason: 'feedback_runtime_unavailable' });
     }
 
-    const decision = decidePetTerminalFeedback(transition);
-    if (decision.kind === 'invalid') {
-      this.cancelScheduledEnd?.();
-      this.cancelScheduledEnd = undefined;
-      this.publish(Object.freeze({
-        status: 'recovery',
-        reason: 'invalid_terminal_transition',
-      }));
+    const feedbackDecision = decidePetTerminalFeedback(transition);
+    if (feedbackDecision.kind === 'invalid') {
+      this.enterRecovery('invalid_terminal_transition');
       return Object.freeze({ accepted: false, reason: 'invalid_terminal_transition' });
     }
-    if (decision.kind === 'none') {
-      return Object.freeze({ accepted: false, reason: decision.reason });
-    }
-    if (this.seenFeedbackIds.has(decision.dedupeKey)) {
+
+    const dedupeKey = `${transition.sessionId}:${transition.terminalStatus}`;
+    const freshness = decidePetTerminalFreshness({
+      sessionId: transition.sessionId,
+      terminalStatus: transition.terminalStatus,
+      committedAtMs: transition.committedAtMs,
+      dedupeKey,
+    }, {
+      ...context,
+      knownTerminalStatus: this.terminalStatusBySessionId.get(transition.sessionId),
+      candidateSeen: this.seenFeedbackIds.has(dedupeKey),
+      currentFeedback: this.latestAcceptedTerminal,
+    });
+
+    if (freshness.kind === 'recovery') {
+      this.enterRecovery('conflicting_committed_truth');
       return Object.freeze({
         accepted: false,
-        reason: 'duplicate_terminal_transition',
+        reason: 'conflicting_committed_truth',
       });
     }
-    if (this.projection.status === 'active') {
-      return Object.freeze({ accepted: false, reason: 'feedback_in_progress' });
+    if (freshness.kind === 'drop') {
+      return Object.freeze({
+        accepted: false,
+        reason: freshness.reason === 'duplicate'
+          ? 'duplicate_terminal_transition'
+          : 'stale_terminal_transition',
+      });
     }
 
+    if (feedbackDecision.kind === 'none') {
+      this.terminalStatusBySessionId.set(
+        transition.sessionId,
+        transition.terminalStatus,
+      );
+      this.seenFeedbackIds.add(dedupeKey);
+      this.latestAcceptedTerminal = Object.freeze({
+        sessionId: transition.sessionId,
+        terminalStatus: transition.terminalStatus,
+        committedAtMs: transition.committedAtMs,
+      });
+      return Object.freeze({
+        accepted: false,
+        reason: 'terminal_result_has_no_pet_feedback',
+      });
+    }
+
+    this.cancelScheduledEnd?.();
+    this.cancelScheduledEnd = undefined;
     const startedAtMs = this.dependencies.clock.nowMs();
     const activeProjection = Object.freeze({
       status: 'active' as const,
-      feedbackId: decision.dedupeKey,
-      state: decision.state,
+      feedbackId: feedbackDecision.dedupeKey,
+      sessionId: transition.sessionId,
+      terminalStatus: transition.terminalStatus as 'completed' | 'failed',
+      committedAtMs: transition.committedAtMs,
+      state: feedbackDecision.state,
       startedAtMs,
-      endsAtMs: startedAtMs + decision.durationMs,
+      endsAtMs: startedAtMs + feedbackDecision.durationMs,
       visualMode: 'one-shot' as const,
     });
     try {
       this.cancelScheduledEnd = this.dependencies.scheduler.schedule(
-        () => this.finish(decision.dedupeKey),
-        decision.durationMs,
+        () => this.finish(feedbackDecision.dedupeKey),
+        feedbackDecision.durationMs,
       );
     } catch {
-      this.publish(Object.freeze({
-        status: 'recovery',
-        reason: 'feedback_runtime_unavailable',
-      }));
+      this.enterRecovery('feedback_runtime_unavailable');
       return Object.freeze({
         accepted: false,
         reason: 'feedback_runtime_unavailable',
       });
     }
-    this.seenFeedbackIds.add(decision.dedupeKey);
+    this.terminalStatusBySessionId.set(
+      transition.sessionId,
+      transition.terminalStatus,
+    );
+    this.seenFeedbackIds.add(dedupeKey);
+    this.latestAcceptedTerminal = Object.freeze({
+      sessionId: transition.sessionId,
+      terminalStatus: transition.terminalStatus,
+      committedAtMs: transition.committedAtMs,
+    });
     this.publish(activeProjection);
-    return Object.freeze({ accepted: true, feedbackId: decision.dedupeKey });
+    return Object.freeze({
+      accepted: true,
+      feedbackId: feedbackDecision.dedupeKey,
+    });
+  }
+
+  preemptByCommittedActiveSession(activeSessionId: string): void {
+    if (this.disposed || this.projection.status !== 'active') return;
+    if (this.projection.sessionId === activeSessionId) {
+      this.enterRecovery('conflicting_committed_truth');
+      return;
+    }
+    this.discardActive();
+  }
+
+  discardActive(): void {
+    if (this.disposed || this.projection.status !== 'active') return;
+    this.cancelScheduledEnd?.();
+    this.cancelScheduledEnd = undefined;
+    this.publish(idle());
   }
 
   reportVisualComplete(feedbackId: string): void {
@@ -144,6 +223,14 @@ export class PetTerminalFeedbackController {
     this.cancelScheduledEnd?.();
     this.cancelScheduledEnd = undefined;
     this.listeners.clear();
+  }
+
+  private enterRecovery(
+    reason: Extract<PetTerminalFeedbackProjection, { status: 'recovery' }>['reason'],
+  ): void {
+    this.cancelScheduledEnd?.();
+    this.cancelScheduledEnd = undefined;
+    this.publish(Object.freeze({ status: 'recovery', reason }));
   }
 
   private holdStillUntilDeadline(feedbackId: string): void {

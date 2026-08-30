@@ -16,6 +16,7 @@ export interface PetTerminalReviewFixture {
 
 const completedTransition = (): FreshCommittedTerminalTransition => ({
   sessionId: 'review-terminal-completed',
+  committedAtMs: 100,
   sessionType: 'focus',
   focusVariant: 'standard',
   mode: 'relax',
@@ -47,6 +48,7 @@ export const createPetTerminalReviewFixture = (
     case 'strict_failed':
       return fixture({
         sessionId: 'review-terminal-strict-failed',
+        committedAtMs: 100,
         sessionType: 'focus',
         focusVariant: 'standard',
         mode: 'strict',
@@ -63,6 +65,7 @@ export const createPetTerminalReviewFixture = (
     case 'break_completed':
       return fixture({
         sessionId: 'review-break-completed',
+        committedAtMs: 100,
         sessionType: 'short_break',
         focusVariant: null,
         mode: null,

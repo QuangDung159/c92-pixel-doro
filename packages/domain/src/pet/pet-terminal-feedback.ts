@@ -2,6 +2,7 @@ export type PetTerminalState = 'celebrating' | 'bugged';
 
 export interface FreshCommittedTerminalTransition {
   readonly sessionId: string;
+  readonly committedAtMs: number;
   readonly sessionType: 'focus' | 'short_break' | 'long_break';
   readonly focusVariant: 'standard' | 'onboarding_trial' | null;
   readonly mode: 'relax' | 'strict' | null;
@@ -40,6 +41,9 @@ export const decidePetTerminalFeedback = (
   transition: FreshCommittedTerminalTransition,
 ): PetTerminalFeedbackDecision => {
   if (transition.sessionId.trim().length === 0) {
+    return invalid('invalid_terminal_transition');
+  }
+  if (!Number.isFinite(transition.committedAtMs) || transition.committedAtMs < 0) {
     return invalid('invalid_terminal_transition');
   }
 

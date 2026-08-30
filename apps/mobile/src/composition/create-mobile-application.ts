@@ -15,6 +15,7 @@ import {
 import {
   PetCompanionController,
   PetTerminalFeedbackController,
+  PetVisualController,
   type ClockPort,
   type IdPort,
   type PetCompanionSessionReader,
@@ -41,6 +42,7 @@ import { DeviceTimeoutScheduler } from '@/infrastructure/platform/timing/device-
 
 import type { MobileApplication } from './mobile-application';
 import type { Epic02ExitCompletionCandidate } from './diagnostics/run-epic-02-exit-probe';
+import { createPetArbitrationReviewFixture } from './review/pet-arbitration-review-fixture';
 import { createPetBaseReviewSessionReader } from './review/pet-base-review-fixture';
 import { createPetTerminalReviewFixture } from './review/pet-terminal-review-fixture';
 import { NoopStartupReconciliationAdapter } from './startup/noop-startup-reconciliation.adapter';
@@ -125,18 +127,25 @@ export const createMobileApplication = (
     options.diagnosticsEnabled !== false &&
     typeof __DEV__ !== 'undefined' &&
     __DEV__;
+  const petArbitrationReviewFixture = createPetArbitrationReviewFixture(
+    process.env.EXPO_PUBLIC_EPIC_04_ARBITRATION_FIXTURE,
+    petReviewFixturesEnabled,
+  );
   const petCompanion = new PetCompanionController(
     options.petCompanionSessions ??
+      petArbitrationReviewFixture?.sessionReader ??
       createPetBaseReviewSessionReader(
         process.env.EXPO_PUBLIC_EPIC_04_PET_BASE_FIXTURE,
         petReviewFixturesEnabled,
       ) ??
       persistence.sessions,
   );
+  const petFeedbackScheduler = new DeviceTimeoutScheduler();
   const petTerminalFeedback = new PetTerminalFeedbackController({
     clock,
-    scheduler: new DeviceTimeoutScheduler(),
+    scheduler: petFeedbackScheduler,
   });
+  const petVisual = new PetVisualController(petCompanion, petTerminalFeedback);
   const petTerminalReviewFixture = createPetTerminalReviewFixture(
     process.env.EXPO_PUBLIC_EPIC_04_TERMINAL_FIXTURE,
     petReviewFixturesEnabled,
@@ -190,6 +199,8 @@ export const createMobileApplication = (
   let epic02ExitCompletion: Epic02ExitCompletionCandidate | undefined;
   let unsubscribePetLifecycle: (() => void) | undefined;
   let retryRecoveryPromise: Promise<void> | undefined;
+  let reviewFixturePromise: Promise<void> | undefined;
+  let cancelReviewWait: (() => void) | undefined;
 
   const refreshPetCompanion = async (): Promise<void> => {
     if (bootstrap.getSnapshot().status !== 'ready') return;
@@ -198,7 +209,11 @@ export const createMobileApplication = (
 
   const startPetLifecycleRefresh = (): void => {
     unsubscribePetLifecycle ??= appLifecycle.subscribe((state) => {
-      if (state === 'active') void refreshPetCompanion();
+      if (state === 'background') {
+        petTerminalFeedback.discardActive();
+        return;
+      }
+      void refreshPetCompanion();
     });
   };
 
@@ -212,19 +227,63 @@ export const createMobileApplication = (
     return operation;
   };
 
-  const triggerPetTerminalReviewFixture = (): void => {
+  const requestReviewTransition = (
+    transition: Parameters<
+      PetTerminalFeedbackController['requestFreshTransition']
+    >[0],
+  ) => {
+    const base = petCompanion.getSnapshot();
+    return petTerminalFeedback.requestFreshTransition(transition, {
+      currentResultSessionId: transition.sessionId,
+      activeSessionId: base.status === 'ready' ? base.activeSessionId : null,
+    });
+  };
+
+  const waitForReview = (durationMs: number): Promise<void> =>
+    new Promise((resolve) => {
+      const cancel = petFeedbackScheduler.schedule(() => {
+        cancelReviewWait = undefined;
+        resolve();
+      }, durationMs);
+      cancelReviewWait = () => {
+        cancel();
+        cancelReviewWait = undefined;
+        resolve();
+      };
+    });
+
+  const runPetTerminalReviewFixture = async (): Promise<void> => {
+    if (petArbitrationReviewFixture !== undefined) {
+      for (const action of petArbitrationReviewFixture.actions) {
+        if (action.kind === 'wait') {
+          await waitForReview(action.durationMs);
+        } else if (action.kind === 'set_base') {
+          petArbitrationReviewFixture.setBaseScenario(action.scenario);
+          await refreshPetCompanion();
+        } else {
+          requestReviewTransition(action.transition);
+        }
+      }
+      return;
+    }
     if (petTerminalReviewFixture === undefined) return;
-    const first = petTerminalFeedback.requestFreshTransition(
-      petTerminalReviewFixture.transition,
-    );
+    const first = requestReviewTransition(petTerminalReviewFixture.transition);
     if (petTerminalReviewFixture.repeat) {
-      petTerminalFeedback.requestFreshTransition(
-        petTerminalReviewFixture.transition,
-      );
+      requestReviewTransition(petTerminalReviewFixture.transition);
     }
     if (petTerminalReviewFixture.reportVisualFailure && first.accepted) {
       petTerminalFeedback.reportVisualFailure(first.feedbackId);
     }
+  };
+
+  const triggerPetTerminalReviewFixture = (): Promise<void> => {
+    if (reviewFixturePromise !== undefined) return reviewFixturePromise;
+    const operation = runPetTerminalReviewFixture();
+    reviewFixturePromise = operation;
+    void operation.finally(() => {
+      if (reviewFixturePromise === operation) reviewFixturePromise = undefined;
+    });
+    return operation;
   };
 
   const runProbeIfEnabled = (): Promise<void> => {
@@ -326,6 +385,10 @@ export const createMobileApplication = (
     criticalRecovery: bootstrap,
     petCompanion,
     petTerminalFeedback,
+    petVisual,
+    petTerminalReviewFixtureAvailable:
+      petTerminalReviewFixture !== undefined ||
+      petArbitrationReviewFixture !== undefined,
     persistence,
     readiness,
     transaction,
@@ -350,12 +413,16 @@ export const createMobileApplication = (
       }
     },
     dismissPetTerminalFeedbackError: () => petTerminalFeedback.dismissRecovery(),
+    discardPetTerminalFeedback: () => petTerminalFeedback.discardActive(),
     refreshPetCompanion,
     retryRecovery,
     triggerPetTerminalReviewFixture,
     dispose: () => {
       unsubscribePetLifecycle?.();
       unsubscribePetLifecycle = undefined;
+      cancelReviewWait?.();
+      cancelReviewWait = undefined;
+      petVisual.dispose();
       petCompanion.dispose();
       petTerminalFeedback.dispose();
       return bootstrap.dispose();

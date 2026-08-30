@@ -8,7 +8,7 @@ import {
 import { describe, expect, it, vi } from 'vitest';
 
 import {
-  PetTerminalFeedbackStatus,
+  PetVisualStatus,
   PrimaryButton,
 } from '@/presentation/components';
 
@@ -39,7 +39,7 @@ const flatten = (node: ReactNode): ReactNode[] => {
 
 interface TestElementProps {
   readonly children?: ReactNode;
-  readonly feedbackProjection?: unknown;
+  readonly projection?: unknown;
   readonly label?: string;
   readonly onPress?: () => void;
 }
@@ -50,12 +50,13 @@ const isTestElement = (node: ReactNode): node is ReactElement<TestElementProps> 
 describe('FocusResultScreen terminal Pet feedback', () => {
   it('keeps the Result CTA available while accepted feedback is active', () => {
     const onHome = vi.fn();
+    const onTriggerTerminalReviewFixture = vi.fn();
     const feedback = {
-      status: 'active' as const,
+      status: 'ready' as const,
+      source: 'terminal' as const,
       feedbackId: 'focus-1:completed',
       state: 'celebrating' as const,
-      startedAtMs: 0,
-      endsAtMs: 2_000,
+      announcementId: 'focus-1:completed',
       visualMode: 'one-shot' as const,
     };
     const tree = FocusResultScreen({
@@ -75,25 +76,28 @@ describe('FocusResultScreen terminal Pet feedback', () => {
       onRetryTrial: vi.fn(),
       onRetryPet: vi.fn(),
       onDismissPetFeedbackError: vi.fn(),
-      pet: {
-        status: 'ready',
-        baseState: 'idle',
-        activeSessionId: null,
-      },
-      petFeedback: feedback,
+      onTriggerTerminalReviewFixture,
+      pet: feedback,
+      terminalReviewFixtureAvailable: true,
     });
     const elements = flatten(tree).filter(isTestElement);
     const feedbackStatus = elements.find(
-      (element) => element.type === PetTerminalFeedbackStatus,
+      (element) => element.type === PetVisualStatus,
     );
     const homeCta = elements.find(
       (element) =>
         element.type === PrimaryButton &&
         element.props.label === 'Vào Pet Room',
     );
+    const reviewControl = elements.find(
+      (element) => element.props.label === 'Emit Pet review fixture',
+    );
 
-    expect(feedbackStatus?.props.feedbackProjection).toBe(feedback);
+    expect(feedbackStatus?.props.projection).toBe(feedback);
     expect(homeCta).toBeDefined();
+    expect(onTriggerTerminalReviewFixture).not.toHaveBeenCalled();
+    reviewControl?.props.onPress?.();
+    expect(onTriggerTerminalReviewFixture).toHaveBeenCalledOnce();
     homeCta?.props.onPress?.();
     expect(onHome).toHaveBeenCalledOnce();
   });

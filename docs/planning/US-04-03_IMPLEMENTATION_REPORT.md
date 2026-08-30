@@ -2,7 +2,7 @@
 document_id: PIXELDORO_US_04_03_IMPLEMENTATION_REPORT
 title: PixelDoro US-04-03 — Terminal Pet Feedback Implementation Report
 version: 1.0.0
-status: IMPLEMENTED_AWAITING_OWNER_MANUAL_EVIDENCE
+status: DONE_OWNER_ACCEPTED
 story: US-04-03
 date: 2026-08-30
 owner: Dũng Lư
@@ -27,8 +27,8 @@ từ một fresh committed terminal transition mà không block CTA/navigation:
 | Break completed/cancelled | Không one-shot; giữ/khôi phục base projection | — |
 | Cùng `sessionId + terminalStatus` trong một runtime | Drop duplicate | — |
 
-Story ở trạng thái `IMPLEMENTED_AWAITING_OWNER_MANUAL_EVIDENCE`, chưa phải `DONE`. US-04-04 chưa
-được active.
+Story ở trạng thái `DONE_OWNER_ACCEPTED`. Owner xác nhận “Đã test done US-04-03” ngày 2026-08-30;
+platform/device/screenshot metadata không được cung cấp và không được report tự suy diễn.
 
 ## 2. Output đã implement
 
@@ -86,7 +86,8 @@ Thực hiện checklist tại
 - VoiceOver/TalkBack announcement note;
 - xác nhận đã unset fixture sau test.
 
-Manual evidence hiện `PENDING`; report không tự suy diễn metadata chưa được owner cung cấp.
+Manual evidence được owner chấp nhận ngày 2026-08-30. Report không tự suy diễn metadata chưa được
+owner cung cấp.
 
 ## 5. Boundary và phần chưa làm
 
@@ -101,5 +102,4 @@ Manual evidence hiện `PENDING`; report không tự suy diễn metadata chưa �
 
 ## 6. Gate sang Story tiếp theo
 
-Chỉ chuyển US-04-03 sang `DONE_OWNER_ACCEPTED` và mở US-04-04 sau khi owner thực hiện manual guide,
-xác nhận kết quả và evidence record được cập nhật.
+Gate đã đóng bằng owner confirmation ngày 2026-08-30; US-04-04 được phép active trong turn kế tiếp.
