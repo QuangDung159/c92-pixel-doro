@@ -33,6 +33,7 @@ import { SafeConsoleConfirmedResetDiagnosticsAdapter } from '@/infrastructure/pl
 import { NoopResetNotificationCleanupAdapter } from '@/infrastructure/platform/notifications/noop-reset-notification-cleanup.adapter';
 
 import type { MobileApplication } from './mobile-application';
+import type { Epic02ExitCompletionCandidate } from './diagnostics/run-epic-02-exit-probe';
 import { NoopStartupReconciliationAdapter } from './startup/noop-startup-reconciliation.adapter';
 
 const PIXELDORO_DATABASE_NAME = 'pixeldoro.db';
@@ -149,7 +150,13 @@ export const createMobileApplication = (
     typeof __DEV__ !== 'undefined' &&
     __DEV__ &&
     process.env.EXPO_PUBLIC_CONFIRMED_RESET_PROBE === '1';
+  const epic02ExitProbeEnabled =
+    options.diagnosticsEnabled !== false &&
+    typeof __DEV__ !== 'undefined' &&
+    __DEV__ &&
+    process.env.EXPO_PUBLIC_EPIC_02_EXIT_PROBE === '1';
   let probePromise: Promise<void> | undefined;
+  let epic02ExitCompletion: Epic02ExitCompletionCandidate | undefined;
 
   const runProbeIfEnabled = (): Promise<void> => {
     if (
@@ -160,12 +167,28 @@ export const createMobileApplication = (
       !typedRepositoriesProbeEnabled &&
       !derivedQueriesProbeEnabled &&
       !failureRecoveryProbeEnabled &&
-      !confirmedResetProbeEnabled
+      !confirmedResetProbeEnabled &&
+      !epic02ExitProbeEnabled
     ) {
       return Promise.resolve();
     }
 
     probePromise ??= (async () => {
+      if (epic02ExitProbeEnabled) {
+        const { runEpic02ExitProbe } =
+          await import('./diagnostics/run-epic-02-exit-probe');
+        const execution = await runEpic02ExitProbe(driver);
+        if ('kind' in execution) {
+          epic02ExitCompletion = execution;
+        } else {
+          console.info(
+            '[PixelDoro][Epic02ExitProbe]',
+            JSON.stringify(execution),
+          );
+        }
+        return;
+      }
+
       if (sqliteKernelProbeEnabled) {
         const { runSQLiteKernelProbe } =
           await import('./diagnostics/run-sqlite-kernel-probe');
@@ -238,6 +261,18 @@ export const createMobileApplication = (
     boot: async () => {
       await runProbeIfEnabled();
       await bootstrap.boot();
+      if (epic02ExitCompletion !== undefined) {
+        const candidate = epic02ExitCompletion;
+        epic02ExitCompletion = undefined;
+        const { completeEpic02ExitProbe } =
+          await import('./diagnostics/run-epic-02-exit-probe');
+        const report = await completeEpic02ExitProbe(
+          driver,
+          candidate,
+          bootstrap.getSnapshot().status === 'ready',
+        );
+        console.info('[PixelDoro][Epic02ExitProbe]', JSON.stringify(report));
+      }
     },
     retryRecovery: () => bootstrap.retry(),
     dispose: () => bootstrap.dispose(),

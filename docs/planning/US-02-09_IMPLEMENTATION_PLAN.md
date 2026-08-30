@@ -1,10 +1,10 @@
 ---
 document_id: PIXELDORO_US_02_09_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-02-09 Implementation Plan
-version: 0.2.0
-status: READY_FOR_IMPLEMENTATION
-implementation_status: NOT_STARTED
-last_updated: 2026-08-29
+version: 0.3.0
+status: IMPLEMENTED_AWAITING_OWNER_CROSS_PLATFORM_RUNTIME
+implementation_status: IMPLEMENTED_AWAITING_OWNER_CROSS_PLATFORM_RUNTIME
+last_updated: 2026-08-30
 owner: Dũng Lư
 reviewer: Dũng Lư
 reviewer_role: Tech Lead
@@ -51,12 +51,15 @@ gate. `EPIC-03` chỉ được mở sau khi owner review evidence và xác nhậ
 **Blocks:** `EPIC-02 DONE` và planning gate của `EPIC-03`. Story này không tạo Timer/Session
 behavior; nó chỉ quyết định durable foundation hiện tại có đủ evidence để handoff hay chưa.
 
-**Planning status:** `READY_FOR_IMPLEMENTATION`.
-**Implementation status:** `NOT_STARTED`.
+**Planning status:** `IMPLEMENTED_AWAITING_OWNER_CROSS_PLATFORM_RUNTIME`.
+**Implementation status:** `IMPLEMENTED_AWAITING_OWNER_CROSS_PLATFORM_RUNTIME`.
 
 Không có Product decision `OPEN` hoặc technical confirmation nào còn block implementation. Owner
-đã duyệt đủ `US0209-CONFIRM-01`–`05` ngày 2026-08-29. Lượt xác nhận này chỉ cập nhật tài liệu;
-không triển khai harness, chạy native/EAS build, prebuild, development client hoặc tạo native artifact.
+đã duyệt đủ `US0209-CONFIRM-01`–`05` ngày 2026-08-29. Aggregate two-phase runner, exact component
+contract validation, final normal-bootstrap gate, host integration tests, device validator và
+cross-platform runbook đã hoàn tất ngày 2026-08-30. Full `pnpm quality` pass `25` files / `153`
+tests. Story còn chờ owner chạy exact same-SHA scenario trên iOS và Android; agent không chạy
+native/EAS build, prebuild, development client hoặc tạo native artifact.
 
 ### 0.1. Start gate
 
@@ -278,68 +281,68 @@ authoritative duy nhất cho solo workflow.
 
 - [x] Owner duyệt `US0209-CONFIRM-01`–`05` ngày 2026-08-29.
 - [x] Update plan qua `READY_FOR_IMPLEMENTATION` trước implementation.
-- [ ] Snapshot worktree và preserve unrelated owner/documentation changes.
+- [x] Snapshot worktree và preserve unrelated owner/documentation changes.
 
 ### US0209-T01 — Traceability inventory và gap classification
 
-- [ ] Map 11 EPIC-02 completion criteria tới exact Story/host/native evidence.
-- [ ] Map 12 `US-02-09` acceptance criteria và Data Model §13 relevant rows.
-- [ ] Inventory all 147 current tests, eight probe contracts và migration checksum evidence theo
+- [x] Map 11 EPIC-02 completion criteria tới exact Story/host/native evidence.
+- [x] Map 12 `US-02-09` acceptance criteria và Data Model §13 relevant rows.
+- [x] Inventory current tests, eight probe contracts và migration checksum evidence theo
   capability; không cần list từng test nếu stable suite/file grouping trace đủ.
-- [ ] Classify gap thành `MISSING_TEST`, `MISSING_NATIVE_PARITY`, `LIMITATION` hoặc `BLOCKER`.
-- [ ] Verify prior iOS reports/assertions/SHA remain preserved as supporting evidence.
-- [ ] Confirm no `OPEN`/`DEFERRED` field/fixture và no product history background prune.
+- [x] Classify gap thành `MISSING_TEST`, `MISSING_NATIVE_PARITY`, `LIMITATION` hoặc `BLOCKER`.
+- [x] Verify prior iOS reports/assertions/SHA remain preserved as supporting evidence.
+- [x] Confirm no `OPEN`/`DEFERRED` field/fixture và no product history background prune.
 
 ### US0209-T02 — Host evidence stabilization
 
-- [ ] Run targeted audit trước; chỉ add automated test nếu criterion không có deterministic evidence.
-- [ ] Preserve exact empty/latest/synthetic/incompatible migration matrix.
-- [ ] Preserve constraint, repositories, derived query, retention, recovery/Retry và reset matrices.
-- [ ] Add aggregate contract tests without duplicating schema/business rules.
-- [ ] Verify all probe functions return stable passed/assertion/metadata contracts and cleanup.
-- [ ] Không thay production behavior chỉ để thuận tiện cho report; bug thật phải được ghi blocker/fix.
+- [x] Run targeted audit trước; chỉ add automated test nếu criterion không có deterministic evidence.
+- [x] Preserve exact empty/latest/synthetic/incompatible migration matrix.
+- [x] Preserve constraint, repositories, derived query, retention, recovery/Retry và reset matrices.
+- [x] Add aggregate contract tests without duplicating schema/business rules.
+- [x] Verify all probe functions return stable passed/assertion/metadata contracts and cleanup.
+- [x] Không thay production behavior chỉ để thuận tiện cho report; không phát hiện bug/blocker mới.
 
 ### US0209-T03 — Two-phase aggregate Expo SQLite harness
 
-- [ ] Add explicit dev-only `EXPO_PUBLIC_EPIC_02_EXIT_PROBE=1` gate; production/default boot no-op.
-- [ ] Use exact isolated exit database and static name; never inspect/mutate default product DB.
-- [ ] Phase 1 migrate/verify, persist bound sentinel + final identity, close and emit
+- [x] Add explicit dev-only `EXPO_PUBLIC_EPIC_02_EXIT_PROBE=1` gate; production/default boot no-op.
+- [x] Use exact isolated exit database and static name; never inspect/mutate default product DB.
+- [x] Phase 1 migrate/verify, persist bound sentinel + final identity, close and emit
   `AWAITING_RELAUNCH` without success.
-- [ ] Phase 2 validate same platform/application/runtime/commit + sentinel after real relaunch.
-- [ ] Sequentially invoke/reuse `US-02-01`–`08` probe functions and validate exact reports.
-- [ ] Verify normal bootstrap/readiness after aggregate diagnostics and no probe leakage.
-- [ ] Close idempotently and delete only exact isolated/component probe DBs after success/failure.
-- [ ] Handle stale/mismatched phase deterministically with safe exact cleanup/restart guidance.
+- [x] Phase 2 validate same platform/application/runtime/commit + sentinel after relaunch.
+- [x] Sequentially invoke/reuse `US-02-01`–`08` probe functions and validate exact reports.
+- [x] Verify normal bootstrap/readiness after aggregate diagnostics and no probe leakage.
+- [x] Close idempotently and delete only exact isolated/component probe DBs after success/failure.
+- [x] Handle stale/mismatched phase deterministically with safe exact cleanup/restart guidance.
 
 ### US0209-T04 — Report contract và failure/limitation evidence
 
-- [ ] Freeze phase-1 and final report schemas, metadata and stable assertion IDs.
-- [ ] Include platform/OS/target kind/app/runtime/application/SHA/SQLite identity.
-- [ ] Require exact component probe IDs, passed state and assertion completeness.
-- [ ] Carry representative write/unavailable/fingerprint/Retry/reset rollback facts into final result.
-- [ ] Add explicit physical disk-full status: `RUN_ON_ISOLATED_TARGET_AND_PASSED`,
+- [x] Freeze phase-1 and final report schemas, metadata and stable assertion IDs.
+- [x] Include platform/OS/target kind/app/runtime/application/SHA/SQLite identity.
+- [x] Require exact component probe IDs, passed state and assertion completeness.
+- [x] Carry representative write/unavailable/fingerprint/Retry/reset rollback facts into final result.
+- [x] Add explicit physical disk-full status: `RUN_ON_ISOLATED_TARGET_AND_PASSED`,
   `RUN_ON_ISOLATED_TARGET_AND_FAILED` hoặc `NOT_RUN_UNSAFE_OR_NONDETERMINISTIC`; không dùng
   ambiguous boolean.
-- [ ] Test report has no SQL, row payload, anonymous/session ID, stack, credential or raw exception.
+- [x] Test report has no SQL, row payload, anonymous/session ID, stack, credential or raw exception.
 
 ### US0209-T05 — Cross-platform manual runbook và validation
 
-- [ ] Write one non-destructive runbook cho iOS và Android, including prerequisites and cleanup.
-- [ ] Explain existing compatible dev client vs mandatory refresh after native/config mismatch.
-- [ ] Explain phase 1 signal, actual force-stop/terminate, phase 2 reopen and final log capture.
-- [ ] Record exact `git rev-parse HEAD`, target kind, OS, runtime and application identity.
-- [ ] Explain how to clear stale sentinel using only exact probe DB, never app/user DB.
-- [ ] Extend device-harness validator for new flag, runner, DB name, assertion/report contract.
-- [ ] Confirm default/production startup cannot execute aggregate or component probes.
+- [x] Write one non-destructive runbook cho iOS và Android, including prerequisites and cleanup.
+- [x] Explain existing compatible dev client vs mandatory refresh after native/config mismatch.
+- [x] Explain phase 1 signal, actual force-stop/terminate, phase 2 reopen and final log capture.
+- [x] Record exact `git rev-parse HEAD`, target kind, OS, runtime and application identity.
+- [x] Explain safe automatic exact-probe cleanup; never delete app/user DB.
+- [x] Extend device-harness validator for new flag, runner, DB name, assertion/report contract.
+- [x] Confirm default/production startup cannot execute aggregate or component probes.
 
 ### US0209-T06 — Final host quality và repository audit
 
-- [ ] Run targeted aggregate/relaunch/report tests with pinned Node `22.23.2` / pnpm `11.24.0`.
-- [ ] Run root `pnpm quality` and record exact final file/test count.
-- [ ] Run `git diff --check`, boundary, repository hygiene and immutable migration checksum.
-- [ ] Audit no migration `002`, Product behavior, provider SDK or probe production exposure.
-- [ ] Audit no generated `ios/`, `android/`, binary, signing material or credential in tracked diff.
-- [ ] Commit behavior/harness baseline and freeze exact SHA before native evidence.
+- [x] Run targeted aggregate/relaunch/report tests with pinned Node `22.23.2` / pnpm `11.24.0`.
+- [x] Run root `pnpm quality`: `25` files / `153` tests pass ngày 2026-08-30.
+- [x] Run `git diff --check`, boundary, repository hygiene and immutable migration checksum.
+- [x] Audit no migration `002`, Product behavior, provider SDK or probe production exposure.
+- [x] Audit no generated `ios/`, `android/`, binary, signing material or credential in tracked diff.
+- [x] Commit behavior/harness baseline and freeze exact SHA before native evidence.
 
 ### US0209-T07 — Owner iOS final evidence
 
@@ -412,7 +415,7 @@ provider SDK, native dependency/config, EAS pipeline change hoặc tracked nativ
 | Full Epic mapping | Criterion-to-evidence table completeness test/review | Both reports linked to same criteria |
 | No known blocker/owner gate | Audit outputs + blocker register | Owner reviews pair and approves exit |
 
-### 8.1. Proposed phase-1 report contract
+### 8.1. Frozen phase-1 report contract
 
 ```json
 {
@@ -427,14 +430,19 @@ provider SDK, native dependency/config, EAS pipeline change hoặc tracked nativ
   "applicationId": "com.dragonc92team.pixeldoro",
   "commitSha": "40-character-final-implementation-sha",
   "sqliteVersion": "runtime-value",
-  "nextAction": "terminate_and_relaunch_same_build"
+  "nextAction": "terminate_and_relaunch_same_build",
+  "assertions": [
+    "exit_probe_database_opened_and_migrated",
+    "persistent_sentinel_committed_before_relaunch",
+    "sentinel_connection_closed_before_relaunch"
+  ]
 }
 ```
 
 Phase 1 không có `passed: true`. Owner chỉ tiếp tục khi exact report cho biết sentinel đã commit và
 connection đã close. Hot/Fast Refresh không được tính là relaunch.
 
-### 8.2. Proposed final report contract
+### 8.2. Frozen final report contract
 
 ```json
 {
@@ -461,6 +469,7 @@ connection đã close. Hot/Fast Refresh không được tính là relaunch.
     "US-02-08_CONFIRMED_RESET"
   ],
   "assertions": [
+    "exit_probe_database_opened_and_migrated",
     "persistent_sentinel_survived_actual_process_relaunch",
     "all_component_probes_passed_with_exact_assertions",
     "migration_and_schema_safety_were_cross_platform_equivalent",
@@ -475,9 +484,9 @@ connection đã close. Hot/Fast Refresh không được tính là relaunch.
 }
 ```
 
-Exact assertion IDs/component representation chỉ freeze khi `T03`–`T04` implement. Final report
-không cần embed toàn bộ rows hoặc 80+ component assertions; aggregate runner phải validate exact
-component contracts internally và report pass/failure atomically.
+Assertion IDs/component order đã freeze trong `T03`–`T04`. Final report không embed toàn bộ rows
+hoặc 80+ component assertions; aggregate runner validate exact component contracts internally và
+chỉ report pass atomically sau normal bootstrap `ready` + cleanup.
 
 ## 9. Failure, retry và evidence invalidation policy
 
@@ -498,13 +507,13 @@ component contracts internally và report pass/failure atomically.
 ## 10. Definition of Done
 
 - [x] `US0209-CONFIRM-01`–`05` approved và reflected trong plan.
-- [ ] `T01`–`T06` implementation/host/harness/runbook complete theo order.
-- [ ] Final root quality/boundary/hygiene/checksum pass trên frozen behavior SHA.
-- [ ] Aggregate probe reuses all eight component contracts without production exposure.
+- [x] `T01`–`T06` implementation/host/harness/runbook complete theo order.
+- [x] Final root quality/boundary/hygiene/checksum pass trên frozen behavior SHA.
+- [x] Aggregate probe reuses all eight component contracts without production exposure.
 - [ ] Actual process relaunch sentinel pass on one iOS and one Android target.
 - [ ] Both final reports pass exact contract trên same frozen SHA.
-- [ ] Deterministic unavailable/write/fingerprint evidence pass; physical disk-full limitation ghi rõ.
-- [ ] No migration `002`, Product behavior, provider/native dependency hoặc tracked native artifact.
+- [x] Deterministic unavailable/write/fingerprint evidence pass; physical disk-full limitation ghi rõ.
+- [x] No migration `002`, Product behavior, provider/native dependency hoặc tracked native artifact.
 - [ ] Consolidated audit maps all Epic criteria/Story acceptance/Data Model rows.
 - [ ] Không còn known blocker/crash trong migration/bootstrap/durable-data outcome.
 - [ ] Owner explicitly approves Epic exit; `US-02-09` và `EPIC-02` closeout hoàn tất.
@@ -512,9 +521,10 @@ component contracts internally và report pass/failure atomically.
 
 ## 11. Handoff sau planning
 
-1. Owner đã duyệt `US0209-CONFIRM-01`–`05`; plan đủ `READY_FOR_IMPLEMENTATION`.
-2. Khi owner yêu cầu triển khai, execute `T00 → T06`, freeze final behavior/harness SHA.
-3. Owner chạy two-phase probe trên iOS rồi Android bằng exact same SHA; agent không chạy build.
+1. `T00 → T06` đã hoàn tất; host quality pass và final behavior/harness commit được freeze.
+2. Owner chạy two-phase probe theo
+   `apps/mobile/test/device/epic-02-exit-smoke.md` trên iOS rồi Android bằng exact same SHA.
+3. Agent không chạy native/EAS build; owner gửi hai final structured reports để review.
 4. Agent reconcile evidence và trình exit audit; owner quyết định `PASS_READY_TO_CLOSE` hoặc blocker.
 5. Chỉ sau explicit exit approval mới update `EPIC-02 DONE` và mở planning `EPIC-03`.
 
@@ -534,6 +544,19 @@ component contracts internally và report pass/failure atomically.
 - `docs/architecture/decisions/ADR-007-eas-delivery-pipeline.md`
 
 ## 13. Change log
+
+### 0.3.0 — 2026-08-30
+
+- Implement dev-only aggregate `US-02-09_EPIC_EXIT` runner reuse exact eight component probes.
+- Add isolated two-phase migration/sentinel, strict runtime/target/final-SHA identity, fail-closed
+  mismatch, normal-bootstrap-ready finalization và exact cleanup.
+- Freeze sanitized phase/final reports, explicit physical disk-full limitation và exact component/
+  assertion surfaces; missing target kind bị reject thay vì suy đoán.
+- Add real host SQLite phase/relaunch/identity/assertion-drift/full-component tests, composition
+  finalization test, cross-platform manual runbook và device-harness validation.
+- Full `pnpm quality` pass `25` files / `153` tests; boundary `11` forbidden / `3` valid; repository
+  hygiene pass với một immutable migration. Không native/EAS/prebuild hoặc generated artifact.
+- Chuyển Story sang `IMPLEMENTED_AWAITING_OWNER_CROSS_PLATFORM_RUNTIME`; còn `T07`–`T10`.
 
 ### 0.2.0 — 2026-08-29
 

@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_EPIC_02_IMPLEMENTATION_EVIDENCE
 title: PixelDoro Mobile MVP — EPIC-02 Implementation Evidence
-version: 0.18.0
+version: 0.19.0
 status: IN_PROGRESS
-last_updated: 2026-08-29
+last_updated: 2026-08-30
 owner: Dũng Lư
 language: vi
 scope:
@@ -70,10 +70,12 @@ implementation SHA `795c3cd59abf80225747e36fcc61e4d13afbaa14`. Private authority
 atomic reset/reseed, post-reset bootstrap, notification/privacy boundary và per-statement
 rollback/fingerprint matrix đều pass. Planning dependency `US-02-09` đã mở.
 
-`US-02-09 — Cross-platform Evidence và Epic Exit Audit` có implementation plan `0.2.0` ở trạng
-thái `READY_FOR_IMPLEMENTATION`; implementation `NOT_STARTED`. Owner đã duyệt đủ năm technical
-confirmation. EPIC-02 chưa `DONE` và `EPIC-03` chưa được mở cho tới final host + iOS + Android
-evidence và explicit owner exit review.
+`US-02-09 — Cross-platform Evidence và Epic Exit Audit` đã hoàn tất host/harness implementation.
+Full `pnpm quality` pass `25` files / `153` tests. Aggregate two-phase sentinel, strict runtime/
+target/SHA identity, exact eight-component validation, fail-closed mismatch/cleanup và normal-
+bootstrap-ready final gate đều pass trên host. Story đang
+`IMPLEMENTED_AWAITING_OWNER_CROSS_PLATFORM_RUNTIME`; EPIC-02 chưa `DONE` và EPIC-03 chưa được mở
+cho tới exact same-SHA iOS + Android reports và explicit owner exit review.
 
 Không có migration `002`, Settings reset UI, reset-path database-file deletion, Product
 Session/Reward/Pet/Gamification behavior, analytics/notification provider delivery, native/EAS
@@ -809,17 +811,17 @@ phải probe failure. Documentation-only closeout không làm stale behavioral e
 Planning dependency `US-02-09` đã mở theo authoritative solo order. Both-platform process-kill/
 relaunch và Epic exit audit vẫn thuộc Story đó; không tự active trong closeout này.
 
-## 19. `US-02-09` planning baseline — 2026-08-29
+## 19. `US-02-09` planning baseline — 2026-08-30
 
 - Start gate đạt: `US-02-01` đến `US-02-08` đều `DONE`; latest baseline SHA là
   `795c3cd59abf80225747e36fcc61e4d13afbaa14` với host `24` files / `147` tests và exact iOS
   reset report `12/12` assertions, SQLite `3.50.3`.
 - Implementation plan authoritative:
-  [`US-02-09_IMPLEMENTATION_PLAN.md`](./US-02-09_IMPLEMENTATION_PLAN.md) `0.2.0` /
-  `READY_FOR_IMPLEMENTATION` / implementation `NOT_STARTED`.
+  [`US-02-09_IMPLEMENTATION_PLAN.md`](./US-02-09_IMPLEMENTATION_PLAN.md) `0.3.0` /
+  `IMPLEMENTED_AWAITING_OWNER_CROSS_PLATFORM_RUNTIME`.
 - Current gap là final same-SHA both-platform parity và actual process relaunch; prior per-Story
   iOS reports vẫn là supporting evidence nhưng không thay final US-02-09 iOS + Android pair.
-- Plan đề xuất một dev-only aggregate runner reuse tám existing probes và một two-phase isolated
+- Implementation có một dev-only aggregate runner reuse tám existing probes và một two-phase isolated
   sentinel: phase 1 commit rồi yêu cầu actual terminate/relaunch; phase 2 validate persistence,
   component matrix, normal readiness và cleanup.
 - Deterministic injected unavailable/write/fingerprint evidence là bắt buộc. Physical disk-full
@@ -832,3 +834,67 @@ relaunch và Epic exit audit vẫn thuộc Story đó; không tự active trong 
   release artifact hoặc tracked native/generated credential material.
 - Chỉ sau host quality, two native reports, complete traceability và explicit owner approval mới
   chuyển `US-02-09`/`EPIC-02` sang `DONE` và mở planning `EPIC-03`.
+
+## 20. `US-02-09` host implementation evidence — 2026-08-30
+
+| Capability | Repository evidence | Status |
+|---|---|---|
+| Final aggregate runner | Dev-only `US-02-09_EPIC_EXIT` lazy path; one explicit flag; no current facade/route/Product UI exposure | `PASS_HOST` |
+| Two-phase durability | Isolated normative-migrated DB persists a bound sentinel in phase 1; phase 2 validates it before component work | `PASS_HOST_SQLITE` |
+| Runtime identity | Platform/OS/target kind/app/runtime/application/final SHA/SQLite required; invalid SHA, missing target or phase mismatch fail closed | `PASS_HOST` |
+| Exact component surface | Eight existing production-backed probes run in order; exact IDs/assertion arrays/runtime identity/cleanup are validated internally | `PASS_HOST_SQLITE` |
+| Aggregate safety facts | Migration/schema, constraints/repositories/queries, recovery/Retry/reset and representative unavailable/write rollback map to stable aggregate assertions | `PASS_HOST_SQLITE` |
+| Normal bootstrap gate | Composition publishes final success only after aggregate components pass and the normal app bootstrap reaches `ready` | `PASS_HOST` |
+| Relaunch/same-process guard | Phase 1 emits no success and the application-scoped probe promise cannot advance phase 2 without a new app runtime launch | `PASS_HOST` |
+| Failure/cleanup | Stale identity/assertion drift/invalid metadata return sanitized failure and delete only exact isolated probe DB after safe close | `PASS_HOST_SQLITE` |
+| Physical disk limitation | Report explicitly records `NOT_RUN_UNSAFE_OR_NONDETERMINISTIC`; host fault injection remains exhaustive, no fake physical pass | `PASS_POLICY` |
+| Native runbook | One non-destructive iOS/Android Development Build guide freezes same-SHA, force-stop/reopen, metadata/assertions and cleanup | `READY_OWNER_NATIVE` |
+| Scope/artifact audit | No migration `002`, Product behavior, provider/native dependency, generated platform tree, binary or credential | `PASS_HOST` |
+
+Automated checks dùng pinned Node.js `22.23.2` và pnpm `11.24.0`:
+
+- Targeted composition + aggregate tests: `PASS`, `8/8` final combined cases; final aggregate
+  suite gồm phase transition, final readiness, identity mismatch, missing target, assertion drift
+  và full real eight-component execution.
+- `pnpm quality`: `PASS`.
+  - Domain/Application/Mobile strict typecheck: `PASS`.
+  - ESLint workspace: `PASS`.
+  - Vitest: `25` files / `153` tests pass.
+  - Device harness: `PASS`, gồm two-phase cross-platform runbook/source contract.
+  - Architecture boundary: `11` forbidden imports rejected, `3` valid imports accepted.
+  - Repository hygiene/checksum: `PASS`, đúng một immutable production migration `001`.
+- `git diff --check`: `PASS`.
+- Tracked native/artifact audit: chỉ `apps/mobile/artifacts/.gitkeep`; không `ios/`, `android/`,
+  binary, signing material hoặc credential trong implementation diff.
+- Không chạy native/EAS build, Expo prebuild, simulator hoặc emulator trong agent turn.
+
+### 20.1. EPIC-02 criterion traceability trước native pair
+
+| EPIC-02 completion criterion | Deterministic/host evidence | Native pair gate |
+|---|---|---|
+| Normative initial schema | US-02-02 schema manifest/failure matrix + aggregate exact component | iOS + Android final report |
+| FK/one-running/immutability/backstops | US-02-01/02/05 real SQLite matrices + aggregate component | iOS + Android final report |
+| Exact singleton/default/catalog | US-02-02/04/08 seed/bootstrap/reset verification | iOS + Android final report |
+| Forward migration/checksum/gap/newer/rollback | US-02-03/07 exhaustive migration/retry evidence | iOS + Android final report |
+| Safe bootstrap/readiness | US-02-04/07 + aggregate normal-bootstrap-ready gate | iOS + Android actual relaunch |
+| Typed repositories/shared transaction owner | US-02-01/05 boundary, round-trip and rollback | iOS + Android final report |
+| Durable query/retention semantics | US-02-06 history/cadence/review/economy/queue/retention | iOS + Android final report |
+| Typed recovery/Retry/no destruction | US-02-07 recovery/fingerprint/no-auto-reset | iOS + Android final report |
+| Atomic confirmed reset | US-02-08 success/per-statement rollback/retained schema | iOS + Android final report |
+| Automated + cross-platform evidence | Full `25/153` quality + aggregate contract | `AWAITING_IOS_ANDROID` |
+| Epic exit/no known blocker | Host audit has no blocker | Await both reports + owner review |
+
+Physical storage exhaustion remains `NOT_RUN_UNSAFE_OR_NONDETERMINISTIC`; deterministic write/
+unavailable/rollback/fingerprint cases pass. This limitation does not claim protection from OS
+uninstall, physical storage corruption or device loss.
+
+Manual owner gate:
+[`apps/mobile/test/device/epic-02-exit-smoke.md`](../../apps/mobile/test/device/epic-02-exit-smoke.md).
+Owner must run phase 1 → actual force-stop/terminate → phase 2 on one iOS and one Android
+Development Build target using the exact same final behavior/harness SHA. Send both complete final
+JSON reports; component Recovery log lines are expected injected traces.
+
+**Current Story status:** `IMPLEMENTED_AWAITING_OWNER_CROSS_PLATFORM_RUNTIME`.
+
+`EPIC-02` remains `IN_PROGRESS`; `EPIC-03` remains blocked pending both native reports,
+criterion reconciliation and explicit owner exit approval.

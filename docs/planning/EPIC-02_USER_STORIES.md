@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_EPIC_02_USER_STORIES
 title: PixelDoro Mobile MVP — EPIC-02 User Stories
-version: 1.24.0
+version: 1.25.0
 status: READY_FOR_REVIEW
-last_updated: 2026-08-29
+last_updated: 2026-08-30
 owner: Dũng Lư
 reviewer: Dũng Lư
 reviewer_role: Tech Lead
@@ -795,10 +795,10 @@ EPIC-02/EPIC-10 boundary.
 ### US-02-09 — Cross-platform Evidence và Epic Exit Audit
 
 **Implementation plan:**
-[`US-02-09_IMPLEMENTATION_PLAN.md`](./US-02-09_IMPLEMENTATION_PLAN.md) `0.2.0` đã
-`READY_FOR_IMPLEMENTATION`; implementation `NOT_STARTED`. Owner đã duyệt aggregate final-SHA
-probe, two-phase actual process relaunch, deterministic failure/physical-disk limitation boundary,
-one iOS + one Android Development Build target và explicit owner Epic-exit approval.
+[`US-02-09_IMPLEMENTATION_PLAN.md`](./US-02-09_IMPLEMENTATION_PLAN.md) `0.3.0` đang
+`IMPLEMENTED_AWAITING_OWNER_CROSS_PLATFORM_RUNTIME`. Aggregate two-phase probe, full-component
+contract validation, host tests/runbook và final normal-bootstrap gate đã hoàn tất. Full
+`pnpm quality` pass `25` files / `153` tests; còn owner iOS + Android reports trên cùng final SHA.
 
 **Story statement**
 
@@ -827,23 +827,23 @@ behavior, closed-beta artifact, PostHog/provider delivery và full `EPIC-12` mat
 
 **Acceptance criteria:**
 
-- [ ] Root quality/test/boundary commands pass với exact committed dependency graph.
-- [ ] Automated matrix cover empty DB, latest DB, synthetic upgrade, checksum/gap/newer schema, migration rollback và repeated bootstrap.
-- [ ] Automated constraint matrix cover FK, singleton, conditional session shape, one-running, terminal/identity immutability, reward/purchase/ownership backstop.
-- [ ] Automated repository/query matrix cover every durable entity, trial exclusions, local-day grouping, cadence/review facts, economy consistency và analytics queue bounds.
-- [ ] Automated recovery/reset matrix chứng minh no automatic destruction, Retry và atomic reset rollback/success.
+- [x] Root quality/test/boundary commands pass với exact committed dependency graph.
+- [x] Automated matrix cover empty DB, latest DB, synthetic upgrade, checksum/gap/newer schema, migration rollback và repeated bootstrap.
+- [x] Automated constraint matrix cover FK, singleton, conditional session shape, one-running, terminal/identity immutability, reward/purchase/ownership backstop.
+- [x] Automated repository/query matrix cover every durable entity, trial exclusions, local-day grouping, cadence/review facts, economy consistency và analytics queue bounds.
+- [x] Automated recovery/reset matrix chứng minh no automatic destruction, Retry và atomic reset rollback/success.
 - [ ] iOS target mở app, migrate/bootstrap ready, persist/reopen data và confirmed-reset harness theo scenario đã duyệt.
 - [ ] Android target chạy cùng scenario và kết quả tương đương về durable truth.
 - [ ] Write/disk/database-unavailable failure được kiểm thử trên runtime nơi khả thi; limitation không deterministic được ghi rõ, không giả evidence.
 - [ ] Native dependency change dẫn tới development-build refresh do owner thực hiện; không commit generated native build artifact/credential.
-- [ ] Không có `OPEN-001`, `OPEN-006`, `OPEN-009` hoặc feature `DEFERRED` trong schema/evidence fixture.
+- [x] Không có `OPEN-001`, `OPEN-006`, `OPEN-009` hoặc feature `DEFERRED` trong schema/evidence fixture.
 - [ ] Evidence record map đủ toàn bộ EPIC-02 completion checklist và không dùng documentation approval thay implementation evidence.
 - [ ] Không còn known blocker khiến migration/bootstrap unsafe; `EPIC-03` chỉ được mở sau owner review exit audit.
 
 **Task checklist sơ bộ:**
 
-- [ ] Consolidate automated test matrix và stable commands.
-- [ ] Prepare non-destructive iOS/Android scenario checklist.
+- [x] Consolidate automated test matrix và stable commands.
+- [x] Prepare non-destructive iOS/Android scenario checklist.
 - [ ] Owner refresh development build sau SQLite native dependency change.
 - [ ] Owner chạy iOS evidence.
 - [ ] Owner chạy Android evidence.
@@ -931,8 +931,9 @@ Một Story chỉ được đánh dấu `[x]` khi:
   `b3c8421ef3a20934005711a571655265cf736091`. `US-02-08` plan `0.4.0` đã
   `DONE`: production/host evidence pass `24` files / `147` tests và exact iOS reset probe `12/12`
   pass với SQLite `3.50.3` trên SHA `795c3cd59abf80225747e36fcc61e4d13afbaa14`.
-  `US-02-09` plan `0.2.0` đã `READY_FOR_IMPLEMENTATION` / implementation `NOT_STARTED`;
-  owner đã duyệt đủ `US0209-CONFIRM-01`–`05`.
+  `US-02-09` plan `0.3.0` đang `IMPLEMENTED_AWAITING_OWNER_CROSS_PLATFORM_RUNTIME`: full host
+  quality `25` files / `153` tests và aggregate two-phase/full-component harness pass; còn owner
+  iOS + Android reports trên exact same final SHA trước Epic exit audit.
 
 ### 8.2. Điều kiện chuyển `READY_FOR_IMPLEMENTATION`
 
@@ -957,6 +958,17 @@ Một Story chỉ được đánh dấu `[x]` khi:
 - [ ] Dũng Lư review và phê duyệt Story breakdown trước khi chuyển status sang `APPROVED`/`READY_FOR_IMPLEMENTATION`.
 
 ## 10. Change log
+
+### 1.25.0 — 2026-08-30
+
+- Implement aggregate `US-02-09_EPIC_EXIT` two-phase sentinel runner, strict target/runtime/SHA
+  identity, exact reuse/validation của tám component probes và normal-bootstrap-ready final gate.
+- Add real host SQLite relaunch/identity/assertion-drift/full-component tests, composition test,
+  iOS/Android manual runbook và device validator; full quality pass `25` files / `153` tests.
+- Xác nhận deterministic migration/constraint/repository/query/recovery/reset matrices, no
+  OPEN/DEFERRED schema scope, đúng một immutable migration và không tracked native/credential.
+- Chuyển plan `US-02-09` `0.3.0` sang `IMPLEMENTED_AWAITING_OWNER_CROSS_PLATFORM_RUNTIME`;
+  không chạy native/EAS build và chưa đóng EPIC-02/mở EPIC-03.
 
 ### 1.24.0 — 2026-08-29
 
