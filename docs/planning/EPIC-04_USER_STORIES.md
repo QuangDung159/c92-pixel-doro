@@ -1,13 +1,13 @@
 ---
 document_id: PIXELDORO_EPIC_04_USER_STORIES
 title: PixelDoro EPIC-04 — Home/Pet Room và Pet Companion Projection User Stories
-version: 0.5.0
+version: 0.6.0
 status: APPROVED_FOR_SEQUENTIAL_IMPLEMENTATION
 last_updated: 2026-08-30
 owner: Dũng Lư
 approved_by: Dũng Lư
 approved_at: 2026-08-30
-implementation_status: US_04_04_IMPLEMENTED_AWAITING_OWNER_MANUAL_EVIDENCE
+implementation_status: US_04_05_IMPLEMENTED_AWAITING_OWNER_MANUAL_AND_PERFORMANCE_EVIDENCE
 language: vi
 scope:
   - mobile_mvp
@@ -32,9 +32,9 @@ trong khi animation không được làm chậm, block hoặc thay đổi core F
 
 Story list đã được owner duyệt toàn bộ trong một lượt ngày 2026-08-30. Solo developer chỉ được có
 **một Story active tại một thời điểm** và đi theo execution order ở mục 8. Owner xác nhận đã test
-`US-04-01` đến `US-04-03`. Owner sau đó yêu cầu tiến hành `US-04-04`; implementation/automated gates
-của Story 04 đã hoàn tất và đang chờ owner manual Development Build evidence. Các Story 05–07 chưa
-được active.
+`US-04-01` đến `US-04-04`. Owner sau đó yêu cầu tiến hành `US-04-05`; implementation/automated gates
+của Story 05 đã hoàn tất và đang chờ owner manual Development Build cùng performance evidence. Các
+Story 06–07 chưa được active.
 
 ### 0.2. Baseline đã xác minh
 
@@ -788,7 +788,7 @@ việc đang diễn ra thay vì phát lại kết quả cũ gây nhầm lẫn.
 | Blocks | `US-04-05`–`07` |
 | Gate | Fresh event provenance reviewed |
 | Initial status | `NOT_STARTED` |
-| Current status | `IMPLEMENTED_AWAITING_OWNER_MANUAL_EVIDENCE` |
+| Current status | `DONE_OWNER_ACCEPTED` |
 
 #### Outcome và output
 
@@ -885,7 +885,8 @@ session/reward mutation.
   `docs/planning/US-04-04_IMPLEMENTATION_REPORT.md`.
 - Root quality pass tại baseline `8e9690e123e7e9e12e1166ff23bfc45db324edd1`: typecheck, lint,
   `47` test files / `255` tests, device harness, boundary checks (`11` forbidden rejected / `3` valid
-  accepted) và repository hygiene. Manual owner evidence vẫn `PENDING`, nên `US-04-05` chưa active.
+  accepted) và repository hygiene. Owner xác nhận đã test `US-04-04` ngày 2026-08-30; platform/device
+  metadata không được tự suy diễn. `US-04-05` được active theo yêu cầu tiếp theo của owner.
 - Không thêm schema/migration, durable receipt, production resolver/reward emitter, Reanimated
   playback, native/EAS/prebuild artifact hoặc quyết định Pet identity.
 
@@ -903,7 +904,7 @@ screen không còn hiển thị để PixelDoro không tốn pin hay làm chậm
 | Dependencies | `US-04-04` |
 | Blocks | `US-04-06`, `US-04-07` |
 | Gate | ADR-005 Reanimated baseline; Skia excluded |
-| Initial status | `NOT_STARTED` |
+| Current status | `IMPLEMENTED_AWAITING_OWNER_MANUAL_AND_PERFORMANCE_EVIDENCE` |
 
 #### Outcome và output
 
@@ -921,17 +922,17 @@ by agent, production timer.
 
 #### Acceptance criteria
 
-- [ ] Loop state does not restart on countdown/projection-equivalent rerender.
-- [ ] One-shot does not loop or block input/navigation.
-- [ ] Background, blur/not-visible, recovery replacement and unmount cancel visual work/timers.
-- [ ] Foreground starts current base state only after safe projection/reconciliation boundary.
-- [ ] Cleanup is idempotent; no late callback changes visible state after unmount/preemption.
-- [ ] Animation failure falls toward static contract and never mutates durable truth.
-- [ ] Reduced motion switch hook is supported; full still behavior accepted in 06.
-- [ ] Reanimated + bundled sprite remains baseline; no Skia/dependency/schema change.
-- [ ] Components <300 dòng; renderer, visibility hook and asset playback adapter split by responsibility.
-- [ ] Accessibility/status text không bị animation che, lặp hoặc mất focus.
-- [ ] Automated tests pass.
+- [x] Loop state does not restart on countdown/projection-equivalent rerender.
+- [x] One-shot does not loop or block input/navigation.
+- [x] Background, blur/not-visible, recovery replacement and unmount cancel visual work/timers.
+- [x] Foreground starts current base state only after safe projection/reconciliation boundary.
+- [x] Cleanup is idempotent; no late callback changes visible state after unmount/preemption.
+- [x] Animation failure falls toward static contract and never mutates durable truth.
+- [x] Reduced motion switch hook is supported; full still behavior accepted in 06.
+- [x] Reanimated + bundled sprite remains baseline; no Skia/dependency/schema change.
+- [x] Components <300 dòng; renderer, visibility hook and asset playback adapter split by responsibility.
+- [x] Accessibility/status text không bị animation che, lặp hoặc mất focus.
+- [x] Automated tests pass.
 - [ ] Manual guide pass.
 - [ ] Performance và Story evidence được ghi lại.
 
@@ -983,6 +984,26 @@ plus one current/mid-range target. No new build solely for planning.
 **Evidence:** screen recording, lifecycle log/counter without raw session payload, benchmark table,
 SHA/build/device. **Không được xảy ra:** background animation, duplicated loops, blocked CTA,
 production log payload, Skia addition without gate.
+
+#### Implementation evidence — 2026-08-30
+
+- Base projection phát `loop` cho Idle/Working/Breaking; terminal projection giữ `one-shot` rồi chuyển
+  `still` qua feedback deadline hiện có. Countdown hoặc projection-equivalent rerender giữ cùng
+  playback key nên không restart.
+- Shared `PetAnimationRenderer` dùng typed neutral-pose manifest và Reanimated driver; semantic status
+  nằm ngoài decorative animated surface. Final identity/art vẫn bị chặn bởi `OPEN-001` và thuộc 07.
+- Một composition-scoped lifecycle subscription publish app visibility. Mỗi Pet route cung cấp screen
+  focus qua shared wrapper; visibility hook kết hợp active + focused + mounted.
+- Playback controller cancel trước replacement, idempotent cleanup, generation guard cho late callback,
+  one-shot completion dedupe và failure-to-static callback. Reduced Motion dừng driver, không đổi truth.
+- Focus feature 368 dòng được tách thành 241 + 150 dòng; mọi Presentation source module dưới 300 dòng.
+- Automated root quality pass trên baseline `680bf182c08fc867a1e77558c1570ae1ea289d9e`:
+  typecheck, lint, `51` test files / `271` tests, device harness, boundary checks (`11` forbidden /
+  `3` valid) và repository hygiene. Manual guide:
+  `apps/mobile/test/device/pet-animation-lifecycle-smoke.md`; report:
+  `docs/planning/US-04-05_IMPLEMENTATION_REPORT.md`.
+- Manual lifecycle và bảng performance 30 phút vẫn `PENDING`; không có native/EAS/prebuild run,
+  schema/migration/dependency/Skia change hoặc quyết định Pet identity. `US-04-06` chưa active.
 
 ---
 
@@ -1322,12 +1343,23 @@ Approval Story list không đồng nghĩa resolve `OPEN-001`, approve artwork ho
 | `RISK-04-02` | Root prototype provider mistaken for app truth | Wrong state/reward/replay | Independent production facade/provider; import tests | OPEN until 02 |
 | `RISK-04-03` | Latest terminal row mistaken as fresh event | Relaunch/reopen replay | Commit-time event provenance; no read inference | OPEN until 03–04 |
 | `RISK-04-04` | Startup reconciliation is currently noop | Unsafe active projection if overclaimed | 02 exposes read/recovery boundary only; Timer Epic owns production reconcile | VISIBLE DEPENDENCY |
-| `RISK-04-05` | Reanimated asset/frame cost on low-end device | Jank/battery/leak | 05 ADR-005 benchmark and simplify decoration first | OPEN until 05 |
+| `RISK-04-05` | Reanimated asset/frame cost on low-end device | Jank/battery/leak | 05 ADR-005 benchmark and simplify decoration first | AWAITING DEVICE EVIDENCE |
 | `RISK-04-06` | Accessibility semantics duplicated by animated nodes | Repeated/spam announcements | One semantic status owner; decorative frames hidden | OPEN until 06 |
 | `RISK-04-07` | Architecture/schema drives UX | Approved flow regression or needless migration | Authority order + data-needs no-gap decision | MONITOR |
 | `RISK-04-08` | Final iOS/Android evidence missing/fabricated | Invalid Epic exit | Frozen SHA and explicit per-platform owner record | OPEN until 07 |
 
 ## 19. Change log
+
+### 0.6.0 — 2026-08-30
+
+- Ghi nhận owner đã test/chấp nhận `US-04-04` và yêu cầu triển khai `US-04-05`; không tự điền
+  platform/device/screenshot metadata chưa được cung cấp.
+- Implement visibility aggregation cho app + route focus, shared Reanimated renderer/driver, typed
+  neutral-pose manifest, base loop, terminal one-shot/hold và guarded idempotent cleanup.
+- Tách Focus Result để mọi Presentation source module dưới 300 dòng; giữ nguyên shared UI convention,
+  semantic status và CTA layout. Không thêm Skia, dependency, schema/migration hoặc final Pet art.
+- Root quality pass `51` files / `271` tests. Manual lifecycle và performance matrix 30 phút còn
+  `PENDING`; `US-04-06` chưa active.
 
 ### 0.5.0 — 2026-08-30
 

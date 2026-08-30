@@ -10,6 +10,7 @@ import {
 import { usePrototype } from '@/presentation/prototype/prototype-context';
 
 import { usePrototypeBack } from '../use-prototype-back';
+import { PetRouteVisibility } from '../pet-route-visibility';
 
 export default function BreakSessionRoute() {
   const router = useRouter();
@@ -33,18 +34,24 @@ export default function BreakSessionRoute() {
   });
 
   if (breakResult !== null && session === null) {
-    return <BreakResultScreen onHome={goHome} result={breakResult} />;
+    return (
+      <PetRouteVisibility>
+        <BreakResultScreen onHome={goHome} result={breakResult} />
+      </PetRouteVisibility>
+    );
   }
 
   return (
-    <BreakSessionScreen
-      cancelRequestToken={cancelRequestToken}
-      onMissingSession={goHome}
-      onDismissPetFeedbackError={dismissPetFeedbackError}
-      onRetryPet={() => void refreshPet()}
-      onResolve={resolveBreak}
-      pet={pet}
-      session={session}
-    />
+    <PetRouteVisibility>
+      <BreakSessionScreen
+        cancelRequestToken={cancelRequestToken}
+        onMissingSession={goHome}
+        onDismissPetFeedbackError={dismissPetFeedbackError}
+        onRetryPet={() => void refreshPet()}
+        onResolve={resolveBreak}
+        pet={pet}
+        session={session}
+      />
+    </PetRouteVisibility>
   );
 }

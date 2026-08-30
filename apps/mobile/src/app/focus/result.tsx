@@ -13,6 +13,7 @@ import {
 import { usePrototype } from '@/presentation/prototype/prototype-context';
 
 import { usePrototypeBack } from '../use-prototype-back';
+import { PetRouteVisibility } from '../pet-route-visibility';
 
 export default function FocusResultRoute() {
   const router = useRouter();
@@ -39,27 +40,29 @@ export default function FocusResultRoute() {
   usePrototypeBack(goHome);
 
   return (
-    <FocusResultScreen
-      nextBreakKind={nextBreakKind}
-      onDismissPetFeedbackError={dismissPetFeedbackError}
-      onHome={goHome}
-      onRetryPet={() => void refreshPet()}
-      onRetryFocus={() => router.replace('/focus/setup')}
-      onRetryTrial={() => {
-        startTrial();
-        router.replace('/focus/session');
-      }}
-      onTriggerTerminalReviewFixture={() => {
-        void triggerPetTerminalReviewFixture();
-      }}
-      onSetNextBreakKind={setNextBreakKind}
-      onStartBreak={() => {
-        startBreak();
-        router.replace('/break/session');
-      }}
-      pet={pet}
-      result={focusResult}
-      terminalReviewFixtureAvailable={terminalReviewFixtureAvailable}
-    />
+    <PetRouteVisibility>
+      <FocusResultScreen
+        nextBreakKind={nextBreakKind}
+        onDismissPetFeedbackError={dismissPetFeedbackError}
+        onHome={goHome}
+        onRetryPet={() => void refreshPet()}
+        onRetryFocus={() => router.replace('/focus/setup')}
+        onRetryTrial={() => {
+          startTrial();
+          router.replace('/focus/session');
+        }}
+        onTriggerTerminalReviewFixture={() => {
+          void triggerPetTerminalReviewFixture();
+        }}
+        onSetNextBreakKind={setNextBreakKind}
+        onStartBreak={() => {
+          startBreak();
+          router.replace('/break/session');
+        }}
+        pet={pet}
+        result={focusResult}
+        terminalReviewFixtureAvailable={terminalReviewFixtureAvailable}
+      />
+    </PetRouteVisibility>
   );
 }

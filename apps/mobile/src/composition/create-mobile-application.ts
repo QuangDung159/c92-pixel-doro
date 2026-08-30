@@ -1,5 +1,6 @@
 import {
   ConfirmedLocalDataReset,
+  AppVisibilityController,
   MobileBootstrap,
   ReadinessGate,
   type AppLifecyclePort,
@@ -75,6 +76,9 @@ export const createMobileApplication = (
   const id = options.id ?? new DeviceIdAdapter();
   const appLifecycle =
     options.appLifecycle ?? new ReactNativeAppLifecycleAdapter();
+  const appVisibility = new AppVisibilityController(
+    appLifecycle.getCurrentState(),
+  );
   const databaseOwner = new SQLiteDatabaseOwner(
     options.databaseName ?? PIXELDORO_DATABASE_NAME,
     driver,
@@ -209,6 +213,7 @@ export const createMobileApplication = (
 
   const startPetLifecycleRefresh = (): void => {
     unsubscribePetLifecycle ??= appLifecycle.subscribe((state) => {
+      appVisibility.publish(state);
       if (state === 'background') {
         petTerminalFeedback.discardActive();
         return;
@@ -380,6 +385,7 @@ export const createMobileApplication = (
   };
 
   return {
+    appVisibility,
     bootstrap,
     confirmedReset,
     criticalRecovery: bootstrap,
@@ -415,6 +421,10 @@ export const createMobileApplication = (
     dismissPetTerminalFeedbackError: () => petTerminalFeedback.dismissRecovery(),
     discardPetTerminalFeedback: () => petTerminalFeedback.discardActive(),
     refreshPetCompanion,
+    reportPetVisualComplete: (feedbackId) =>
+      petTerminalFeedback.reportVisualComplete(feedbackId),
+    reportPetVisualFailure: (feedbackId) =>
+      petTerminalFeedback.reportVisualFailure(feedbackId),
     retryRecovery,
     triggerPetTerminalReviewFixture,
     dispose: () => {
@@ -422,6 +432,7 @@ export const createMobileApplication = (
       unsubscribePetLifecycle = undefined;
       cancelReviewWait?.();
       cancelReviewWait = undefined;
+      appVisibility.dispose();
       petVisual.dispose();
       petCompanion.dispose();
       petTerminalFeedback.dispose();

@@ -2,6 +2,7 @@ import type { PetVisualProjection } from '@pixeldoro/application';
 
 import { PetStage } from './pet-stage';
 import { ErrorState, LoadingState } from './status-surface';
+import { usePetVisualPlaybackCallbacks } from '@/presentation/providers/mobile-application-context';
 
 export interface PetVisualStatusProps {
   readonly projection: PetVisualProjection;
@@ -14,6 +15,7 @@ export const PetVisualStatus = ({
   onRetryBase,
   onDismissTerminalError,
 }: PetVisualStatusProps) => {
+  const playbackCallbacks = usePetVisualPlaybackCallbacks();
   if (projection.status === 'loading') {
     return <LoadingState label="Đang đồng bộ người bạn nhỏ…" />;
   }
@@ -37,7 +39,17 @@ export const PetVisualStatus = ({
       {...(projection.source === 'terminal'
         ? { liveRegion: 'polite' as const }
         : {})}
+      playbackId={projection.announcementId}
       state={projection.state}
+      visualMode={projection.visualMode}
+      {...(projection.source === 'terminal'
+        ? {
+            onPlaybackComplete: () =>
+              playbackCallbacks.reportComplete(projection.feedbackId),
+            onPlaybackFailure: () =>
+              playbackCallbacks.reportFailure(projection.feedbackId),
+          }
+        : {})}
     />
   );
 };

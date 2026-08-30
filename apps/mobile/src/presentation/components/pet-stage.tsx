@@ -2,7 +2,10 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { palette } from '@/presentation/theme/palette';
 
-import { PetPortrait, type CompanionState } from './pet-portrait';
+import { PetAnimationRenderer } from '@/presentation/animation/pet-animation-renderer';
+import { petAnimationManifest } from '@/presentation/animation/pet-animation-manifest';
+
+import type { CompanionState } from './pet-portrait';
 
 const defaultStatusLabels: Record<CompanionState, string> = {
   idle: 'Người bạn đang chờ bạn',
@@ -16,9 +19,21 @@ export interface PetStageProps {
   readonly state: CompanionState;
   readonly statusLabel?: string;
   readonly liveRegion?: 'none' | 'polite' | 'assertive';
+  readonly playbackId?: string;
+  readonly visualMode?: 'loop' | 'one-shot' | 'still';
+  readonly onPlaybackComplete?: () => void;
+  readonly onPlaybackFailure?: () => void;
 }
 
-export const PetStage = ({ state, statusLabel, liveRegion }: PetStageProps) => {
+export const PetStage = ({
+  state,
+  statusLabel,
+  liveRegion,
+  playbackId = `direct:${state}`,
+  visualMode = petAnimationManifest[state].playback,
+  onPlaybackComplete,
+  onPlaybackFailure,
+}: PetStageProps) => {
   const label = statusLabel ?? defaultStatusLabels[state];
 
   return (
@@ -29,7 +44,13 @@ export const PetStage = ({ state, statusLabel, liveRegion }: PetStageProps) => {
       style={styles.scene}
     >
       <View accessibilityElementsHidden style={styles.roomShelf} />
-      <PetPortrait state={state} />
+      <PetAnimationRenderer
+        {...(onPlaybackComplete === undefined ? {} : { onPlaybackComplete })}
+        {...(onPlaybackFailure === undefined ? {} : { onPlaybackFailure })}
+        playbackId={playbackId}
+        state={state}
+        visualMode={visualMode}
+      />
       <Text style={styles.label}>{label}</Text>
     </View>
   );

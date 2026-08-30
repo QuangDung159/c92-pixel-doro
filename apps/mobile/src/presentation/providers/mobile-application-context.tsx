@@ -13,6 +13,7 @@ import {
 } from '@pixeldoro/application';
 
 import type {
+  AppLifecycleState,
   BootstrapProjection,
   MobileApplicationFacade,
 } from '@/application';
@@ -93,6 +94,29 @@ export const usePetVisualProjection = (): PetVisualProjection => {
     petVisual.getSnapshot,
     petVisual.getSnapshot,
   );
+};
+
+export const useAppVisibility = (): AppLifecycleState => {
+  const { appVisibility } = useMobileApplication();
+  return useSyncExternalStore(
+    appVisibility.subscribe,
+    appVisibility.getSnapshot,
+    appVisibility.getSnapshot,
+  );
+};
+
+export interface PetVisualPlaybackCallbacks {
+  readonly reportComplete: (feedbackId: string) => void;
+  readonly reportFailure: (feedbackId: string) => void;
+}
+
+export const usePetVisualPlaybackCallbacks = (): PetVisualPlaybackCallbacks => {
+  const { reportPetVisualComplete, reportPetVisualFailure } =
+    useMobileApplication();
+  return {
+    reportComplete: reportPetVisualComplete,
+    reportFailure: reportPetVisualFailure,
+  };
 };
 
 export const usePetTerminalReviewFixture = (): (() => Promise<void>) => {

@@ -10,6 +10,7 @@ import {
 import { usePrototype } from '@/presentation/prototype/prototype-context';
 
 import { usePrototypeBack } from '../use-prototype-back';
+import { PetRouteVisibility } from '../pet-route-visibility';
 
 export default function FocusSessionRoute() {
   const router = useRouter();
@@ -32,17 +33,19 @@ export default function FocusSessionRoute() {
   usePrototypeBack(() => setCancelRequestToken((token) => token + 1));
 
   return (
-    <FocusSessionScreen
-      cancelRequestToken={cancelRequestToken}
-      onMissingSession={() => router.replace('/(tabs)')}
-      onDismissPetFeedbackError={dismissPetFeedbackError}
-      onRetryPet={() => void refreshPet()}
-      onResolve={(outcome) => {
-        resolveFocus(outcome);
-        router.replace('/focus/result');
-      }}
-      pet={pet}
-      session={session}
-    />
+    <PetRouteVisibility>
+      <FocusSessionScreen
+        cancelRequestToken={cancelRequestToken}
+        onMissingSession={() => router.replace('/(tabs)')}
+        onDismissPetFeedbackError={dismissPetFeedbackError}
+        onRetryPet={() => void refreshPet()}
+        onResolve={(outcome) => {
+          resolveFocus(outcome);
+          router.replace('/focus/result');
+        }}
+        pet={pet}
+        session={session}
+      />
+    </PetRouteVisibility>
   );
 }

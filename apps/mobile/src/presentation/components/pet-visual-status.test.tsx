@@ -12,6 +12,15 @@ vi.mock('react-native', () => ({
   View: 'View',
 }));
 
+const playbackCallbackSpies = vi.hoisted(() => ({
+  reportComplete: vi.fn(),
+  reportFailure: vi.fn(),
+}));
+
+vi.mock('@/presentation/providers/mobile-application-context', () => ({
+  usePetVisualPlaybackCallbacks: () => playbackCallbackSpies,
+}));
+
 describe('PetVisualStatus', () => {
   it('renders one semantic terminal announcement and quiet base states', () => {
     const terminal = PetVisualStatus({
@@ -33,7 +42,7 @@ describe('PetVisualStatus', () => {
         state: 'working',
         activeSessionId: 'focus-2',
         announcementId: 'base:working:focus-2',
-        visualMode: 'still',
+        visualMode: 'loop',
       },
       onRetryBase: vi.fn(),
       onDismissTerminalError: vi.fn(),
@@ -41,11 +50,21 @@ describe('PetVisualStatus', () => {
 
     expect(terminal.type).toBe(PetStage);
     expect(terminal.props).toMatchObject({
+      playbackId: 'focus-1:completed',
       state: 'celebrating',
       liveRegion: 'polite',
+      visualMode: 'one-shot',
     });
+    terminal.props.onPlaybackComplete();
+    terminal.props.onPlaybackFailure();
+    expect(playbackCallbackSpies.reportComplete).toHaveBeenCalledWith('focus-1:completed');
+    expect(playbackCallbackSpies.reportFailure).toHaveBeenCalledWith('focus-1:completed');
     expect(base.type).toBe(PetStage);
     expect(base.props.liveRegion).toBeUndefined();
+    expect(base.props).toMatchObject({
+      playbackId: 'base:working:focus-2',
+      visualMode: 'loop',
+    });
   });
 
   it('renders loading and routes each recovery action to its owner', () => {

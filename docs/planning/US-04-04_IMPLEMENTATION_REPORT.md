@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_US_04_04_IMPLEMENTATION_REPORT
 title: PixelDoro US-04-04 — Pet Arbitration and No-Replay Implementation Report
-version: 1.0.0
-status: IMPLEMENTED_AWAITING_OWNER_MANUAL_EVIDENCE
+version: 1.1.0
+status: DONE_OWNER_ACCEPTED
 story: US-04-04
 date: 2026-08-30
 owner: Dũng Lư
@@ -25,7 +25,8 @@ safety/recovery → active committed Focus/Break → fresh terminal one-shot →
 
 Active Focus/Break mới preempt one-shot cũ ngay và timer bị hủy; effect không thể quay lại. Stale,
 duplicate, wrong-Result-context và out-of-order terminal candidate bị drop mà không tạo visible flash.
-Story ở trạng thái `IMPLEMENTED_AWAITING_OWNER_MANUAL_EVIDENCE`; US-04-05 chưa active.
+Owner xác nhận đã test `US-04-04` ngày 2026-08-30. Story ở trạng thái `DONE_OWNER_ACCEPTED` và
+`US-04-05` được mở theo yêu cầu tiếp theo; report không tự suy diễn platform/device metadata.
 
 ## 2. Output đã implement
 
@@ -75,18 +76,13 @@ Coverage mới gồm priority matrix, context/recency/duplicate/conflict freshne
 Working/Breaking, no-flicker refresh, background discard, new-runtime base-only state, composition
 integration, explicit Result fixture control và semantic renderer.
 
-## 4. Manual evidence cần owner xác nhận
+## 4. Owner acceptance
 
-Thực hiện checklist tại `apps/mobile/test/device/pet-arbitration-smoke.md`. Cần ghi:
+Owner xác nhận “Đã test 0404” ngày 2026-08-30. Checklist tham chiếu:
+`apps/mobile/test/device/pet-arbitration-smoke.md`.
 
-- Git SHA, platform/OS và device/simulator;
-- video Celebrate → Breaking và Bugged → Working;
-- stale/conflicting-result observations;
-- Result reopen, force-quit/relaunch và background/resume table;
-- xác nhận CTA không bị block và screen reader không announce duplicate;
-- xác nhận đã unset fixture sau test.
-
-Manual evidence hiện `PENDING`; report không tự suy diễn metadata chưa được owner cung cấp.
+Platform/OS/device, video và profiler metadata chưa được owner cung cấp nên vẫn để trống, không tự
+suy diễn. Việc thiếu metadata này không thay đổi owner acceptance đã được phát biểu trực tiếp.
 
 ## 5. Boundary và phần chưa làm
 
@@ -100,5 +96,5 @@ Manual evidence hiện `PENDING`; report không tự suy diễn metadata chưa �
 
 ## 6. Gate sang Story tiếp theo
 
-Chỉ chuyển US-04-04 sang `DONE_OWNER_ACCEPTED` và mở US-04-05 sau khi owner thực hiện manual guide,
-xác nhận kết quả và evidence record được cập nhật.
+Gate đã pass: `US-04-04` là `DONE_OWNER_ACCEPTED`; owner đã yêu cầu và implementation đã chuyển sang
+`US-04-05`.

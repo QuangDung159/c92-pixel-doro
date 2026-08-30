@@ -16,6 +16,7 @@ const epic02ExitFlowPath = `${deviceDirectory}epic-02-exit-smoke.md`;
 const petBaseStateFlowPath = `${deviceDirectory}pet-base-state-smoke.md`;
 const petTerminalFeedbackFlowPath = `${deviceDirectory}pet-terminal-feedback-smoke.md`;
 const petArbitrationFlowPath = `${deviceDirectory}pet-arbitration-smoke.md`;
+const petAnimationLifecycleFlowPath = `${deviceDirectory}pet-animation-lifecycle-smoke.md`;
 
 await access(flowPath);
 await access(sqliteFlowPath);
@@ -30,6 +31,7 @@ await access(epic02ExitFlowPath);
 await access(petBaseStateFlowPath);
 await access(petTerminalFeedbackFlowPath);
 await access(petArbitrationFlowPath);
+await access(petAnimationLifecycleFlowPath);
 const flow = await readFile(flowPath, 'utf8');
 const sqliteFlow = await readFile(sqliteFlowPath, 'utf8');
 const schemaFlow = await readFile(schemaFlowPath, 'utf8');
@@ -46,6 +48,10 @@ const petTerminalFeedbackFlow = await readFile(
   'utf8',
 );
 const petArbitrationFlow = await readFile(petArbitrationFlowPath, 'utf8');
+const petAnimationLifecycleFlow = await readFile(
+  petAnimationLifecycleFlowPath,
+  'utf8',
+);
 
 const requiredLabels = [
   'Chào mừng đến PixelDoro',
@@ -318,6 +324,32 @@ for (const evidence of requiredPetArbitrationEvidence) {
 
 await access(
   `${mobileDirectory}/src/composition/review/pet-arbitration-review-fixture.ts`,
+);
+
+const requiredPetAnimationLifecycleEvidence = [
+  'EXPO_PUBLIC_EPIC_04_PET_BASE_FIXTURE=idle',
+  'EXPO_PUBLIC_EPIC_04_PET_BASE_FIXTURE=focus',
+  'EXPO_PUBLIC_EPIC_04_PET_BASE_FIXTURE=short_break',
+  'EXPO_PUBLIC_EPIC_04_TERMINAL_FIXTURE=completed',
+  'EXPO_PUBLIC_EPIC_04_TERMINAL_FIXTURE=strict_failed',
+  '30 phút',
+  'jank >100 ms',
+  'Reduce Motion',
+  'unset EXPO_PUBLIC_EPIC_04_PET_BASE_FIXTURE',
+  'unset EXPO_PUBLIC_EPIC_04_TERMINAL_FIXTURE',
+];
+
+for (const evidence of requiredPetAnimationLifecycleEvidence) {
+  if (!petAnimationLifecycleFlow.includes(evidence)) {
+    throw new Error(`Pet animation lifecycle guide is missing: ${evidence}`);
+  }
+}
+
+await access(
+  `${mobileDirectory}/src/presentation/animation/pet-animation-renderer.tsx`,
+);
+await access(
+  `${mobileDirectory}/src/presentation/hooks/use-pet-visual-visibility.ts`,
 );
 
 console.log(

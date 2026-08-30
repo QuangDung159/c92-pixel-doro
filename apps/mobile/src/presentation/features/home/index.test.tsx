@@ -42,7 +42,7 @@ describe('HomeScreen', () => {
         state: 'idle',
         activeSessionId: null,
         announcementId: 'base:idle:none',
-        visualMode: 'still',
+        visualMode: 'loop',
       },
       profile: {
         level: 1,

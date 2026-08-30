@@ -82,6 +82,7 @@ export {
   type ReadinessController,
 } from './readiness/readiness-gate';
 export type { MobileApplicationFacade } from './mobile-application.facade';
+export { AppVisibilityController } from './visibility/app-visibility.controller';
 export type {
   AnalyticsDeliveryState,
   AnalyticsEventRecord,

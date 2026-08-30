@@ -93,6 +93,7 @@ describe('mobile composition root', () => {
     });
 
     expect(application.bootstrap.getSnapshot()).toEqual({ status: 'idle' });
+    expect(application.appVisibility.getSnapshot()).toBe('active');
 
     await application.boot();
     expect(application.bootstrap.getSnapshot().status).toBe('ready');
@@ -146,6 +147,7 @@ describe('mobile composition root', () => {
       activeSessionId: null,
     });
     lifecycleListener?.('background');
+    expect(application.appVisibility.getSnapshot()).toBe('background');
     expect(application.petVisual.getSnapshot()).toMatchObject({
       status: 'ready',
       source: 'base',

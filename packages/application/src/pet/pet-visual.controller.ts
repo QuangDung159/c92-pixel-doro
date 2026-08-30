@@ -20,7 +20,7 @@ export type PetVisualProjection =
       state: PetBaseState;
       activeSessionId: string | null;
       announcementId: string;
-      visualMode: 'still';
+      visualMode: 'loop';
     }>
   | Readonly<{
       status: 'ready';
@@ -145,7 +145,7 @@ export class PetVisualController {
         state: baseProjection.baseState,
         activeSessionId: baseProjection.activeSessionId,
         announcementId: `base:${baseProjection.baseState}:${baseProjection.activeSessionId ?? 'none'}`,
-        visualMode: 'still',
+        visualMode: 'loop',
       }));
     }
   };

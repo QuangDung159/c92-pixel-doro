@@ -9,6 +9,8 @@ import {
   usePetVisualProjection,
 } from '@/presentation/providers/mobile-application-context';
 
+import { PetRouteVisibility } from '../pet-route-visibility';
+
 export default function HomeRoute() {
   const router = useRouter();
   const profile = useHomeProfileProjection();
@@ -23,12 +25,14 @@ export default function HomeRoute() {
   );
 
   return (
-    <HomeScreen
-      onStartFocus={() => router.push('/focus/setup')}
-      onDismissPetFeedbackError={dismissPetFeedbackError}
-      onRetryPet={() => void refreshPet()}
-      pet={pet}
-      profile={profile}
-    />
+    <PetRouteVisibility>
+      <HomeScreen
+        onStartFocus={() => router.push('/focus/setup')}
+        onDismissPetFeedbackError={dismissPetFeedbackError}
+        onRetryPet={() => void refreshPet()}
+        pet={pet}
+        profile={profile}
+      />
+    </PetRouteVisibility>
   );
 }
