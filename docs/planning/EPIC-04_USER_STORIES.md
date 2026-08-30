@@ -1,13 +1,13 @@
 ---
 document_id: PIXELDORO_EPIC_04_USER_STORIES
 title: PixelDoro EPIC-04 — Home/Pet Room và Pet Companion Projection User Stories
-version: 0.3.0
+version: 0.4.0
 status: APPROVED_FOR_SEQUENTIAL_IMPLEMENTATION
 last_updated: 2026-08-30
 owner: Dũng Lư
 approved_by: Dũng Lư
 approved_at: 2026-08-30
-implementation_status: US_04_02_IMPLEMENTED_AWAITING_OWNER_MANUAL_EVIDENCE
+implementation_status: US_04_03_IMPLEMENTED_AWAITING_OWNER_MANUAL_EVIDENCE
 language: vi
 scope:
   - mobile_mvp
@@ -32,8 +32,9 @@ trong khi animation không được làm chậm, block hoặc thay đổi core F
 
 Story list đã được owner duyệt toàn bộ trong một lượt ngày 2026-08-30. Solo developer chỉ được có
 **một Story active tại một thời điểm** và đi theo execution order ở mục 8. Owner xác nhận đã test
-`US-04-01` và yêu cầu tiến hành Story tiếp theo; `US-04-02` đã hoàn tất implementation/automated
-gates và đang chờ owner manual Development Build evidence. Các Story 03–07 chưa được active.
+`US-04-01` và `US-04-02`. Owner sau đó yêu cầu tiến hành `US-04-03`; implementation/automated gates
+của Story 03 đã hoàn tất và đang chờ owner manual Development Build evidence. Các Story 04–07 chưa
+được active.
 
 ### 0.2. Baseline đã xác minh
 
@@ -542,7 +543,7 @@ phiên thật đã commit để người bạn luôn phản ánh đúng việc t
 | Blocks | `US-04-03` đến `US-04-07` |
 | Gate | `COMMITTED-PROJECTION-CONTRACT` |
 | Initial status | `NOT_STARTED` |
-| Current status | `IMPLEMENTED_AWAITING_OWNER_MANUAL_EVIDENCE` |
+| Current status | `DONE_OWNER_ACCEPTED` |
 
 #### Outcome và output
 
@@ -576,8 +577,8 @@ composition root/lifecycle. **Chưa làm:** terminal event handoff.
 - [x] Không terminal replay/request trong Story này; `OPEN-001` không bị chốt.
 - [x] Common components giữ single responsibility và <300 dòng.
 - [x] Automated mapping/provider/integration tests pass.
-- [ ] Manual guide pass.
-- [ ] Evidence được ghi lại.
+- [x] Manual guide pass.
+- [x] Evidence được ghi lại.
 
 #### Implementation boundary
 
@@ -645,7 +646,8 @@ Bugged/celebration, new schema.
   fixtures `idle/focus/short_break/long_break/error` chỉ bật bằng
   `EXPO_PUBLIC_EPIC_04_PET_BASE_FIXTURE` trong dev và không ghi `pixeldoro.db`.
 - Root quality pass: typecheck, lint, `38` test files / `205` tests, device harness, boundary checks và
-  repository hygiene. Manual guide `apps/mobile/test/device/pet-base-state-smoke.md` vẫn `PENDING`.
+  repository hygiene. Owner xác nhận “Đã test” ngày 2026-08-30; platform/device/screenshot metadata
+  không được cung cấp và không được tài liệu này tự suy diễn.
 - Không thêm schema/migration, production Start/Resolve/Reward, terminal event hoặc Pet identity.
 
 ---
@@ -663,6 +665,7 @@ Pet ngắn và đúng outcome để nỗ lực được công nhận mà không 
 | Blocks | `US-04-04`–`07` |
 | Gate | `FRESH-TERMINAL-HANDOFF` |
 | Initial status | `NOT_STARTED` |
+| Current status | `IMPLEMENTED_AWAITING_OWNER_MANUAL_EVIDENCE` |
 
 #### Outcome và output
 
@@ -684,16 +687,16 @@ session/reward types/repositories; no direct database polling to invent freshnes
 
 #### Acceptance criteria
 
-- [ ] Celebrate chỉ sau completed Focus + reward truth committed; failure trước commit không request.
-- [ ] Bugged chỉ sau Strict Focus failed commit; Relax/trial/Break không request Bugged.
-- [ ] Celebrate <=2.000 ms; Bugged <=1.500 ms; input/navigation không bị block.
-- [ ] Duplicate same runtime key bị drop; no durable receipt.
-- [ ] Cancelled Focus/Break và completed Break về base projection, no reward/one-shot.
-- [ ] Animation/status failure không rollback hoặc grant/revoke reward.
-- [ ] Semantic copy warm, concise, non-guilt-heavy; no color-only state.
-- [ ] Reduced-motion full policy deferred to 06 nhưng renderer có static-capable contract.
-- [ ] Không chốt `OPEN-001`; component rules đạt.
-- [ ] Automated tests pass.
+- [x] Celebrate chỉ sau completed Focus + reward truth committed; failure trước commit không request.
+- [x] Bugged chỉ sau Strict Focus failed commit; Relax/trial/Break không request Bugged.
+- [x] Celebrate <=2.000 ms; Bugged <=1.500 ms; input/navigation không bị block.
+- [x] Duplicate same runtime key bị drop; no durable receipt.
+- [x] Cancelled Focus/Break và completed Break về base projection, no reward/one-shot.
+- [x] Animation/status failure không rollback hoặc grant/revoke reward.
+- [x] Semantic copy warm, concise, non-guilt-heavy; no color-only state.
+- [x] Reduced-motion full policy deferred to 06 nhưng renderer có static-capable contract.
+- [x] Không chốt `OPEN-001`; component rules đạt.
+- [x] Automated tests pass.
 - [ ] Manual guide pass.
 - [ ] Evidence được ghi lại.
 
@@ -746,6 +749,28 @@ Focus, completed Break, duplicate event.
 **Evidence:** short recording with visible timing marker, before/after durable facts, accessibility
 announcement note, SHA/device. **Không được xảy ra:** claim action, duplicate reward, route blocking,
 guilt copy, Break celebration, persisted receipt.
+
+#### Implementation evidence — 2026-08-30
+
+- Domain pure decision chỉ accept completed Focus sau `rewardCommitted=true` hoặc failed Standard
+  Strict Focus; impossible combinations trả typed invalid decision. Cancelled Focus và terminal Break
+  không tạo feedback.
+- Application-scoped controller giữ dedupe runtime theo `sessionId + terminalStatus`, dùng injected
+  clock/scheduler cho deadline chính xác 2.000/1.500 ms, giữ still pose đến deadline khi visual
+  complete/fail và không có repository/reward mutation.
+- Result dùng shared Pet stage/status từ provider; Celebrate/Bugged có pose tĩnh và semantic live
+  region riêng, còn mọi CTA/navigation vẫn render và nhận input bình thường.
+- Explicit Development Build fixture chỉ bật trong dev bằng
+  `EXPO_PUBLIC_EPIC_04_TERMINAL_FIXTURE`; sáu scenario đi qua production committed-event contract và
+  không ghi database. Production Result mount không emit event khi fixture vắng mặt.
+- Root quality pass tại baseline `8bd06433b309d64609f3337b7eeb3f0d88d59a49`: typecheck, lint,
+  `43` test files / `232` tests, device harness, boundary checks (`11` forbidden rejected / `3` valid
+  accepted) và repository hygiene.
+- Report: `docs/planning/US-04-03_IMPLEMENTATION_REPORT.md`; manual guide:
+  `apps/mobile/test/device/pet-terminal-feedback-smoke.md`. Manual owner evidence vẫn `PENDING`, nên
+  `US-04-04` chưa active.
+- Không thêm schema/migration, durable replay receipt, production resolver/reward caller, Reanimated,
+  native/EAS/prebuild artifact hoặc quyết định Pet identity.
 
 ---
 
@@ -1276,6 +1301,17 @@ Approval Story list không đồng nghĩa resolve `OPEN-001`, approve artwork ho
 | `RISK-04-08` | Final iOS/Android evidence missing/fabricated | Invalid Epic exit | Frozen SHA and explicit per-platform owner record | OPEN until 07 |
 
 ## 19. Change log
+
+### 0.4.0 — 2026-08-30
+
+- Ghi nhận owner đã test/chấp nhận `US-04-02` và yêu cầu triển khai `US-04-03`; không tự điền
+  platform/device/screenshot metadata chưa được cung cấp.
+- Implement committed terminal feedback contract, exact timeout controller, runtime dedupe,
+  Result/shared renderer integration và distinct static Celebrate/Bugged poses.
+- Thêm development-only six-scenario fixture, device guide và implementation report; root quality
+  pass `43` files / `232` tests. `US-04-03` đang chờ owner manual evidence.
+- Giữ `US-04-04` chưa active; không thêm production resolver/reward caller, schema, durable receipt,
+  native animation hoặc resolve `OPEN-001`.
 
 ### 0.3.0 — 2026-08-30
 

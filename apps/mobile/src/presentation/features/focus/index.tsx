@@ -1,5 +1,8 @@
 import { useState } from 'react';
-import type { PetCompanionProjection } from '@pixeldoro/application';
+import type {
+  PetCompanionProjection,
+  PetTerminalFeedbackProjection,
+} from '@pixeldoro/application';
 import { StyleSheet, Text, View } from 'react-native';
 
 import {
@@ -9,7 +12,7 @@ import {
   InlineNotice,
   LoadingState,
   PetCompanionStatus,
-  PixelCompanion,
+  PetTerminalFeedbackStatus,
   PixelPanel,
   PrimaryButton,
   PrototypeScreen,
@@ -228,6 +231,10 @@ export const FocusResultScreen = ({
   onHome,
   onRetryFocus,
   onRetryTrial,
+  onRetryPet,
+  onDismissPetFeedbackError,
+  pet,
+  petFeedback,
 }: {
   readonly result: PrototypeFocusResult | null;
   readonly nextBreakKind: BreakKind;
@@ -236,6 +243,10 @@ export const FocusResultScreen = ({
   readonly onHome: () => void;
   readonly onRetryFocus: () => void;
   readonly onRetryTrial: () => void;
+  readonly onRetryPet: () => void;
+  readonly onDismissPetFeedbackError: () => void;
+  readonly pet: PetCompanionProjection;
+  readonly petFeedback: PetTerminalFeedbackProjection;
 }) => {
   if (result === null) {
     return (
@@ -255,7 +266,6 @@ export const FocusResultScreen = ({
     : failed
       ? 'Phiên này bị gián đoạn.'
       : 'Phiên đã dừng.';
-  const companionState = completed ? 'celebrating' : failed ? 'bugged' : 'idle';
 
   return (
     <PrototypeScreen>
@@ -271,7 +281,12 @@ export const FocusResultScreen = ({
         eyebrow={completed ? 'FOCUS COMPLETE' : failed ? 'STRICT INTERRUPTED' : 'FOCUS CANCELLED'}
         title={title}
       />
-      <PixelCompanion state={companionState} />
+      <PetTerminalFeedbackStatus
+        baseProjection={pet}
+        feedbackProjection={petFeedback}
+        onDismissFeedbackError={onDismissPetFeedbackError}
+        onRetryBase={onRetryPet}
+      />
       {completed ? (
         <PixelPanel tone="gold">
           <Text style={styles.rewardEyebrow}>REWARD FEEDBACK · MOCK</Text>

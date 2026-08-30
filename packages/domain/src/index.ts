@@ -14,3 +14,9 @@ export {
   type PetBaseState,
   type PetBaseStateDecision,
 } from './pet/pet-base-state';
+export {
+  decidePetTerminalFeedback,
+  type FreshCommittedTerminalTransition,
+  type PetTerminalFeedbackDecision,
+  type PetTerminalState,
+} from './pet/pet-terminal-feedback';

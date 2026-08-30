@@ -15,13 +15,19 @@ const defaultStatusLabels: Record<CompanionState, string> = {
 export interface PetStageProps {
   readonly state: CompanionState;
   readonly statusLabel?: string;
+  readonly liveRegion?: 'none' | 'polite' | 'assertive';
 }
 
-export const PetStage = ({ state, statusLabel }: PetStageProps) => {
+export const PetStage = ({ state, statusLabel, liveRegion }: PetStageProps) => {
   const label = statusLabel ?? defaultStatusLabels[state];
 
   return (
-    <View accessible accessibilityLabel={label} style={styles.scene}>
+    <View
+      accessible
+      accessibilityLabel={label}
+      accessibilityLiveRegion={liveRegion}
+      style={styles.scene}
+    >
       <View accessibilityElementsHidden style={styles.roomShelf} />
       <PetPortrait state={state} />
       <Text style={styles.label}>{label}</Text>

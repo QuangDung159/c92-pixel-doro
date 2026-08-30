@@ -14,6 +14,7 @@ const failureRecoveryFlowPath = `${deviceDirectory}failure-recovery-smoke.md`;
 const confirmedResetFlowPath = `${deviceDirectory}confirmed-reset-smoke.md`;
 const epic02ExitFlowPath = `${deviceDirectory}epic-02-exit-smoke.md`;
 const petBaseStateFlowPath = `${deviceDirectory}pet-base-state-smoke.md`;
+const petTerminalFeedbackFlowPath = `${deviceDirectory}pet-terminal-feedback-smoke.md`;
 
 await access(flowPath);
 await access(sqliteFlowPath);
@@ -26,6 +27,7 @@ await access(failureRecoveryFlowPath);
 await access(confirmedResetFlowPath);
 await access(epic02ExitFlowPath);
 await access(petBaseStateFlowPath);
+await access(petTerminalFeedbackFlowPath);
 const flow = await readFile(flowPath, 'utf8');
 const sqliteFlow = await readFile(sqliteFlowPath, 'utf8');
 const schemaFlow = await readFile(schemaFlowPath, 'utf8');
@@ -37,6 +39,10 @@ const failureRecoveryFlow = await readFile(failureRecoveryFlowPath, 'utf8');
 const confirmedResetFlow = await readFile(confirmedResetFlowPath, 'utf8');
 const epic02ExitFlow = await readFile(epic02ExitFlowPath, 'utf8');
 const petBaseStateFlow = await readFile(petBaseStateFlowPath, 'utf8');
+const petTerminalFeedbackFlow = await readFile(
+  petTerminalFeedbackFlowPath,
+  'utf8',
+);
 
 const requiredLabels = [
   'Chào mừng đến PixelDoro',
@@ -266,6 +272,28 @@ for (const evidence of requiredPetBaseStateEvidence) {
 
 await access(
   `${mobileDirectory}/src/composition/review/pet-base-review-fixture.ts`,
+);
+
+const requiredPetTerminalFeedbackEvidence = [
+  'EXPO_PUBLIC_EPIC_04_TERMINAL_FIXTURE=completed',
+  'EXPO_PUBLIC_EPIC_04_TERMINAL_FIXTURE=strict_failed',
+  'EXPO_PUBLIC_EPIC_04_TERMINAL_FIXTURE=cancelled',
+  'EXPO_PUBLIC_EPIC_04_TERMINAL_FIXTURE=break_completed',
+  'EXPO_PUBLIC_EPIC_04_TERMINAL_FIXTURE=duplicate_completed',
+  'EXPO_PUBLIC_EPIC_04_TERMINAL_FIXTURE=playback_error',
+  '2.000 ms',
+  '1.500 ms',
+  'unset EXPO_PUBLIC_EPIC_04_TERMINAL_FIXTURE',
+];
+
+for (const evidence of requiredPetTerminalFeedbackEvidence) {
+  if (!petTerminalFeedbackFlow.includes(evidence)) {
+    throw new Error(`Pet terminal-feedback device guide is missing: ${evidence}`);
+  }
+}
+
+await access(
+  `${mobileDirectory}/src/composition/review/pet-terminal-review-fixture.ts`,
 );
 
 console.log(

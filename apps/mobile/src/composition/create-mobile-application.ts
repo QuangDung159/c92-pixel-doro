@@ -14,6 +14,7 @@ import {
 } from '@/application';
 import {
   PetCompanionController,
+  PetTerminalFeedbackController,
   type ClockPort,
   type IdPort,
   type PetCompanionSessionReader,
@@ -36,10 +37,12 @@ import { DeviceIdAdapter } from '@/infrastructure/platform/id/device-id.adapter'
 import { SafeConsoleRecoveryDiagnosticsAdapter } from '@/infrastructure/platform/diagnostics/safe-console-recovery-diagnostics.adapter';
 import { SafeConsoleConfirmedResetDiagnosticsAdapter } from '@/infrastructure/platform/diagnostics/safe-console-confirmed-reset-diagnostics.adapter';
 import { NoopResetNotificationCleanupAdapter } from '@/infrastructure/platform/notifications/noop-reset-notification-cleanup.adapter';
+import { DeviceTimeoutScheduler } from '@/infrastructure/platform/timing/device-timeout.scheduler';
 
 import type { MobileApplication } from './mobile-application';
 import type { Epic02ExitCompletionCandidate } from './diagnostics/run-epic-02-exit-probe';
 import { createPetBaseReviewSessionReader } from './review/pet-base-review-fixture';
+import { createPetTerminalReviewFixture } from './review/pet-terminal-review-fixture';
 import { NoopStartupReconciliationAdapter } from './startup/noop-startup-reconciliation.adapter';
 
 const PIXELDORO_DATABASE_NAME = 'pixeldoro.db';
@@ -130,6 +133,14 @@ export const createMobileApplication = (
       ) ??
       persistence.sessions,
   );
+  const petTerminalFeedback = new PetTerminalFeedbackController({
+    clock,
+    scheduler: new DeviceTimeoutScheduler(),
+  });
+  const petTerminalReviewFixture = createPetTerminalReviewFixture(
+    process.env.EXPO_PUBLIC_EPIC_04_TERMINAL_FIXTURE,
+    petReviewFixturesEnabled,
+  );
   const sqliteKernelProbeEnabled =
     options.diagnosticsEnabled !== false &&
     typeof __DEV__ !== 'undefined' &&
@@ -199,6 +210,21 @@ export const createMobileApplication = (
       if (retryRecoveryPromise === operation) retryRecoveryPromise = undefined;
     });
     return operation;
+  };
+
+  const triggerPetTerminalReviewFixture = (): void => {
+    if (petTerminalReviewFixture === undefined) return;
+    const first = petTerminalFeedback.requestFreshTransition(
+      petTerminalReviewFixture.transition,
+    );
+    if (petTerminalReviewFixture.repeat) {
+      petTerminalFeedback.requestFreshTransition(
+        petTerminalReviewFixture.transition,
+      );
+    }
+    if (petTerminalReviewFixture.reportVisualFailure && first.accepted) {
+      petTerminalFeedback.reportVisualFailure(first.feedbackId);
+    }
   };
 
   const runProbeIfEnabled = (): Promise<void> => {
@@ -299,6 +325,7 @@ export const createMobileApplication = (
     confirmedReset,
     criticalRecovery: bootstrap,
     petCompanion,
+    petTerminalFeedback,
     persistence,
     readiness,
     transaction,
@@ -322,12 +349,15 @@ export const createMobileApplication = (
         await petCompanion.refresh();
       }
     },
+    dismissPetTerminalFeedbackError: () => petTerminalFeedback.dismissRecovery(),
     refreshPetCompanion,
     retryRecovery,
+    triggerPetTerminalReviewFixture,
     dispose: () => {
       unsubscribePetLifecycle?.();
       unsubscribePetLifecycle = undefined;
       petCompanion.dispose();
+      petTerminalFeedback.dispose();
       return bootstrap.dispose();
     },
   };

@@ -10,6 +10,7 @@ export { Panel, Panel as PixelPanel, type PanelTone } from './panel';
 export { PetCompanionStatus } from './pet-companion-status';
 export { PetPortrait, type CompanionState } from './pet-portrait';
 export { PetStage, PixelCompanion, type PetStageProps } from './pet-stage';
+export { PetTerminalFeedbackStatus } from './pet-terminal-feedback-status';
 export { ScreenHeader, type ScreenHeaderProps } from './screen-header';
 export { ScreenShell, ScreenShell as PrototypeScreen } from './screen-shell';
 export { SectionLabel } from './section-label';

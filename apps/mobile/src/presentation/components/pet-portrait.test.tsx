@@ -28,4 +28,16 @@ describe('PetPortrait base-state poses', () => {
     expect(rendered).toContain('pet-breaking-cushion');
     expect(rendered).not.toContain('pet-working-desk');
   });
+
+  it('renders a distinct positive still pose for Celebrate', () => {
+    expect(JSON.stringify(PetPortrait({ state: 'celebrating' }))).toContain(
+      'pet-celebration-sparks',
+    );
+  });
+
+  it('renders a distinct short-lived still pose for Bugged', () => {
+    expect(JSON.stringify(PetPortrait({ state: 'bugged' }))).toContain(
+      'pet-bugged-glitches',
+    );
+  });
 });

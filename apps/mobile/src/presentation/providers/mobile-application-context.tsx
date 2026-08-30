@@ -8,6 +8,7 @@ import {
   createHomeProfileProjection,
   type HomeProfileProjection,
   type PetCompanionProjection,
+  type PetTerminalFeedbackProjection,
 } from '@pixeldoro/application';
 
 import type {
@@ -73,4 +74,23 @@ export const usePetCompanionProjection = (): PetCompanionProjection => {
 export const usePetCompanionRefresh = (): (() => Promise<void>) => {
   const { refreshPetCompanion } = useMobileApplication();
   return refreshPetCompanion;
+};
+
+export const usePetTerminalFeedbackProjection = (): PetTerminalFeedbackProjection => {
+  const { petTerminalFeedback } = useMobileApplication();
+  return useSyncExternalStore(
+    petTerminalFeedback.subscribe,
+    petTerminalFeedback.getSnapshot,
+    petTerminalFeedback.getSnapshot,
+  );
+};
+
+export const usePetTerminalReviewFixture = (): (() => void) => {
+  const { triggerPetTerminalReviewFixture } = useMobileApplication();
+  return triggerPetTerminalReviewFixture;
+};
+
+export const useDismissPetTerminalFeedbackError = (): (() => void) => {
+  const { dismissPetTerminalFeedbackError } = useMobileApplication();
+  return dismissPetTerminalFeedbackError;
 };
