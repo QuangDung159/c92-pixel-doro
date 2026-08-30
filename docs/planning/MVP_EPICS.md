@@ -123,7 +123,7 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 
 - [x] `01 / EPIC-01 / W1` — Mobile Foundation.
 - [x] `02 / EPIC-02 / W1` — Durable Data & Bootstrap.
-- [ ] `03 / EPIC-03 / W2` — MVP Experience Prototype & User-flow Validation.
+- [x] `03 / EPIC-03 / W2` — MVP Experience Prototype & User-flow Validation.
 - [ ] `04 / EPIC-04 / W3` — Pet Companion.
 - [ ] `05 / EPIC-05 / W3` — Onboarding Trial.
 - [ ] `06 / EPIC-06 / W3` — Standard Focus.
@@ -307,7 +307,7 @@ block Product discovery và được chuyển sang `EPIC-12` release-hardening. 
 - **MVP priority:** `MUST`
 - **Delivery wave:** `W2_EXPERIENCE_VALIDATION`
 - **Execution order:** `03`
-- **Status:** `READY_FOR_PLANNING`
+- **Status:** `DONE` — clickable prototype và data-needs map được owner duyệt ngày 2026-08-30.
 - **Start gate:** `EPIC-02 DONE`; không cần thêm schema/domain/timer implementation.
 
 **Outcome:** Owner có thể nhìn thấy, bấm qua và duyệt primary PixelDoro experience trước khi team
@@ -333,16 +333,21 @@ block Product discovery và được chuyển sang `EPIC-12` release-hardening. 
 
 **Epic completion checklist:**
 
-- [ ] Primary user-flow diagram được review trước Story implementation kỹ thuật.
-- [ ] Clickable mock chạy được end-to-end bằng fake data/fake navigation.
-- [ ] Happy path từ First Use tới completed Focus/reward/Home nhìn thấy được.
-- [ ] Failed/cancelled, empty/loading/error và recovery entry có mock state đủ để review.
-- [ ] Owner xác nhận screen hierarchy, CTA, transition và back/exit behavior.
-- [ ] Không cần JSON probe để hiểu prototype outcome; demo chính nằm trên UI.
-- [ ] Không có production Timer/Session/Reward/Pet rule được implement trước UX approval.
-- [ ] Product decision `OPEN` dùng placeholder, không được chốt ngầm.
-- [ ] Data-needs map phân biệt durable fact, transient UI state và derived projection.
-- [ ] Chỉ sau explicit owner UX approval mới mở implementation planning `EPIC-04`–`07`.
+- [x] Primary user-flow diagram được review trước Story implementation kỹ thuật.
+- [x] Clickable mock chạy được end-to-end bằng fake data/fake navigation.
+- [x] Happy path từ First Use tới completed Focus/reward/Home nhìn thấy được.
+- [x] Failed/cancelled, empty/loading/error và recovery entry có mock state đủ để review.
+- [x] Owner xác nhận screen hierarchy, CTA, transition và back/exit behavior.
+- [x] Không cần JSON probe để hiểu prototype outcome; demo chính nằm trên UI.
+- [x] Không có production Timer/Session/Reward/Pet rule được implement trước UX approval.
+- [x] Product decision `OPEN` dùng placeholder, không được chốt ngầm.
+- [x] Data-needs map phân biệt durable fact, transient UI state và derived projection.
+- [x] Chỉ sau explicit owner UX approval mới mở implementation planning `EPIC-04`–`07`.
+
+**Closeout note:** Owner duyệt lean flow và sáu UX confirmation, sau đó duyệt clickable prototype
+ngày 2026-08-30. Prototype dùng Presentation-owned in-memory reducer, fake navigation/countdown và
+neutral placeholder; root `pnpm quality` pass `26` files / `158` tests. Data-needs map xác nhận
+approved UX không cần schema/migration mới và không chốt `OPEN-001`, `OPEN-006`, `OPEN-009`.
 
 **Out of scope:** Production timer correctness, background/relaunch reconciliation, reward commit,
 notification scheduling, schema migration mới, real purchase/equip, analytics provider và final art.
