@@ -7,6 +7,7 @@ import type {
 import type { MobileBootstrap } from './bootstrap/mobile-bootstrap';
 import type { CommandReadinessPort } from './readiness/readiness-gate';
 import type { AppVisibilityController } from './visibility/app-visibility.controller';
+import type { PetVisualDiagnostic } from './ports/pet-visual-diagnostics.port';
 
 export interface MobileApplicationFacade {
   readonly bootstrap: MobileBootstrap;
@@ -20,6 +21,7 @@ export interface MobileApplicationFacade {
   dismissPetTerminalFeedbackError(): void;
   discardPetTerminalFeedback(): void;
   refreshPetCompanion(): Promise<void>;
+  recordPetVisualDiagnostic(diagnostic: PetVisualDiagnostic): void;
   reportPetVisualComplete(feedbackId: string): void;
   reportPetVisualFailure(feedbackId: string): void;
   triggerPetTerminalReviewFixture(): Promise<void>;

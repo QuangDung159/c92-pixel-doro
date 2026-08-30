@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_US_04_05_IMPLEMENTATION_REPORT
 title: PixelDoro US-04-05 — Pet Animation Lifecycle and Performance Implementation Report
-version: 1.0.0
-status: IMPLEMENTED_AWAITING_OWNER_MANUAL_AND_PERFORMANCE_EVIDENCE
+version: 1.1.0
+status: DONE_OWNER_ACCEPTED
 story: US-04-05
 date: 2026-08-30
 owner: Dũng Lư
@@ -20,7 +20,8 @@ US-04-05 đã hoàn tất code và automated gates. Idle/Working/Breaking dùng 
 thấy; Celebrate/Bugged chạy one-shot rồi giữ pose tĩnh theo deadline hiện có. Background, route blur,
 replacement và unmount hủy visual work; equivalent rerender không khởi động lại playback.
 
-Story đang `IMPLEMENTED_AWAITING_OWNER_MANUAL_AND_PERFORMANCE_EVIDENCE`. US-04-06 chưa active.
+Owner xác nhận đã test `US-04-05` ngày 2026-08-30. Story là `DONE_OWNER_ACCEPTED` và `US-04-06`
+được mở theo yêu cầu tiếp theo.
 
 ## 2. Output đã implement
 
@@ -68,7 +69,7 @@ Coverage mới gồm visibility truth table, application visibility publish/disp
 equivalent loop no-restart, cancel-before-replacement, background/reduced/still cancel, late callback,
 one-shot completion dedupe, driver failure containment và composition lifecycle integration.
 
-## 4. Manual và performance evidence cần owner xác nhận
+## 4. Owner acceptance
 
 Thực hiện checklist tại `apps/mobile/test/device/pet-animation-lifecycle-smoke.md`, gồm:
 
@@ -78,9 +79,10 @@ Thực hiện checklist tại `apps/mobile/test/device/pet-animation-lifecycle-s
 - bảng physical-device 30 phút: jank >100 ms, memory, CPU, thermal/energy, cold start, binary delta;
 - Git SHA, platform/OS/device, video và profiler trace/screenshot.
 
-Các ô này hiện `PENDING`; report không tự tạo số liệu device/performance.
+Owner xác nhận “Đã test US-04-05” ngày 2026-08-30. Device/OS, video, profiler và performance matrix
+chi tiết chưa được cung cấp nên report không tự tạo hoặc suy diễn các số liệu đó.
 
 ## 5. Gate sang Story tiếp theo
 
-Chỉ chuyển US-04-05 sang `DONE_OWNER_ACCEPTED` và mở US-04-06 sau khi owner hoàn tất manual guide,
-cung cấp/xác nhận performance matrix và báo kết quả.
+Gate đã pass: `US-04-05` là `DONE_OWNER_ACCEPTED`; owner đã yêu cầu và implementation đã chuyển sang
+`US-04-06`.

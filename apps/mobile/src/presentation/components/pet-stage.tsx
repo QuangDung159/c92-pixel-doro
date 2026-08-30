@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { palette } from '@/presentation/theme/palette';
 
@@ -6,6 +6,7 @@ import { PetAnimationRenderer } from '@/presentation/animation/pet-animation-ren
 import { petAnimationManifest } from '@/presentation/animation/pet-animation-manifest';
 
 import type { CompanionState } from './pet-portrait';
+import { PetStatusText } from './pet-status-text';
 
 const defaultStatusLabels: Record<CompanionState, string> = {
   idle: 'Người bạn đang chờ bạn',
@@ -37,12 +38,7 @@ export const PetStage = ({
   const label = statusLabel ?? defaultStatusLabels[state];
 
   return (
-    <View
-      accessible
-      accessibilityLabel={label}
-      accessibilityLiveRegion={liveRegion}
-      style={styles.scene}
-    >
+    <View style={styles.scene}>
       <View accessibilityElementsHidden style={styles.roomShelf} />
       <PetAnimationRenderer
         {...(onPlaybackComplete === undefined ? {} : { onPlaybackComplete })}
@@ -51,7 +47,10 @@ export const PetStage = ({
         state={state}
         visualMode={visualMode}
       />
-      <Text style={styles.label}>{label}</Text>
+      <PetStatusText
+        {...(liveRegion === undefined ? {} : { liveRegion })}
+        label={label}
+      />
     </View>
   );
 };
@@ -77,12 +76,5 @@ const styles = StyleSheet.create({
     right: 20,
     top: 40,
     width: 75,
-  },
-  label: {
-    color: palette.textPrimary,
-    fontSize: 14,
-    fontWeight: '800',
-    marginTop: 18,
-    textAlign: 'center',
   },
 });

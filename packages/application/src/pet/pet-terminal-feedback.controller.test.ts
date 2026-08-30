@@ -130,6 +130,31 @@ describe('PetTerminalFeedbackController', () => {
     expect(controller.getSnapshot()).toEqual({ status: 'idle' });
   });
 
+  it('keeps failed Bugged playback as a preemptible still for at most 1.500 ms', () => {
+    const runtime = new FakeRuntime();
+    const controller = new PetTerminalFeedbackController({
+      clock: runtime.clock,
+      scheduler: runtime,
+    });
+    const transition = completedFocus({
+      mode: 'strict',
+      terminalStatus: 'failed',
+      rewardCommitted: false,
+    });
+    controller.requestFreshTransition(transition, contextFor(transition));
+    controller.reportVisualFailure('focus-1:failed');
+
+    expect(controller.getSnapshot()).toMatchObject({
+      status: 'active',
+      state: 'bugged',
+      visualMode: 'still',
+    });
+    runtime.advanceBy(1_499);
+    expect(controller.getSnapshot().status).toBe('active');
+    controller.preemptByCommittedActiveSession('focus-2');
+    expect(controller.getSnapshot()).toEqual({ status: 'idle' });
+  });
+
   it('publishes safe recovery for an impossible transition without scheduling feedback', () => {
     const runtime = new FakeRuntime();
     const listener = vi.fn();

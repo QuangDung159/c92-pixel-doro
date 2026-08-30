@@ -16,6 +16,7 @@ import type {
   AppLifecycleState,
   BootstrapProjection,
   MobileApplicationFacade,
+  PetVisualDiagnostic,
 } from '@/application';
 
 const MobileApplicationContext = createContext<MobileApplicationFacade | undefined>(undefined);
@@ -118,6 +119,10 @@ export const usePetVisualPlaybackCallbacks = (): PetVisualPlaybackCallbacks => {
     reportFailure: reportPetVisualFailure,
   };
 };
+
+export const usePetVisualDiagnostics = (): ((
+  diagnostic: PetVisualDiagnostic,
+) => void) => useMobileApplication().recordPetVisualDiagnostic;
 
 export const usePetTerminalReviewFixture = (): (() => Promise<void>) => {
   const { triggerPetTerminalReviewFixture } = useMobileApplication();

@@ -42,6 +42,13 @@ export type {
   AppLifecyclePort,
   AppLifecycleState,
 } from './ports/app-lifecycle.port';
+export type {
+  PetVisualDiagnostic,
+  PetVisualDiagnosticsPort,
+  PetVisualFallbackLayer,
+  PetVisualFallbackReason,
+  PetVisualStateName,
+} from './ports/pet-visual-diagnostics.port';
 export {
   bootstrapDataError,
   type BootstrapDataError,

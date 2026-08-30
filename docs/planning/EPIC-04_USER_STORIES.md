@@ -1,13 +1,13 @@
 ---
 document_id: PIXELDORO_EPIC_04_USER_STORIES
 title: PixelDoro EPIC-04 — Home/Pet Room và Pet Companion Projection User Stories
-version: 0.6.0
+version: 0.7.0
 status: APPROVED_FOR_SEQUENTIAL_IMPLEMENTATION
 last_updated: 2026-08-30
 owner: Dũng Lư
 approved_by: Dũng Lư
 approved_at: 2026-08-30
-implementation_status: US_04_05_IMPLEMENTED_AWAITING_OWNER_MANUAL_AND_PERFORMANCE_EVIDENCE
+implementation_status: US_04_06_IMPLEMENTED_AWAITING_OWNER_MANUAL_EVIDENCE
 language: vi
 scope:
   - mobile_mvp
@@ -32,9 +32,9 @@ trong khi animation không được làm chậm, block hoặc thay đổi core F
 
 Story list đã được owner duyệt toàn bộ trong một lượt ngày 2026-08-30. Solo developer chỉ được có
 **một Story active tại một thời điểm** và đi theo execution order ở mục 8. Owner xác nhận đã test
-`US-04-01` đến `US-04-04`. Owner sau đó yêu cầu tiến hành `US-04-05`; implementation/automated gates
-của Story 05 đã hoàn tất và đang chờ owner manual Development Build cùng performance evidence. Các
-Story 06–07 chưa được active.
+`US-04-01` đến `US-04-05`. Owner sau đó yêu cầu tiến hành `US-04-06`; implementation/automated gates
+của Story 06 đã hoàn tất và đang chờ owner manual Development Build evidence. `US-04-07` chưa active
+và tiếp tục bị chặn bởi `OPEN-001`.
 
 ### 0.2. Baseline đã xác minh
 
@@ -904,7 +904,7 @@ screen không còn hiển thị để PixelDoro không tốn pin hay làm chậm
 | Dependencies | `US-04-04` |
 | Blocks | `US-04-06`, `US-04-07` |
 | Gate | ADR-005 Reanimated baseline; Skia excluded |
-| Current status | `IMPLEMENTED_AWAITING_OWNER_MANUAL_AND_PERFORMANCE_EVIDENCE` |
+| Current status | `DONE_OWNER_ACCEPTED` |
 
 #### Outcome và output
 
@@ -933,8 +933,8 @@ by agent, production timer.
 - [x] Components <300 dòng; renderer, visibility hook and asset playback adapter split by responsibility.
 - [x] Accessibility/status text không bị animation che, lặp hoặc mất focus.
 - [x] Automated tests pass.
-- [ ] Manual guide pass.
-- [ ] Performance và Story evidence được ghi lại.
+- [x] Manual guide pass.
+- [x] Performance và Story evidence được owner xác nhận.
 
 #### Implementation boundary
 
@@ -1002,8 +1002,9 @@ production log payload, Skia addition without gate.
   `3` valid) và repository hygiene. Manual guide:
   `apps/mobile/test/device/pet-animation-lifecycle-smoke.md`; report:
   `docs/planning/US-04-05_IMPLEMENTATION_REPORT.md`.
-- Manual lifecycle và bảng performance 30 phút vẫn `PENDING`; không có native/EAS/prebuild run,
-  schema/migration/dependency/Skia change hoặc quyết định Pet identity. `US-04-06` chưa active.
+- Owner xác nhận đã test `US-04-05` ngày 2026-08-30 và yêu cầu mở `US-04-06`. Chi tiết device,
+  screenshot và performance matrix không được cung cấp nên không tự suy diễn. Không có
+  native/EAS/prebuild run, schema/migration/dependency/Skia change hoặc quyết định Pet identity.
 
 ---
 
@@ -1019,7 +1020,7 @@ trạng thái nào và tiếp tục Focus flow an toàn.
 | Dependencies | `US-04-05` |
 | Blocks | `US-04-07` |
 | Gate | Accessibility/fallback contract owner review |
-| Initial status | `NOT_STARTED` |
+| Current status | `IMPLEMENTED_AWAITING_OWNER_MANUAL_EVIDENCE` |
 
 #### Outcome và output
 
@@ -1037,17 +1038,17 @@ new Pet state, final identity, visual redesign.
 
 #### Acceptance criteria
 
-- [ ] Reduced motion: Idle/Working/Breaking use state still; Celebrate/Bugged use state still no longer
+- [x] Reduced motion: Idle/Working/Breaking use state still; Celebrate/Bugged use state still no longer
   than 2.000/1.500 ms and remain preemptible.
-- [ ] Missing playback but readable asset uses same-state fallback frame.
-- [ ] Missing state frame uses selected Pet Idle still plus current semantic state text.
-- [ ] Missing all bitmap uses neutral geometric placeholder plus current semantic state text.
-- [ ] Playback/asset failure does not crash, block actions, grant/rollback reward or alter projection.
-- [ ] Diagnostics sanitized, no raw session payload/Pet name, no network retry.
-- [ ] Pet/status group has clear role/label; decorative frames hidden; live announcements are not spammed.
-- [ ] Buttons/selected/disabled/busy/focus order remain accessible after common migration.
-- [ ] No `OPEN-001` decision; all components <300 dòng và reuse rules đạt.
-- [ ] Automated tests pass.
+- [x] Missing playback but readable asset uses same-state fallback frame.
+- [x] Missing state frame uses selected Pet Idle still plus current semantic state text.
+- [x] Missing all bitmap uses neutral geometric placeholder plus current semantic state text.
+- [x] Playback/asset failure does not crash, block actions, grant/rollback reward or alter projection.
+- [x] Diagnostics sanitized, no raw session payload/Pet name, no network retry.
+- [x] Pet/status group has clear role/label; decorative frames hidden; live announcements are not spammed.
+- [x] Buttons/selected/disabled/busy/focus order remain accessible after common migration.
+- [x] No `OPEN-001` decision; all components <300 dòng và reuse rules đạt.
+- [x] Automated tests pass.
 - [ ] Manual guide pass.
 - [ ] Evidence được ghi lại.
 
@@ -1094,6 +1095,29 @@ injection that cannot alter product DB.
 **Evidence:** screenshot matrix five states in reduced motion, each fallback layer, accessibility notes,
 before/after durable facts, SHA/device. **Không được xảy ra:** remote download, crash, silent/color-only
 state, Cat/Dog/Robot inference, reward/session mutation.
+
+#### Implementation evidence — 2026-08-30
+
+- App-scoped reduced-motion store bắt đầu conservative still, đọc OS preference, nhận change event,
+  chống late initial-read race và cleanup subscription idempotently. Shared provider phục vụ mọi Pet.
+- Typed asset resolver giữ đúng chuỗi: state playback → same-state still → neutral-family Idle still →
+  neutral geometric placeholder. Logical state/status text luôn lấy từ Application projection, không
+  bị fallback pose thay đổi.
+- Development-only `EXPO_PUBLIC_EPIC_04_ASSET_FIXTURE` có ba scenario `playback_failure`,
+  `state_frame_missing`, `all_art_missing`; production/invalid input luôn về normal và không network.
+- Runtime driver failure được contain, cancel và hạ xuống same-state still. Celebrate/Bugged still giữ
+  deadline 2.000/1.500 ms, dedupe/no-replay và committed-session preemption từ controller hiện có.
+- `PetStatusText` là semantic owner duy nhất; animated pose và placeholder decorative đều bị ẩn khỏi
+  accessibility tree. Shared Button/ChoiceChip giữ busy/disabled/selected semantics không phụ thuộc màu.
+- Fixed diagnostics envelope chỉ có `eventName`, logical `state`, `fallbackLayer`, `reasonCode`; sink
+  failure bị nuốt ngoài transaction và không thể đổi Pet/session/reward truth.
+- Root quality pass trên baseline `2c9dda933881b83db26e28c7cef149f93ca3f9b8`: typecheck, lint,
+  `55` test files / `280` tests, device harness, boundary checks (`11` forbidden / `3` valid), repository
+  hygiene và diff check. Presentation source max 241 dòng. Manual guide:
+  `apps/mobile/test/device/pet-accessibility-fallback-smoke.md`; report:
+  `docs/planning/US-04-06_IMPLEMENTATION_REPORT.md`.
+- Manual device/accessibility evidence vẫn `PENDING`; không có dependency/Skia/schema/migration,
+  native/EAS/prebuild, final art hoặc `OPEN-001` decision. `US-04-07` chưa active.
 
 ---
 
@@ -1343,12 +1367,23 @@ Approval Story list không đồng nghĩa resolve `OPEN-001`, approve artwork ho
 | `RISK-04-02` | Root prototype provider mistaken for app truth | Wrong state/reward/replay | Independent production facade/provider; import tests | OPEN until 02 |
 | `RISK-04-03` | Latest terminal row mistaken as fresh event | Relaunch/reopen replay | Commit-time event provenance; no read inference | OPEN until 03–04 |
 | `RISK-04-04` | Startup reconciliation is currently noop | Unsafe active projection if overclaimed | 02 exposes read/recovery boundary only; Timer Epic owns production reconcile | VISIBLE DEPENDENCY |
-| `RISK-04-05` | Reanimated asset/frame cost on low-end device | Jank/battery/leak | 05 ADR-005 benchmark and simplify decoration first | AWAITING DEVICE EVIDENCE |
-| `RISK-04-06` | Accessibility semantics duplicated by animated nodes | Repeated/spam announcements | One semantic status owner; decorative frames hidden | OPEN until 06 |
+| `RISK-04-05` | Reanimated asset/frame cost on low-end device | Jank/battery/leak | 05 ADR-005 benchmark and simplify decoration first | OWNER ACCEPTED AT 05 |
+| `RISK-04-06` | Accessibility semantics duplicated by animated nodes | Repeated/spam announcements | One semantic status owner; decorative frames hidden | AWAITING OWNER DEVICE EVIDENCE |
 | `RISK-04-07` | Architecture/schema drives UX | Approved flow regression or needless migration | Authority order + data-needs no-gap decision | MONITOR |
 | `RISK-04-08` | Final iOS/Android evidence missing/fabricated | Invalid Epic exit | Frozen SHA and explicit per-platform owner record | OPEN until 07 |
 
 ## 19. Change log
+
+### 0.7.0 — 2026-08-30
+
+- Ghi nhận owner đã test/chấp nhận `US-04-05` và yêu cầu triển khai `US-04-06`; không tự điền
+  performance/device/screenshot metadata chưa được cung cấp.
+- Implement app-scoped OS reduced-motion store, deterministic four-layer visual resolver, neutral
+  placeholder, development-only failure fixtures và fixed sanitized diagnostic port.
+- Tách `PetStatusText` làm semantic owner duy nhất; giữ decorative visual hidden, common control
+  semantics, mọi Presentation source module dưới 300 dòng và không thay approved layout.
+- Root quality pass `55` files / `280` tests. Manual accessibility/fallback evidence còn `PENDING`;
+  `OPEN-001` giữ nguyên và `US-04-07` chưa active.
 
 ### 0.6.0 — 2026-08-30
 

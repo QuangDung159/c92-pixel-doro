@@ -38,6 +38,9 @@ describe('mobile composition root', () => {
 
   it('boots and disposes one application-scoped graph', async () => {
     const driver = new FakeSQLiteDriver();
+    const petVisualDiagnostic = vi.fn(() => {
+      throw new Error('diagnostic sink unavailable');
+    });
     let lifecycleListener: ((state: 'active' | 'background') => void) | undefined;
     let petScenario: PetBaseReviewScenario = 'idle';
     const appLifecycle: AppLifecyclePort = {
@@ -90,6 +93,7 @@ describe('mobile composition root', () => {
           return reader.findActive();
         },
       },
+      petVisualDiagnostics: { record: petVisualDiagnostic },
     });
 
     expect(application.bootstrap.getSnapshot()).toEqual({ status: 'idle' });
@@ -106,6 +110,15 @@ describe('mobile composition root', () => {
       ok: true,
       value: 'safe',
     });
+    const petProjectionBeforeDiagnostic = application.petVisual.getSnapshot();
+    expect(() => application.recordPetVisualDiagnostic({
+      eventName: 'pet_visual_fallback',
+      state: 'working',
+      fallbackLayer: 'state_still',
+      reasonCode: 'driver_failure',
+    })).not.toThrow();
+    expect(application.petVisual.getSnapshot()).toBe(petProjectionBeforeDiagnostic);
+    expect(petVisualDiagnostic).toHaveBeenCalledOnce();
 
     const completed = {
       sessionId: 'completed-focus',

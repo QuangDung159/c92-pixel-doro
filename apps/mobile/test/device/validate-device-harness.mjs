@@ -17,6 +17,7 @@ const petBaseStateFlowPath = `${deviceDirectory}pet-base-state-smoke.md`;
 const petTerminalFeedbackFlowPath = `${deviceDirectory}pet-terminal-feedback-smoke.md`;
 const petArbitrationFlowPath = `${deviceDirectory}pet-arbitration-smoke.md`;
 const petAnimationLifecycleFlowPath = `${deviceDirectory}pet-animation-lifecycle-smoke.md`;
+const petAccessibilityFallbackFlowPath = `${deviceDirectory}pet-accessibility-fallback-smoke.md`;
 
 await access(flowPath);
 await access(sqliteFlowPath);
@@ -32,6 +33,7 @@ await access(petBaseStateFlowPath);
 await access(petTerminalFeedbackFlowPath);
 await access(petArbitrationFlowPath);
 await access(petAnimationLifecycleFlowPath);
+await access(petAccessibilityFallbackFlowPath);
 const flow = await readFile(flowPath, 'utf8');
 const sqliteFlow = await readFile(sqliteFlowPath, 'utf8');
 const schemaFlow = await readFile(schemaFlowPath, 'utf8');
@@ -50,6 +52,10 @@ const petTerminalFeedbackFlow = await readFile(
 const petArbitrationFlow = await readFile(petArbitrationFlowPath, 'utf8');
 const petAnimationLifecycleFlow = await readFile(
   petAnimationLifecycleFlowPath,
+  'utf8',
+);
+const petAccessibilityFallbackFlow = await readFile(
+  petAccessibilityFallbackFlowPath,
   'utf8',
 );
 
@@ -350,6 +356,34 @@ await access(
 );
 await access(
   `${mobileDirectory}/src/presentation/hooks/use-pet-visual-visibility.ts`,
+);
+
+const requiredPetAccessibilityFallbackEvidence = [
+  'EXPO_PUBLIC_EPIC_04_ASSET_FIXTURE=playback_failure',
+  'EXPO_PUBLIC_EPIC_04_ASSET_FIXTURE=state_frame_missing',
+  'EXPO_PUBLIC_EPIC_04_ASSET_FIXTURE=all_art_missing',
+  'Reduce Motion',
+  'VoiceOver/TalkBack',
+  '2.000 ms',
+  '1.500 ms',
+  '[PixelDoro][PetVisual]',
+  'unset EXPO_PUBLIC_EPIC_04_ASSET_FIXTURE',
+];
+
+for (const evidence of requiredPetAccessibilityFallbackEvidence) {
+  if (!petAccessibilityFallbackFlow.includes(evidence)) {
+    throw new Error(`Pet accessibility fallback guide is missing: ${evidence}`);
+  }
+}
+
+await access(
+  `${mobileDirectory}/src/presentation/animation/pet-asset-catalog.ts`,
+);
+await access(
+  `${mobileDirectory}/src/presentation/components/neutral-pet-placeholder.tsx`,
+);
+await access(
+  `${mobileDirectory}/src/presentation/providers/reduced-motion-context.tsx`,
 );
 
 console.log(

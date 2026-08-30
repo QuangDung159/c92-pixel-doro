@@ -9,6 +9,7 @@ import {
   type ConfirmedResetDiagnosticsPort,
   type ConfirmedResetPersistencePort,
   type MigrationPort,
+  type PetVisualDiagnosticsPort,
   type RecoveryDiagnosticsPort,
   type ResetNotificationCleanupPort,
   type StartupReconciliationPort,
@@ -38,6 +39,7 @@ import { DeviceClockAdapter } from '@/infrastructure/platform/clock/device-clock
 import { DeviceIdAdapter } from '@/infrastructure/platform/id/device-id.adapter';
 import { SafeConsoleRecoveryDiagnosticsAdapter } from '@/infrastructure/platform/diagnostics/safe-console-recovery-diagnostics.adapter';
 import { SafeConsoleConfirmedResetDiagnosticsAdapter } from '@/infrastructure/platform/diagnostics/safe-console-confirmed-reset-diagnostics.adapter';
+import { SafeConsolePetVisualDiagnosticsAdapter } from '@/infrastructure/platform/diagnostics/safe-console-pet-visual-diagnostics.adapter';
 import { NoopResetNotificationCleanupAdapter } from '@/infrastructure/platform/notifications/noop-reset-notification-cleanup.adapter';
 import { DeviceTimeoutScheduler } from '@/infrastructure/platform/timing/device-timeout.scheduler';
 
@@ -62,6 +64,7 @@ export interface CreateMobileApplicationOptions {
   readonly migration?: MigrationPort;
   readonly id?: IdPort;
   readonly petCompanionSessions?: PetCompanionSessionReader;
+  readonly petVisualDiagnostics?: PetVisualDiagnosticsPort;
   readonly recoveryDiagnostics?: RecoveryDiagnosticsPort;
   readonly resetNotificationCleanup?: ResetNotificationCleanupPort;
   readonly sqliteDriver?: SQLiteDriver;
@@ -150,6 +153,8 @@ export const createMobileApplication = (
     scheduler: petFeedbackScheduler,
   });
   const petVisual = new PetVisualController(petCompanion, petTerminalFeedback);
+  const petVisualDiagnostics =
+    options.petVisualDiagnostics ?? new SafeConsolePetVisualDiagnosticsAdapter();
   const petTerminalReviewFixture = createPetTerminalReviewFixture(
     process.env.EXPO_PUBLIC_EPIC_04_TERMINAL_FIXTURE,
     petReviewFixturesEnabled,
@@ -421,6 +426,13 @@ export const createMobileApplication = (
     dismissPetTerminalFeedbackError: () => petTerminalFeedback.dismissRecovery(),
     discardPetTerminalFeedback: () => petTerminalFeedback.discardActive(),
     refreshPetCompanion,
+    recordPetVisualDiagnostic: (diagnostic) => {
+      try {
+        petVisualDiagnostics.record(diagnostic);
+      } catch {
+        // Visual diagnostics are best effort and cannot affect application truth.
+      }
+    },
     reportPetVisualComplete: (feedbackId) =>
       petTerminalFeedback.reportVisualComplete(feedbackId),
     reportPetVisualFailure: (feedbackId) =>
