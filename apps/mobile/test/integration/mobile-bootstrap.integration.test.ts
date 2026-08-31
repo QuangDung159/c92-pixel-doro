@@ -194,6 +194,53 @@ const createHarness = (options: HarnessOptions = {}) => {
 };
 
 describe('mobile bootstrap integration', () => {
+  it('refreshes a ready snapshot atomically and preserves the old snapshot on read failure', async () => {
+    const { bootstrap, dependencies } = createHarness();
+    await bootstrap.boot();
+    const refreshed = {
+      ...snapshot,
+      installation: { ...snapshot.installation, onboardingCompletedAt: 100 },
+      profile: { totalXp: 5, coinBalance: 1 },
+    };
+    vi.mocked(dependencies.bootstrapData.read).mockResolvedValueOnce({
+      ok: true,
+      value: refreshed,
+    });
+
+    await expect(bootstrap.refreshReadySnapshot()).resolves.toEqual({
+      ok: true,
+      value: refreshed,
+    });
+    expect(bootstrap.getSnapshot()).toMatchObject({
+      status: 'ready',
+      snapshot: refreshed,
+    });
+
+    vi.mocked(dependencies.bootstrapData.read).mockResolvedValueOnce({
+      ok: false,
+      error: {
+        kind: 'bootstrap_data_error',
+        code: 'DATABASE_READ_FAILED',
+      },
+    });
+    await expect(bootstrap.refreshReadySnapshot()).resolves.toMatchObject({
+      ok: false,
+      error: { code: 'BOOTSTRAP_REFRESH_READ_FAILED' },
+    });
+    expect(bootstrap.getSnapshot()).toMatchObject({
+      status: 'ready',
+      snapshot: refreshed,
+    });
+  });
+
+  it('rejects narrow snapshot refresh before bootstrap is ready', async () => {
+    const { bootstrap } = createHarness();
+    await expect(bootstrap.refreshReadySnapshot()).resolves.toMatchObject({
+      ok: false,
+      error: { code: 'BOOTSTRAP_REFRESH_NOT_READY' },
+    });
+  });
+
   it('hydrates again before readiness when startup reconciliation commits durable data', async () => {
     const { bootstrap, dependencies, gate } = createHarness();
     const refreshed = {

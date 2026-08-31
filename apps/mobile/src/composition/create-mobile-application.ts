@@ -1,9 +1,12 @@
 import {
   ConfirmedLocalDataReset,
+  CompleteFirstUseHandoffUseCase,
   AppVisibilityController,
   FirstUseEntryController,
   MobileBootstrap,
   OnboardingTrialCompletionController,
+  OnboardingTrialHandoffController,
+  OnboardingTrialPetFeedbackBridge,
   OnboardingTrialResultController,
   OnboardingTrialRunningController,
   ReadinessGate,
@@ -117,12 +120,15 @@ export const createMobileApplication = (
     baseClock,
     persistence.sessions,
     persistence.rewards,
+    persistence.installation,
   );
   const clock = onboardingTrialReviewFixture?.clock ?? baseClock;
   const onboardingTrialSessions =
     onboardingTrialReviewFixture?.sessions ?? persistence.sessions;
   const onboardingTrialRewards =
     onboardingTrialReviewFixture?.rewards ?? persistence.rewards;
+  const onboardingTrialInstallation =
+    onboardingTrialReviewFixture?.installation ?? persistence.installation;
   const sessionCommands = new SessionCommandCoordinator();
   const startOnboardingTrialUseCase = new StartOnboardingTrialUseCase({
     calendar: localCalendar,
@@ -179,7 +185,7 @@ export const createMobileApplication = (
     installation:
       options.firstUseInstallation ??
       firstUseEntryReviewFixture?.installation ??
-      persistence.installation,
+      onboardingTrialInstallation,
     sessions:
       options.firstUseSessions ??
       firstUseEntryReviewFixture?.sessions ??
@@ -213,7 +219,10 @@ export const createMobileApplication = (
         onboardingTrialCompletion,
         onboardingTrialReviewFixture?.prepareForStartup === undefined
           ? undefined
-          : () => onboardingTrialReviewFixture.prepareForStartup!(startOnboardingTrialUseCase),
+          : () => onboardingTrialReviewFixture.prepareForStartup!(
+              startOnboardingTrialUseCase,
+              completeOnboardingTrialUseCase,
+            ),
       ),
   });
   const confirmedReset = new ConfirmedLocalDataReset({
@@ -251,6 +260,22 @@ export const createMobileApplication = (
     scheduler: petFeedbackScheduler,
   });
   const petVisual = new PetVisualController(petCompanion, petTerminalFeedback);
+  const completeFirstUseHandoffUseCase = new CompleteFirstUseHandoffUseCase({
+    clock,
+    installation: onboardingTrialInstallation,
+  });
+  const onboardingTrialHandoff = new OnboardingTrialHandoffController({
+    bootstrap,
+    completeHandoff: completeFirstUseHandoffUseCase,
+    firstUseEntry,
+    petCompanion,
+  });
+  const onboardingTrialPetFeedback = new OnboardingTrialPetFeedbackBridge({
+    completion: onboardingTrialCompletion,
+    petCompanion,
+    petTerminalFeedback,
+  });
+  onboardingTrialPetFeedback.start();
   const petVisualDiagnostics =
     options.petVisualDiagnostics ?? new SafeConsolePetVisualDiagnosticsAdapter();
   const petTerminalReviewFixture = createPetTerminalReviewFixture(
@@ -509,6 +534,8 @@ export const createMobileApplication = (
     firstUseEntry,
     onboardingTrialRunning,
     onboardingTrialCompletion,
+    onboardingTrialHandoff,
+    onboardingTrialPetFeedback,
     onboardingTrialResult,
     petCompanion,
     petTerminalFeedback,
@@ -545,6 +572,8 @@ export const createMobileApplication = (
       const result = await allowed.value;
       if (result.ok) {
         onboardingTrialCompletion.reset();
+        onboardingTrialHandoff.reset();
+        onboardingTrialPetFeedback.reset();
         await Promise.all([
           firstUseEntry.refresh(),
           onboardingTrialRunning.refresh(),
@@ -553,7 +582,15 @@ export const createMobileApplication = (
       }
       return result;
     },
-    dismissPetTerminalFeedbackError: () => petTerminalFeedback.dismissRecovery(),
+    completeFirstUseHandoff: async (result) => {
+      const allowed = readiness.run(() => onboardingTrialHandoff.complete(result));
+      if (!allowed.ok) return allowed;
+      return allowed.value;
+    },
+    dismissPetTerminalFeedbackError: () => {
+      petTerminalFeedback.dismissRecovery();
+      void onboardingTrialPetFeedback.retry();
+    },
     discardPetTerminalFeedback: () => petTerminalFeedback.discardActive(),
     refreshPetCompanion,
     refreshFirstUseEntry: () => firstUseEntry.refresh(),
@@ -561,6 +598,7 @@ export const createMobileApplication = (
     refreshOnboardingTrialResult: () => onboardingTrialResult.refresh(),
     reconcileOnboardingTrial: (sessionId) => onboardingTrialCompletion.reconcile(sessionId),
     retryOnboardingTrialCompletion: () => onboardingTrialCompletion.retry(),
+    retryOnboardingTrialPetFeedback: () => onboardingTrialPetFeedback.retry(),
     recordPetVisualDiagnostic: (diagnostic) => {
       try {
         petVisualDiagnostics.record(diagnostic);
@@ -579,6 +617,8 @@ export const createMobileApplication = (
       const result = await allowed.value;
       if (result.ok) {
         onboardingTrialCompletion.reset();
+        onboardingTrialHandoff.reset();
+        onboardingTrialPetFeedback.reset();
         await Promise.all([
           firstUseEntry.refresh(),
           onboardingTrialRunning.refresh(),
@@ -596,6 +636,8 @@ export const createMobileApplication = (
       appVisibility.dispose();
       firstUseEntry.dispose();
       onboardingTrialRunning.dispose();
+      onboardingTrialHandoff.dispose();
+      onboardingTrialPetFeedback.dispose();
       onboardingTrialCompletion.dispose();
       onboardingTrialResult.dispose();
       petVisual.dispose();

@@ -4,6 +4,7 @@ import type {
   SessionRepository,
   TransactionScope,
 } from '@pixeldoro/application';
+import type { InstallationRepository } from '@/application';
 
 import { createOnboardingTrialReviewFixture } from './onboarding-trial-review-fixture';
 
@@ -28,6 +29,15 @@ const createRewards = (): RewardReceiptRepository => ({
   findBySessionId: vi.fn(),
   findBySessionIdInTransaction: vi.fn(),
   insertInTransaction: vi.fn(async () => ({ ok: true as const, value: undefined })),
+});
+
+const createInstallation = (): InstallationRepository => ({
+  find: vi.fn(),
+  setOnboardingCompleted: vi.fn(async () => ({
+    ok: true as const,
+    value: 'updated' as const,
+  })),
+  setAnonymousAnalyticsId: vi.fn(),
 });
 
 describe('createOnboardingTrialReviewFixture', () => {
@@ -116,8 +126,53 @@ describe('createOnboardingTrialReviewFixture', () => {
     }));
 
     expect(fixture?.clock.nowMs()).toBe(1_000);
-    await expect(fixture?.prepareForStartup?.({ execute } as never)).resolves.toBe(true);
+    await expect(fixture?.prepareForStartup?.(
+      { execute } as never,
+      { execute: vi.fn() } as never,
+    )).resolves.toBe(true);
     expect(execute).toHaveBeenCalledOnce();
     expect(fixture?.clock.nowMs()).toBe(301_001);
+  });
+
+  it('prepares reopen through production completion without exposing a fresh event', async () => {
+    const fixture = createOnboardingTrialReviewFixture(
+      'trial_completed_reopen',
+      true,
+      { nowMs: () => 1_000 },
+      createSessions(),
+      createRewards(),
+    );
+    const start = vi.fn(async () => ({
+      ok: true as const,
+      value: { outcome: 'started' as const, session: { id: 'trial-1' } },
+    }));
+    const complete = vi.fn(async () => ({
+      ok: true as const,
+      value: { outcome: 'completed_fresh' as const },
+    }));
+
+    await expect(fixture?.prepareForStartup?.(
+      { execute: start } as never,
+      { execute: complete } as never,
+    )).resolves.toBe(true);
+    expect(complete).toHaveBeenCalledWith('trial-1');
+  });
+
+  it('fails only the first Continue installation write', async () => {
+    const installation = createInstallation();
+    const fixture = createOnboardingTrialReviewFixture(
+      'trial_continue_failure',
+      true,
+      { nowMs: () => 1_000 },
+      createSessions(),
+      createRewards(),
+      installation,
+    );
+
+    await expect(fixture?.installation?.setOnboardingCompleted(2_000, 2_000))
+      .resolves.toMatchObject({ ok: false, error: { entity: 'app_installation' } });
+    await expect(fixture?.installation?.setOnboardingCompleted(2_000, 2_000))
+      .resolves.toEqual({ ok: true, value: 'updated' });
+    expect(installation.setOnboardingCompleted).toHaveBeenCalledOnce();
   });
 });

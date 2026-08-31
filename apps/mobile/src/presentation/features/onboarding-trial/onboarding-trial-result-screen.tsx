@@ -20,6 +20,9 @@ export interface OnboardingTrialResultScreenProps {
   readonly pet: PetVisualProjection;
   readonly onDismissPetFeedbackError: () => void;
   readonly onRetryPet: () => void;
+  readonly onContinue: () => void;
+  readonly continueBusy: boolean;
+  readonly continueError: boolean;
 }
 
 export const OnboardingTrialResultScreen = ({
@@ -27,6 +30,9 @@ export const OnboardingTrialResultScreen = ({
   pet,
   onDismissPetFeedbackError,
   onRetryPet,
+  onContinue,
+  continueBusy,
+  continueError,
 }: OnboardingTrialResultScreenProps) => (
   <ScreenShell>
     <ScreenHeader
@@ -47,8 +53,16 @@ export const OnboardingTrialResultScreen = ({
         <StatDisplay label="Coin hiện có" value={`${result.coinBalance}`} />
       </View>
     </View>
-    <InlineNotice>Mèo Dev đang ở trạng thái cơ bản. Phần chúc mừng và Pet Room sẽ mở ở bước tiếp theo.</InlineNotice>
-    <PrimaryButton disabled label="Tiếp tục" onPress={() => undefined} />
+    <InlineNotice>
+      {continueError
+        ? 'Kết quả và phần thưởng vẫn an toàn. Hãy thử mở Pet Room lại.'
+        : 'Mèo Dev đã ghi nhận nỗ lực đầu tiên. Bạn có thể vào Pet Room ngay.'}
+    </InlineNotice>
+    <PrimaryButton
+      busy={continueBusy}
+      label={continueBusy ? 'Đang mở Pet Room…' : 'Vào Pet Room'}
+      onPress={onContinue}
+    />
   </ScreenShell>
 );
 

@@ -2,6 +2,7 @@ import type {
   ApplicationResult,
   CancelOnboardingTrialError,
   CancelOnboardingTrialOutcome,
+  OnboardingTrialCommittedResult,
   PetCompanionController,
   PetTerminalFeedbackController,
   PetVisualController,
@@ -18,7 +19,11 @@ import type {
 import type { AppVisibilityController } from './visibility/app-visibility.controller';
 import type { PetVisualDiagnostic } from './ports/pet-visual-diagnostics.port';
 import type {
+  CompleteFirstUseHandoffOutcome,
   OnboardingTrialCompletionController,
+  OnboardingTrialHandoffController,
+  OnboardingTrialHandoffError,
+  OnboardingTrialPetFeedbackBridge,
   OnboardingTrialResultController,
   OnboardingTrialRunningController,
 } from './onboarding-trial';
@@ -28,6 +33,8 @@ export interface MobileApplicationFacade {
   readonly firstUseEntry: FirstUseEntryController;
   readonly onboardingTrialRunning: OnboardingTrialRunningController;
   readonly onboardingTrialCompletion: OnboardingTrialCompletionController;
+  readonly onboardingTrialHandoff: OnboardingTrialHandoffController;
+  readonly onboardingTrialPetFeedback: OnboardingTrialPetFeedbackBridge;
   readonly onboardingTrialResult: OnboardingTrialResultController;
   readonly appVisibility: AppVisibilityController;
   readonly petCompanion: PetCompanionController;
@@ -44,6 +51,14 @@ export interface MobileApplicationFacade {
       CancelOnboardingTrialError | CommandReadinessError
     >
   >;
+  completeFirstUseHandoff(
+    result: OnboardingTrialCommittedResult,
+  ): Promise<
+    ApplicationResult<
+      CompleteFirstUseHandoffOutcome,
+      OnboardingTrialHandoffError | CommandReadinessError
+    >
+  >;
   dismissPetTerminalFeedbackError(): void;
   discardPetTerminalFeedback(): void;
   refreshPetCompanion(): Promise<void>;
@@ -56,6 +71,7 @@ export interface MobileApplicationFacade {
   retryOnboardingTrialCompletion(): ReturnType<
     OnboardingTrialCompletionController['retry']
   >;
+  retryOnboardingTrialPetFeedback(): Promise<void>;
   recordPetVisualDiagnostic(diagnostic: PetVisualDiagnostic): void;
   reportPetVisualComplete(feedbackId: string): void;
   reportPetVisualFailure(feedbackId: string): void;

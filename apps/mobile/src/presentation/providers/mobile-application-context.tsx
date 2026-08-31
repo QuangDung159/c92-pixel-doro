@@ -19,6 +19,7 @@ import type {
   MobileApplicationFacade,
   OnboardingTrialRunningProjection,
   OnboardingTrialCompletionProjection,
+  OnboardingTrialHandoffProjection,
   OnboardingTrialResultProjection,
   PetVisualDiagnostic,
 } from '@/application';
@@ -123,6 +124,21 @@ export const useOnboardingTrialResultProjection = (): OnboardingTrialResultProje
 
 export const useOnboardingTrialResultRefresh = (): (() => Promise<void>) =>
   useMobileApplication().refreshOnboardingTrialResult;
+
+export const useOnboardingTrialHandoffProjection = (): OnboardingTrialHandoffProjection => {
+  const { onboardingTrialHandoff } = useMobileApplication();
+  return useSyncExternalStore(
+    onboardingTrialHandoff.subscribe,
+    onboardingTrialHandoff.getSnapshot,
+    onboardingTrialHandoff.getSnapshot,
+  );
+};
+
+export const useCompleteFirstUseHandoff = () =>
+  useMobileApplication().completeFirstUseHandoff;
+
+export const useRetryOnboardingTrialPetFeedback = (): (() => Promise<void>) =>
+  useMobileApplication().retryOnboardingTrialPetFeedback;
 
 export const useStartOnboardingTrial = () =>
   useMobileApplication().startOnboardingTrial;

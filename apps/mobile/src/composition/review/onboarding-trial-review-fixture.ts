@@ -1,10 +1,12 @@
 import {
   persistenceError,
   type ClockPort,
+  type CompleteOnboardingTrialUseCase,
   type RewardReceiptRepository,
   type SessionRepository,
   type StartOnboardingTrialUseCase,
 } from '@pixeldoro/application';
+import type { InstallationRepository } from '@/application';
 
 export type OnboardingTrialReviewScenario =
   | 'trial_start_failure'
@@ -13,14 +15,21 @@ export type OnboardingTrialReviewScenario =
   | 'trial_deadline_pending'
   | 'trial_overdue_running'
   | 'trial_complete_race'
-  | 'trial_reward_write_failure';
+  | 'trial_reward_write_failure'
+  | 'trial_completed_fresh'
+  | 'trial_completed_reopen'
+  | 'trial_continue_failure';
 
 export interface OnboardingTrialReviewFixture {
   readonly scenario: OnboardingTrialReviewScenario;
   readonly clock: ClockPort;
   readonly sessions: SessionRepository;
   readonly rewards: RewardReceiptRepository;
-  readonly prepareForStartup?: (start: StartOnboardingTrialUseCase) => Promise<boolean>;
+  readonly installation?: InstallationRepository;
+  readonly prepareForStartup?: (
+    start: StartOnboardingTrialUseCase,
+    complete: CompleteOnboardingTrialUseCase,
+  ) => Promise<boolean>;
 }
 
 const scenarios: readonly OnboardingTrialReviewScenario[] = [
@@ -31,6 +40,9 @@ const scenarios: readonly OnboardingTrialReviewScenario[] = [
   'trial_overdue_running',
   'trial_complete_race',
   'trial_reward_write_failure',
+  'trial_completed_fresh',
+  'trial_completed_reopen',
+  'trial_continue_failure',
 ];
 
 class OffsetReviewClock implements ClockPort {
@@ -130,12 +142,38 @@ class ReviewSessionRepository implements SessionRepository {
       : this.delegate.transitionFromRunningInTransaction(scope, input);
 }
 
+class ReviewInstallationRepository implements InstallationRepository {
+  private failedOnce = false;
+
+  constructor(private readonly delegate: InstallationRepository) {}
+
+  find: InstallationRepository['find'] = () => this.delegate.find();
+  setAnonymousAnalyticsId: InstallationRepository['setAnonymousAnalyticsId'] = (
+    anonymousAnalyticsId,
+    updatedAt,
+  ) => this.delegate.setAnonymousAnalyticsId(anonymousAnalyticsId, updatedAt);
+  setOnboardingCompleted: InstallationRepository['setOnboardingCompleted'] = (
+    completedAt,
+    updatedAt,
+  ) => {
+    if (!this.failedOnce) {
+      this.failedOnce = true;
+      return Promise.resolve({
+        ok: false,
+        error: persistenceError('PERSISTENCE_WRITE_FAILED', 'app_installation'),
+      });
+    }
+    return this.delegate.setOnboardingCompleted(completedAt, updatedAt);
+  };
+}
+
 export const createOnboardingTrialReviewFixture = (
   rawScenario: string | undefined,
   enabled: boolean,
   baseClock: ClockPort,
   sessions: SessionRepository,
   rewards: RewardReceiptRepository,
+  installation?: InstallationRepository,
 ): OnboardingTrialReviewFixture | undefined => {
   if (!enabled || !scenarios.includes(rawScenario as OnboardingTrialReviewScenario)) {
     return undefined;
@@ -148,7 +186,10 @@ export const createOnboardingTrialReviewFixture = (
         scenario === 'trial_reward_write_failure'
       ? 1_000
       : 1;
-  const overdueClock = scenario === 'trial_overdue_running'
+  const overdueClock = scenario === 'trial_overdue_running' ||
+    scenario === 'trial_completed_fresh' ||
+    scenario === 'trial_completed_reopen' ||
+    scenario === 'trial_continue_failure'
     ? new OffsetReviewClock(baseClock)
     : undefined;
   return {
@@ -156,11 +197,23 @@ export const createOnboardingTrialReviewFixture = (
     clock: overdueClock ?? (factor === 1 ? baseClock : new AcceleratedReviewClock(baseClock, factor)),
     sessions: new ReviewSessionRepository(sessions, scenario),
     rewards: new ReviewRewardReceiptRepository(rewards, scenario),
+    ...(scenario === 'trial_continue_failure' && installation !== undefined
+      ? { installation: new ReviewInstallationRepository(installation) }
+      : {}),
     ...(overdueClock === undefined ? {} : {
-      prepareForStartup: async (start: StartOnboardingTrialUseCase) => {
+      prepareForStartup: async (
+        start: StartOnboardingTrialUseCase,
+        complete: CompleteOnboardingTrialUseCase,
+      ) => {
           const result = await start.execute();
           if (!result.ok) return false;
           overdueClock.advanceBy(300_001);
+          if (scenario === 'trial_completed_reopen') {
+            const completed = await complete.execute(result.value.session.id);
+            return completed.ok &&
+              (completed.value.outcome === 'completed_fresh' ||
+                completed.value.outcome === 'already_completed');
+          }
           return true;
         },
     }),

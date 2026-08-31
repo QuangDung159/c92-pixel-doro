@@ -1,9 +1,10 @@
 ---
 document_id: PIXELDORO_US_05_04_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-05-04 Implementation Plan
-version: 0.1.0
-status: READY_FOR_OWNER_CONFIRMATION
-implementation_status: NOT_STARTED
+version: 0.2.0
+status: APPROVED
+implementation_status: IN_PROGRESS
+implementation_started_at: 2026-08-31
 created_at: 2026-08-31
 last_updated: 2026-08-31
 owner: Dũng Lư
@@ -13,6 +14,7 @@ language: vi
 branch: feats/epic-05
 baseline_sha: dcfeb17ea583c896ddba9fa3ce81f3de2d3b8298
 accepted_dependency_sha: a66d8a9e3ab870dd8e42b1b7349b2408bf4630d8
+implementation_start_sha: 8c66dd59a441f142bae701c33747dacc88905b2c
 formal_tester_status: DEFERRED_TO_LATER_PHASE
 scope:
   - mobile_mvp
@@ -59,9 +61,10 @@ feedback để Mèo Dev celebrate tối đa `2.000 ms`, không block CTA. User c
 `a66d8a9e3ab870dd8e42b1b7349b2408bf4630d8` sau quick smoke. Formal tester/device evidence vẫn
 `DEFERRED_TO_LATER_PHASE`.
 
-**Planning status:** `READY_FOR_OWNER_CONFIRMATION`.
-**Implementation status:** `NOT_STARTED`. Không production implementation trước khi owner duyệt
-`US0504-CONFIRM-01`…`08`.
+**Planning status:** `APPROVED` ngày 2026-08-31.
+**Implementation status:** `IN_PROGRESS` từ exact SHA
+`8c66dd59a441f142bae701c33747dacc88905b2c`. Owner duyệt toàn bộ
+`US0504-CONFIRM-01`…`08` ngày 2026-08-31.
 
 ### 0.1. Readiness gate
 
@@ -73,7 +76,7 @@ feedback để Mèo Dev celebrate tối đa `2.000 ms`, không block CTA. User c
 - [x] Không cần schema/migration/index/dependency/native/asset mới.
 - [x] DEC-05-01 giữ onboarding mandatory; DEC-05-04 giữ commit-before-Result.
 - [x] Formal tester execution tiếp tục deferred; automated/SQLite/EPIC-04 regressions là gate bắt buộc.
-- [ ] Owner duyệt toàn bộ confirmations trước khi Story chuyển `READY/IN_PROGRESS`.
+- [x] Owner duyệt toàn bộ confirmations; Story chuyển `IN_PROGRESS` từ `8c66dd5`.
 
 ## 1. Baseline audit và gap map
 
@@ -429,14 +432,14 @@ pnpm start --clear
 
 | ID | Confirmation | Recommendation | Status |
 | --- | --- | --- | --- |
-| `US0504-CONFIRM-01` | Base-first bridge maps only buffered fresh event into existing EPIC-04 controller | Approve TD-05-04-A | `PENDING OWNER` |
-| `US0504-CONFIRM-02` | Keep EPIC-04 2s/non-blocking/reduced-motion/lifecycle/no-replay contracts unchanged | Approve TD-05-04-B | `PENDING OWNER` |
-| `US0504-CONFIRM-03` | Conditional idempotent installation handoff; no session/reward/profile writes | Approve TD-05-04-C | `PENDING OWNER` |
-| `US0504-CONFIRM-04` | Persist → refresh snapshot → verify totals/route → replace Home | Approve TD-05-04-D | `PENDING OWNER` |
-| `US0504-CONFIRM-05` | Enable `Vào Pet Room`; busy/error, but never wait for animation | Approve TD-05-04-E | `PENDING OWNER` |
-| `US0504-CONFIRM-06` | Retain fresh event on recoverable delivery error; discard only after safe outcome/reset | Approve TD-05-04-F | `PENDING OWNER` |
-| `US0504-CONFIRM-07` | Finite fresh/reopen/one-shot Continue failure fixtures through production paths | Approve TD-05-04-G | `PENDING OWNER` |
-| `US0504-CONFIRM-08` | No schema/assets/dependencies/analytics; automated gates mandatory, formal tester deferred | Approve TD-05-04-H | `PENDING OWNER` |
+| `US0504-CONFIRM-01` | Base-first bridge maps only buffered fresh event into existing EPIC-04 controller | Approve TD-05-04-A | `APPROVED 2026-08-31` |
+| `US0504-CONFIRM-02` | Keep EPIC-04 2s/non-blocking/reduced-motion/lifecycle/no-replay contracts unchanged | Approve TD-05-04-B | `APPROVED 2026-08-31` |
+| `US0504-CONFIRM-03` | Conditional idempotent installation handoff; no session/reward/profile writes | Approve TD-05-04-C | `APPROVED 2026-08-31` |
+| `US0504-CONFIRM-04` | Persist → refresh snapshot → verify totals/route → replace Home | Approve TD-05-04-D | `APPROVED 2026-08-31` |
+| `US0504-CONFIRM-05` | Enable `Vào Pet Room`; busy/error, but never wait for animation | Approve TD-05-04-E | `APPROVED 2026-08-31` |
+| `US0504-CONFIRM-06` | Retain fresh event on recoverable delivery error; discard only after safe outcome/reset | Approve TD-05-04-F | `APPROVED 2026-08-31` |
+| `US0504-CONFIRM-07` | Finite fresh/reopen/one-shot Continue failure fixtures through production paths | Approve TD-05-04-G | `APPROVED 2026-08-31` |
+| `US0504-CONFIRM-08` | No schema/assets/dependencies/analytics; automated gates mandatory, formal tester deferred | Approve TD-05-04-H | `APPROVED 2026-08-31` |
 
 Owner có thể duyệt một lần bằng `Duyệt US0504-CONFIRM-01…08` hoặc nêu ID cần chỉnh. Approval chỉ
 mở implementation US-05-04; không mở analytics/integrity US-05-05.
@@ -468,4 +471,5 @@ mở implementation US-05-04; không mở analytics/integrity US-05-05.
 
 | Version | Date | Author | Change |
 | --- | --- | --- | --- |
+| 0.2.0 | 2026-08-31 | Codex, recording owner approval | Recorded approval of US0504-CONFIRM-01…08 and opened implementation from exact SHA 8c66dd5; US-05-05 remains closed. |
 | 0.1.0 | 2026-08-31 | Codex, for owner review | Closed accepted a66d8a9 dependency audit; proposed fresh Pet bridge, idempotent Continue, committed Home refresh, fixtures, tests and deferred tester contracts. No production implementation. |

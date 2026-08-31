@@ -1,5 +1,7 @@
 export {
   MobileBootstrap,
+  type BootstrapRefreshError,
+  type BootstrapRefreshErrorCode,
   type BootstrapProjection,
   type MobileBootstrapDependencies,
 } from './bootstrap/mobile-bootstrap';
@@ -100,6 +102,19 @@ export {
   type OnboardingTrialCompletionProjection,
   OnboardingTrialResultController,
   type OnboardingTrialResultProjection,
+  CompleteFirstUseHandoffUseCase,
+  type CompleteFirstUseHandoffDependencies,
+  type CompleteFirstUseHandoffError,
+  type CompleteFirstUseHandoffErrorCode,
+  type CompleteFirstUseHandoffOutcome,
+  OnboardingTrialHandoffController,
+  type OnboardingTrialHandoffControllerDependencies,
+  type OnboardingTrialHandoffError,
+  type OnboardingTrialHandoffErrorCode,
+  type OnboardingTrialHandoffProjection,
+  OnboardingTrialPetFeedbackBridge,
+  type OnboardingTrialPetFeedbackBridgeDependencies,
+  type OnboardingTrialPetFeedbackBridgeProjection,
 } from './onboarding-trial';
 export {
   FirstUseEntryController,

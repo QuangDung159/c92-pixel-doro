@@ -59,7 +59,8 @@ export class SQLiteInstallationRepository implements InstallationRepository {
     }
     return writeWithOwner(this.owner, 'app_installation', async (executor) => {
       const result = await executor.run(
-        `UPDATE app_installation SET onboarding_completed_at = ?, updated_at = ? WHERE id = 1`,
+        `UPDATE app_installation SET onboarding_completed_at = ?, updated_at = ?
+          WHERE id = 1 AND onboarding_completed_at IS NULL`,
         [completedAt, updatedAt],
       );
       return { ok: true, value: result.changes === 1 ? 'updated' : 'not_updated' };

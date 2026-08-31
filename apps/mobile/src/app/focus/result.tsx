@@ -13,6 +13,9 @@ import {
   usePetVisualProjection,
   useOnboardingTrialResultProjection,
   useOnboardingTrialResultRefresh,
+  useOnboardingTrialHandoffProjection,
+  useCompleteFirstUseHandoff,
+  useRetryOnboardingTrialPetFeedback,
 } from '@/presentation/providers/mobile-application-context';
 import { usePrototype } from '@/presentation/prototype/prototype-context';
 
@@ -24,6 +27,9 @@ export default function FocusResultRoute() {
   const pet = usePetVisualProjection();
   const trialResult = useOnboardingTrialResultProjection();
   const refreshTrialResult = useOnboardingTrialResultRefresh();
+  const handoff = useOnboardingTrialHandoffProjection();
+  const completeFirstUseHandoff = useCompleteFirstUseHandoff();
+  const retryTrialPetFeedback = useRetryOnboardingTrialPetFeedback();
   const refreshPet = usePetCompanionRefresh();
   const triggerPetTerminalReviewFixture = usePetTerminalReviewFixture();
   const terminalReviewFixtureAvailable =
@@ -78,8 +84,15 @@ export default function FocusResultRoute() {
     return (
       <PetRouteVisibility>
         <OnboardingTrialResultScreen
+          continueBusy={handoff.status === 'submitting'}
+          continueError={handoff.status === 'error'}
+          onContinue={() => {
+            void completeFirstUseHandoff(trialResult.result).then((completed) => {
+              if (completed.ok) router.replace('/(tabs)');
+            });
+          }}
           onDismissPetFeedbackError={dismissPetFeedbackError}
-          onRetryPet={() => void refreshPet()}
+          onRetryPet={() => void retryTrialPetFeedback()}
           pet={pet}
           result={trialResult.result}
         />

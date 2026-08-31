@@ -15,6 +15,10 @@ import {
   SessionCommandCoordinator,
   StartOnboardingTrialUseCase,
 } from '@pixeldoro/application';
+import {
+  CompleteFirstUseHandoffUseCase,
+  FirstUseEntryController,
+} from '@/application';
 
 import { MigrationRunner } from '@/infrastructure/database/migration-runner';
 import { productionMigrationRegistry } from '@/infrastructure/database/migrations/migration-registry';
@@ -268,6 +272,36 @@ describe('onboarding trial SQLite integration', () => {
       ok: true,
       value: { totalXp: 5, coinBalance: 1 },
     });
+    now += 1_000;
+    const handoff = new CompleteFirstUseHandoffUseCase({
+      clock,
+      installation: first.graph.installation,
+    });
+    expect(await handoff.execute()).toEqual({
+      ok: true,
+      value: { outcome: 'completed_fresh', completedAt: now },
+    });
+    now += 1_000;
+    expect(await handoff.execute()).toEqual({
+      ok: true,
+      value: { outcome: 'already_completed', completedAt: now - 1_000 },
+    });
+    expect(await first.graph.installation.find()).toMatchObject({
+      ok: true,
+      value: { onboardingCompletedAt: now - 1_000, updatedAt: now - 1_000 },
+    });
+    expect(await first.graph.sessions.findById(sessionId)).toMatchObject({
+      ok: true,
+      value: { status: 'completed', xpEarned: 5, coinsEarned: 1 },
+    });
+    expect(await first.graph.rewards.findBySessionId(sessionId)).toMatchObject({
+      ok: true,
+      value: { xpDelta: 5, coinDelta: 1 },
+    });
+    expect(await first.graph.profile.find()).toMatchObject({
+      ok: true,
+      value: { totalXp: 5, coinBalance: 1 },
+    });
     await first.owner.close();
 
     const reopened = await openGraph(driver, databaseName);
@@ -300,6 +334,20 @@ describe('onboarding trial SQLite integration', () => {
       ok: true,
       value: { totalXp: 5, coinBalance: 1 },
     });
+    expect(await reopened.graph.installation.find()).toMatchObject({
+      ok: true,
+      value: { onboardingCompletedAt: now - 1_000 },
+    });
+    const firstUseEntry = new FirstUseEntryController({
+      installation: reopened.graph.installation,
+      sessions: reopened.graph.sessions,
+    });
+    await firstUseEntry.refresh();
+    expect(firstUseEntry.getSnapshot()).toEqual({
+      status: 'ready',
+      destination: 'home',
+    });
+    firstUseEntry.dispose();
     await reopened.owner.close();
   });
 

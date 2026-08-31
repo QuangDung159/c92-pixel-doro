@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_05_USER_STORIES
-version: 0.11.0
-status: US_05_03_DONE_US_05_04_PLAN_REVIEW
+version: 0.12.0
+status: US_05_04_IN_PROGRESS
 date: 2026-08-31
 owner: Dũng Lư
 baseline_sha: 91cb459c05fdcfa1f114c9ed13ac143fdc7fd7d2
@@ -231,7 +231,7 @@ Onboarding, Trial Running, Result, and route files may only arrange components, 
 | 1 | US-05-01 — Durable First-use Entry | New user sees approved production intro; returning/recovering user lands on the correct durable route. | MUST | P0 | EPIC-01/02/03/04, G05-PLAN/G05-UX | US-05-02 | DONE_OWNER_ACCEPTED — `f2efd62` |
 | 2 | US-05-02 — Start, Run, Resume, or Cancel Trial | CTA starts a real five-minute trial; countdown resumes after background/relaunch; cancel safely returns to intro. | MUST | P0 | US-05-01, DEC-05-03 | US-05-03 | DONE_OWNER_ACCEPTED — `ef05b207`; TESTER DEFERRED |
 | 3 | US-05-03 — Complete and Reward Exactly Once | Deadline produces one committed completion and reward; Result reads `5 XP`/`1 Coin` from durable truth. | MUST | P0 | US-05-02, DEC-05-04 | US-05-04/05 | DONE_OWNER_ACCEPTED — `a66d8a9e`; QUICK SMOKE PASS; TESTER DEFERRED |
-| 4 | US-05-04 — Pet Celebration and Home Handoff | Fresh completion celebrates once; explicit Continue lands in production Home with committed totals. | MUST | P1 | US-05-03, EPIC-04, DEC-05-04 | US-05-05 | PLAN READY — OWNER CONFIRMATION REQUIRED |
+| 4 | US-05-04 — Pet Celebration and Home Handoff | Fresh completion celebrates once; explicit Continue lands in production Home with committed totals. | MUST | P1 | US-05-03, EPIC-04, DEC-05-04 | US-05-05 | IN PROGRESS — CONFIRMATIONS APPROVED; START `8c66dd5` |
 | 5 | US-05-05 — First-use Integrity and Exit Evidence | Full offline/relaunch/a11y journey is reviewable; exclusions and analytics semantics are proven without later-epic scope. | MUST | P1 | US-05-04, DEC-05-02 | EPIC-05 exit / EPIC-06 gate | NOT STARTED — SEQUENCED |
 
 `MVP Priority` says every capability is mandatory for the MVP outcome. `Dependency Priority` expresses correctness/rework risk: P0 establishes durable truth before polished handoff; P1 closes integration and evidence; no P2 story is proposed.
@@ -605,8 +605,8 @@ Evidence to send: Git SHA; platform; device/simulator; OS; normal/race/failure/r
 - **Dependencies:** US-05-03, EPIC-04 accepted controllers/assets, DEC-05-04.
 - **Blocks:** US-05-05.
 - **Product/technical gate:** Fresh-event semantics and explicit Continue persistence must preserve EPIC-04 arbitration/no-replay contract.
-- **Current status:** `PLAN READY — OWNER CONFIRMATION REQUIRED`; xem
-  `US-05-04_IMPLEMENTATION_PLAN.md`. Production implementation chưa bắt đầu.
+- **Current status:** `IN PROGRESS`; owner duyệt `US0504-CONFIRM-01`…`08` ngày 2026-08-31,
+  implementation mở từ exact SHA `8c66dd5`.
 
 **In scope**
 
@@ -1010,12 +1010,13 @@ One-pass review requested. No implementation starts until these are answered.
 - [x] `US-05-03_IMPLEMENTATION_PLAN.md` confirmations `US0503-CONFIRM-01`…`08` approved 2026-08-31; implementation opened at `657c25e`.
 - [x] `US-05-03` implementation committed at `a66d8a9e`; root 77 files/358 tests and real SQLite race/rollback/reopen gates pass; formal tester deferred.
 - [x] Owner closed US-05-03 on `a66d8a9e` after quick smoke; formal tester remains deferred; only US-05-04 planning opens.
-- [ ] `US-05-04_IMPLEMENTATION_PLAN.md` confirmations must be approved before production implementation begins.
+- [x] `US-05-04_IMPLEMENTATION_PLAN.md` confirmations `US0504-CONFIRM-01`…`08` approved; implementation opened at `8c66dd5`.
 
 ## 20. Change log
 
 | Version | Date | Author | Change |
 | --- | --- | --- | --- |
+| 0.12.0 | 2026-08-31 | Codex, recording owner approval | Recorded US0504-CONFIRM-01…08 approval and opened US-05-04 implementation at exact SHA 8c66dd5; US-05-05 remains gated. |
 | 0.11.0 | 2026-08-31 | Codex, recording owner acceptance | Closed US-05-03 at a66d8a9e after owner-reported quick smoke, retained formal tester evidence as deferred, and opened only US-05-04 plan review. |
 | 0.10.0 | 2026-08-31 | Codex | Recorded US-05-03 implementation at a66d8a9e and automated/SQLite evidence; Story awaits owner acceptance, formal tester remains deferred, US-05-04 stays gated. |
 | 0.9.0 | 2026-08-31 | Codex, recording owner approval | Recorded US0503-CONFIRM-01…08 approval and opened US-05-03 implementation at 657c25e; US-05-04 remains gated. |

@@ -20,6 +20,7 @@ const petAnimationLifecycleFlowPath = `${deviceDirectory}pet-animation-lifecycle
 const petAccessibilityFallbackFlowPath = `${deviceDirectory}pet-accessibility-fallback-smoke.md`;
 const onboardingTrialFlowPath = `${deviceDirectory}onboarding-trial-smoke.md`;
 const onboardingTrialCompletionFlowPath = `${deviceDirectory}onboarding-trial-completion-smoke.md`;
+const onboardingTrialHandoffFlowPath = `${deviceDirectory}onboarding-trial-handoff-smoke.md`;
 
 await access(flowPath);
 await access(sqliteFlowPath);
@@ -38,6 +39,7 @@ await access(petAnimationLifecycleFlowPath);
 await access(petAccessibilityFallbackFlowPath);
 await access(onboardingTrialFlowPath);
 await access(onboardingTrialCompletionFlowPath);
+await access(onboardingTrialHandoffFlowPath);
 const flow = await readFile(flowPath, 'utf8');
 const sqliteFlow = await readFile(sqliteFlowPath, 'utf8');
 const schemaFlow = await readFile(schemaFlowPath, 'utf8');
@@ -65,6 +67,10 @@ const petAccessibilityFallbackFlow = await readFile(
 const onboardingTrialFlow = await readFile(onboardingTrialFlowPath, 'utf8');
 const onboardingTrialCompletionFlow = await readFile(
   onboardingTrialCompletionFlowPath,
+  'utf8',
+);
+const onboardingTrialHandoffFlow = await readFile(
+  onboardingTrialHandoffFlowPath,
   'utf8',
 );
 
@@ -95,6 +101,21 @@ const requiredOnboardingTrialCompletionEvidence = [
 for (const evidence of requiredOnboardingTrialCompletionEvidence) {
   if (!onboardingTrialCompletionFlow.includes(evidence)) {
     throw new Error(`Onboarding completion device flow is missing: ${evidence}`);
+  }
+}
+
+const requiredOnboardingTrialHandoffEvidence = [
+  'EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE=trial_completed_fresh',
+  'EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE=trial_completed_reopen',
+  'EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE=trial_continue_failure',
+  'Vào Pet Room',
+  'onboarding_completed_at',
+  'unset EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE',
+];
+
+for (const evidence of requiredOnboardingTrialHandoffEvidence) {
+  if (!onboardingTrialHandoffFlow.includes(evidence)) {
+    throw new Error(`Onboarding handoff device flow is missing: ${evidence}`);
   }
 }
 
