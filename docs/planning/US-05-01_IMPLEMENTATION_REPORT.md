@@ -1,14 +1,15 @@
 ---
 document_id: PIXELDORO_US_05_01_IMPLEMENTATION_REPORT
 title: PixelDoro US-05-01 — Durable First-use Entry Implementation Report
-version: 0.1.0
-status: IMPLEMENTED_AWAITING_OWNER_MANUAL
+version: 1.0.0
+status: DONE_OWNER_ACCEPTED
 story: US-05-01
 date: 2026-08-31
 owner: Dũng Lư
 baseline_commit: 91cb459c05fdcfa1f114c9ed13ac143fdc7fd7d2
 implementation_start_commit: 9c1b6e70a715116e0715f4248ae69f960f68a927
-implementation_sha: PENDING_OWNER_COMMIT
+implementation_sha: f2efd62168886b429c1d8bf360dd99cf35fced97
+owner_accepted_at: 2026-08-31
 language: vi
 ---
 
@@ -133,7 +134,7 @@ native config/generated folder or native artifact changed.
 - No productionization of Standard Focus, Break, History, Shop, Settings or Feedback.
 - `OPEN-009` remains open.
 
-## 7. Owner manual gate — pending
+## 7. Owner manual acceptance
 
 Use the full guide in `US-05-01_IMPLEMENTATION_PLAN.md` §10. Minimum start command:
 
@@ -144,16 +145,21 @@ node -v
 EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE=first_use_new pnpm start --clear
 ```
 
-Required owner evidence:
+Owner xác nhận ngày 2026-08-31 đã chạy và chấp nhận test US-05-01 trên iPhone 14 Plus Simulator.
+Hai screenshot new/cancelled được cung cấp; hình ảnh giống nhau là đúng DEC-05-03 vì cả no-trial và
+cancelled đều map về Intro. Owner report toàn bộ guide pass. Exact iOS version, Development Build
+version, raw returning/error/offline/a11y captures và durable before/after dump không được cung cấp,
+nên report không tự điền giả.
 
-- [ ] Final Git SHA, platform, device/simulator, OS and Development Build/app version.
-- [ ] New user cold launch: neutral entry → production Intro, no wrong-screen flash.
-- [ ] Returning cold launch: direct production Home, no Intro flash.
-- [ ] Cancelled: Intro; running/completed: correct route selection only.
-- [ ] Read-error screen then Retry succeeds exactly once.
-- [ ] Offline, background/foreground and cold relaunch cases.
-- [ ] Screen reader, large text and Reduce Motion/static Cat behavior.
-- [ ] Screenshot/video plus before/after installation/session/reward/profile facts and pass/fail.
+Accepted checklist:
+
+- [x] Final implementation SHA `f2efd62168886b429c1d8bf360dd99cf35fced97`.
+- [x] Platform/target: iOS, iPhone 14 Plus Simulator; exact OS/app build version not supplied.
+- [x] Owner reported new user cold launch reaches production Intro without wrong-screen flash.
+- [x] Owner reported returning cold launch reaches production Home without Intro flash.
+- [x] Owner reported cancelled→Intro and running/completed route-selection cases pass.
+- [x] Owner reported read-error→Retry, offline, lifecycle/relaunch and accessibility cases pass.
+- [x] New/cancelled screenshots supplied; missing raw facts/captures are recorded as unavailable.
 
 Cleanup:
 
@@ -162,18 +168,18 @@ unset EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE
 pnpm start --clear
 ```
 
-No device/platform/manual box is marked pass by this report.
+No unsupported OS/version/raw durable fact is inferred by this report.
 
-## 8. Remaining gate and limitations
+## 8. Closure and transferred limitations
 
-- Story status remains `IMPLEMENTED_AWAITING_OWNER_MANUAL`, not `DONE`.
-- `implementation_sha` remains pending until owner commits the implementation working tree.
+- Story is `DONE_OWNER_ACCEPTED` on exact implementation SHA `f2efd62`.
 - Intro CTA is intentionally disabled; enabling committed Start belongs US-05-02.
 - Running/Result destination content remains prototype/pending and must not be accepted under US-05-01.
-- US-05-02 remains unopened until owner supplies manual evidence and explicitly closes US-05-01.
+- US-05-02 implementation planning may open; its production implementation still needs plan approval.
 
 ## 9. Change log
 
 | Version | Date | Author | Change |
 | --- | --- | --- | --- |
+| 1.0.0 | 2026-08-31 | Codex, recording owner acceptance | Bound implementation to f2efd62, recorded owner manual pass and known evidence limitations, and closed US-05-01. |
 | 0.1.0 | 2026-08-31 | Codex | Recorded host implementation, automated evidence, scope audit and pending owner Development Build gate. |

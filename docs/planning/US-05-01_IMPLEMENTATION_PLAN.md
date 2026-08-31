@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_05_01_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-05-01 Implementation Plan
-version: 0.3.0
-status: IMPLEMENTED_AWAITING_OWNER_MANUAL
-implementation_status: IMPLEMENTED_AWAITING_OWNER_MANUAL
+version: 0.4.0
+status: DONE_OWNER_ACCEPTED
+implementation_status: DONE_OWNER_ACCEPTED
 implementation_started_at: 2026-08-31
 last_updated: 2026-08-31
 owner: Dũng Lư
@@ -16,6 +16,8 @@ language: vi
 branch: feats/epic-05
 baseline_sha: 91cb459c05fdcfa1f114c9ed13ac143fdc7fd7d2
 implementation_start_sha: 9c1b6e70a715116e0715f4248ae69f960f68a927
+implementation_sha: f2efd62168886b429c1d8bf360dd99cf35fced97
+owner_accepted_at: 2026-08-31
 scope:
   - mobile_mvp
   - epic_05
@@ -59,8 +61,8 @@ duyệt Option 1 ngày 2026-08-31.
 và owner đóng exit gate.
 
 **Planning status:** `APPROVED` ngày 2026-08-31.
-**Implementation status:** `IMPLEMENTED_AWAITING_OWNER_MANUAL`. Host implementation và automated
-quality đã pass; Development Build/device acceptance chưa được owner cung cấp.
+**Implementation status:** `DONE_OWNER_ACCEPTED`. Owner xác nhận đã chạy và chấp nhận test
+US-05-01 ngày 2026-08-31 trên iPhone 14 Plus Simulator; exact OS version không được cung cấp.
 
 ### 0.1. Readiness gate
 
@@ -84,7 +86,9 @@ quality đã pass; Development Build/device acceptance chưa được owner cung
 - Root `pnpm run quality` pass: `60` files / `307` tests; device harness, boundary validation và
   repository hygiene đều pass.
 - Không có schema/migration/dependency/native change; UI production mới/sửa nằm trong giới hạn 300 dòng.
-- Owner manual Development Build evidence vẫn `PENDING`; Story chưa `DONE` và US-05-02 chưa mở.
+- Owner manual acceptance được xác nhận sau commit
+  `f2efd62168886b429c1d8bf360dd99cf35fced97`; screenshots new/cancelled được cung cấp, các scenario
+  còn lại được owner report pass nhưng raw device metadata/evidence không được đính kèm đầy đủ.
 
 ## 1. Authority contract và current-state review
 
@@ -822,16 +826,16 @@ Stop implementation and return to owner/plan review if:
 - [x] Automated tests map new/returning/running/completed/cancelled facts to the approved semantic destination.
 - [x] Intro is production common UI with Cat/Mèo Dev and no prototype badge/authority/forbidden control.
 - [x] CTA is truthful/disabled until US-05-02; no in-memory session is created.
-- [ ] Returning user reaches production Home without Intro flash.
-- [ ] Loading/read failure/retry are safe, accessible, local/offline, and write nothing.
+- [x] Owner reported returning user reaches production Home without Intro flash.
+- [x] Owner reported loading/read failure/retry, accessibility, local/offline and no-write cases pass.
 - [x] Latest onboarding-trial SQLite query is deterministic and requires no schema/migration.
 - [x] Controller/composition/presentation/navigation/SQLite/a11y/boundary/common automated tests pass.
 - [x] `pnpm run quality` and `git diff --check` pass in the implementation working tree.
 - [x] No UI source exceeds 300 lines; no duplicated common component or repository import in screen.
 - [x] No dependency/native artifact/schema/reward/timer/analytics/later-epic behavior changed.
-- [ ] Owner manual evidence records SHA/platform/device/OS/captures/facts/pass-fail honestly.
+- [x] Owner manual evidence records SHA, iOS/iPhone 14 Plus Simulator and pass; OS/raw facts not provided are left explicit rather than invented.
 - [x] Running/Result production behavior remains explicitly transferred, not marked accepted.
-- [ ] Story report/status is updated and owner closes exit gate before US-05-02.
+- [x] Story report/status is updated and owner closed US-05-01 before US-05-02 planning.
 
 ## 14. Owner confirmation gate cho implementation
 
@@ -863,6 +867,7 @@ Không còn technical confirmation mở. Story sẵn sàng để owner yêu cầ
 
 | Version | Date | Author | Change |
 | --- | --- | --- | --- |
+| 0.4.0 | 2026-08-31 | Codex, recording owner acceptance | Bound evidence to implementation SHA f2efd62, recorded owner manual pass with known/unknown metadata, and closed US-05-01. |
 | 0.3.0 | 2026-08-31 | Codex | Implemented the approved host slice; targeted 30 tests and root 307 tests pass. Marked Story awaiting owner Development Build/manual evidence, not DONE. |
 | 0.2.0 | 2026-08-31 | Codex, recording owner approval | Recorded approval of US0501-CONFIRM-01…06 and moved the Story to READY. No production task started. |
 | 0.1.0 | 2026-08-31 | Codex, for owner review | Created implementation plan after owner approved DEC-05-01…04; defined read-only entry controller, latest trial query, root landing route, production Intro migration, fixture/test/evidence plan, and six technical confirmations. No production implementation. |
