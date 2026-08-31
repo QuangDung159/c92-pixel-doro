@@ -41,6 +41,7 @@ export interface OnboardingTrialRunningControllerDependencies {
   readonly scheduler: TrialTickScheduler;
   readonly sessions: Pick<SessionRepository, 'findActive'>;
   readonly appInitiallyVisible?: boolean;
+  readonly onDeadlineReached?: (sessionId: string) => void;
 }
 
 export class OnboardingTrialRunningController {
@@ -52,6 +53,7 @@ export class OnboardingTrialRunningController {
   private routeActive = false;
   private appVisible: boolean;
   private disposed = false;
+  private deadlineRequestSessionId: string | null = null;
 
   constructor(private readonly dependencies: OnboardingTrialRunningControllerDependencies) {
     this.appVisible = dependencies.appInitiallyVisible ?? true;
@@ -105,6 +107,7 @@ export class OnboardingTrialRunningController {
     }
     if (result.value === null || !isRunningOnboardingTrial(result.value)) {
       this.session = null;
+      this.deadlineRequestSessionId = null;
       this.stopTick();
       this.publish({ status: 'missing' });
       return;
@@ -146,6 +149,13 @@ export class OnboardingTrialRunningController {
             displaySeconds: remaining.displaySeconds,
           },
     );
+    if (
+      remaining.phase === 'deadline_pending' &&
+      this.deadlineRequestSessionId !== this.session.id
+    ) {
+      this.deadlineRequestSessionId = this.session.id;
+      this.dependencies.onDeadlineReached?.(this.session.id);
+    }
     this.scheduleTick();
   }
 

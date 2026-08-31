@@ -12,6 +12,6 @@ export const startupReconciliationError = (): StartupReconciliationError => ({
 
 export interface StartupReconciliationPort {
   reconcileAtStartup(): Promise<
-    ApplicationResult<void, StartupReconciliationError>
+    ApplicationResult<{ readonly durableDataChanged: boolean }, StartupReconciliationError>
   >;
 }

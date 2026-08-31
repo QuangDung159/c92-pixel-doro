@@ -19,6 +19,7 @@ const petArbitrationFlowPath = `${deviceDirectory}pet-arbitration-smoke.md`;
 const petAnimationLifecycleFlowPath = `${deviceDirectory}pet-animation-lifecycle-smoke.md`;
 const petAccessibilityFallbackFlowPath = `${deviceDirectory}pet-accessibility-fallback-smoke.md`;
 const onboardingTrialFlowPath = `${deviceDirectory}onboarding-trial-smoke.md`;
+const onboardingTrialCompletionFlowPath = `${deviceDirectory}onboarding-trial-completion-smoke.md`;
 
 await access(flowPath);
 await access(sqliteFlowPath);
@@ -36,6 +37,7 @@ await access(petArbitrationFlowPath);
 await access(petAnimationLifecycleFlowPath);
 await access(petAccessibilityFallbackFlowPath);
 await access(onboardingTrialFlowPath);
+await access(onboardingTrialCompletionFlowPath);
 const flow = await readFile(flowPath, 'utf8');
 const sqliteFlow = await readFile(sqliteFlowPath, 'utf8');
 const schemaFlow = await readFile(schemaFlowPath, 'utf8');
@@ -61,6 +63,10 @@ const petAccessibilityFallbackFlow = await readFile(
   'utf8',
 );
 const onboardingTrialFlow = await readFile(onboardingTrialFlowPath, 'utf8');
+const onboardingTrialCompletionFlow = await readFile(
+  onboardingTrialCompletionFlowPath,
+  'utf8',
+);
 
 const requiredOnboardingTrialEvidence = [
   'EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE=trial_start_failure',
@@ -74,6 +80,21 @@ const requiredOnboardingTrialEvidence = [
 for (const evidence of requiredOnboardingTrialEvidence) {
   if (!onboardingTrialFlow.includes(evidence)) {
     throw new Error(`Onboarding trial device flow is missing: ${evidence}`);
+  }
+}
+
+const requiredOnboardingTrialCompletionEvidence = [
+  'EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE=trial_overdue_running',
+  'EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE=trial_complete_race',
+  'EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE=trial_reward_write_failure',
+  'onboarding_trial_completed',
+  'DEFERRED_TO_LATER_PHASE',
+  'unset EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE',
+];
+
+for (const evidence of requiredOnboardingTrialCompletionEvidence) {
+  if (!onboardingTrialCompletionFlow.includes(evidence)) {
+    throw new Error(`Onboarding completion device flow is missing: ${evidence}`);
   }
 }
 

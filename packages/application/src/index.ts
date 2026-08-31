@@ -42,6 +42,23 @@ export {
   type CancelOnboardingTrialOutcome,
 } from './onboarding-trial/cancel-onboarding-trial.use-case';
 export {
+  CompleteOnboardingTrialUseCase,
+  ONBOARDING_TRIAL_COIN_REWARD,
+  ONBOARDING_TRIAL_XP_REWARD,
+  type CompleteOnboardingTrialDependencies,
+  type CompleteOnboardingTrialError,
+  type CompleteOnboardingTrialErrorCode,
+  type CompleteOnboardingTrialOutcome,
+  type OnboardingTrialCommittedResult,
+  type OnboardingTrialFreshCompletionEvent,
+} from './onboarding-trial/complete-onboarding-trial.use-case';
+export {
+  LoadOnboardingTrialResultUseCase,
+  type LoadOnboardingTrialResultDependencies,
+  type LoadOnboardingTrialResultError,
+  type LoadOnboardingTrialResultOutcome,
+} from './onboarding-trial/load-onboarding-trial-result.use-case';
+export {
   createOnboardingTrialRecord,
   isRunningOnboardingTrial,
   MVP_PROFILE_ID,

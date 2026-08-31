@@ -20,6 +20,10 @@ export interface RewardReceiptRepository {
   findBySessionId(
     sessionId: string,
   ): Promise<PersistenceResult<RewardReceiptRecord | null>>;
+  findBySessionIdInTransaction(
+    scope: TransactionScope,
+    sessionId: string,
+  ): Promise<PersistenceResult<RewardReceiptRecord | null>>;
   insertInTransaction(
     scope: TransactionScope,
     record: RewardReceiptRecord,

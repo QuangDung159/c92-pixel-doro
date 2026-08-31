@@ -36,8 +36,9 @@ EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE=trial_deadline_pending pnpm start --clear
 - `trial_cancel_failure`: remain on Running; row stays running; no reward/profile write.
 - `trial_running_fast_clock`: display advances 30×, while persisted duration remains exactly five
   minutes and `endsAt-startedAt=300000`.
-- `trial_deadline_pending`: quickly reaches `00:00`, shows “Đang xác nhận kết quả…”, disables Cancel,
-  and does not navigate, complete, reward or celebrate.
+- `trial_deadline_pending`: on the accepted US-05-02 SHA `ef05b207`, quickly reaches `00:00`, shows
+  “Đang xác nhận kết quả…” and does not complete. On later US-05-03 builds this boundary is expected
+  to continue through the production completion command; use the US-05-03 guide for that behavior.
 
 Review VoiceOver/TalkBack, large text and Reduce Motion. Countdown must not announce every second;
 button/dialog order must remain understandable.
@@ -50,5 +51,5 @@ pnpm start --clear
 ```
 
 Capture start/double-tap/background/relaunch/cancel video, failure/pending screenshots, durable
-before/after facts and pass/fail for every group. Do not accept US-05-03 completion/reward behavior
-under this Story.
+before/after facts and pass/fail for every group. Bind US-05-02 evidence to `ef05b207`; do not treat
+later completion/reward behavior as US-05-02 evidence.

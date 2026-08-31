@@ -85,7 +85,7 @@ describe('mobile composition root', () => {
         }),
       },
       startupReconciliation: {
-        reconcileAtStartup: async () => ({ ok: true, value: undefined }),
+        reconcileAtStartup: async () => ({ ok: true, value: { durableDataChanged: false } }),
       },
       firstUseInstallation: {
         find: async () => ({
@@ -301,7 +301,7 @@ describe('mobile composition root', () => {
         }),
       },
       startupReconciliation: {
-        reconcileAtStartup: async () => ({ ok: true, value: undefined }),
+        reconcileAtStartup: async () => ({ ok: true, value: { durableDataChanged: false } }),
       },
     });
 

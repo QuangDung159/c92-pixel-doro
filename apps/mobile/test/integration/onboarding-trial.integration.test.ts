@@ -9,6 +9,9 @@ import {
 import { afterEach, describe, expect, it } from 'vitest';
 import {
   CancelOnboardingTrialUseCase,
+  CompleteOnboardingTrialUseCase,
+  LoadOnboardingTrialResultUseCase,
+  persistenceError,
   SessionCommandCoordinator,
   StartOnboardingTrialUseCase,
 } from '@pixeldoro/application';
@@ -195,5 +198,172 @@ describe('onboarding trial SQLite integration', () => {
       value: { totalXp: 0, coinBalance: 0 },
     });
     await final.owner.close();
+  });
+
+  it('completes and rewards exactly once across races and reopen', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'pixeldoro-us0503-'));
+    temporaryDirectories.push(directory);
+    const driver = new HostDriver(directory);
+    const databaseName = 'onboarding-completion.db';
+    const first = await openGraph(driver, databaseName);
+    let idCounter = 0;
+    let now = initialNow;
+    const id = { nextId: () => `us0503-${++idCounter}` };
+    const clock = { nowMs: () => now };
+    const migration = new MigrationRunner({
+      owner: first.owner,
+      transaction: first.transaction,
+      registry: productionMigrationRegistry,
+      clock,
+      id,
+    });
+    expect(await migration.migrate()).toMatchObject({ ok: true });
+    const coordinator = new SessionCommandCoordinator();
+    const start = new StartOnboardingTrialUseCase({
+      calendar: { snapshot: () => ({
+        ok: true,
+        value: { localDate: '2026-08-31', utcOffsetMinutes: 420 },
+      }) },
+      clock,
+      coordinator,
+      id,
+      sessions: first.graph.sessions,
+      transaction: first.transaction,
+    });
+    const started = await start.execute();
+    if (!started.ok) throw new Error('trial did not start');
+    const sessionId = started.value.session.id;
+    now += 300_000;
+    const complete = new CompleteOnboardingTrialUseCase({
+      clock,
+      coordinator,
+      id,
+      profile: first.graph.profile,
+      rewards: first.graph.rewards,
+      sessions: first.graph.sessions,
+      transaction: first.transaction,
+    });
+
+    const outcomes = await Promise.all([
+      complete.execute(sessionId),
+      complete.execute(sessionId),
+    ]);
+    expect(outcomes.map((result) => result.ok ? result.value.outcome : 'error').sort())
+      .toEqual(['already_completed', 'completed_fresh']);
+    expect(await first.graph.sessions.findById(sessionId)).toMatchObject({
+      ok: true,
+      value: {
+        status: 'completed', resolvedAt: now, rewardClaimedAt: now,
+        xpEarned: 5, coinsEarned: 1,
+      },
+    });
+    expect(await first.graph.rewards.findBySessionId(sessionId)).toMatchObject({
+      ok: true,
+      value: {
+        sessionId, profileId: 1, xpDelta: 5, coinDelta: 1,
+        reason: 'onboarding_trial_completed', createdAt: now,
+      },
+    });
+    expect(await first.graph.profile.find()).toMatchObject({
+      ok: true,
+      value: { totalXp: 5, coinBalance: 1 },
+    });
+    await first.owner.close();
+
+    const reopened = await openGraph(driver, databaseName);
+    const load = new LoadOnboardingTrialResultUseCase({
+      profile: reopened.graph.profile,
+      rewards: reopened.graph.rewards,
+      sessions: reopened.graph.sessions,
+    });
+    expect(await load.execute()).toMatchObject({
+      ok: true,
+      value: {
+        outcome: 'ready',
+        result: { sessionId, xpEarned: 5, coinsEarned: 1, totalXp: 5, coinBalance: 1 },
+      },
+    });
+    const hydratedComplete = new CompleteOnboardingTrialUseCase({
+      clock,
+      coordinator: new SessionCommandCoordinator(),
+      id,
+      profile: reopened.graph.profile,
+      rewards: reopened.graph.rewards,
+      sessions: reopened.graph.sessions,
+      transaction: reopened.transaction,
+    });
+    expect(await hydratedComplete.execute(sessionId)).toMatchObject({
+      ok: true,
+      value: { outcome: 'already_completed' },
+    });
+    expect(await reopened.graph.profile.find()).toMatchObject({
+      ok: true,
+      value: { totalXp: 5, coinBalance: 1 },
+    });
+    await reopened.owner.close();
+  });
+
+  it('rolls back session completion when reward insertion fails, then retries once', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'pixeldoro-us0503-rollback-'));
+    temporaryDirectories.push(directory);
+    const driver = new HostDriver(directory);
+    const databaseName = 'onboarding-rollback.db';
+    const opened = await openGraph(driver, databaseName);
+    let counter = 0;
+    let now = initialNow;
+    const id = { nextId: () => `rollback-${++counter}` };
+    const clock = { nowMs: () => now };
+    expect(await new MigrationRunner({
+      owner: opened.owner, transaction: opened.transaction,
+      registry: productionMigrationRegistry, clock, id,
+    }).migrate()).toMatchObject({ ok: true });
+    const coordinator = new SessionCommandCoordinator();
+    const start = new StartOnboardingTrialUseCase({
+      calendar: { snapshot: () => ({
+        ok: true, value: { localDate: '2026-08-31', utcOffsetMinutes: 420 },
+      }) },
+      clock, coordinator, id, sessions: opened.graph.sessions, transaction: opened.transaction,
+    });
+    const started = await start.execute();
+    if (!started.ok) throw new Error('trial did not start');
+    const sessionId = started.value.session.id;
+    now += 300_000;
+    const failing = new CompleteOnboardingTrialUseCase({
+      clock, coordinator, id, profile: opened.graph.profile,
+      rewards: {
+        findBySessionIdInTransaction: (scope, idValue) =>
+          opened.graph.rewards.findBySessionIdInTransaction(scope, idValue),
+        insertInTransaction: async () => ({
+          ok: false,
+          error: persistenceError('PERSISTENCE_WRITE_FAILED', 'reward_transactions'),
+        }),
+      },
+      sessions: opened.graph.sessions,
+      transaction: opened.transaction,
+    });
+    expect(await failing.execute(sessionId)).toMatchObject({
+      ok: false,
+      error: { code: 'SESSION_COMPLETION_WRITE_FAILED' },
+    });
+    expect(await opened.graph.sessions.findById(sessionId)).toMatchObject({
+      ok: true,
+      value: { status: 'running', xpEarned: 0, coinsEarned: 0, rewardClaimedAt: null },
+    });
+    expect(await opened.graph.rewards.findBySessionId(sessionId)).toEqual({ ok: true, value: null });
+    expect(await opened.graph.profile.find()).toMatchObject({
+      ok: true, value: { totalXp: 0, coinBalance: 0 },
+    });
+
+    const retry = new CompleteOnboardingTrialUseCase({
+      clock, coordinator, id, profile: opened.graph.profile, rewards: opened.graph.rewards,
+      sessions: opened.graph.sessions, transaction: opened.transaction,
+    });
+    expect(await retry.execute(sessionId)).toMatchObject({
+      ok: true, value: { outcome: 'completed_fresh' },
+    });
+    expect(await opened.graph.profile.find()).toMatchObject({
+      ok: true, value: { totalXp: 5, coinBalance: 1 },
+    });
+    await opened.owner.close();
   });
 });

@@ -1,5 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
-import type { SessionRepository, TransactionScope } from '@pixeldoro/application';
+import type {
+  RewardReceiptRepository,
+  SessionRepository,
+  TransactionScope,
+} from '@pixeldoro/application';
 
 import { createOnboardingTrialReviewFixture } from './onboarding-trial-review-fixture';
 
@@ -19,6 +23,13 @@ const createSessions = (): SessionRepository => ({
   })),
 });
 
+const createRewards = (): RewardReceiptRepository => ({
+  findById: vi.fn(),
+  findBySessionId: vi.fn(),
+  findBySessionIdInTransaction: vi.fn(),
+  insertInTransaction: vi.fn(async () => ({ ok: true as const, value: undefined })),
+});
+
 describe('createOnboardingTrialReviewFixture', () => {
   it('is absent unless dev diagnostics explicitly enable a finite scenario', () => {
     const sessions = createSessions();
@@ -27,12 +38,14 @@ describe('createOnboardingTrialReviewFixture', () => {
       false,
       { nowMs: () => 1_000 },
       sessions,
+      createRewards(),
     )).toBeUndefined();
     expect(createOnboardingTrialReviewFixture(
       'unknown',
       true,
       { nowMs: () => 1_000 },
       sessions,
+      createRewards(),
     )).toBeUndefined();
   });
 
@@ -43,6 +56,7 @@ describe('createOnboardingTrialReviewFixture', () => {
       true,
       { nowMs: () => 1_000 },
       sessions,
+      createRewards(),
     );
     expect(fixture).toBeDefined();
     const result = await fixture!.sessions.insertRunningInTransaction(
@@ -63,9 +77,47 @@ describe('createOnboardingTrialReviewFixture', () => {
       true,
       { nowMs: () => now },
       createSessions(),
+      createRewards(),
     );
     expect(fixture?.clock.nowMs()).toBe(1_000);
     now = 2_000;
     expect(fixture?.clock.nowMs()).toBe(31_000);
+  });
+
+  it('fails only the first reward insert for the completion recovery fixture', async () => {
+    const rewards = createRewards();
+    const fixture = createOnboardingTrialReviewFixture(
+      'trial_reward_write_failure',
+      true,
+      { nowMs: () => 1_000 },
+      createSessions(),
+      rewards,
+    );
+    const record = {} as Parameters<RewardReceiptRepository['insertInTransaction']>[1];
+    expect(await fixture!.rewards.insertInTransaction(scope, record)).toMatchObject({
+      ok: false,
+      error: { entity: 'reward_transactions' },
+    });
+    await fixture!.rewards.insertInTransaction(scope, record);
+    expect(rewards.insertInTransaction).toHaveBeenCalledTimes(1);
+  });
+
+  it('prepares a genuine trial before advancing only the injected startup clock', async () => {
+    const fixture = createOnboardingTrialReviewFixture(
+      'trial_overdue_running',
+      true,
+      { nowMs: () => 1_000 },
+      createSessions(),
+      createRewards(),
+    );
+    const execute = vi.fn(async () => ({
+      ok: true as const,
+      value: { outcome: 'started' as const, session: {} },
+    }));
+
+    expect(fixture?.clock.nowMs()).toBe(1_000);
+    await expect(fixture?.prepareForStartup?.({ execute } as never)).resolves.toBe(true);
+    expect(execute).toHaveBeenCalledOnce();
+    expect(fixture?.clock.nowMs()).toBe(301_001);
   });
 });

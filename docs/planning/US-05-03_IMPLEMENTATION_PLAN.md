@@ -1,9 +1,10 @@
 ---
 document_id: PIXELDORO_US_05_03_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-05-03 Implementation Plan
-version: 0.1.0
-status: READY_FOR_OWNER_CONFIRMATION
-implementation_status: NOT_STARTED
+version: 0.2.0
+status: APPROVED_IN_PROGRESS
+implementation_status: IN_PROGRESS
+implementation_started_at: 2026-08-31
 created_at: 2026-08-31
 last_updated: 2026-08-31
 owner: Dũng Lư
@@ -12,6 +13,7 @@ reviewer_role: Tech Lead/Product Owner
 language: vi
 branch: feats/epic-05
 baseline_sha: ef05b207e48bf36623932a83bc24d589dca99f23
+implementation_start_sha: 657c25eb57db84f2b1123ff4084c161f455fe142
 formal_tester_status: DEFERRED_TO_LATER_PHASE
 scope:
   - mobile_mvp
@@ -57,9 +59,10 @@ reopen, relaunch hoặc các nguồn chạy đồng thời không được cộn
 `ef05b207e48bf36623932a83bc24d589dca99f23`. Formal tester/Development Build evidence của 05-02
 được chuyển sang phase tester sau và không được ghi giả là đã pass.
 
-**Planning status:** `READY_FOR_OWNER_CONFIRMATION`.
-**Implementation status:** `NOT_STARTED`. Không production implementation trước khi owner duyệt
-`US0503-CONFIRM-01`…`08`.
+**Planning status:** `APPROVED` ngày 2026-08-31.
+**Implementation status:** `IN_PROGRESS` từ baseline
+`657c25eb57db84f2b1123ff4084c161f455fe142`. Owner duyệt toàn bộ
+`US0503-CONFIRM-01`…`08` và yêu cầu triển khai ngày 2026-08-31.
 
 ### 0.1. Readiness gate
 
@@ -73,7 +76,7 @@ reopen, relaunch hoặc các nguồn chạy đồng thời không được cộn
 - [x] Automated/real SQLite gates là bắt buộc trong implementation.
 - [x] Formal tester/device matrix được chuẩn bị nhưng execution giữ `DEFERRED_TO_LATER_PHASE` theo
   chỉ đạo owner.
-- [ ] Owner duyệt toàn bộ confirmation trước khi đổi Story sang `READY/IN_PROGRESS`.
+- [x] Owner duyệt toàn bộ confirmation; Story chuyển `READY/IN_PROGRESS` ngày 2026-08-31.
 
 ## 1. Baseline audit và gap map
 
@@ -454,14 +457,14 @@ pnpm start --clear
 
 | ID | Confirmation | Recommendation | Status |
 | --- | --- | --- | --- |
-| `US0503-CONFIRM-01` | One shared completion use case; atomic session → receipt → profile order with exact `5/1` | Approve TD-05-03-A | `PENDING OWNER` |
-| `US0503-CONFIRM-02` | Fresh/already/still-running/no-active/terminal outcomes plus coordinator + constraints idempotency | Approve TD-05-03-B | `PENDING OWNER` |
-| `US0503-CONFIRM-03` | Deadline, foreground and startup feed one single-flight completion boundary | Approve TD-05-03-C | `PENDING OWNER` |
-| `US0503-CONFIRM-04` | Startup changed outcome triggers one post-reconcile hydrate before readiness opens | Approve TD-05-03-D | `PENDING OWNER` |
-| `US0503-CONFIRM-05` | Result validates committed session/receipt/profile; stable fresh event only after commit | Approve TD-05-03-E | `PENDING OWNER` |
-| `US0503-CONFIRM-06` | Production Result + common RewardSummary; base Pet and disabled Continue until 05-04 | Approve TD-05-03-F | `PENDING OWNER` |
-| `US0503-CONFIRM-07` | Finite overdue/race/one-shot reward failure fixtures through production command | Approve TD-05-03-G | `PENDING OWNER` |
-| `US0503-CONFIRM-08` | No schema/dependency/native expansion; automated/SQLite mandatory, formal tester deferred | Approve TD-05-03-H | `PENDING OWNER` |
+| `US0503-CONFIRM-01` | One shared completion use case; atomic session → receipt → profile order with exact `5/1` | Approve TD-05-03-A | `APPROVED 2026-08-31` |
+| `US0503-CONFIRM-02` | Fresh/already/still-running/no-active/terminal outcomes plus coordinator + constraints idempotency | Approve TD-05-03-B | `APPROVED 2026-08-31` |
+| `US0503-CONFIRM-03` | Deadline, foreground and startup feed one single-flight completion boundary | Approve TD-05-03-C | `APPROVED 2026-08-31` |
+| `US0503-CONFIRM-04` | Startup changed outcome triggers one post-reconcile hydrate before readiness opens | Approve TD-05-03-D | `APPROVED 2026-08-31` |
+| `US0503-CONFIRM-05` | Result validates committed session/receipt/profile; stable fresh event only after commit | Approve TD-05-03-E | `APPROVED 2026-08-31` |
+| `US0503-CONFIRM-06` | Production Result + common RewardSummary; base Pet and disabled Continue until 05-04 | Approve TD-05-03-F | `APPROVED 2026-08-31` |
+| `US0503-CONFIRM-07` | Finite overdue/race/one-shot reward failure fixtures through production command | Approve TD-05-03-G | `APPROVED 2026-08-31` |
+| `US0503-CONFIRM-08` | No schema/dependency/native expansion; automated/SQLite mandatory, formal tester deferred | Approve TD-05-03-H | `APPROVED 2026-08-31` |
 
 Owner có thể duyệt một lần bằng `Duyệt US0503-CONFIRM-01…08` hoặc nêu ID cần chỉnh. Approval chỉ
 mở implementation của US-05-03, không mở Pet celebration/Continue/Home/analytics.
@@ -493,4 +496,5 @@ mở implementation của US-05-03, không mở Pet celebration/Continue/Home/an
 
 | Version | Date | Author | Change |
 | --- | --- | --- | --- |
+| 0.2.0 | 2026-08-31 | Codex, recording owner approval | Recorded approval of US0503-CONFIRM-01…08 and opened implementation from 657c25e; US-05-04 remains gated. |
 | 0.1.0 | 2026-08-31 | Codex, for owner review | Audited ef05b207 baseline; proposed atomic completion, race/idempotency, startup refresh, committed Result/fresh-event, fixture, test and deferred tester contracts. No production implementation. |

@@ -17,12 +17,18 @@ import type {
 } from './readiness/readiness-gate';
 import type { AppVisibilityController } from './visibility/app-visibility.controller';
 import type { PetVisualDiagnostic } from './ports/pet-visual-diagnostics.port';
-import type { OnboardingTrialRunningController } from './onboarding-trial';
+import type {
+  OnboardingTrialCompletionController,
+  OnboardingTrialResultController,
+  OnboardingTrialRunningController,
+} from './onboarding-trial';
 
 export interface MobileApplicationFacade {
   readonly bootstrap: MobileBootstrap;
   readonly firstUseEntry: FirstUseEntryController;
   readonly onboardingTrialRunning: OnboardingTrialRunningController;
+  readonly onboardingTrialCompletion: OnboardingTrialCompletionController;
+  readonly onboardingTrialResult: OnboardingTrialResultController;
   readonly appVisibility: AppVisibilityController;
   readonly petCompanion: PetCompanionController;
   readonly petTerminalFeedback: PetTerminalFeedbackController;
@@ -43,6 +49,13 @@ export interface MobileApplicationFacade {
   refreshPetCompanion(): Promise<void>;
   refreshFirstUseEntry(): Promise<void>;
   refreshOnboardingTrialRunning(): Promise<void>;
+  refreshOnboardingTrialResult(): Promise<void>;
+  reconcileOnboardingTrial(sessionId?: string): ReturnType<
+    OnboardingTrialCompletionController['reconcile']
+  >;
+  retryOnboardingTrialCompletion(): ReturnType<
+    OnboardingTrialCompletionController['retry']
+  >;
   recordPetVisualDiagnostic(diagnostic: PetVisualDiagnostic): void;
   reportPetVisualComplete(feedbackId: string): void;
   reportPetVisualFailure(feedbackId: string): void;

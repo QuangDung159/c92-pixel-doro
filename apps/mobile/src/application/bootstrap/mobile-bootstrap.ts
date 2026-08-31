@@ -315,10 +315,22 @@ export class MobileBootstrap
         return;
       }
 
+      let finalSnapshot = dataResult.value;
+      if (reconciliationResult.value.durableDataChanged) {
+        this.updateBooting('hydrating');
+        const refreshedData = await this.dependencies.bootstrapData.read();
+        if (!this.isCurrent(generation)) return;
+        if (!refreshedData.ok) {
+          this.recover('hydrating', refreshedData.error.code);
+          return;
+        }
+        finalSnapshot = refreshedData.value;
+      }
+
       this.dependencies.readiness.open();
       this.updateProjection({
         status: 'ready',
-        snapshot: dataResult.value,
+        snapshot: finalSnapshot,
         lifecycleState: this.lifecycleState,
       });
 

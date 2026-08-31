@@ -1,19 +1,26 @@
 import {
   persistenceError,
   type ClockPort,
+  type RewardReceiptRepository,
   type SessionRepository,
+  type StartOnboardingTrialUseCase,
 } from '@pixeldoro/application';
 
 export type OnboardingTrialReviewScenario =
   | 'trial_start_failure'
   | 'trial_cancel_failure'
   | 'trial_running_fast_clock'
-  | 'trial_deadline_pending';
+  | 'trial_deadline_pending'
+  | 'trial_overdue_running'
+  | 'trial_complete_race'
+  | 'trial_reward_write_failure';
 
 export interface OnboardingTrialReviewFixture {
   readonly scenario: OnboardingTrialReviewScenario;
   readonly clock: ClockPort;
   readonly sessions: SessionRepository;
+  readonly rewards: RewardReceiptRepository;
+  readonly prepareForStartup?: (start: StartOnboardingTrialUseCase) => Promise<boolean>;
 }
 
 const scenarios: readonly OnboardingTrialReviewScenario[] = [
@@ -21,7 +28,24 @@ const scenarios: readonly OnboardingTrialReviewScenario[] = [
   'trial_cancel_failure',
   'trial_running_fast_clock',
   'trial_deadline_pending',
+  'trial_overdue_running',
+  'trial_complete_race',
+  'trial_reward_write_failure',
 ];
+
+class OffsetReviewClock implements ClockPort {
+  private offsetMs = 0;
+
+  constructor(private readonly base: ClockPort) {}
+
+  nowMs(): number {
+    return this.base.nowMs() + this.offsetMs;
+  }
+
+  advanceBy(durationMs: number): void {
+    this.offsetMs += durationMs;
+  }
+}
 
 class AcceleratedReviewClock implements ClockPort {
   private readonly realAnchor: number;
@@ -40,6 +64,33 @@ class AcceleratedReviewClock implements ClockPort {
       this.virtualAnchor + (this.base.nowMs() - this.realAnchor) * this.factor,
     );
   }
+}
+
+class ReviewRewardReceiptRepository implements RewardReceiptRepository {
+  private failedOnce = false;
+
+  constructor(
+    private readonly delegate: RewardReceiptRepository,
+    private readonly scenario: OnboardingTrialReviewScenario,
+  ) {}
+
+  findById: RewardReceiptRepository['findById'] = (id) => this.delegate.findById(id);
+  findBySessionId: RewardReceiptRepository['findBySessionId'] = (sessionId) =>
+    this.delegate.findBySessionId(sessionId);
+  findBySessionIdInTransaction: RewardReceiptRepository['findBySessionIdInTransaction'] = (
+    scope,
+    sessionId,
+  ) => this.delegate.findBySessionIdInTransaction(scope, sessionId);
+  insertInTransaction: RewardReceiptRepository['insertInTransaction'] = (scope, record) => {
+    if (this.scenario === 'trial_reward_write_failure' && !this.failedOnce) {
+      this.failedOnce = true;
+      return Promise.resolve({
+        ok: false,
+        error: persistenceError('PERSISTENCE_WRITE_FAILED', 'reward_transactions'),
+      });
+    }
+    return this.delegate.insertInTransaction(scope, record);
+  };
 }
 
 class ReviewSessionRepository implements SessionRepository {
@@ -84,6 +135,7 @@ export const createOnboardingTrialReviewFixture = (
   enabled: boolean,
   baseClock: ClockPort,
   sessions: SessionRepository,
+  rewards: RewardReceiptRepository,
 ): OnboardingTrialReviewFixture | undefined => {
   if (!enabled || !scenarios.includes(rawScenario as OnboardingTrialReviewScenario)) {
     return undefined;
@@ -91,12 +143,26 @@ export const createOnboardingTrialReviewFixture = (
   const scenario = rawScenario as OnboardingTrialReviewScenario;
   const factor = scenario === 'trial_running_fast_clock'
     ? 30
-    : scenario === 'trial_deadline_pending'
+    : scenario === 'trial_deadline_pending' ||
+        scenario === 'trial_complete_race' ||
+        scenario === 'trial_reward_write_failure'
       ? 1_000
       : 1;
+  const overdueClock = scenario === 'trial_overdue_running'
+    ? new OffsetReviewClock(baseClock)
+    : undefined;
   return {
     scenario,
-    clock: factor === 1 ? baseClock : new AcceleratedReviewClock(baseClock, factor),
+    clock: overdueClock ?? (factor === 1 ? baseClock : new AcceleratedReviewClock(baseClock, factor)),
     sessions: new ReviewSessionRepository(sessions, scenario),
+    rewards: new ReviewRewardReceiptRepository(rewards, scenario),
+    ...(overdueClock === undefined ? {} : {
+      prepareForStartup: async (start: StartOnboardingTrialUseCase) => {
+          const result = await start.execute();
+          if (!result.ok) return false;
+          overdueClock.advanceBy(300_001);
+          return true;
+        },
+    }),
   };
 };

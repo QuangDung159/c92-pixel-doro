@@ -96,6 +96,10 @@ export {
   type OnboardingTrialRunningErrorCode,
   type OnboardingTrialRunningProjection,
   type TrialTickScheduler,
+  OnboardingTrialCompletionController,
+  type OnboardingTrialCompletionProjection,
+  OnboardingTrialResultController,
+  type OnboardingTrialResultProjection,
 } from './onboarding-trial';
 export {
   FirstUseEntryController,

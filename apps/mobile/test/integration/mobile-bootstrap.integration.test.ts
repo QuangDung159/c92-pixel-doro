@@ -168,7 +168,7 @@ const createHarness = (options: HarnessOptions = {}) => {
       reconcileAtStartup: vi.fn(() =>
         run(
           'reconciling',
-          { ok: true as const, value: undefined },
+          { ok: true as const, value: { durableDataChanged: false } },
           {
             ok: false as const,
             error: {
@@ -194,6 +194,27 @@ const createHarness = (options: HarnessOptions = {}) => {
 };
 
 describe('mobile bootstrap integration', () => {
+  it('hydrates again before readiness when startup reconciliation commits durable data', async () => {
+    const { bootstrap, dependencies, gate } = createHarness();
+    const refreshed = {
+      ...snapshot,
+      profile: { ...snapshot.profile, totalXp: 5, coinBalance: 1 },
+    };
+    vi.mocked(dependencies.startupReconciliation.reconcileAtStartup).mockResolvedValue({
+      ok: true,
+      value: { durableDataChanged: true },
+    });
+    vi.mocked(dependencies.bootstrapData.read)
+      .mockResolvedValueOnce({ ok: true, value: snapshot })
+      .mockResolvedValueOnce({ ok: true, value: refreshed });
+
+    await bootstrap.boot();
+
+    expect(dependencies.bootstrapData.read).toHaveBeenCalledTimes(2);
+    expect(bootstrap.getSnapshot()).toMatchObject({ status: 'ready', snapshot: refreshed });
+    expect(gate.run(() => 'ready')).toEqual({ ok: true, value: 'ready' });
+  });
+
   it('publishes ready only after the exact durable barrier order', async () => {
     const { bootstrap, gate, lifecycle, trace } = createHarness();
     const projections: string[] = [];

@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
 
 import { FocusSessionScreen } from '@/presentation/features/focus';
@@ -9,6 +9,8 @@ import {
   useDismissPetTerminalFeedbackError,
   useOnboardingTrialRunningActions,
   useOnboardingTrialRunningProjection,
+  useOnboardingTrialCompletionActions,
+  useOnboardingTrialCompletionProjection,
   usePetCompanionRefresh,
   usePetVisualProjection,
 } from '@/presentation/providers/mobile-application-context';
@@ -28,6 +30,8 @@ export default function FocusSessionRoute() {
   const dismissPetFeedbackError = useDismissPetTerminalFeedbackError();
   const cancelOnboardingTrial = useCancelOnboardingTrial();
   const trial = useOnboardingTrialRunningProjection();
+  const completion = useOnboardingTrialCompletionProjection();
+  const { retry: retryCompletion } = useOnboardingTrialCompletionActions();
   const {
     activate: activateTrial,
     deactivate: deactivateTrial,
@@ -48,6 +52,10 @@ export default function FocusSessionRoute() {
   );
 
   useSessionCancelBack(() => setCancelRequestToken((token) => token + 1));
+
+  useEffect(() => {
+    if (completion.status === 'committed') router.replace('/focus/result');
+  }, [completion.status, router]);
 
   const confirmTrialCancel = (sessionId: string): void => {
     if (cancelOperation.current !== null) return;
@@ -89,6 +97,18 @@ export default function FocusSessionRoute() {
           body="Dữ liệu phiên vẫn an toàn. Hãy thử lại để mở đúng phiên đang chạy."
           onRetry={() => void refreshTrial()}
           title="Chưa thể đọc phiên"
+        />
+      </ScreenShell>
+    );
+  }
+
+  if (completion.status === 'error') {
+    return (
+      <ScreenShell>
+        <ErrorState
+          body="Không có phần thưởng nào được ghi một phần. Hãy thử lại để hoàn tất phiên an toàn."
+          onRetry={() => void retryCompletion()}
+          title="Chưa thể hoàn tất phiên"
         />
       </ScreenShell>
     );

@@ -114,4 +114,20 @@ describe('OnboardingTrialRunningController', () => {
     await controller.refresh();
     expect(controller.getSnapshot()).toEqual({ status: 'missing' });
   });
+
+  it('requests completion once when the durable deadline is reached', async () => {
+    const onDeadlineReached = vi.fn();
+    const controller = new OnboardingTrialRunningController({
+      clock: { nowMs: () => 301_000 },
+      scheduler: { schedule: vi.fn() },
+      sessions: { findActive: async () => ({ ok: true, value: runningTrial() }) },
+      onDeadlineReached,
+    });
+
+    await controller.refresh();
+    await controller.refresh();
+
+    expect(onDeadlineReached).toHaveBeenCalledOnce();
+    expect(onDeadlineReached).toHaveBeenCalledWith('trial-1');
+  });
 });
