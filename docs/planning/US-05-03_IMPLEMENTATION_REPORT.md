@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_US_05_03_IMPLEMENTATION_REPORT
 title: PixelDoro US-05-03 — Complete and Reward Exactly Once Implementation Report
-version: 0.1.0
-status: IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE
+version: 0.2.0
+status: DONE_OWNER_ACCEPTED
 story: US-05-03
 date: 2026-08-31
 owner: Dũng Lư
@@ -10,6 +10,8 @@ baseline_commit: ef05b207e48bf36623932a83bc24d589dca99f23
 implementation_start_commit: 657c25eb57db84f2b1123ff4084c161f455fe142
 implementation_sha: a66d8a9e3ab870dd8e42b1b7349b2408bf4630d8
 formal_tester_status: DEFERRED_TO_LATER_PHASE
+quick_smoke_status: OWNER_REPORTED_PASS
+owner_accepted_at: 2026-08-31
 language: vi
 ---
 
@@ -31,8 +33,9 @@ US-05-03 đã được triển khai tại exact SHA
 - Production Result đọc session + receipt + profile đã commit; không Claim hoặc screen formula.
 - Stable fresh event được buffer sau commit nhưng chưa đưa vào Pet; Continue giữ disabled tới 05-04.
 
-Story đang `IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE`. Formal tester/Development Build execution tiếp
-tục `DEFERRED_TO_LATER_PHASE` theo chỉ đạo owner; báo cáo không claim manual/device pass.
+Owner đã đóng Story `DONE_OWNER_ACCEPTED` trên exact implementation SHA sau khi xác nhận quick smoke
+test done ngày 2026-08-31. Formal tester/Development Build execution tiếp tục
+`DEFERRED_TO_LATER_PHASE`; báo cáo không claim full manual/device pass.
 
 ## 2. Implemented architecture
 
@@ -141,6 +144,13 @@ Required later evidence: exact SHA, platform, device/simulator, OS, Development 
 captures, durable before/after facts and pass/fail per group. Current status of every manual field:
 `DEFERRED`. No device/manual box is marked pass by this report.
 
+Owner acceptance evidence hiện có:
+
+- [x] Exact implementation SHA `a66d8a9e3ab870dd8e42b1b7349b2408bf4630d8`.
+- [x] Owner reports quick smoke test done ngày 2026-08-31.
+- [x] Automated/real SQLite/root quality evidence được chấp nhận để đóng Story.
+- [ ] Platform/device/OS, app version, captures và raw durable facts chưa được cung cấp.
+
 ## 7. Transferred limitations
 
 - US-05-04 consumes the buffered fresh event for accepted Pet celebration and must not replay it for
@@ -148,10 +158,12 @@ captures, durable before/after facts and pass/fail per group. Current status of 
 - US-05-04 enables explicit Continue, persists onboarding completion and refreshes committed profile
   before Home/Pet Room handoff.
 - US-05-05 owns analytics/integrity exit evidence.
-- US-05-04 production must not open until owner accepts US-05-03 on exact implementation SHA.
+- US-05-04 planning may open because owner accepted US-05-03 on `a66d8a9e`; US-05-04 production
+  remains gated by its own implementation plan confirmations.
 
 ## 8. Change log
 
 | Version | Date | Author | Change |
 | --- | --- | --- | --- |
+| 0.2.0 | 2026-08-31 | Codex, recording owner acceptance | Closed US-05-03 at a66d8a9e after owner-reported quick smoke; formal tester evidence remains deferred without claiming full device pass. |
 | 0.1.0 | 2026-08-31 | Codex | Bound approved implementation, atomic/race/rollback evidence, committed Result, scope audit and deferred formal tester status to a66d8a9e. |

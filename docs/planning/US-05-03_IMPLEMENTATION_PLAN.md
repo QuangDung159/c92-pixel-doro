@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_05_03_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-05-03 Implementation Plan
-version: 0.3.0
-status: IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE
-implementation_status: IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE
+version: 0.4.0
+status: DONE_OWNER_ACCEPTED
+implementation_status: DONE_OWNER_ACCEPTED
 implementation_started_at: 2026-08-31
 created_at: 2026-08-31
 last_updated: 2026-08-31
@@ -16,6 +16,8 @@ baseline_sha: ef05b207e48bf36623932a83bc24d589dca99f23
 implementation_start_sha: 657c25eb57db84f2b1123ff4084c161f455fe142
 implementation_sha: a66d8a9e3ab870dd8e42b1b7349b2408bf4630d8
 formal_tester_status: DEFERRED_TO_LATER_PHASE
+quick_smoke_status: OWNER_REPORTED_PASS
+owner_accepted_at: 2026-08-31
 scope:
   - mobile_mvp
   - epic_05
@@ -61,7 +63,7 @@ reopen, relaunch hoặc các nguồn chạy đồng thời không được cộn
 được chuyển sang phase tester sau và không được ghi giả là đã pass.
 
 **Planning status:** `APPROVED` ngày 2026-08-31.
-**Implementation status:** `IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE` tại
+**Implementation status:** `DONE_OWNER_ACCEPTED` tại
 `a66d8a9e3ab870dd8e42b1b7349b2408bf4630d8`. Owner duyệt toàn bộ
 `US0503-CONFIRM-01`…`08` và mở implementation từ `657c25e` ngày 2026-08-31.
 
@@ -73,7 +75,18 @@ reopen, relaunch hoặc các nguồn chạy đồng thời không được cộn
 - Real SQLite race/rollback/retry/reopen evidence passes.
 - Final root quality: `77` files / `358` tests; lint/typecheck/device harness/boundaries/hygiene pass.
 - No schema/migration/dependency/native/Pet celebration/Continue/Home/analytics change.
-- Formal tester remains deferred; Story awaits owner acceptance and US-05-04 remains closed.
+- Tại implementation checkpoint này formal tester còn deferred; owner acceptance được ghi ở mục
+  0.3 và chỉ mở US-05-04 planning.
+
+### 0.3. Owner acceptance update — 2026-08-31
+
+- Owner xác nhận quick smoke test done và chấp nhận US-05-03 trên exact implementation SHA
+  `a66d8a9e3ab870dd8e42b1b7349b2408bf4630d8`.
+- Quick smoke được ghi là owner-reported pass; platform/device/OS, captures và raw durable dump không
+  được cung cấp trong lượt xác nhận này.
+- Formal tester/Development Build matrix vẫn `DEFERRED_TO_LATER_PHASE`, không được suy diễn thành
+  full manual pass.
+- Story đóng `DONE_OWNER_ACCEPTED`; chỉ US-05-04 implementation planning được mở.
 
 ### 0.1. Readiness gate
 
@@ -463,7 +476,7 @@ pnpm start --clear
 - [x] Implementation report is bound to exact SHA `a66d8a9e3ab870dd8e42b1b7349b2408bf4630d8`.
 - [x] Formal tester fields remain `DEFERRED` unless actual later-phase evidence is supplied; no false
   manual pass is recorded.
-- [ ] Owner accepts implemented Story on exact SHA before US-05-04 opens.
+- [x] Owner accepts implemented Story on exact SHA `a66d8a9e…`; US-05-04 planning may open.
 
 ## 10. Owner confirmation gate
 
@@ -508,6 +521,7 @@ mở implementation của US-05-03, không mở Pet celebration/Continue/Home/an
 
 | Version | Date | Author | Change |
 | --- | --- | --- | --- |
+| 0.4.0 | 2026-08-31 | Codex, recording owner acceptance | Closed US-05-03 at a66d8a9e after owner-reported quick smoke; retained formal tester/device evidence as deferred and opened only US-05-04 planning. |
 | 0.3.0 | 2026-08-31 | Codex | Recorded implementation at a66d8a9e, final 77/358 quality evidence and deferred formal tester status; Story awaits owner acceptance. |
 | 0.2.0 | 2026-08-31 | Codex, recording owner approval | Recorded approval of US0503-CONFIRM-01…08 and opened implementation from 657c25e; US-05-04 remains gated. |
 | 0.1.0 | 2026-08-31 | Codex, for owner review | Audited ef05b207 baseline; proposed atomic completion, race/idempotency, startup refresh, committed Result/fresh-event, fixture, test and deferred tester contracts. No production implementation. |
