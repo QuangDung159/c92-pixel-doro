@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_05_03_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-05-03 Implementation Plan
-version: 0.2.0
-status: APPROVED_IN_PROGRESS
-implementation_status: IN_PROGRESS
+version: 0.3.0
+status: IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE
+implementation_status: IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE
 implementation_started_at: 2026-08-31
 created_at: 2026-08-31
 last_updated: 2026-08-31
@@ -14,6 +14,7 @@ language: vi
 branch: feats/epic-05
 baseline_sha: ef05b207e48bf36623932a83bc24d589dca99f23
 implementation_start_sha: 657c25eb57db84f2b1123ff4084c161f455fe142
+implementation_sha: a66d8a9e3ab870dd8e42b1b7349b2408bf4630d8
 formal_tester_status: DEFERRED_TO_LATER_PHASE
 scope:
   - mobile_mvp
@@ -60,9 +61,19 @@ reopen, relaunch hoặc các nguồn chạy đồng thời không được cộn
 được chuyển sang phase tester sau và không được ghi giả là đã pass.
 
 **Planning status:** `APPROVED` ngày 2026-08-31.
-**Implementation status:** `IN_PROGRESS` từ baseline
-`657c25eb57db84f2b1123ff4084c161f455fe142`. Owner duyệt toàn bộ
-`US0503-CONFIRM-01`…`08` và yêu cầu triển khai ngày 2026-08-31.
+**Implementation status:** `IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE` tại
+`a66d8a9e3ab870dd8e42b1b7349b2408bf4630d8`. Owner duyệt toàn bộ
+`US0503-CONFIRM-01`…`08` và mở implementation từ `657c25e` ngày 2026-08-31.
+
+### 0.2. Implementation update — 2026-08-31
+
+- Production implementation committed at `a66d8a9e3ab870dd8e42b1b7349b2408bf4630d8`.
+- Atomic completion/reward, duplicate classification, startup/foreground/deadline orchestration,
+  committed Result, common RewardSummary and three finite review fixtures are implemented.
+- Real SQLite race/rollback/retry/reopen evidence passes.
+- Final root quality: `77` files / `358` tests; lint/typecheck/device harness/boundaries/hygiene pass.
+- No schema/migration/dependency/native/Pet celebration/Continue/Home/analytics change.
+- Formal tester remains deferred; Story awaits owner acceptance and US-05-04 remains closed.
 
 ### 0.1. Readiness gate
 
@@ -438,20 +449,21 @@ pnpm start --clear
 
 ## 9. Definition of Done
 
-- [ ] Owner approves `US0503-CONFIRM-01`…`08`; implementation start SHA is recorded.
-- [ ] All completion sources use one command/coordinator and commit before navigation/event.
-- [ ] Session + receipt + profile write atomically with exact `5/1` and correct reason.
-- [ ] Duplicate/race/retry/reopen/relaunch cannot duplicate reward/profile progression.
-- [ ] Failure at each write boundary leaves no partial mutation and has truthful recovery.
-- [ ] Startup overdue reconcile blocks readiness and publishes a post-reconcile fresh snapshot.
-- [ ] Result reads committed session/receipt/profile facts; no screen formula/claim/fake reward.
-- [ ] Fresh event exists post-commit only; old hydration emits none; Pet consumption remains 05-04.
-- [ ] Continue/Home remains disabled/transferred; Standard prototype remains isolated.
-- [ ] Targeted, real SQLite, root quality, boundary, hygiene and line-count gates pass.
-- [ ] No schema/migration/dependency/native/analytics/notification change.
-- [ ] Implementation report is bound to an exact final SHA.
-- [ ] Formal tester fields remain `DEFERRED` unless actual later-phase evidence is supplied; no false
+- [x] Owner approves `US0503-CONFIRM-01`…`08`; implementation start SHA is recorded.
+- [x] All completion sources use one command/coordinator and commit before navigation/event.
+- [x] Session + receipt + profile write atomically with exact `5/1` and correct reason.
+- [x] Duplicate/race/retry/reopen/relaunch cannot duplicate reward/profile progression.
+- [x] Failure at each write boundary leaves no partial mutation and has truthful recovery.
+- [x] Startup overdue reconcile blocks readiness and publishes a post-reconcile fresh snapshot.
+- [x] Result reads committed session/receipt/profile facts; no screen formula/claim/fake reward.
+- [x] Fresh event exists post-commit only; old hydration emits none; Pet consumption remains 05-04.
+- [x] Continue/Home remains disabled/transferred; Standard prototype remains isolated.
+- [x] Targeted, real SQLite, root quality, boundary, hygiene and line-count gates pass.
+- [x] No schema/migration/dependency/native/analytics/notification change.
+- [x] Implementation report is bound to exact SHA `a66d8a9e3ab870dd8e42b1b7349b2408bf4630d8`.
+- [x] Formal tester fields remain `DEFERRED` unless actual later-phase evidence is supplied; no false
   manual pass is recorded.
+- [ ] Owner accepts implemented Story on exact SHA before US-05-04 opens.
 
 ## 10. Owner confirmation gate
 
@@ -496,5 +508,6 @@ mở implementation của US-05-03, không mở Pet celebration/Continue/Home/an
 
 | Version | Date | Author | Change |
 | --- | --- | --- | --- |
+| 0.3.0 | 2026-08-31 | Codex | Recorded implementation at a66d8a9e, final 77/358 quality evidence and deferred formal tester status; Story awaits owner acceptance. |
 | 0.2.0 | 2026-08-31 | Codex, recording owner approval | Recorded approval of US0503-CONFIRM-01…08 and opened implementation from 657c25e; US-05-04 remains gated. |
 | 0.1.0 | 2026-08-31 | Codex, for owner review | Audited ef05b207 baseline; proposed atomic completion, race/idempotency, startup refresh, committed Result/fresh-event, fixture, test and deferred tester contracts. No production implementation. |
