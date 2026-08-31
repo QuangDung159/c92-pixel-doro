@@ -1,14 +1,15 @@
 ---
 document_id: PIXELDORO_US_05_02_IMPLEMENTATION_REPORT
 title: PixelDoro US-05-02 — Start, Run, Resume, or Cancel Trial Implementation Report
-version: 0.1.0
-status: IMPLEMENTED_AWAITING_OWNER_MANUAL
+version: 0.2.0
+status: DONE_OWNER_ACCEPTED
 story: US-05-02
 date: 2026-08-31
 owner: Dũng Lư
 baseline_commit: f2efd62168886b429c1d8bf360dd99cf35fced97
 implementation_start_commit: 9a519748fd62bd08624275e59ff18c4729265314
-implementation_sha: PENDING_OWNER_COMMIT
+implementation_sha: ef05b207e48bf36623932a83bc24d589dca99f23
+formal_tester_status: DEFERRED_TO_LATER_PHASE
 language: vi
 ---
 
@@ -29,7 +30,10 @@ US-05-02 đã được triển khai trên host working tree theo toàn bộ owne
 - Standard Focus prototype vẫn hoạt động qua route fallback tách biệt; durable trial branch không có
   prototype/mock/Strict/Complete controls.
 
-Story chưa `DONE`: final Git SHA và owner Development Build/manual acceptance còn pending.
+Owner đã đóng Story `DONE_OWNER_ACCEPTED` tại exact SHA
+`ef05b207e48bf36623932a83bc24d589dca99f23` dựa trên automated/SQLite evidence bên dưới. Owner đồng
+thời quyết định để tester thực hiện Development Build/manual matrix ở phase sau. Báo cáo không ghi
+nhận bất kỳ device/manual case chưa chạy nào là pass.
 
 ## 2. Implemented architecture
 
@@ -121,7 +125,7 @@ This is the final host recount after report/date-validation changes.
 - No naming/species selection; `OPEN-009` remains open.
 - All new/changed production UI files remain below 300 lines; largest new controller is below 180.
 
-## 7. Manual Development Build gate — pending
+## 7. Formal tester / Development Build evidence — deferred
 
 Use the full guide at:
 
@@ -136,7 +140,7 @@ node -v
 pnpm start --clear
 ```
 
-Required owner evidence:
+Evidence còn phải được tester thu ở phase sau:
 
 - [ ] Final implementation SHA, platform, device/simulator, OS and Development Build/app version.
 - [ ] Rapid double-tap creates one Running trial near `05:00`.
@@ -155,7 +159,15 @@ unset EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE
 pnpm start --clear
 ```
 
-No device/platform/manual box is marked pass by this report.
+Owner acceptance record ngày 2026-08-31:
+
+- [x] Exact implementation SHA được khóa tại `ef05b207e48bf36623932a83bc24d589dca99f23`.
+- [x] Automated, real SQLite, boundary, hygiene và no-schema-drift evidence được chấp nhận để đóng
+  Story và mở planning cho US-05-03.
+- [x] Formal tester/Development Build execution được chuyển sang phase sau theo quyết định owner.
+- [ ] Platform/device/OS, captures và manual durable facts chưa được cung cấp.
+
+Không device/platform/manual box nào được đánh dấu pass bởi báo cáo này.
 
 ## 8. Transferred limitations
 
@@ -163,10 +175,12 @@ No device/platform/manual box is marked pass by this report.
 - Automatic completion, reward transaction, Result navigation and startup/foreground reconciliation
   belong exclusively to US-05-03.
 - Result celebration/Home handoff and analytics remain US-05-04/05.
-- US-05-03 must not open until owner closes US-05-02 on an exact implementation SHA.
+- US-05-03 planning may open because owner closed US-05-02 on exact SHA `ef05b207…`; US-05-03
+  production remains gated by its own confirmation plan.
 
 ## 9. Change log
 
 | Version | Date | Author | Change |
 | --- | --- | --- | --- |
+| 0.2.0 | 2026-08-31 | Codex, recording owner acceptance | Bound report to ef05b207, closed Story by owner acceptance, and recorded formal tester/Development Build evidence as deferred to a later phase without claiming manual pass. |
 | 0.1.0 | 2026-08-31 | Codex | Recorded approved host implementation, architecture, automated/SQLite evidence, scope audit, manual gate and transferred US-05-03 boundary. |

@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_05_02_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-05-02 Implementation Plan
-version: 0.3.0
-status: IMPLEMENTED_AWAITING_OWNER_MANUAL
-implementation_status: IMPLEMENTED_AWAITING_OWNER_MANUAL
+version: 0.4.0
+status: DONE_OWNER_ACCEPTED
+implementation_status: DONE_OWNER_ACCEPTED
 implementation_started_at: 2026-08-31
 created_at: 2026-08-31
 last_updated: 2026-08-31
@@ -14,6 +14,8 @@ language: vi
 branch: feats/epic-05
 baseline_sha: f2efd62168886b429c1d8bf360dd99cf35fced97
 implementation_start_sha: 9a519748fd62bd08624275e59ff18c4729265314
+implementation_sha: ef05b207e48bf36623932a83bc24d589dca99f23
+formal_tester_status: DEFERRED_TO_LATER_PHASE
 scope:
   - mobile_mvp
   - epic_05
@@ -57,9 +59,10 @@ rồi mới quay lại Intro.
 **Blocks:** US-05-03. Story completion/reward không được mở trong implementation của US-05-02.
 
 **Planning status:** `APPROVED` ngày 2026-08-31.
-**Implementation status:** `IN_PROGRESS` từ baseline
-`9a519748fd62bd08624275e59ff18c4729265314`. Owner duyệt toàn bộ
-`US0502-CONFIRM-01`…`07` và yêu cầu triển khai ngày 2026-08-31.
+**Implementation status:** `DONE_OWNER_ACCEPTED` trên exact SHA
+`ef05b207e48bf36623932a83bc24d589dca99f23`. Owner xác nhận test done và quyết định chuyển
+Development Build/formal tester execution sang phase tester sau ngày 2026-08-31. Trạng thái này dựa
+trên automated/SQLite evidence đã ghi nhận; không tuyên bố manual device cases đã được chạy.
 
 ### 0.1. Readiness gate
 
@@ -84,8 +87,11 @@ rồi mới quay lại Intro.
 - Final root quality pass: `71` test files / `339` tests; lint không warning; device harness,
   boundary validation và repository hygiene đều pass.
 - Không có schema/migration/dependency/native/reward/profile/analytics/notification change.
-- Owner Development Build/manual evidence và final implementation commit còn `PENDING`; Story chưa
-  `DONE` và US-05-03 chưa mở.
+- Owner đã chấp nhận implementation tại exact SHA `ef05b20` dựa trên automated/SQLite evidence.
+- Development Build/formal tester evidence được owner chủ động defer sang phase tester sau; mọi ô
+  platform/device/OS/capture còn giữ `DEFERRED`, không được suy diễn thành pass.
+- Story đóng `DONE_OWNER_ACCEPTED`; US-05-03 implementation planning được mở, production vẫn chờ
+  owner duyệt plan riêng.
 
 ## 1. Authority contract và phạm vi khóa
 
@@ -566,7 +572,9 @@ screenshots failure/pending/a11y; before/after session/reward/profile facts; pas
 7. Không add notifications/background task chỉ vì Timer spec ghi best-effort effect.
 8. Không refactor toàn Focus/Break hay tạo common timer abstraction chưa có consumer thứ hai.
 9. Không sửa schema để thêm request ID; idempotency dựa serialized active-session invariant.
-10. Không đánh dấu DONE chỉ từ automated/host tests; cần owner Development Build acceptance.
+10. Không tự đánh dấu DONE chỉ từ automated/host tests. Ngoại lệ closure hiện tại là quyết định rõ
+    ràng của owner: accept implementation và defer formal tester sang phase sau; manual pass không
+    được ghi giả.
 
 ## 13. Definition of Done
 
@@ -581,8 +589,9 @@ screenshots failure/pending/a11y; before/after session/reward/profile facts; pas
 - [x] Pet working→idle refresh follows committed Start/Cancel; no terminal celebration path exists.
 - [x] Targeted tests, root quality, diff check, boundaries, hygiene and line-count gates pass.
 - [x] No schema/migration/dependency/native/reward/profile/analytics/notification change.
-- [ ] Implementation report binds evidence to final exact SHA after owner-requested commit; transferred US-05-03 behavior is already listed.
-- [ ] Owner manually accepts Development Build evidence before Story becomes `DONE_OWNER_ACCEPTED`.
+- [x] Implementation report binds evidence to final exact SHA `ef05b207…`; transferred US-05-03 behavior is listed.
+- [x] Owner accepts US-05-02 and explicitly defers Development Build/formal tester execution to a later tester phase.
+- [ ] Deferred tester phase supplies platform/device/OS, captures and durable before/after facts; this is not claimed by Story closure.
 
 ## 14. Owner confirmation gate
 
@@ -612,6 +621,7 @@ Owner đã duyệt toàn bộ bằng xác nhận “Duyệt confirmation => ti�
 
 | Version | Date | Author | Change |
 | --- | --- | --- | --- |
+| 0.4.0 | 2026-08-31 | Codex, recording owner acceptance | Bound implementation to ef05b207; closed US-05-02 by explicit owner acceptance and recorded formal tester/device evidence as deferred, not passed. |
 | 0.3.0 | 2026-08-31 | Codex | Implemented the approved host slice; final root 71 files/339 tests pass; marked Story awaiting owner Development Build evidence and final commit SHA. |
 | 0.2.0 | 2026-08-31 | Codex, recording owner approval | Recorded approval of US0502-CONFIRM-01…07 and opened implementation at 9a51974; US-05-03 remains gated. |
 | 0.1.0 | 2026-08-31 | Codex, for owner review | Audited accepted f2efd62 baseline; proposed exact Start/Cancel, concurrency, clock/calendar, lifecycle, deadline-pending, route, fixture, test and manual evidence contracts. No production implementation. |

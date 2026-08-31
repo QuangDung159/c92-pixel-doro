@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_05_USER_STORIES
-version: 0.7.0
-status: US_05_02_IMPLEMENTED_AWAITING_OWNER_MANUAL
+version: 0.8.0
+status: US_05_02_DONE_US_05_03_PLAN_REVIEW
 date: 2026-08-31
 owner: Dũng Lư
 baseline_sha: 91cb459c05fdcfa1f114c9ed13ac143fdc7fd7d2
@@ -24,8 +24,9 @@ authority_references:
 
 # EPIC-05 — First-use Onboarding Trial
 
-> Living execution record. US-05-01 acceptance is bound to its exact implementation SHA; later
-> Stories remain gated by their own plan, implementation, automated evidence and owner acceptance.
+> Living execution record. US-05-01/02 acceptance is bound to exact implementation SHAs. US-05-02
+> formal tester evidence is explicitly deferred to a later phase; no device/manual pass is implied.
+> Later Stories remain gated by their own plan, implementation, evidence and owner acceptance.
 
 ## 1. Epic context and outcome
 
@@ -221,15 +222,15 @@ Onboarding, Trial Running, Result, and route files may only arrange components, 
 | G05-UX | US-05-01/02/04 | CLOSED | Owner approved Option 1 for DEC-05-01, DEC-05-03, and DEC-05-04 on 2026-08-31. |
 | G05-ANALYTICS | US-05-05 | CLOSED | Owner approved Option 1 for DEC-05-02 on 2026-08-31. |
 | G05-DATA | Each story | CONDITIONAL | Existing schema appears sufficient. Any proven schema gap stops implementation for separate owner/authority review; no silent migration. |
-| G05-STORY-N | Next story | US-05-01 CLOSED | Owner accepted US-05-01 on `f2efd62`; US-05-02 implementation planning may open, but production remains gated by its plan approval. |
+| G05-STORY-N | Next story | US-05-02 CLOSED | Owner accepted US-05-02 on `ef05b207`; formal tester evidence is deferred; US-05-03 planning may open, but production remains gated by its plan approval. |
 
 ## 9. Story overview
 
 | Order | Story | User-visible increment | MVP Priority | Dependency Priority | Dependencies | Blocks | Initial status |
 | ---: | --- | --- | --- | --- | --- | --- | --- |
 | 1 | US-05-01 — Durable First-use Entry | New user sees approved production intro; returning/recovering user lands on the correct durable route. | MUST | P0 | EPIC-01/02/03/04, G05-PLAN/G05-UX | US-05-02 | DONE_OWNER_ACCEPTED — `f2efd62` |
-| 2 | US-05-02 — Start, Run, Resume, or Cancel Trial | CTA starts a real five-minute trial; countdown resumes after background/relaunch; cancel safely returns to intro. | MUST | P0 | US-05-01, DEC-05-03 | US-05-03 | IMPLEMENTED — AWAITING OWNER MANUAL |
-| 3 | US-05-03 — Complete and Reward Exactly Once | Deadline produces one committed completion and reward; Result reads `5 XP`/`1 Coin` from durable truth. | MUST | P0 | US-05-02, DEC-05-04 | US-05-04/05 | NOT STARTED — SEQUENCED |
+| 2 | US-05-02 — Start, Run, Resume, or Cancel Trial | CTA starts a real five-minute trial; countdown resumes after background/relaunch; cancel safely returns to intro. | MUST | P0 | US-05-01, DEC-05-03 | US-05-03 | DONE_OWNER_ACCEPTED — `ef05b207`; TESTER DEFERRED |
+| 3 | US-05-03 — Complete and Reward Exactly Once | Deadline produces one committed completion and reward; Result reads `5 XP`/`1 Coin` from durable truth. | MUST | P0 | US-05-02, DEC-05-04 | US-05-04/05 | PLAN READY — OWNER CONFIRMATION REQUIRED |
 | 4 | US-05-04 — Pet Celebration and Home Handoff | Fresh completion celebrates once; explicit Continue lands in production Home with committed totals. | MUST | P1 | US-05-03, EPIC-04, DEC-05-04 | US-05-05 | NOT STARTED — SEQUENCED |
 | 5 | US-05-05 — First-use Integrity and Exit Evidence | Full offline/relaunch/a11y journey is reviewable; exclusions and analytics semantics are proven without later-epic scope. | MUST | P1 | US-05-04, DEC-05-02 | EPIC-05 exit / EPIC-06 gate | NOT STARTED — SEQUENCED |
 
@@ -490,7 +491,8 @@ Evidence to send: Git SHA; platform; device/simulator; OS; start/background/rela
 - **Dependencies:** US-05-02, DEC-05-04, Session/Reward/Profile repositories, shared transaction, schema constraints.
 - **Blocks:** US-05-04 and US-05-05.
 - **Product/technical gate:** Atomic mutation order and conditional terminal outcome must pass SQLite concurrency/failure tests before Result is considered valid.
-- **Initial status:** `PROPOSED — OWNER REVIEW`.
+- **Current status:** `PLAN READY — OWNER CONFIRMATION REQUIRED`; see
+  `US-05-03_IMPLEMENTATION_PLAN.md`. Production implementation has not started.
 
 **In scope**
 
@@ -838,7 +840,7 @@ No box below is checked by planning. Owner/device evidence is required.
 | Evidence case | Story | Git SHA | Platform/device/OS | Capture | Durable before/after | Result |
 | --- | --- | --- | --- | --- | --- | --- |
 | New/returning/recovery launch | US-05-01 | `f2efd62` | iOS / iPhone 14 Plus Simulator / OS not supplied | New + cancelled screenshots; owner reports full guide pass | Owner reports unchanged; raw dump not supplied | PASS — OWNER ACCEPTED |
-| Start/double tap/background/relaunch/cancel/offline | US-05-02 | [ ] | [ ] | [ ] | [ ] | [ ] |
+| Start/double tap/background/relaunch/cancel/offline | US-05-02 | `ef05b207` | DEFERRED — formal tester phase | DEFERRED | Automated SQLite facts accepted; manual facts deferred | OWNER ACCEPTED — FORMAL TEST DEFERRED |
 | Deadline/race/rollback/reopen/relaunch reward | US-05-03 | [ ] | [ ] | [ ] | [ ] | [ ] |
 | Fresh/reopen celebration/Continue/Home/Reduce Motion | US-05-04 | [ ] | [ ] | [ ] | [ ] | [ ] |
 | Full journey/exclusions/failures/a11y | US-05-05 | [ ] | [ ] | [ ] | [ ] | [ ] |
@@ -1003,11 +1005,14 @@ One-pass review requested. No implementation starts until these are answered.
 - [x] `US-05-01` authorized to move to `READY` through approval of `US0501-CONFIRM-01`…`06` on 2026-08-31; remaining Epic-wide confirmations stay open for their owning Story/exit gate.
 - [x] `US-05-01` closed `DONE_OWNER_ACCEPTED` at `f2efd62` on 2026-08-31.
 - [x] `US-05-02_IMPLEMENTATION_PLAN.md` confirmations `US0502-CONFIRM-01`…`07` approved 2026-08-31; implementation opened at `9a51974`.
+- [x] `US-05-02` closed `DONE_OWNER_ACCEPTED` at `ef05b207` on 2026-08-31; Development Build/formal tester matrix explicitly deferred to a later phase without manual-pass claim.
+- [ ] `US-05-03_IMPLEMENTATION_PLAN.md` confirmations must be approved before production implementation begins.
 
 ## 20. Change log
 
 | Version | Date | Author | Change |
 | --- | --- | --- | --- |
+| 0.8.0 | 2026-08-31 | Codex, recording owner acceptance | Closed US-05-02 at ef05b207 with formal tester evidence deferred and opened only US-05-03 implementation-plan review. |
 | 0.7.0 | 2026-08-31 | Codex | Recorded US-05-02 host implementation and automated gates; Story remains awaiting owner Development Build evidence and final commit SHA. |
 | 0.6.0 | 2026-08-31 | Codex, recording owner approval | Recorded US0502-CONFIRM-01…07 approval and moved US-05-02 implementation to IN PROGRESS at 9a51974. |
 | 0.5.0 | 2026-08-31 | Codex, recording owner acceptance | Closed US-05-01 at f2efd62 with owner manual acceptance and opened US-05-02 implementation-plan review; US-05-02 production remains gated. |
