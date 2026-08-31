@@ -11,6 +11,7 @@ import { resolvePetRenderPlan } from './pet-asset-catalog';
 import { usePetAssetReviewScenario } from './pet-asset-review-context';
 import { petAnimationManifest } from './pet-animation-manifest';
 import { PetPlaybackController } from './pet-playback.controller';
+import { PetSpritePlayback } from './pet-sprite-playback';
 import { useReanimatedPetPlaybackDriver } from './use-reanimated-pet-playback-driver';
 
 export interface PetAnimationRendererProps {
@@ -99,7 +100,9 @@ export const PetAnimationRenderer = ({
     >
       {plan.layer === 'neutral_placeholder'
         ? <NeutralPetPlaceholder />
-        : <PetPortrait state={poseState} />}
+        : plan.layer === 'state_playback'
+          ? <PetSpritePlayback state={poseState} />
+          : <PetPortrait state={poseState} />}
     </Animated.View>
   );
 };

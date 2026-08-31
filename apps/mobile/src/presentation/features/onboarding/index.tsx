@@ -42,7 +42,7 @@ export const OnboardingScreen = ({ onStartTrial }: { readonly onStartTrial: () =
     </InlineNotice>
     <PrimaryButton label="Thử phiên 5 phút" onPress={onStartTrial} />
     <Text style={styles.decisionNote}>
-      Pet và tên chính thức vẫn đang chờ quyết định. Hình hiện tại là placeholder trung tính.
+      Người bạn mặc định trong MVP là Mèo Dev. Tên riêng và tính năng chọn Pet thuộc phase sau.
     </Text>
   </PrototypeScreen>
 );

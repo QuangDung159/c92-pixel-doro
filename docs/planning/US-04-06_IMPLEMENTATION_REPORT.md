@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_US_04_06_IMPLEMENTATION_REPORT
 title: PixelDoro US-04-06 — Reduced Motion, Layered Fallback and Semantic Pet State Report
-version: 1.0.0
-status: IMPLEMENTED_AWAITING_OWNER_MANUAL_EVIDENCE
+version: 1.1.0
+status: DONE_OWNER_ACCEPTED
 story: US-04-06
 date: 2026-08-30
 owner: Dũng Lư
@@ -18,8 +18,8 @@ story_authority: ./EPIC-04_USER_STORIES.md
 
 US-04-06 đã hoàn tất code và automated gates. Khi OS bật Reduce Motion, cả năm Pet state dùng pose
 tĩnh. Khi playback/art lỗi, renderer hạ cấp theo chuỗi xác định mà vẫn giữ nguyên semantic state,
-session/reward truth và CTA. Story đang `IMPLEMENTED_AWAITING_OWNER_MANUAL_EVIDENCE`;
-`US-04-07` chưa active và vẫn bị `OPEN-001` chặn.
+session/reward truth và CTA. Owner xác nhận đã test xong ngày 2026-08-31. Story là
+`DONE_OWNER_ACCEPTED`; `US-04-07` được mở ở art-candidate gate sau khi owner chốt Cat / Mèo Dev.
 
 ## 2. Output đã implement
 
@@ -71,7 +71,7 @@ Coverage mới gồm initial/change/race/cleanup của Reduce Motion, exact fall
 terminal failure still/preemption, five distinct static poses, semantic status, ChoiceChip/Button state,
 sanitized console adapter và diagnostic-sink failure không đổi projection.
 
-## 4. Manual evidence cần owner xác nhận
+## 4. Owner acceptance
 
 Thực hiện `apps/mobile/test/device/pet-accessibility-fallback-smoke.md` và ghi:
 
@@ -81,11 +81,12 @@ Thực hiện `apps/mobile/test/device/pet-accessibility-fallback-smoke.md` và 
 - before/after XP/Coin/session result;
 - Git SHA, platform/device/OS và pass/fail.
 
-Manual evidence hiện `PENDING`; report không tự suy diễn device/accessibility result.
+Owner xác nhận “Đã test done US-04-06” ngày 2026-08-31. Device/OS, screenshot và accessibility notes
+chi tiết chưa được cung cấp nên report không tự suy diễn metadata đó.
 
 ## 5. Boundary và gate tiếp theo
 
 - Không remote retry/download, new Pet state, UI redesign, dependency/Skia, schema/migration hoặc native build.
-- Không resolve `OPEN-001` và không tạo production Pet identity/art.
-- Chỉ đóng US-04-06 sau owner acceptance. US-04-07 còn hard-block cho tới khi `OPEN-001` được Product/Art
-  resolve và authority documents được đồng bộ.
+- Story 06 không tự resolve `OPEN-001` hoặc tạo production Pet identity/art. Owner đã resolve decision
+  riêng sau khi Story 06 được chấp nhận.
+- Gate Story 06 đã pass; exact US-04-07 artwork được Product/Art duyệt ở turn tiếp theo trước runtime integration.

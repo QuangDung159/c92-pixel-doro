@@ -1,16 +1,16 @@
 ---
 document_id: PIXELDORO_MVP_EPIC_BREAKDOWN
 title: PixelDoro Mobile MVP — Epic Breakdown
-version: 1.1.0
+version: 1.3.0
 status: APPROVED
-last_updated: 2026-08-30
+last_updated: 2026-08-31
 owner: Dũng Lư
 reviewer: Dũng Lư
 reviewer_role: Tech Lead
 approved_by: Dũng Lư
 approver_role: Product Owner
 approved_at: 2026-08-27
-amended_at: 2026-08-30
+amended_at: 2026-08-31
 amendment_approved_by: Dũng Lư
 language: vi
 scope:
@@ -191,18 +191,19 @@ Không mở Wave kế tiếp khi gate của Wave hiện tại chưa đạt.
 
 ## 4. Product decision gates
 
-Ba decision sau vẫn `OPEN` và không được Epic này tự chốt:
+`OPEN-001` đã được Product Owner chốt ngày 2026-08-31; hai decision còn lại vẫn `OPEN` và không được
+Epic tự chốt:
 
 | Gate | Decision | Epic bị ảnh hưởng trực tiếp | Milestone phải chốt |
 |---|---|---|---|
-| `GATE-PET-IDENTITY` | `OPEN-001` — Pet mặc định là Cat, Dog hay Robot | `EPIC-04`, `EPIC-05`, asset production trong `EPIC-12` | Trước khi chọn/tích hợp production Pet asset. |
+| `GATE-PET-IDENTITY` | `OPEN-001 RESOLVED` — Pet mặc định là Cat / Mèo Dev, stable asset ID `cat-dev` | `EPIC-04`, `EPIC-05`, asset production trong `EPIC-12` | Identity và Cat Dev sprite v1 đã được Product/Art duyệt; production integration thuộc US-04-07. |
 | `GATE-CONTRIBUTION-COLOR` | `OPEN-006` — Ngưỡng màu contribution graph | `EPIC-09`, visual QA trong `EPIC-12` | Trước khi khóa contribution visual design. |
 | `GATE-PET-NAMING` | `OPEN-009` — Có cho đặt tên Pet trong onboarding hay không | `EPIC-05`, schema/migration liên quan | Không block placeholder mock; phải đóng trước final production naming UX hoặc thêm Pet-name field. |
 
-Trong khi gate chưa chốt:
+Trong khi một gate liên quan chưa chốt hoặc exact artwork chưa được duyệt:
 
 - Được dùng neutral placeholder/fallback để phát triển phần không phụ thuộc decision.
-- Không seed species/name, không khóa artwork và không viết acceptance test giả định một phương án.
+- Không seed Pet name, không khóa artwork candidate và không viết acceptance test vượt quá decision đã chốt.
 - Không coi placeholder là production decision.
 
 ## 5. Epic definitions
@@ -377,7 +378,7 @@ notification scheduling, schema migration mới, real purchase/equip, analytics 
 - Runtime dedupe theo `sessionId + terminalStatus`.
 - Reanimated sprite loops, one-shot, cleanup khi background/unmount.
 - Reduced motion, layered static fallback và semantic status text.
-- Neutral placeholder cho tới khi Product chọn Pet mặc định.
+- Cat / Mèo Dev (`cat-dev`) là Pet duy nhất của MVP; Cat Dev sprite v1 đã được duyệt và neutral placeholder chỉ còn là failure fallback.
 
 **Epic completion checklist:**
 
@@ -745,7 +746,7 @@ Bảng này bảo đảm toàn bộ 18 hạng mục Mobile MVP trong Product Cor
 | # | Mobile MVP scope | Epic owner |
 |---:|---|---|
 | 1 | Onboarding ngắn | `EPIC-05` |
-| 2 | Một Pet mặc định | `EPIC-04`; chờ `OPEN-001` để khóa production asset |
+| 2 | Một Pet mặc định | `EPIC-04`; Cat / Mèo Dev và sprite v1 đã được Product/Art duyệt |
 | 3 | Home/Pet Room | `EPIC-04` |
 | 4 | Chọn tag công việc | `EPIC-06` |
 | 5 | Focus 15–120 phút | `EPIC-06` |
@@ -813,13 +814,26 @@ block trạng thái `APPROVED` của master plan hoặc `DONE` của Epic 1.
 - [ ] Tạo clickable UI mock bằng fake data/fake navigation trước mọi schema/domain plan mới.
 - [ ] Gắn mỗi flow với Epic owner và source requirement.
 - [ ] Xác định happy path, alternate path, error/recovery path và exit state cho từng flow.
-- [ ] Ghi decision gate vào Story bị ảnh hưởng bởi `OPEN-001`, `OPEN-006`, `OPEN-009`.
+- [ ] Ghi decision gate vào Story bị ảnh hưởng; `OPEN-001` đã resolved, `OPEN-006`/`OPEN-009` còn open.
 - [ ] Chỉ chia Story đủ nhỏ sau khi flow và acceptance boundary rõ ràng.
 - [ ] Lập data-needs map sau UX approval; không suy ngược UX từ schema hiện có.
 - [ ] Sau Story mới tạo Task theo layer và test level.
 - [ ] Không estimate deadline trước khi Story refinement hoàn tất.
 
 ## 10. Change log
+
+### 1.3.0 — 2026-08-31
+
+- Owner Product/Art duyệt Cat Dev sprite v1 và cho phép production integration trong `US-04-07`.
+- Xác nhận Mobile MVP không có Pet selector; Cat/Dog/Rabbit hoặc roster khác thuộc phase sau.
+- Giữ selection/species persistence, multiple Pet và Pet naming ngoài MVP scope.
+
+### 1.2.0 — 2026-08-31
+
+- Đồng bộ Product `OPEN-001 RESOLVED`: Pet mặc định là Cat / Mèo Dev với stable asset ID `cat-dev`.
+- Đóng identity gate cho US-04-07 nhưng giữ exact artwork/manifest ở trạng thái chờ Product/Art duyệt;
+  không coi candidate là production asset.
+- Không thêm species/name persistence, multiple Pet, evolution/gameplay hoặc resolve `OPEN-009`.
 
 ### 1.1.0 — 2026-08-30
 

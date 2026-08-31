@@ -49,7 +49,7 @@ EXPO_PUBLIC_EPIC_04_PET_BASE_FIXTURE=focus EXPO_PUBLIC_EPIC_04_ASSET_FIXTURE=all
 Kỳ vọng:
 
 - `playback_failure`: không crash; hiển thị đúng Working pose tĩnh và status Working.
-- `state_frame_missing`: hiển thị neutral Idle pose tĩnh nhưng status vẫn là Working; không được đổi
+- `state_frame_missing`: hiển thị Cat Idle fallback frame tĩnh nhưng status vẫn là Working; không được đổi
   logical state thành Idle.
 - `all_art_missing`: hiển thị placeholder hình học nét đứt; status vẫn là Working.
 - Cả ba trường hợp: CTA/Back/Complete vẫn bấm được, không remote retry/download, không màn đỏ.

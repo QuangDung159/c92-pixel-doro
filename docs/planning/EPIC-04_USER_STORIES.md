@@ -1,13 +1,13 @@
 ---
 document_id: PIXELDORO_EPIC_04_USER_STORIES
 title: PixelDoro EPIC-04 — Home/Pet Room và Pet Companion Projection User Stories
-version: 0.7.0
+version: 0.9.0
 status: APPROVED_FOR_SEQUENTIAL_IMPLEMENTATION
-last_updated: 2026-08-30
+last_updated: 2026-08-31
 owner: Dũng Lư
 approved_by: Dũng Lư
 approved_at: 2026-08-30
-implementation_status: US_04_06_IMPLEMENTED_AWAITING_OWNER_MANUAL_EVIDENCE
+implementation_status: US_04_07_IMPLEMENTED_AWAITING_OWNER_DEVICE_ACCEPTANCE
 language: vi
 scope:
   - mobile_mvp
@@ -32,9 +32,9 @@ trong khi animation không được làm chậm, block hoặc thay đổi core F
 
 Story list đã được owner duyệt toàn bộ trong một lượt ngày 2026-08-30. Solo developer chỉ được có
 **một Story active tại một thời điểm** và đi theo execution order ở mục 8. Owner xác nhận đã test
-`US-04-01` đến `US-04-05`. Owner sau đó yêu cầu tiến hành `US-04-06`; implementation/automated gates
-của Story 06 đã hoàn tất và đang chờ owner manual Development Build evidence. `US-04-07` chưa active
-và tiếp tục bị chặn bởi `OPEN-001`.
+`US-04-01` đến `US-04-06`. Ngày 2026-08-31 owner chốt `OPEN-001`: Pet mặc định là Cat / Mèo Dev,
+stable asset ID `cat-dev`, yêu cầu tạo sprite mới và đã duyệt candidate v1. `US-04-07` đã production-
+integrate năm state sheet; automated quality pass, còn chờ owner device matrix/acceptance để Done.
 
 ### 0.2. Baseline đã xác minh
 
@@ -65,7 +65,7 @@ Khi có khác biệt, Story và Task phải áp dụng đúng thứ tự:
 
 | Tài liệu | Trạng thái/ý nghĩa được dùng |
 |---|---|
-| `docs/PIXELDORO_CORE_TRUTH.md` | `ACTIVE` 1.13.0; Product thesis, companion-first, Pet mapping, primary journey và `OPEN-001` |
+| `docs/PIXELDORO_CORE_TRUTH.md` | `ACTIVE` 1.15.0; Product thesis, fixed Cat / Mèo Dev (`cat-dev`), Pet mapping và primary journey |
 | `docs/planning/MVP_EPICS.md` | `APPROVED`; EPIC-03 `DONE`, EPIC-04 scope/checklist, gate và execution wave |
 | `docs/planning/EPIC-03_UX_PROTOTYPE_PLAN.md` | `UX_APPROVED`; approved hierarchy, CTA, fake boundary, data-needs map và quality evidence |
 | `docs/planning/EPIC-01_USER_STORIES.md` | `APPROVED`; foundation dependency, route/composition/test conventions |
@@ -244,17 +244,18 @@ tests kiểm tra lần lượt state frame → state static frame → same-Pet i
 placeholder, luôn giữ semantic status. Device guide kiểm tra visual result và core navigation vẫn
 hoạt động; animation failure không được sửa session/reward/profile.
 
-### 2.11. `OPEN-001` block chính xác
+### 2.11. `OPEN-001` resolution và artwork gate
 
-`OPEN-001 / GATE-PET-IDENTITY` **không block** neutral production composition, Pet mapping,
-arbitration, lifecycle, fallback hay accessibility. Nó block:
+`OPEN-001 / GATE-PET-IDENTITY` đã được owner resolve ngày 2026-08-31 với Cat / Mèo Dev (`cat-dev`).
+Trước resolution, gate không block neutral composition nhưng block:
 
 - chọn Cat, Dog hoặc Robot;
 - stable production `<pet-id>` và final species-specific asset set;
 - production art/animation acceptance, attribution và final visual QA;
 - `US-04-07 DONE` và EPIC-04 exit.
 
-Không copy, placeholder hoặc test fixture nào được xem là ngầm đóng gate.
+Resolution identity không đồng nghĩa approve exact artwork. Candidate, copy, placeholder hoặc test
+fixture chỉ trở thành production asset sau Product/Art duyệt exact binary/checksum và integration gate.
 
 ### 2.12. Technical baseline có nguy cơ ép UX
 
@@ -276,7 +277,7 @@ Không copy, placeholder hoặc test fixture nào được xem là ngầm đóng
 - Failed/cancelled Result không reward; chỉ failed Strict có Bugged; cancel về Idle.
 - Completed Break không celebrate/reward.
 - Warm, concise, non-judgmental Vietnamese copy; status không chỉ bằng màu/motion.
-- Neutral geometric placeholder tới khi `OPEN-001` đóng.
+- Neutral geometric placeholder là failure fallback; production Cat artwork chỉ được tích hợp sau Product/Art approval.
 
 ### 2.14. Schema/data-needs conclusion
 
@@ -323,7 +324,7 @@ phải chụp contract/semantics của consumer approved trước và sau migrat
 - Active session preemption; relaunch/Result reopen/resume no-replay.
 - Animation lifecycle, screen visibility, background/unmount cleanup và ADR-005 benchmark evidence.
 - Reduced motion, layered fallback, semantic text/accessibility.
-- Neutral placeholder cho đến khi Pet identity gate đóng.
+- Neutral placeholder cho đến khi exact Cat artwork được Product/Art duyệt và production-integrated.
 - Production asset integration và final evidence chỉ sau gate.
 
 ### 4.2. Out of scope
@@ -333,7 +334,7 @@ phải chụp contract/semantics của consumer approved trước và sau migrat
 - Production Start/Cancel/Reconcile Timer/Session/Reward implementation của Epic khác.
 - Schema/migration mới; persist Pet state, animation progress, replay receipt hoặc dedupe key.
 - Đổi approved primary journey, route hierarchy hoặc auto-start Break.
-- Final Pet identity/art trước `OPEN-001`.
+- Multiple-Pet/species gameplay; exact Cat artwork chưa qua Product/Art approval.
 - Xóa prototype wholesale, refactor Timer blocks hoặc generalize mọi UI component trong app.
 
 ### 4.3. Cross-Story implementation rules
@@ -356,7 +357,7 @@ phải chụp contract/semantics của consumer approved trước và sau migrat
 | `COMMITTED-PROJECTION-CONTRACT` | `US-04-02` trở đi | Application-owned DTO/provider và recovery semantics được review trong Story refinement |
 | `FRESH-TERMINAL-HANDOFF` | `US-04-03`–`04` | Event chỉ phát sau terminal/reward commit; không infer từ route/latest terminal row |
 | `ADR-005-BASELINE` | `US-04-05`/`07` | Reanimated + bundled sprite; Skia cấm nếu chưa vượt benchmark gate |
-| `GATE-PET-IDENTITY / OPEN-001` | `US-04-07`, Epic exit | Owner/Product-Art chốt Cat/Dog/Robot và authority sync trước production asset acceptance |
+| `GATE-PET-IDENTITY / OPEN-001` | `US-04-07`, Epic exit | Identity Cat / Mèo Dev (`cat-dev`) đã chốt; owner/Product-Art còn phải duyệt exact sprite candidate trước production integration |
 | `OWNER-DEVICE-EVIDENCE` | Mỗi Story và Epic exit | Owner chạy guide trên Development Build/target phù hợp và ghi platform/OS/device/SHA/evidence |
 
 ## 6. Priority model
@@ -1020,7 +1021,7 @@ trạng thái nào và tiếp tục Focus flow an toàn.
 | Dependencies | `US-04-05` |
 | Blocks | `US-04-07` |
 | Gate | Accessibility/fallback contract owner review |
-| Current status | `IMPLEMENTED_AWAITING_OWNER_MANUAL_EVIDENCE` |
+| Current status | `DONE_OWNER_ACCEPTED` |
 
 #### Outcome và output
 
@@ -1049,8 +1050,8 @@ new Pet state, final identity, visual redesign.
 - [x] Buttons/selected/disabled/busy/focus order remain accessible after common migration.
 - [x] No `OPEN-001` decision; all components <300 dòng và reuse rules đạt.
 - [x] Automated tests pass.
-- [ ] Manual guide pass.
-- [ ] Evidence được ghi lại.
+- [x] Manual guide pass.
+- [x] Evidence được owner xác nhận.
 
 #### Implementation boundary
 
@@ -1116,8 +1117,9 @@ state, Cat/Dog/Robot inference, reward/session mutation.
   hygiene và diff check. Presentation source max 241 dòng. Manual guide:
   `apps/mobile/test/device/pet-accessibility-fallback-smoke.md`; report:
   `docs/planning/US-04-06_IMPLEMENTATION_REPORT.md`.
-- Manual device/accessibility evidence vẫn `PENDING`; không có dependency/Skia/schema/migration,
-  native/EAS/prebuild, final art hoặc `OPEN-001` decision. `US-04-07` chưa active.
+- Owner xác nhận đã test xong `US-04-06` ngày 2026-08-31. Device/screenshot/accessibility metadata
+  chi tiết không được cung cấp nên không tự suy diễn. Không có dependency/Skia/schema/migration,
+  native/EAS/prebuild hoặc final art trong Story 06.
 
 ---
 
@@ -1133,12 +1135,12 @@ duyệt để trải nghiệm đồng hành hoàn chỉnh, nhất quán trên iO
 | Dependencies | `US-04-06`; `OPEN-001` resolved + authority sync |
 | Blocks | EPIC-04 exit; production Pet acceptance in later Epics |
 | Gate | `GATE-PET-IDENTITY` hard gate |
-| Initial status | `BLOCKED_BY_OPEN_001` |
+| Current status | `IMPLEMENTED_AWAITING_OWNER_DEVICE_ACCEPTANCE` |
 
 #### Outcome và output
 
-- Approved Cat/Dog/Robot decision (do owner/Product-Art chốt, không phải Story này) được tích hợp qua
-  stable Pet ID, five-state bundled asset set, manifest/fallback/attribution.
+- Approved Cat / Mèo Dev (`cat-dev`) dùng năm bundled production sheet qua typed runtime manifest;
+  neutral code renderer chỉ còn là failure fallback cuối chuỗi.
 - Final Home/Focus/Break/Result walkthrough shows production Pet without changing approved behavior.
 - Epic exit evidence ties exact assets, app SHA/runtime and iOS/Android results.
 
@@ -1153,18 +1155,30 @@ but production consumer uses approved catalog. **Production foundation:** all 01
 
 #### Acceptance criteria
 
-- [ ] `OPEN-001` được owner/Product-Art chuyển `RESOLVED` và authority documents sync trước asset accept.
-- [ ] Không Story/asset/copy ngầm chọn species trước decision.
-- [ ] Approved stable `<pet-id>` có Idle/Working/Breaking/Celebrating/Bugged manifest và fallback frame.
-- [ ] Bundled static imports, naming/layout/attribution khớp Project Structure; core works offline.
-- [ ] Timing, preemption, no-replay, lifecycle, reduced motion, fallback và semantics không regression.
-- [ ] Asset missing/corrupt still falls through approved chain; animation failure no crash/mutation.
+- [x] `OPEN-001` được owner/Product-Art chuyển `RESOLVED` và authority documents sync trước asset accept.
+- [x] Không Story/asset/copy ngầm chọn species trước decision.
+- [x] Approved stable `<pet-id>` có Idle/Working/Breaking/Celebrating/Bugged manifest và fallback frame.
+- [x] Bundled static imports, naming/layout/attribution khớp Project Structure; core works offline.
+- [x] Timing, preemption, no-replay, lifecycle, reduced motion, fallback và semantics không regression.
+- [x] Asset missing/corrupt still falls through approved chain; animation failure no crash/mutation.
 - [ ] Final layout works on common iOS/Android phone sizes and performance gate has no blocker.
-- [ ] No component >300 dòng; no feature rule in common renderer; no schema/migration.
-- [ ] Full automated matrix/root quality pass.
+- [x] No component >300 dòng; no feature rule in common renderer; no schema/migration.
+- [x] Full automated matrix/root quality pass.
 - [ ] Owner manual matrix pass.
-- [ ] Evidence được ghi lại.
+- [x] Automated/asset implementation evidence được ghi lại; owner device evidence còn pending.
 - [ ] Chỉ sau tất cả criteria owner mới được đánh `US-04-07 DONE` và `EPIC-04 DONE`.
+
+#### Art candidate evidence — 2026-08-31
+
+- Owner chốt Cat / Mèo Dev, stable Pet ID `cat-dev`; `OPEN-001` đã được sync vào Product Core và MVP
+  Epic authority. `OPEN-009` về user-defined name vẫn open, không có schema change.
+- Built-in OpenAI ImageGen tạo `cat-dev-atlas-candidate-v1.png`: RGBA `1374 × 1145`, exact grid
+  `6 × 5`, frame `229 × 229`, 30 frame theo row Idle/Working/Breaking/Celebrating/Bugged.
+- SHA-256 candidate: `e5baa6bcccc271bdd68a67c24641866636d514aa20d10740c430bc009e3ae697`.
+- Owner Product/Art duyệt candidate v1 ngày 2026-08-31. Engineering đã normalize thành năm state
+  sheet, import tĩnh qua typed manifest và giữ candidate checksum làm provenance.
+- Review record: `docs/planning/US-04-07_ART_CANDIDATE_REVIEW.md`; implementation report/test guide:
+  `US-04-07_IMPLEMENTATION_REPORT.md` và `US-04-07_TEST_GUIDE.md`.
 
 #### Implementation boundary
 
@@ -1313,11 +1327,11 @@ Owner đã xác nhận toàn bộ mục sau trong một lượt ngày 2026-08-30
 - [x] Chấp nhận Reanimated + bundled sprite direction, visibility cleanup, reduced-motion still pose và
   layered fallback; không Skia nếu chưa vượt ADR-005 gate.
 - [x] Xác nhận `OPEN-001 / GATE-PET-IDENTITY` chỉ cho phép neutral placeholder ở 01–06 và hard-block
-  production Pet asset acceptance, `US-04-07 DONE` cùng Epic exit; tài liệu này không chọn Cat/Dog/Robot.
+  production Pet asset acceptance, `US-04-07 DONE` cùng Epic exit cho tới khi identity/art được duyệt riêng.
 - [x] Chấp nhận owner manual evidence per Story và final iOS/Android Development Build matrix; agent
   không chạy native/EAS build hoặc Expo prebuild trong planning.
 
-Approval Story list không đồng nghĩa resolve `OPEN-001`, approve artwork hoặc approve implementation.
+Approval Story list không đồng nghĩa approve artwork hoặc approve implementation; `OPEN-001` chỉ được resolve bằng owner decision riêng.
 
 ## 16. Definition of Ready
 
@@ -1335,7 +1349,7 @@ Approval Story list không đồng nghĩa resolve `OPEN-001`, approve artwork ho
 - [ ] Story tasks là vertical outcome, không chia thành layer-only mini projects.
 - [ ] Props/projection/error/fake boundary và component split được refine đủ để implement.
 - [ ] Test fixtures phản ánh committed facts; không biến fake behavior thành production truth.
-- [ ] Gate riêng đã đóng; đặc biệt `US-04-07` không Ready khi `OPEN-001` còn `OPEN`.
+- [ ] Gate riêng đã đóng; `US-04-07` chỉ Ready sau khi identity authority sync xong và exact artwork được Product/Art duyệt.
 
 ## 17. Definition of Done
 
@@ -1362,7 +1376,7 @@ Approval Story list không đồng nghĩa resolve `OPEN-001`, approve artwork ho
 
 | ID | Risk/decision | Impact | Owner/mitigation | Status |
 |---|---|---|---|---|
-| `OPEN-001` | Default Pet Cat/Dog/Robot | Blocks production assets/07/Epic exit | Product/Art resolve; no inference | OPEN |
+| `OPEN-001` | Default Pet Cat/Dog/Robot | Identity gate for production assets/07 | Cat / Mèo Dev (`cat-dev`) và sprite v1 được duyệt 2026-08-31 | RESOLVED; ART APPROVED |
 | `RISK-04-01` | Prototype common file 399 lines/god-component drift | Duplication, >300 rule | Split in 01 with consumer regression | OPEN until 01 |
 | `RISK-04-02` | Root prototype provider mistaken for app truth | Wrong state/reward/replay | Independent production facade/provider; import tests | OPEN until 02 |
 | `RISK-04-03` | Latest terminal row mistaken as fresh event | Relaunch/reopen replay | Commit-time event provenance; no read inference | OPEN until 03–04 |
@@ -1373,6 +1387,24 @@ Approval Story list không đồng nghĩa resolve `OPEN-001`, approve artwork ho
 | `RISK-04-08` | Final iOS/Android evidence missing/fabricated | Invalid Epic exit | Frozen SHA and explicit per-platform owner record | OPEN until 07 |
 
 ## 19. Change log
+
+### 0.9.0 — 2026-08-31
+
+- Ghi nhận owner Product/Art duyệt Cat Dev sprite v1; xác nhận Pet selector/Cat-Dog-Rabbit roster
+  thuộc phase sau, không có trong Mobile MVP.
+- Normalize atlas thành năm RGBA sheet, static-import bằng typed manifest và render đủ sáu frame/state.
+- Thêm checksum/dimension/alpha test; root quality pass `55` files / `281` tests, không schema/native/
+  dependency/Skia change và mọi source component dưới 300 dòng.
+- `US-04-07` còn chờ owner iOS/Android functional/accessibility/performance evidence trước khi Done.
+
+### 0.8.0 — 2026-08-31
+
+- Ghi nhận owner đã test/chấp nhận `US-04-06`, chốt `OPEN-001` là Cat / Mèo Dev (`cat-dev`) và yêu
+  cầu tạo sprite mới để duyệt.
+- Đồng bộ identity authority; tạo atlas candidate PNG RGBA 30 frame, manifest/checksum, attribution và
+  Product/Art review checklist bằng built-in OpenAI ImageGen.
+- Giữ candidate ngoài runtime manifest; `US-04-07`/EPIC-04 chưa Done cho tới exact artwork approval,
+  production integration và final iOS/Android/performance matrix.
 
 ### 0.7.0 — 2026-08-30
 

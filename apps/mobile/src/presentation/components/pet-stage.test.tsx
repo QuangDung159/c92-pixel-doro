@@ -10,7 +10,7 @@ vi.mock('react-native', () => ({
 }));
 
 describe('PetStage', () => {
-  it('communicates neutral Idle state without relying on color or artwork', () => {
+  it('communicates Idle state without relying on color or artwork', () => {
     const tree = PetStage({ state: 'idle' });
     const status = tree.props.children[2];
     expect(status.type).toBe(PetStatusText);
@@ -18,9 +18,6 @@ describe('PetStage', () => {
       label: 'Người bạn đang chờ bạn',
     });
     expect(JSON.stringify(tree)).toContain('Người bạn đang chờ bạn');
-    expect(JSON.stringify(tree)).not.toContain('Cat');
-    expect(JSON.stringify(tree)).not.toContain('Dog');
-    expect(JSON.stringify(tree)).not.toContain('Robot');
   });
 
   it('keeps one semantic status owner outside the decorative animation', () => {

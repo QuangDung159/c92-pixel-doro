@@ -216,11 +216,11 @@ Timer Engine và Session Lifecycle có thể được soạn song song sau khi S
 
 ## Governance cho decision ngoài documentation baseline
 
-Các decision dưới vẫn `OPEN` và không bị documentation approval chốt ngầm. Với indie solo project, Dũng Lư sở hữu decision theo vai trò chức năng và phải review trước milestone tương ứng:
+Các decision dưới được theo dõi ngoài documentation baseline. Với indie solo project, Dũng Lư sở hữu decision theo vai trò chức năng và phải review trước milestone tương ứng:
 
 | Decision | Owner | Review milestone | Trạng thái |
 |---|---|---|---|
-| Product `OPEN-001` — Pet mặc định | Dũng Lư — Product/Art | Trước khi chọn hoặc tích hợp asset Pet mặc định vào production implementation. | `OPEN` |
+| Product `OPEN-001` — Pet mặc định | Dũng Lư — Product/Art | Identity Cat / Mèo Dev (`cat-dev`) và Cat Dev sprite v1 đã được duyệt; Pet selection thuộc phase sau. | `RESOLVED`; artwork approved |
 | Product `OPEN-006` — Contribution graph colors | Dũng Lư — Product/Design | Trước khi khóa visual design và visual QA của contribution graph. | `OPEN` |
 | Product `OPEN-009` — Pet naming | Dũng Lư — Product | Trước khi khóa onboarding UX hoặc schema/migration liên quan Pet naming. | `OPEN` |
 
@@ -243,4 +243,4 @@ Milestone là governance gate, không phải quyết định sản phẩm. Imple
 
 **Tech lead:** Dũng Lư
 
-**Ghi chú chung:** `DONE` cho giai đoạn chuẩn bị tài liệu của indie solo project. Cả tám tài liệu kỹ thuật bắt buộc đã được self-review và phê duyệt; consistency audit về enum, state mapping, durable truth, reward idempotency và edge-case acceptance đã hoàn tất. Product `OPEN-001`, `OPEN-006` và `OPEN-009` giữ nguyên trạng thái, có owner/review milestone và không chặn implementation ngoài phần chức năng trực tiếp phụ thuộc các decision đó. Implementation acceptance tiếp tục cần code/test/device evidence; documentation approval không tự đánh dấu các acceptance checkbox trong specification.
+**Ghi chú chung:** `DONE` cho giai đoạn chuẩn bị tài liệu của indie solo project. Cả tám tài liệu kỹ thuật bắt buộc đã được self-review và phê duyệt; consistency audit về enum, state mapping, durable truth, reward idempotency và edge-case acceptance đã hoàn tất. Product `OPEN-001` đã `RESOLVED` ngày 2026-08-31 với Cat / Mèo Dev (`cat-dev`) và Cat Dev sprite v1 đã được Product/Art duyệt; `OPEN-006` và `OPEN-009` vẫn có owner/review milestone và không chặn implementation ngoài phần chức năng trực tiếp phụ thuộc. Implementation acceptance tiếp tục cần code/test/device evidence; documentation approval không tự đánh dấu các acceptance checkbox trong specification.

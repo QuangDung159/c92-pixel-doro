@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_GAMIFICATION_RULES_SPECIFICATION
 title: PixelDoro Mobile MVP — Gamification Rules Specification
-version: 1.0.1
+version: 1.0.3
 status: APPROVED
-last_updated: 2026-08-27
+last_updated: 2026-08-31
 owner: Dũng Lư
 owner_roles:
   - Tech Lead
@@ -48,14 +48,14 @@ Tài liệu này đặc tả gamification và economy của PixelDoro Mobile MVP
 
 Tài liệu này không quyết định lại timer/session/Pet truth và không được dùng để chốt:
 
-- Pet mặc định là Cat, Dog hay Robot; Product `OPEN-001` vẫn `OPEN`.
+- Pet mặc định đã được Product chốt là Cat / Mèo Dev (`cat-dev`); species không thay đổi reward/economy rule.
 - Contribution graph color threshold; Product `OPEN-006` vẫn `OPEN`.
 - Pet naming; Product `OPEN-009` vẫn `OPEN`.
 - Evolution, Happiness, Energy, streak UI/protection, Revive Token, monetization hoặc nội dung `DEFERRED`.
 - Schema, datatype, index, migration hoặc exact SQL; các nội dung đó thuộc `architecture/data-model.md`.
 - Artwork, sprite, slot layout hoặc visual theme cụ thể của từng item.
 
-Nếu có mâu thuẫn, Product Core 1.13.0 là nguồn sự thật sản phẩm ưu tiên cao nhất. Technical Overview 1.0.0, System Architecture 1.0.0, Project Structure 1.0.0, Timer Engine 1.0.2, Session Lifecycle 1.0.1, Pet State Machine 1.0.0 và ADR-001 đến ADR-008 là baseline đã duyệt.
+Nếu có mâu thuẫn, Product Core 1.15.0 là nguồn sự thật sản phẩm ưu tiên cao nhất. Technical Overview 1.0.0, System Architecture 1.0.0, Project Structure 1.0.0, Timer Engine 1.0.2, Session Lifecycle 1.0.1, Pet State Machine 1.0.2 và ADR-001 đến ADR-008 là baseline đã duyệt.
 
 ### 0.1. Trạng thái quyết định
 
@@ -74,11 +74,11 @@ Phiên bản `1.0.0` đã được Dũng Lư — Tech Lead/Product Owner review 
 
 | Nguồn | Phiên bản/trạng thái | Rule được kế thừa |
 |---|---|---|
-| `PIXELDORO_CORE_TRUTH.md` | 1.13.0 `ACTIVE` | XP/Coin, onboarding trial mode/tag/reward, level/economy boundary, exact shop catalog/price và deferred boundaries. |
+| `PIXELDORO_CORE_TRUTH.md` | 1.15.0 `ACTIVE` | XP/Coin, onboarding trial mode/tag/reward, fixed Cat identity, level/economy boundary, exact shop catalog/price và deferred boundaries. |
 | `TECHNICAL_DOCUMENTATION_CHECKLIST.md` | Hiện hành | Definition of done của Gamification Rules. |
 | `architecture/technical-overview.md` | 1.0.0 `APPROVED` | SQLite durable truth, offline-first, reward transaction và side-effect boundary. |
 | `architecture/system-architecture.md` | 1.0.0 `APPROVED` | Domain/Application ownership, command serialization, atomic transaction và unique `sessionId`. |
-| `architecture/project-structure.md` | 1.0.0 `APPROVED` | Reward/inventory module boundary, naming, test placement và asset neutrality với Product `OPEN-001`. |
+| `architecture/project-structure.md` | 1.0.0 `APPROVED` | Reward/inventory module boundary, naming, test placement và separation giữa static Pet asset với economy truth. |
 | `specifications/timer-engine.md` | 1.0.2 `APPROVED` | Completion truth, trial validation, concurrency, automatic claim, safe recovery và reward idempotency. |
 | `specifications/session-lifecycle.md` | 1.0.1 `APPROVED` | Reward eligibility, trial Relax/no-tag lifecycle, formula/rounding, Focus → Reward → Result và Break behavior. |
 | `specifications/pet-state-machine.md` | 1.0.0 `APPROVED` | Animation là transient side effect và không thay đổi durable reward truth. |
@@ -541,7 +541,7 @@ Các nội dung sau không thuộc Gamification Rules Mobile MVP:
 - Premium currency, IAP, subscription, real-money item hoặc monetization package.
 - Social gifting, trade, leaderboard hoặc shared economy.
 - Cloud/server economy, anti-cheat backend hoặc remote price configuration.
-- Multiple Pet/skin system trước khi Product `OPEN-001` và scope tương ứng được duyệt.
+- Multiple Pet/skin system; Cat cố định của MVP không tự mở rộng thành species gameplay hoặc selection system.
 - Contribution graph color unlock hoặc bất kỳ quyết định nào giải quyết `OPEN-006`.
 
 ## 11. Edge cases
@@ -614,7 +614,7 @@ Các nội dung sau không thuộc Gamification Rules Mobile MVP:
 
 ### 13.2. Open decisions
 
-Không còn decision `OPEN` ảnh hưởng trực tiếp đến Gamification Rules Mobile MVP. Product `OPEN-001`, `OPEN-006` và `OPEN-009` vẫn `OPEN` nhưng nằm ngoài phạm vi quyết định của tài liệu này; không được suy diễn Pet mặc định, contribution colors hoặc Pet naming từ catalog đã duyệt.
+Không còn decision `OPEN` ảnh hưởng trực tiếp đến Gamification Rules Mobile MVP. Product `OPEN-001` đã `RESOLVED` với Cat / Mèo Dev (`cat-dev`) nhưng không đổi economy; `OPEN-006` và `OPEN-009` vẫn `OPEN`, không được suy diễn contribution colors hoặc Pet naming từ catalog đã duyệt.
 
 ### 13.3. Các phương án đã cân nhắc cho `GR-OPEN-003` — `RESOLVED`
 
@@ -717,6 +717,17 @@ Các checkbox ở mục 14 là implementation acceptance criteria và vẫn đ�
 Maintenance `1.0.1` được Dũng Lư phê duyệt ngày 2026-08-27 để trace `DM-OPEN-006` sau Product Core 1.13.0, Timer Engine 1.0.2 và Session Lifecycle 1.0.1. Update không thay đổi reward, level, catalog, purchase hoặc inventory semantics.
 
 ## 16. Change log
+
+### 1.0.3 — 2026-08-31
+
+- Đồng bộ Product Core 1.15.0 và Pet State Machine 1.0.2 sau art approval.
+- Xác nhận Pet selection phase sau không thay đổi reward/economy semantics của Mobile MVP.
+
+### 1.0.2 — 2026-08-31
+
+- Đồng bộ Product `OPEN-001` đã `RESOLVED` với Cat / Mèo Dev (`cat-dev`).
+- Xác nhận Pet identity/artwork không thay đổi XP, Coin, level, catalog, purchase hoặc inventory semantics.
+- Multiple-Pet/species gameplay tiếp tục out of scope.
 
 ### 1.0.1 — 2026-08-27
 

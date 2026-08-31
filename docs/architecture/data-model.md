@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_DATA_MODEL
 title: PixelDoro Mobile MVP — Data Model
-version: 1.1.0
+version: 1.2.1
 status: APPROVED
-last_updated: 2026-08-30
+last_updated: 2026-08-31
 owner: Dũng Lư
 owner_roles:
   - Tech Lead
@@ -15,7 +15,7 @@ reviewed_at: 2026-08-27
 approved_by: Dũng Lư
 approver_role: Tech Lead / Product Owner
 approved_at: 2026-08-27
-amended_at: 2026-08-30
+amended_at: 2026-08-31
 amendment_approved_by: Dũng Lư
 language: vi
 scope:
@@ -50,7 +50,7 @@ Tài liệu này chi tiết hóa durable data model của PixelDoro Mobile MVP t
 
 Tài liệu này không quyết định lại product behavior, timer/session/Pet state, reward formula, catalog hoặc architecture boundary đã duyệt. Khi có mâu thuẫn:
 
-1. [Product Core 1.13.0](../PIXELDORO_CORE_TRUTH.md) `ACTIVE` được ưu tiên về product truth.
+1. [Product Core 1.15.0](../PIXELDORO_CORE_TRUTH.md) `ACTIVE` được ưu tiên về product truth.
 2. Technical Overview, System Architecture, Project Structure và ADR đã duyệt được ưu tiên về technical baseline.
 3. Timer Engine, Session Lifecycle, Pet State Machine và Gamification Rules `APPROVED` được ưu tiên về behavior chi tiết.
 4. Tài liệu này chỉ được `APPROVED` sau khi mọi quyết định ảnh hưởng trực tiếp đã `RESOLVED` và Dũng Lư review/phê duyệt toàn bộ.
@@ -80,7 +80,7 @@ presentation state và derived projection phải được phân loại trước 
 
 | Nguồn | Trạng thái trên disk | Dependency bắt buộc với Data Model |
 |---|---|---|
-| `PIXELDORO_CORE_TRUTH.md` | 1.13.0 `ACTIVE` | Mobile MVP scope, four session statuses, trial Relax/no-tag, timestamp/reward truth, Product `OPEN-001/006/009`, catalog và reset. |
+| `PIXELDORO_CORE_TRUTH.md` | 1.15.0 `ACTIVE` | Mobile MVP scope, fixed Cat / Mèo Dev (`cat-dev`), four session statuses, trial Relax/no-tag, timestamp/reward truth, Product `OPEN-006/009`, catalog và reset. |
 | `TECHNICAL_DOCUMENTATION_CHECKLIST.md` | Hiện hành | Definition of done của Data Model và review cuối bộ tài liệu. |
 | `architecture/technical-overview.md` | 1.0.0 `APPROVED` | SQLite durable truth, Zustand projection, offline-first, forward-only migration. |
 | `architecture/system-architecture.md` | 1.0.0 `APPROVED` | Transaction/side-effect order, automatic reward grant, unique `sessionId`, command serialization. |
@@ -95,7 +95,7 @@ presentation state và derived projection phải được phân loại trước 
 
 | Product decision | Trạng thái | Data Model `1.0.0` xử lý thế nào |
 |---|---|---|
-| `OPEN-001` — Pet mặc định Cat/Dog/Robot | `OPEN` | Không seed `petType`, species hoặc species-specific item/asset field. |
+| `OPEN-001` — Pet mặc định Cat/Dog/Robot | `RESOLVED` — Cat / Mèo Dev (`cat-dev`) | Một Pet cố định là static presentation asset identity; không cần seed `petType`, species hay migration/schema mới. |
 | `OPEN-006` — Contribution graph colors | `OPEN` | Không persist color/intensity band; UI derive sau khi decision được duyệt. |
 | `OPEN-009` — Pet naming | `OPEN` | Không bắt buộc hoặc seed `petName`; migration chỉ được thêm sau Product decision. |
 
@@ -253,7 +253,7 @@ Không lưu account ID, advertising ID, Pet name, contact, push token hoặc pro
 
 Không có `type`, `name`, `stage`, `happiness`, `energy`, `equipped_skin_id` trong MVP baseline draft:
 
-- `type` sẽ giải quyết Product `OPEN-001` ngoài Data Model.
+- Mobile MVP chỉ có Cat / Mèo Dev (`cat-dev`); identity này thuộc static presentation catalog và không tạo durable `type` field.
 - `name` sẽ giải quyết Product `OPEN-009` ngoài Data Model.
 - `stage`/evolution, Happiness, Energy và skin system là `DEFERRED`.
 
@@ -702,7 +702,7 @@ Migration `001` chỉ được khóa để implement sau khi Data Model được
 ### 8.3. Future migration boundaries
 
 - Catalog/price change cần Product Core approval trước; owned item không bị thu hồi.
-- Pet type/name column chỉ thêm sau `OPEN-001`/`OPEN-009` resolution và authority sync khi cần.
+- Pet type column chỉ được xem xét nếu Product duyệt multiple-Pet scope mới; Pet name column chỉ thêm sau `OPEN-009` resolution và authority sync khi cần.
 - Cloud ID, sync revision/conflict, backend economy hoặc account FK không được thêm trước Product/ADR approval.
 - Evolution/Happiness/Energy/streak/monetization không được reserve bằng nullable column “để dùng sau”.
 - Major Expo/SQLite upgrade phải test migration từ database version production trước đó trên iOS và Android.
@@ -1164,6 +1164,17 @@ Data Model `1.0.0 APPROVED` và Technical Documentation Checklist được phát
 Ngày 2026-08-27, Dũng Lư xác nhận đã review và duyệt toàn bộ Data Model; cả sáu điều kiện trên đã hoàn tất. Implementation acceptance checkbox ở mục 14 vẫn để trống cho tới khi có migration/test/device evidence và không làm giảm hiệu lực của specification baseline.
 
 ## 16. Change log
+
+### 1.2.1 — 2026-08-31
+
+- Đồng bộ Product Core 1.15.0 sau khi Cat Dev sprite v1 được duyệt.
+- Xác nhận Pet selector/Cat-Dog-Rabbit roster thuộc phase sau và không tạo schema/migration trong MVP.
+
+### 1.2.0 — 2026-08-31
+
+- Đồng bộ Product `OPEN-001` đã `RESOLVED`: Cat / Mèo Dev với stable presentation ID `cat-dev`.
+- Xác nhận quyết định một Pet cố định không tạo durable `petType`/species field và không cần schema migration.
+- Multiple-Pet và Pet naming vẫn cần scope/decision riêng; không đổi schema `001` hay durable invariants.
 
 ### 1.1.0 — 2026-08-30
 
