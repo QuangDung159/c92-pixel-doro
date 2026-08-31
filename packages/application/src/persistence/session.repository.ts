@@ -59,6 +59,7 @@ export interface TransitionSessionInput {
 export interface SessionRepository {
   findById(id: string): Promise<PersistenceResult<SessionRecord | null>>;
   findActive(): Promise<PersistenceResult<SessionRecord | null>>;
+  findLatestOnboardingTrial(): Promise<PersistenceResult<SessionRecord | null>>;
   findByIdInTransaction(
     scope: TransactionScope,
     id: string,

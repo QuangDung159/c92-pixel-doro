@@ -65,6 +65,19 @@ export class SQLiteSessionRepository implements SessionRepository {
     return readWithOwner(this.owner, 'sessions', (executor) => this.readActive(executor));
   }
 
+  findLatestOnboardingTrial(): ReturnType<SessionRepository['findLatestOnboardingTrial']> {
+    return readWithOwner(this.owner, 'sessions', (executor) =>
+      readMappedOne(
+        executor,
+        'sessions',
+        `${sessionSelect} WHERE session_type = 'focus'
+          AND focus_variant = 'onboarding_trial'
+          ORDER BY started_at DESC, created_at DESC, id DESC LIMIT 1`,
+        [],
+        mapSessionRow,
+      ));
+  }
+
   findByIdInTransaction(
     scope: TransactionScope,
     id: string,

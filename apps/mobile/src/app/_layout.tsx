@@ -5,7 +5,7 @@ import { MobileApplicationRoot } from '@/composition';
 import { PrototypeProvider } from '@/presentation/prototype/prototype-context';
 
 export const unstable_settings = {
-  initialRouteName: '(onboarding)',
+  initialRouteName: 'index',
 };
 
 export default function RootLayout() {

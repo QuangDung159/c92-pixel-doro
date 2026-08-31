@@ -1,26 +1,32 @@
 import { StyleSheet, Text, View } from 'react-native';
 
 import {
+  Button,
   InlineNotice,
-  PixelCompanion,
-  PixelPanel,
-  PrimaryButton,
-  PrototypeScreen,
+  Panel,
+  PetStage,
   ScreenHeader,
+  ScreenShell,
 } from '@/presentation/components';
-import { PrototypeBadge } from '@/presentation/prototype/components';
 import { palette } from '@/presentation/theme/palette';
 
-export const OnboardingScreen = ({ onStartTrial }: { readonly onStartTrial: () => void }) => (
-  <PrototypeScreen>
-    <PrototypeBadge />
+export interface OnboardingScreenProps {
+  readonly onStartTrial: () => void;
+  readonly startTrialEnabled: boolean;
+}
+
+export const OnboardingScreen = ({
+  onStartTrial,
+  startTrialEnabled,
+}: OnboardingScreenProps) => (
+  <ScreenShell>
     <ScreenHeader
       description="Một người bạn pixel nhỏ sẽ cùng làm, cùng nghỉ và cùng tiến bộ với bạn."
       eyebrow="FIRST USE · 1/1"
       title="Tập trung không còn là chuyện một mình."
     />
-    <PixelCompanion state="idle" />
-    <PixelPanel>
+    <PetStage state="idle" />
+    <Panel>
       <View style={styles.promiseRow}>
         <Text style={styles.number}>01</Text>
         <View style={styles.promiseCopy}>
@@ -36,15 +42,19 @@ export const OnboardingScreen = ({ onStartTrial }: { readonly onStartTrial: () =
           <Text style={styles.promiseBody}>Phiên hoàn thành sẽ biến thành XP, Coin và một căn phòng sống động hơn.</Text>
         </View>
       </View>
-    </PixelPanel>
+    </Panel>
     <InlineNotice>
       Bắt đầu bằng phiên dùng thử Relax 5 phút. Không cần chọn chế độ hay loại công việc.
     </InlineNotice>
-    <PrimaryButton label="Thử phiên 5 phút" onPress={onStartTrial} />
+    <Button
+      disabled={!startTrialEnabled}
+      label="Thử phiên 5 phút"
+      onPress={onStartTrial}
+    />
     <Text style={styles.decisionNote}>
       Người bạn mặc định trong MVP là Mèo Dev. Tên riêng và tính năng chọn Pet thuộc phase sau.
     </Text>
-  </PrototypeScreen>
+  </ScreenShell>
 );
 
 const styles = StyleSheet.create({

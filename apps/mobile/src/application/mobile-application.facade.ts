@@ -5,12 +5,14 @@ import type {
 } from '@pixeldoro/application';
 
 import type { MobileBootstrap } from './bootstrap/mobile-bootstrap';
+import type { FirstUseEntryController } from './first-use';
 import type { CommandReadinessPort } from './readiness/readiness-gate';
 import type { AppVisibilityController } from './visibility/app-visibility.controller';
 import type { PetVisualDiagnostic } from './ports/pet-visual-diagnostics.port';
 
 export interface MobileApplicationFacade {
   readonly bootstrap: MobileBootstrap;
+  readonly firstUseEntry: FirstUseEntryController;
   readonly appVisibility: AppVisibilityController;
   readonly petCompanion: PetCompanionController;
   readonly petTerminalFeedback: PetTerminalFeedbackController;
@@ -21,6 +23,7 @@ export interface MobileApplicationFacade {
   dismissPetTerminalFeedbackError(): void;
   discardPetTerminalFeedback(): void;
   refreshPetCompanion(): Promise<void>;
+  refreshFirstUseEntry(): Promise<void>;
   recordPetVisualDiagnostic(diagnostic: PetVisualDiagnostic): void;
   reportPetVisualComplete(feedbackId: string): void;
   reportPetVisualFailure(feedbackId: string): void;

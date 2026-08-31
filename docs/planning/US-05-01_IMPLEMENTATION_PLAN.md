@@ -1,9 +1,10 @@
 ---
 document_id: PIXELDORO_US_05_01_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-05-01 Implementation Plan
-version: 0.2.0
-status: APPROVED
-implementation_status: READY
+version: 0.3.0
+status: IMPLEMENTED_AWAITING_OWNER_MANUAL
+implementation_status: IMPLEMENTED_AWAITING_OWNER_MANUAL
+implementation_started_at: 2026-08-31
 last_updated: 2026-08-31
 owner: Dũng Lư
 reviewer: Dũng Lư
@@ -14,6 +15,7 @@ approved_at: 2026-08-31
 language: vi
 branch: feats/epic-05
 baseline_sha: 91cb459c05fdcfa1f114c9ed13ac143fdc7fd7d2
+implementation_start_sha: 9c1b6e70a715116e0715f4248ae69f960f68a927
 scope:
   - mobile_mvp
   - epic_05
@@ -57,7 +59,8 @@ duyệt Option 1 ngày 2026-08-31.
 và owner đóng exit gate.
 
 **Planning status:** `APPROVED` ngày 2026-08-31.
-**Implementation status:** `READY`; chưa có task production nào được đánh dấu `IN_PROGRESS`.
+**Implementation status:** `IMPLEMENTED_AWAITING_OWNER_MANUAL`. Host implementation và automated
+quality đã pass; Development Build/device acceptance chưa được owner cung cấp.
 
 ### 0.1. Readiness gate
 
@@ -71,6 +74,17 @@ và owner đóng exit gate.
 - [x] Owner duyệt toàn bộ `US0501-CONFIRM-01`…`06` ngày 2026-08-31.
 - [x] `EPIC-05_USER_STORIES.md` chuyển US-05-01 sang `READY`.
 - [x] Working tree được kiểm tra lại khi ghi approval; chỉ có hai planning file mới, chưa có production change.
+
+### 0.2. Implementation update — 2026-08-31
+
+- Implementation start SHA: `9c1b6e70a715116e0715f4248ae69f960f68a927` (`US-05-01` planning-only commit).
+- Read-only entry query/controller, production composition, initial landing route, Intro migration,
+  finite fixture và automated tests đã được triển khai trong working tree.
+- Targeted matrix pass: `7` files / `30` tests.
+- Root `pnpm run quality` pass: `60` files / `307` tests; device harness, boundary validation và
+  repository hygiene đều pass.
+- Không có schema/migration/dependency/native change; UI production mới/sửa nằm trong giới hạn 300 dòng.
+- Owner manual Development Build evidence vẫn `PENDING`; Story chưa `DONE` và US-05-02 chưa mở.
 
 ## 1. Authority contract và current-state review
 
@@ -701,8 +715,8 @@ EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE=first_use_read_error pnpm start --clear
 
 1. Cancelled case must land Intro, with no reward/result/Home bypass.
 2. Error case must stay on a safe recovery surface with Retry and no technical details.
-3. Change/recover fixture input according to the documented review action, press Retry, and confirm
-   the correct destination appears once without duplicate navigation.
+3. Press Retry; the deterministic fixture succeeds on its second read and opens Intro exactly once
+   without duplicate navigation.
 4. Disable network and repeat new/returning/error retry; local entry classification must not require
    network.
 
@@ -804,19 +818,19 @@ Stop implementation and return to owner/plan review if:
 ## 13. Definition of Done cho US-05-01
 
 - [x] Owner approved this plan and TD-05-01-A…F before implementation on 2026-08-31.
-- [ ] Exactly one Story was active; US-05-02 remained unopened.
-- [ ] New/returning/running/completed/cancelled facts map to the approved semantic destination.
-- [ ] Intro is production common UI with Cat/Mèo Dev and no prototype badge/authority/forbidden control.
-- [ ] CTA is truthful/disabled until US-05-02; no in-memory session is created.
+- [x] Exactly one Story was active; US-05-02 remained unopened.
+- [x] Automated tests map new/returning/running/completed/cancelled facts to the approved semantic destination.
+- [x] Intro is production common UI with Cat/Mèo Dev and no prototype badge/authority/forbidden control.
+- [x] CTA is truthful/disabled until US-05-02; no in-memory session is created.
 - [ ] Returning user reaches production Home without Intro flash.
 - [ ] Loading/read failure/retry are safe, accessible, local/offline, and write nothing.
-- [ ] Latest onboarding-trial SQLite query is deterministic and requires no schema/migration.
-- [ ] Controller/composition/presentation/navigation/SQLite/a11y/boundary/common regression tests pass.
-- [ ] `pnpm run quality` and `git diff --check` pass on final implementation SHA.
-- [ ] No UI source exceeds 300 lines; no duplicated common component or repository import in screen.
-- [ ] No dependency/native artifact/schema/reward/timer/analytics/later-epic behavior changed.
+- [x] Latest onboarding-trial SQLite query is deterministic and requires no schema/migration.
+- [x] Controller/composition/presentation/navigation/SQLite/a11y/boundary/common automated tests pass.
+- [x] `pnpm run quality` and `git diff --check` pass in the implementation working tree.
+- [x] No UI source exceeds 300 lines; no duplicated common component or repository import in screen.
+- [x] No dependency/native artifact/schema/reward/timer/analytics/later-epic behavior changed.
 - [ ] Owner manual evidence records SHA/platform/device/OS/captures/facts/pass-fail honestly.
-- [ ] Running/Result production behavior remains explicitly transferred, not marked accepted.
+- [x] Running/Result production behavior remains explicitly transferred, not marked accepted.
 - [ ] Story report/status is updated and owner closes exit gate before US-05-02.
 
 ## 14. Owner confirmation gate cho implementation
@@ -849,5 +863,6 @@ Không còn technical confirmation mở. Story sẵn sàng để owner yêu cầ
 
 | Version | Date | Author | Change |
 | --- | --- | --- | --- |
+| 0.3.0 | 2026-08-31 | Codex | Implemented the approved host slice; targeted 30 tests and root 307 tests pass. Marked Story awaiting owner Development Build/manual evidence, not DONE. |
 | 0.2.0 | 2026-08-31 | Codex, recording owner approval | Recorded approval of US0501-CONFIRM-01…06 and moved the Story to READY. No production task started. |
 | 0.1.0 | 2026-08-31 | Codex, for owner review | Created implementation plan after owner approved DEC-05-01…04; defined read-only entry controller, latest trial query, root landing route, production Intro migration, fixture/test/evidence plan, and six technical confirmations. No production implementation. |

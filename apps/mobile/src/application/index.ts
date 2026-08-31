@@ -90,6 +90,15 @@ export {
 } from './readiness/readiness-gate';
 export type { MobileApplicationFacade } from './mobile-application.facade';
 export { AppVisibilityController } from './visibility/app-visibility.controller';
+export {
+  FirstUseEntryController,
+  type FirstUseEntryControllerDependencies,
+  type FirstUseEntryDestination,
+  type FirstUseEntryErrorCode,
+  type FirstUseEntryProjection,
+  type FirstUseInstallationReader,
+  type FirstUseSessionReader,
+} from './first-use';
 export type {
   AnalyticsDeliveryState,
   AnalyticsEventRecord,

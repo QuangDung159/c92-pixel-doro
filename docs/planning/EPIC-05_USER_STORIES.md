@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_05_USER_STORIES
-version: 0.3.0
-status: US_05_01_READY
+version: 0.4.0
+status: US_05_01_AWAITING_OWNER_MANUAL
 date: 2026-08-31
 owner: Dũng Lư
 baseline_sha: 91cb459c05fdcfa1f114c9ed13ac143fdc7fd7d2
@@ -226,7 +226,7 @@ Onboarding, Trial Running, Result, and route files may only arrange components, 
 
 | Order | Story | User-visible increment | MVP Priority | Dependency Priority | Dependencies | Blocks | Initial status |
 | ---: | --- | --- | --- | --- | --- | --- | --- |
-| 1 | US-05-01 — Durable First-use Entry | New user sees approved production intro; returning/recovering user lands on the correct durable route. | MUST | P0 | EPIC-01/02/03/04, G05-PLAN/G05-UX | US-05-02 | READY — PLAN APPROVED |
+| 1 | US-05-01 — Durable First-use Entry | New user sees approved production intro; returning/recovering user lands on the correct durable route. | MUST | P0 | EPIC-01/02/03/04, G05-PLAN/G05-UX | US-05-02 | IMPLEMENTED — AWAITING OWNER MANUAL |
 | 2 | US-05-02 — Start, Run, Resume, or Cancel Trial | CTA starts a real five-minute trial; countdown resumes after background/relaunch; cancel safely returns to intro. | MUST | P0 | US-05-01, DEC-05-03 | US-05-03 | NOT STARTED — SEQUENCED |
 | 3 | US-05-03 — Complete and Reward Exactly Once | Deadline produces one committed completion and reward; Result reads `5 XP`/`1 Coin` from durable truth. | MUST | P0 | US-05-02, DEC-05-04 | US-05-04/05 | NOT STARTED — SEQUENCED |
 | 4 | US-05-04 — Pet Celebration and Home Handoff | Fresh completion celebrates once; explicit Continue lands in production Home with committed totals. | MUST | P1 | US-05-03, EPIC-04, DEC-05-04 | US-05-05 | NOT STARTED — SEQUENCED |
@@ -1005,6 +1005,7 @@ One-pass review requested. No implementation starts until these are answered.
 
 | Version | Date | Author | Change |
 | --- | --- | --- | --- |
+| 0.4.0 | 2026-08-31 | Codex | Recorded US-05-01 host implementation and automated quality pass; kept Story/next gate open pending owner manual Development Build evidence. |
 | 0.3.0 | 2026-08-31 | Codex, recording owner approval | Recorded approval of the US-05-01 implementation plan and technical confirmations; moved only US-05-01 to READY. No implementation started. |
 | 0.2.0 | 2026-08-31 | Codex, recording owner decision | Recorded approval of DEC-05-01 through DEC-05-04, opened US-05-01 implementation-plan review, and kept production implementation gated. |
 | 0.1.0 | 2026-08-31 | Codex, for owner review | Verified EPIC-04 baseline; audited authority/code/UI/data/tests; proposed five vertical stories, execution order, evidence plans, reuse strategy, and four owner decisions. No production implementation. |

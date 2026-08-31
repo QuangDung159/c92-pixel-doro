@@ -1,6 +1,7 @@
 import {
   ConfirmedLocalDataReset,
   AppVisibilityController,
+  FirstUseEntryController,
   MobileBootstrap,
   ReadinessGate,
   type AppLifecyclePort,
@@ -8,6 +9,8 @@ import {
   type BootstrapVerifierPort,
   type ConfirmedResetDiagnosticsPort,
   type ConfirmedResetPersistencePort,
+  type FirstUseInstallationReader,
+  type FirstUseSessionReader,
   type MigrationPort,
   type PetVisualDiagnosticsPort,
   type RecoveryDiagnosticsPort,
@@ -48,6 +51,7 @@ import type { Epic02ExitCompletionCandidate } from './diagnostics/run-epic-02-ex
 import { createPetArbitrationReviewFixture } from './review/pet-arbitration-review-fixture';
 import { createPetBaseReviewSessionReader } from './review/pet-base-review-fixture';
 import { createPetTerminalReviewFixture } from './review/pet-terminal-review-fixture';
+import { createFirstUseEntryReviewFixture } from './review/first-use-entry-review-fixture';
 import { NoopStartupReconciliationAdapter } from './startup/noop-startup-reconciliation.adapter';
 
 const PIXELDORO_DATABASE_NAME = 'pixeldoro.db';
@@ -63,6 +67,8 @@ export interface CreateMobileApplicationOptions {
   readonly diagnosticsEnabled?: boolean;
   readonly migration?: MigrationPort;
   readonly id?: IdPort;
+  readonly firstUseInstallation?: FirstUseInstallationReader;
+  readonly firstUseSessions?: FirstUseSessionReader;
   readonly petCompanionSessions?: PetCompanionSessionReader;
   readonly petVisualDiagnostics?: PetVisualDiagnosticsPort;
   readonly recoveryDiagnostics?: RecoveryDiagnosticsPort;
@@ -88,6 +94,24 @@ export const createMobileApplication = (
   );
   const transaction = new SQLiteTransaction(databaseOwner);
   const persistence = createSQLitePersistenceGraph(databaseOwner, transaction);
+  const reviewFixturesEnabled =
+    options.diagnosticsEnabled !== false &&
+    typeof __DEV__ !== 'undefined' &&
+    __DEV__;
+  const firstUseEntryReviewFixture = createFirstUseEntryReviewFixture(
+    process.env.EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE,
+    reviewFixturesEnabled,
+  );
+  const firstUseEntry = new FirstUseEntryController({
+    installation:
+      options.firstUseInstallation ??
+      firstUseEntryReviewFixture?.installation ??
+      persistence.installation,
+    sessions:
+      options.firstUseSessions ??
+      firstUseEntryReviewFixture?.sessions ??
+      persistence.sessions,
+  });
   const readiness = new ReadinessGate();
   const migration =
     options.migration ??
@@ -130,20 +154,16 @@ export const createMobileApplication = (
       new SQLiteConfirmedResetAdapter(transaction),
     transaction,
   });
-  const petReviewFixturesEnabled =
-    options.diagnosticsEnabled !== false &&
-    typeof __DEV__ !== 'undefined' &&
-    __DEV__;
   const petArbitrationReviewFixture = createPetArbitrationReviewFixture(
     process.env.EXPO_PUBLIC_EPIC_04_ARBITRATION_FIXTURE,
-    petReviewFixturesEnabled,
+    reviewFixturesEnabled,
   );
   const petCompanion = new PetCompanionController(
     options.petCompanionSessions ??
       petArbitrationReviewFixture?.sessionReader ??
       createPetBaseReviewSessionReader(
         process.env.EXPO_PUBLIC_EPIC_04_PET_BASE_FIXTURE,
-        petReviewFixturesEnabled,
+        reviewFixturesEnabled,
       ) ??
       persistence.sessions,
   );
@@ -157,7 +177,7 @@ export const createMobileApplication = (
     options.petVisualDiagnostics ?? new SafeConsolePetVisualDiagnosticsAdapter();
   const petTerminalReviewFixture = createPetTerminalReviewFixture(
     process.env.EXPO_PUBLIC_EPIC_04_TERMINAL_FIXTURE,
-    petReviewFixturesEnabled,
+    reviewFixturesEnabled,
   );
   const sqliteKernelProbeEnabled =
     options.diagnosticsEnabled !== false &&
@@ -229,7 +249,10 @@ export const createMobileApplication = (
 
   const retryRecovery = (): Promise<void> => {
     if (retryRecoveryPromise !== undefined) return retryRecoveryPromise;
-    const operation = bootstrap.retry().then(refreshPetCompanion);
+    const operation = bootstrap.retry().then(async () => {
+      if (bootstrap.getSnapshot().status !== 'ready') return;
+      await Promise.all([firstUseEntry.refresh(), refreshPetCompanion()]);
+    });
     retryRecoveryPromise = operation;
     void operation.finally(() => {
       if (retryRecoveryPromise === operation) retryRecoveryPromise = undefined;
@@ -394,6 +417,7 @@ export const createMobileApplication = (
     bootstrap,
     confirmedReset,
     criticalRecovery: bootstrap,
+    firstUseEntry,
     petCompanion,
     petTerminalFeedback,
     petVisual,
@@ -420,12 +444,13 @@ export const createMobileApplication = (
       }
       if (bootstrap.getSnapshot().status === 'ready') {
         startPetLifecycleRefresh();
-        await petCompanion.refresh();
+        await Promise.all([firstUseEntry.refresh(), petCompanion.refresh()]);
       }
     },
     dismissPetTerminalFeedbackError: () => petTerminalFeedback.dismissRecovery(),
     discardPetTerminalFeedback: () => petTerminalFeedback.discardActive(),
     refreshPetCompanion,
+    refreshFirstUseEntry: () => firstUseEntry.refresh(),
     recordPetVisualDiagnostic: (diagnostic) => {
       try {
         petVisualDiagnostics.record(diagnostic);
@@ -445,6 +470,7 @@ export const createMobileApplication = (
       cancelReviewWait?.();
       cancelReviewWait = undefined;
       appVisibility.dispose();
+      firstUseEntry.dispose();
       petVisual.dispose();
       petCompanion.dispose();
       petTerminalFeedback.dispose();

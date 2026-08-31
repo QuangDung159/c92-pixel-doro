@@ -15,6 +15,7 @@ import {
 import type {
   AppLifecycleState,
   BootstrapProjection,
+  FirstUseEntryProjection,
   MobileApplicationFacade,
   PetVisualDiagnostic,
 } from '@/application';
@@ -57,6 +58,20 @@ export const useBootstrapProjection = (): BootstrapProjection => {
 export const useRecoveryRetry = (): (() => Promise<void>) => {
   const { retryRecovery } = useMobileApplication();
   return retryRecovery;
+};
+
+export const useFirstUseEntryProjection = (): FirstUseEntryProjection => {
+  const { firstUseEntry } = useMobileApplication();
+  return useSyncExternalStore(
+    firstUseEntry.subscribe,
+    firstUseEntry.getSnapshot,
+    firstUseEntry.getSnapshot,
+  );
+};
+
+export const useFirstUseEntryRefresh = (): (() => Promise<void>) => {
+  const { refreshFirstUseEntry } = useMobileApplication();
+  return refreshFirstUseEntry;
 };
 
 export const useHomeProfileProjection = (): HomeProfileProjection | null => {
