@@ -1,13 +1,15 @@
 ---
 document_id: PIXELDORO_EPIC_04_USER_STORIES
 title: PixelDoro EPIC-04 — Home/Pet Room và Pet Companion Projection User Stories
-version: 0.9.0
-status: APPROVED_FOR_SEQUENTIAL_IMPLEMENTATION
+version: 1.0.0
+status: DONE_OWNER_ACCEPTED
 last_updated: 2026-08-31
 owner: Dũng Lư
 approved_by: Dũng Lư
 approved_at: 2026-08-30
-implementation_status: US_04_07_IMPLEMENTED_AWAITING_OWNER_DEVICE_ACCEPTANCE
+implementation_status: EPIC_04_DONE_OWNER_ACCEPTED
+implementation_sha: 5b3a182d9b4fe22d135fbb5a29a9e7ecf9c8f1fd
+closed_at: 2026-08-31
 language: vi
 scope:
   - mobile_mvp
@@ -816,8 +818,8 @@ việc đang diễn ra thay vì phát lại kết quả cũ gây nhầm lẫn.
 - [x] Accessibility announcement follows accepted render state once; component <300 dòng.
 - [x] `OPEN-001` remains open; component/reuse rules đạt.
 - [x] Automated tests pass.
-- [ ] Manual guide pass.
-- [ ] Evidence được ghi lại.
+- [x] Manual guide pass; owner accepted `US-04-04` ngày 2026-08-30.
+- [x] Evidence được ghi tại `US-04-04_IMPLEMENTATION_REPORT.md` và final Epic exit record.
 
 #### Implementation boundary
 
@@ -1135,7 +1137,7 @@ duyệt để trải nghiệm đồng hành hoàn chỉnh, nhất quán trên iO
 | Dependencies | `US-04-06`; `OPEN-001` resolved + authority sync |
 | Blocks | EPIC-04 exit; production Pet acceptance in later Epics |
 | Gate | `GATE-PET-IDENTITY` hard gate |
-| Current status | `IMPLEMENTED_AWAITING_OWNER_DEVICE_ACCEPTANCE` |
+| Current status | `DONE_OWNER_ACCEPTED` |
 
 #### Outcome và output
 
@@ -1161,12 +1163,12 @@ but production consumer uses approved catalog. **Production foundation:** all 01
 - [x] Bundled static imports, naming/layout/attribution khớp Project Structure; core works offline.
 - [x] Timing, preemption, no-replay, lifecycle, reduced motion, fallback và semantics không regression.
 - [x] Asset missing/corrupt still falls through approved chain; animation failure no crash/mutation.
-- [ ] Final layout works on common iOS/Android phone sizes and performance gate has no blocker.
+- [x] Final layout works on common iOS/Android phone sizes and performance gate has no blocker.
 - [x] No component >300 dòng; no feature rule in common renderer; no schema/migration.
 - [x] Full automated matrix/root quality pass.
-- [ ] Owner manual matrix pass.
-- [x] Automated/asset implementation evidence được ghi lại; owner device evidence còn pending.
-- [ ] Chỉ sau tất cả criteria owner mới được đánh `US-04-07 DONE` và `EPIC-04 DONE`.
+- [x] Owner manual matrix pass.
+- [x] Automated/asset implementation và owner device/performance confirmation được ghi lại.
+- [x] Owner explicit approve `US-04-07 DONE` và `EPIC-04 DONE` ngày 2026-08-31.
 
 #### Art candidate evidence — 2026-08-31
 
@@ -1179,6 +1181,14 @@ but production consumer uses approved catalog. **Production foundation:** all 01
   sheet, import tĩnh qua typed manifest và giữ candidate checksum làm provenance.
 - Review record: `docs/planning/US-04-07_ART_CANDIDATE_REVIEW.md`; implementation report/test guide:
   `US-04-07_IMPLEMENTATION_REPORT.md` và `US-04-07_TEST_GUIDE.md`.
+
+#### Owner exit evidence — 2026-08-31
+
+- Owner xác nhận đã hoàn tất toàn bộ scenario trong final guide trên iOS/Android target matrix.
+- Owner xác nhận 30-minute performance check pass và không có blocker/leak/jank được biết.
+- Owner explicit xác nhận “Confirm đã done — có thể xem xét đóng epic”. Exact device/OS strings và
+  raw artifact links không được lặp lại trong conversation record nên tài liệu không tự tạo giá trị giả.
+- Frozen implementation SHA: `5b3a182d9b4fe22d135fbb5a29a9e7ecf9c8f1fd`.
 
 #### Implementation boundary
 
@@ -1344,49 +1354,58 @@ Approval Story list không đồng nghĩa approve artwork hoặc approve impleme
 
 ### 16.2. Story Ready
 
-- [ ] Story trước `DONE` với automated + manual evidence được owner chấp nhận.
-- [ ] Current baseline SHA và affected files được audit lại; không overwrite uncommitted owner work.
-- [ ] Story tasks là vertical outcome, không chia thành layer-only mini projects.
-- [ ] Props/projection/error/fake boundary và component split được refine đủ để implement.
-- [ ] Test fixtures phản ánh committed facts; không biến fake behavior thành production truth.
-- [ ] Gate riêng đã đóng; `US-04-07` chỉ Ready sau khi identity authority sync xong và exact artwork được Product/Art duyệt.
+- [x] Story trước `DONE` với automated + manual evidence được owner chấp nhận.
+- [x] Current baseline SHA và affected files được audit lại; không overwrite uncommitted owner work.
+- [x] Story tasks là vertical outcome, không chia thành layer-only mini projects.
+- [x] Props/projection/error/fake boundary và component split được refine đủ để implement.
+- [x] Test fixtures phản ánh committed facts; không biến fake behavior thành production truth.
+- [x] Gate riêng đã đóng; identity authority và exact artwork đều được Product/Art duyệt trước integration.
 
 ## 17. Definition of Done
 
 ### 17.1. Story Done
 
-- [ ] User-visible outcome mở và kiểm tra được theo guide.
-- [ ] Acceptance checklist của Story hoàn tất bằng evidence thật.
-- [ ] Domain/Application/Presentation/adapter boundary đúng và không repository call từ screen.
-- [ ] Common UI reuse/migration không duplicate implementation; component <300 dòng.
-- [ ] Automated targeted tests, root quality, boundary và repository hygiene pass.
-- [ ] Owner manual Development Build guide pass với SHA/platform/device evidence.
-- [ ] Không native/EAS/prebuild artifact, JSON probe, schema/migration hoặc out-of-scope Product behavior.
-- [ ] Evidence record được cập nhật trước khi Story sau active.
+- [x] User-visible outcome mở và kiểm tra được theo guide.
+- [x] Acceptance checklist của Story hoàn tất bằng evidence thật.
+- [x] Domain/Application/Presentation/adapter boundary đúng và không repository call từ screen.
+- [x] Common UI reuse/migration không duplicate implementation; component <300 dòng.
+- [x] Automated targeted tests, root quality, boundary và repository hygiene pass.
+- [x] Owner manual Development Build guide pass với frozen SHA/platform/device confirmation.
+- [x] Không native/EAS/prebuild artifact, JSON probe, schema/migration hoặc out-of-scope Product behavior.
+- [x] Evidence record được cập nhật trước khi Story sau active.
 
 ### 17.2. Epic Done
 
-- [ ] `US-04-01`–`US-04-07` đều Done theo authoritative order.
-- [ ] `OPEN-001` resolved/authority-synced và production Pet assets được Product-Art accept.
-- [ ] Toàn bộ Epic checklist/automated matrix/final manual matrix pass trên frozen SHA.
-- [ ] No known core-flow, lifecycle, accessibility, fallback hoặc performance blocker.
-- [ ] Owner explicit approve Epic exit; planning status/evidence được cập nhật bằng turn riêng.
+- [x] `US-04-01`–`US-04-07` đều Done theo authoritative order.
+- [x] `OPEN-001` resolved/authority-synced và production Pet assets được Product-Art accept.
+- [x] Toàn bộ Epic checklist/automated matrix/final manual matrix pass trên frozen SHA.
+- [x] No known core-flow, lifecycle, accessibility, fallback hoặc performance blocker.
+- [x] Owner explicit approve Epic exit; planning status/evidence được cập nhật bằng turn riêng.
 
 ## 18. Open risks/decisions
 
 | ID | Risk/decision | Impact | Owner/mitigation | Status |
 |---|---|---|---|---|
 | `OPEN-001` | Default Pet Cat/Dog/Robot | Identity gate for production assets/07 | Cat / Mèo Dev (`cat-dev`) và sprite v1 được duyệt 2026-08-31 | RESOLVED; ART APPROVED |
-| `RISK-04-01` | Prototype common file 399 lines/god-component drift | Duplication, >300 rule | Split in 01 with consumer regression | OPEN until 01 |
-| `RISK-04-02` | Root prototype provider mistaken for app truth | Wrong state/reward/replay | Independent production facade/provider; import tests | OPEN until 02 |
-| `RISK-04-03` | Latest terminal row mistaken as fresh event | Relaunch/reopen replay | Commit-time event provenance; no read inference | OPEN until 03–04 |
-| `RISK-04-04` | Startup reconciliation is currently noop | Unsafe active projection if overclaimed | 02 exposes read/recovery boundary only; Timer Epic owns production reconcile | VISIBLE DEPENDENCY |
-| `RISK-04-05` | Reanimated asset/frame cost on low-end device | Jank/battery/leak | 05 ADR-005 benchmark and simplify decoration first | OWNER ACCEPTED AT 05 |
-| `RISK-04-06` | Accessibility semantics duplicated by animated nodes | Repeated/spam announcements | One semantic status owner; decorative frames hidden | AWAITING OWNER DEVICE EVIDENCE |
-| `RISK-04-07` | Architecture/schema drives UX | Approved flow regression or needless migration | Authority order + data-needs no-gap decision | MONITOR |
-| `RISK-04-08` | Final iOS/Android evidence missing/fabricated | Invalid Epic exit | Frozen SHA and explicit per-platform owner record | OPEN until 07 |
+| `RISK-04-01` | Prototype common file 399 lines/god-component drift | Duplication, >300 rule | Split in 01 with consumer regression | CLOSED AT 01 |
+| `RISK-04-02` | Root prototype provider mistaken for app truth | Wrong state/reward/replay | Independent production facade/provider; import tests | CLOSED AT 02 |
+| `RISK-04-03` | Latest terminal row mistaken as fresh event | Relaunch/reopen replay | Commit-time event provenance; no read inference | CLOSED AT 04 |
+| `RISK-04-04` | Startup reconciliation is currently noop | Unsafe active projection if overclaimed | Production reconciliation remains owned by Timer/Session Epic | TRANSFERRED; NOT EPIC-04 BLOCKER |
+| `RISK-04-05` | Reanimated asset/frame cost on low-end device | Jank/battery/leak | ADR-005 benchmark plus final 30-minute owner check | CLOSED AT 05/07 |
+| `RISK-04-06` | Accessibility semantics duplicated by animated nodes | Repeated/spam announcements | One semantic status owner; owner final matrix accepted | CLOSED AT 06/07 |
+| `RISK-04-07` | Architecture/schema drives UX | Approved flow regression or needless migration | Authority order + data-needs no-gap decision | CLOSED; NO MIGRATION |
+| `RISK-04-08` | Final iOS/Android evidence missing/fabricated | Invalid Epic exit | Frozen SHA and explicit owner final-matrix confirmation | CLOSED AT 07 |
 
 ## 19. Change log
+
+### 1.0.0 — 2026-08-31
+
+- Owner xác nhận final iOS/Android scenarios, 30-minute performance và explicit approve Epic exit.
+- Chuyển `US-04-07` cùng `EPIC-04` sang `DONE_OWNER_ACCEPTED` trên frozen implementation SHA
+  `5b3a182d9b4fe22d135fbb5a29a9e7ecf9c8f1fd`.
+- Đóng risk 01–03/05–08; chuyển production startup reconciliation sang Timer/Session Epic và xác nhận
+  không phải blocker của Pet Presentation scope.
+- Hoàn tất Story/Epic DoD; không thêm species selection, schema/migration, native dependency hay Skia.
 
 ### 0.9.0 — 2026-08-31
 

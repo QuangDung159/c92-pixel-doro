@@ -1,12 +1,14 @@
 ---
 document_id: PIXELDORO_US_04_07_IMPLEMENTATION_REPORT
 title: PixelDoro US-04-07 — Production Cat Sprite Implementation Report
-version: 1.0.0
-status: IMPLEMENTED_AWAITING_OWNER_DEVICE_ACCEPTANCE
+version: 1.1.0
+status: DONE_OWNER_ACCEPTED
 story: US-04-07
 date: 2026-08-31
 owner: Dũng Lư
 baseline_commit: a5abf5e
+implementation_sha: 5b3a182d9b4fe22d135fbb5a29a9e7ecf9c8f1fd
+owner_accepted_at: 2026-08-31
 language: vi
 ---
 
@@ -54,8 +56,14 @@ Lệnh `pnpm quality` với Node `v22.23.2` pass ngày 2026-08-31:
 - Repository hygiene: pass; một immutable migration, không Skia/signing material/lockfile thừa.
 - Asset integrity test xác minh PNG signature, RGBA color type, exact dimensions/frame count và checksum.
 
-## 5. Pending owner evidence
+## 5. Owner acceptance
 
-`US-04-07` và `EPIC-04` chưa Done cho tới khi owner chạy
-`US-04-07_TEST_GUIDE.md`, ghi iOS/Android target, accessibility/fallback result và performance result.
-Không tự suy diễn device pass từ automated host test.
+Owner xác nhận ngày 2026-08-31:
+
+- Toàn bộ scenario trong `US-04-07_TEST_GUIDE.md` đã pass.
+- Final iOS/Android target/device/OS matrix đã được kiểm tra.
+- 30-minute performance check pass, không có blocker được biết.
+- Explicit approve đóng `US-04-07` và `EPIC-04`.
+
+Frozen implementation SHA là `5b3a182d9b4fe22d135fbb5a29a9e7ecf9c8f1fd`. Exact device/OS
+strings và raw evidence links không được cung cấp trong conversation nên report không tự điền giả.

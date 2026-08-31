@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_MVP_EPIC_BREAKDOWN
 title: PixelDoro Mobile MVP — Epic Breakdown
-version: 1.3.0
+version: 1.4.0
 status: APPROVED
 last_updated: 2026-08-31
 owner: Dũng Lư
@@ -124,7 +124,7 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 - [x] `01 / EPIC-01 / W1` — Mobile Foundation.
 - [x] `02 / EPIC-02 / W1` — Durable Data & Bootstrap.
 - [x] `03 / EPIC-03 / W2` — MVP Experience Prototype & User-flow Validation.
-- [ ] `04 / EPIC-04 / W3` — Pet Companion.
+- [x] `04 / EPIC-04 / W3` — Pet Companion — `DONE_OWNER_ACCEPTED` 2026-08-31.
 - [ ] `05 / EPIC-05 / W3` — Onboarding Trial.
 - [ ] `06 / EPIC-06 / W3` — Standard Focus.
 - [ ] `07 / EPIC-07 / W3` — Break & Cadence.
@@ -367,7 +367,7 @@ notification scheduling, schema migration mới, real purchase/equip, analytics 
 **Outcome:** Người dùng luôn nhìn thấy Pet phản ánh đúng trạng thái đã commit và cảm nhận được sự đồng hành mà không làm animation ảnh hưởng core focus flow.  
 **Dependency:** `EPIC-01`, `EPIC-03`.  
 **Decision gate:** `GATE-PET-IDENTITY` trước production asset.  
-**Nguồn chính:** Product Core §8, Pet State Machine 1.0.0, ADR-005.
+**Nguồn chính:** Product Core §8, Pet State Machine 1.0.2, ADR-005.
 
 **In scope:**
 
@@ -382,17 +382,21 @@ notification scheduling, schema migration mới, real purchase/equip, analytics 
 
 **Epic completion checklist:**
 
-- [ ] Pet state derive từ committed session projection, không từ countdown/notification/route.
-- [ ] Focus running map `working`; Break running map `breaking`; no active map `idle`.
-- [ ] Completed Focus fresh transition request `celebrating` sau reward commit.
-- [ ] Strict failed fresh transition request `bugged`; cancelled về `idle`.
-- [ ] Completed Break không celebrate và không tạo reward.
-- [ ] Active session mới preempt stale terminal one-shot.
-- [ ] Relaunch/Result reopen/resume không replay one-shot cũ.
-- [ ] Animation failure không crash, block hoặc mutate core truth.
-- [ ] Reduced-motion/static fallback vẫn truyền đạt state bằng text.
-- [ ] Animation dừng khi không nhìn thấy.
-- [ ] Production Pet asset chỉ được khóa sau `OPEN-001` resolved.
+- [x] Pet state derive từ committed session projection, không từ countdown/notification/route.
+- [x] Focus running map `working`; Break running map `breaking`; no active map `idle`.
+- [x] Completed Focus fresh transition request `celebrating` sau reward commit.
+- [x] Strict failed fresh transition request `bugged`; cancelled về `idle`.
+- [x] Completed Break không celebrate và không tạo reward.
+- [x] Active session mới preempt stale terminal one-shot.
+- [x] Relaunch/Result reopen/resume không replay one-shot cũ.
+- [x] Animation failure không crash, block hoặc mutate core truth.
+- [x] Reduced-motion/static fallback vẫn truyền đạt state bằng text.
+- [x] Animation dừng khi không nhìn thấy.
+- [x] Production Pet asset chỉ được khóa sau `OPEN-001` resolved.
+
+**Completion evidence:** `US-04-01`–`US-04-07` đều `DONE_OWNER_ACCEPTED`; Cat Dev sprite v1 được
+Product/Art duyệt; root quality pass `55/55` files, `281/281` tests; owner xác nhận final iOS/Android
+scenario matrix và 30-minute performance pass trên frozen SHA `5b3a182`.
 
 **Out of scope:** Multiple Pet, evolution, Happiness, Energy, Pet death, Skia khi chưa vượt gate và species-specific gameplay.
 
@@ -821,6 +825,13 @@ block trạng thái `APPROVED` của master plan hoặc `DONE` của Epic 1.
 - [ ] Không estimate deadline trước khi Story refinement hoàn tất.
 
 ## 10. Change log
+
+### 1.4.0 — 2026-08-31
+
+- Đóng `EPIC-04` ở trạng thái `DONE_OWNER_ACCEPTED` sau final owner device/performance confirmation.
+- Đánh dấu toàn bộ Pet projection, transient feedback, lifecycle, reduced-motion, fallback và asset
+  acceptance criteria hoàn tất trên frozen implementation SHA `5b3a182`.
+- Mở start gate cho `EPIC-05`; Pet naming/selection vẫn không bị chốt ngầm và không thuộc MVP scope này.
 
 ### 1.3.0 — 2026-08-31
 
