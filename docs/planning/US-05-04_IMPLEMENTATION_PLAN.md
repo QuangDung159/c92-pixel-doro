@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_05_04_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-05-04 Implementation Plan
-version: 0.2.0
-status: APPROVED
-implementation_status: IN_PROGRESS
+version: 0.3.0
+status: IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE
+implementation_status: IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE
 implementation_started_at: 2026-08-31
 created_at: 2026-08-31
 last_updated: 2026-08-31
@@ -15,6 +15,7 @@ branch: feats/epic-05
 baseline_sha: dcfeb17ea583c896ddba9fa3ce81f3de2d3b8298
 accepted_dependency_sha: a66d8a9e3ab870dd8e42b1b7349b2408bf4630d8
 implementation_start_sha: 8c66dd59a441f142bae701c33747dacc88905b2c
+implementation_sha: f1302b8c0ae8035f67b56aa410b197890498ddc9
 formal_tester_status: DEFERRED_TO_LATER_PHASE
 scope:
   - mobile_mvp
@@ -62,9 +63,23 @@ feedback để Mèo Dev celebrate tối đa `2.000 ms`, không block CTA. User c
 `DEFERRED_TO_LATER_PHASE`.
 
 **Planning status:** `APPROVED` ngày 2026-08-31.
-**Implementation status:** `IN_PROGRESS` từ exact SHA
-`8c66dd59a441f142bae701c33747dacc88905b2c`. Owner duyệt toàn bộ
-`US0504-CONFIRM-01`…`08` ngày 2026-08-31.
+**Implementation status:** `IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE` tại exact SHA
+`f1302b8c0ae8035f67b56aa410b197890498ddc9`. Owner duyệt toàn bộ
+`US0504-CONFIRM-01`…`08` và implementation mở từ `8c66dd5` ngày 2026-08-31.
+
+### 0.2. Implementation update — 2026-08-31
+
+- Fresh-only base-first bridge đã map completion event vào accepted EPIC-04 Pet controller; event
+  được consume sau accepted/safe duplicate và giữ lại cho recoverable retry.
+- Conditional installation handoff, narrow Bootstrap snapshot refresh, exact totals/route verify và
+  replace Home đã triển khai; retry sau committed write không cấp reward lần hai.
+- Result CTA `Vào Pet Room` enabled, single-flight, truthful error và không phụ thuộc 2 giây Pet
+  feedback.
+- Ba finite fixture `trial_completed_fresh`, `trial_completed_reopen`, `trial_continue_failure` và
+  deferred device guide đã có.
+- Final root quality pass: `80` test files / `374` tests; device harness, boundaries, hygiene,
+  lint/typecheck và `git diff --check` pass.
+- Không schema/migration/dependency/native/asset/analytics change. Formal tester vẫn deferred.
 
 ### 0.1. Readiness gate
 
@@ -414,18 +429,18 @@ pnpm start --clear
 
 ## 9. Definition of Done
 
-- [ ] Owner approves `US0504-CONFIRM-01`…`08`; implementation start SHA recorded.
-- [ ] Only fresh post-commit event requests celebration; hydration/reopen/relaunch never replay.
-- [ ] Pet base refresh precedes event request; EPIC-04 arbitration/dedupe/duration remain intact.
-- [ ] Celebration/reduced-motion/fallback never blocks `Vào Pet Room`.
-- [ ] Continue persists installation conditionally/idempotently before navigation.
-- [ ] Snapshot refresh and totals/destination verification complete before Home.
-- [ ] Failure after write is safely retryable without reward/session/profile mutation.
-- [ ] Home and later cold launch show committed totals/direct route with base Pet.
-- [ ] Three finite fixtures travel through production commands and are absent by default.
-- [ ] Targeted/SQLite/EPIC-04/root quality/boundary/hygiene/line-count gates pass.
-- [ ] No schema/migration/dependency/native/asset/analytics change.
-- [ ] Implementation report binds exact SHA; formal tester stays deferred unless evidence arrives.
+- [x] Owner approves `US0504-CONFIRM-01`…`08`; implementation start SHA recorded.
+- [x] Only fresh post-commit event requests celebration; hydration/reopen/relaunch never replay.
+- [x] Pet base refresh precedes event request; EPIC-04 arbitration/dedupe/duration remain intact.
+- [x] Celebration/reduced-motion/fallback never blocks `Vào Pet Room`.
+- [x] Continue persists installation conditionally/idempotently before navigation.
+- [x] Snapshot refresh and totals/destination verification complete before Home.
+- [x] Failure after write is safely retryable without reward/session/profile mutation.
+- [x] Home and later cold launch show committed totals/direct route with base Pet.
+- [x] Three finite fixtures travel through production commands and are absent by default.
+- [x] Targeted/SQLite/EPIC-04/root quality/boundary/hygiene/line-count gates pass.
+- [x] No schema/migration/dependency/native/asset/analytics change.
+- [x] Implementation report binds exact SHA; formal tester stays deferred unless evidence arrives.
 - [ ] Owner accepts exact implementation before US-05-05 opens.
 
 ## 10. Owner confirmation gate
@@ -471,5 +486,6 @@ mở implementation US-05-04; không mở analytics/integrity US-05-05.
 
 | Version | Date | Author | Change |
 | --- | --- | --- | --- |
+| 0.3.0 | 2026-08-31 | Codex | Recorded implementation at f1302b8, final 80/374 quality evidence, fresh Pet delivery, idempotent Home handoff and deferred formal tester status; Story awaits owner acceptance. |
 | 0.2.0 | 2026-08-31 | Codex, recording owner approval | Recorded approval of US0504-CONFIRM-01…08 and opened implementation from exact SHA 8c66dd5; US-05-05 remains closed. |
 | 0.1.0 | 2026-08-31 | Codex, for owner review | Closed accepted a66d8a9 dependency audit; proposed fresh Pet bridge, idempotent Continue, committed Home refresh, fixtures, tests and deferred tester contracts. No production implementation. |
