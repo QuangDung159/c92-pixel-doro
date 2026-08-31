@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_US_05_04_IMPLEMENTATION_REPORT
 title: PixelDoro US-05-04 — Pet Celebration and Home Handoff Implementation Report
-version: 0.1.0
-status: IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE
+version: 0.2.0
+status: DONE_OWNER_ACCEPTED
 story: US-05-04
 date: 2026-08-31
 owner: Dũng Lư
@@ -11,6 +11,8 @@ baseline_commit: dcfeb17ea583c896ddba9fa3ce81f3de2d3b8298
 implementation_start_commit: 8c66dd59a441f142bae701c33747dacc88905b2c
 implementation_sha: f1302b8c0ae8035f67b56aa410b197890498ddc9
 formal_tester_status: DEFERRED_TO_LATER_PHASE
+quick_smoke_status: OWNER_REPORTED_PASS
+owner_accepted_at: 2026-08-31
 language: vi
 ---
 
@@ -28,8 +30,9 @@ US-05-04 đã được triển khai tại exact SHA
 - Retry sau installation write hoặc Pet delivery failure không mutate reward/session/profile.
 - Reopen/relaunch không tái tạo fresh event; returning First-use route đi Home.
 
-Story đang `IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE`. Formal tester/Development Build execution tiếp
-tục `DEFERRED_TO_LATER_PHASE`; báo cáo không claim manual/device pass.
+Owner đã đóng Story `DONE_OWNER_ACCEPTED` trên exact implementation SHA sau khi xác nhận quick UI
+smoke done ngày 2026-08-31. Formal tester/Development Build execution tiếp tục
+`DEFERRED_TO_LATER_PHASE`; báo cáo không claim full manual/device pass.
 
 ## 2. Kiến trúc đã triển khai
 
@@ -125,11 +128,19 @@ Formal tester cần chạy later-phase matrix với exact SHA, platform/device/O
 failure/relaunch/Reduce Motion captures và durable before/after facts. Mọi manual field hiện là
 `DEFERRED`; automated pass không được diễn giải thành device pass.
 
-US-05-05 planning/production chỉ mở sau khi owner chấp nhận US-05-04 trên exact implementation SHA
-`f1302b8c0ae8035f67b56aa410b197890498ddc9`.
+Owner acceptance evidence hiện có:
+
+- [x] Exact implementation SHA `f1302b8c0ae8035f67b56aa410b197890498ddc9`.
+- [x] Owner reports quick UI smoke done ngày 2026-08-31.
+- [x] Automated/SQLite/root quality evidence được chấp nhận để đóng Story.
+- [ ] Platform/device/OS, app version, captures và raw durable facts chưa được cung cấp.
+
+US-05-05 planning may open; its production implementation remains gated by the confirmations in its
+own implementation plan.
 
 ## 8. Change log
 
 | Version | Date | Author | Change |
 | --- | --- | --- | --- |
+| 0.2.0 | 2026-08-31 | Codex, recording owner acceptance | Closed US-05-04 at f1302b8 after owner-reported quick UI smoke; formal tester evidence remains deferred without claiming full device pass. |
 | 0.1.0 | 2026-08-31 | Codex | Bound fresh Pet delivery, idempotent Continue/Home handoff, fixtures, 80/374 quality and deferred tester evidence to exact implementation SHA f1302b8. |

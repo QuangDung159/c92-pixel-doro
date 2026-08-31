@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_05_04_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-05-04 Implementation Plan
-version: 0.3.0
-status: IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE
-implementation_status: IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE
+version: 0.4.0
+status: DONE_OWNER_ACCEPTED
+implementation_status: DONE_OWNER_ACCEPTED
 implementation_started_at: 2026-08-31
 created_at: 2026-08-31
 last_updated: 2026-08-31
@@ -17,6 +17,8 @@ accepted_dependency_sha: a66d8a9e3ab870dd8e42b1b7349b2408bf4630d8
 implementation_start_sha: 8c66dd59a441f142bae701c33747dacc88905b2c
 implementation_sha: f1302b8c0ae8035f67b56aa410b197890498ddc9
 formal_tester_status: DEFERRED_TO_LATER_PHASE
+quick_smoke_status: OWNER_REPORTED_PASS
+owner_accepted_at: 2026-08-31
 scope:
   - mobile_mvp
   - epic_05
@@ -63,7 +65,7 @@ feedback để Mèo Dev celebrate tối đa `2.000 ms`, không block CTA. User c
 `DEFERRED_TO_LATER_PHASE`.
 
 **Planning status:** `APPROVED` ngày 2026-08-31.
-**Implementation status:** `IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE` tại exact SHA
+**Implementation status:** `DONE_OWNER_ACCEPTED` tại exact SHA
 `f1302b8c0ae8035f67b56aa410b197890498ddc9`. Owner duyệt toàn bộ
 `US0504-CONFIRM-01`…`08` và implementation mở từ `8c66dd5` ngày 2026-08-31.
 
@@ -80,6 +82,16 @@ feedback để Mèo Dev celebrate tối đa `2.000 ms`, không block CTA. User c
 - Final root quality pass: `80` test files / `374` tests; device harness, boundaries, hygiene,
   lint/typecheck và `git diff --check` pass.
 - Không schema/migration/dependency/native/asset/analytics change. Formal tester vẫn deferred.
+
+### 0.3. Owner acceptance update — 2026-08-31
+
+- Owner xác nhận quick UI smoke done và chấp nhận US-05-04 trên exact implementation SHA
+  `f1302b8c0ae8035f67b56aa410b197890498ddc9`.
+- Quick smoke được ghi là owner-reported pass; platform/device/OS, captures và raw durable dump không
+  được cung cấp trong lượt xác nhận này.
+- Formal tester/Development Build matrix vẫn `DEFERRED_TO_LATER_PHASE`, không được suy diễn thành
+  full manual pass.
+- Story đóng `DONE_OWNER_ACCEPTED`; chỉ US-05-05 implementation planning được mở.
 
 ### 0.1. Readiness gate
 
@@ -441,7 +453,7 @@ pnpm start --clear
 - [x] Targeted/SQLite/EPIC-04/root quality/boundary/hygiene/line-count gates pass.
 - [x] No schema/migration/dependency/native/asset/analytics change.
 - [x] Implementation report binds exact SHA; formal tester stays deferred unless evidence arrives.
-- [ ] Owner accepts exact implementation before US-05-05 opens.
+- [x] Owner accepts exact implementation `f1302b8…`; US-05-05 planning may open.
 
 ## 10. Owner confirmation gate
 
@@ -486,6 +498,7 @@ mở implementation US-05-04; không mở analytics/integrity US-05-05.
 
 | Version | Date | Author | Change |
 | --- | --- | --- | --- |
+| 0.4.0 | 2026-08-31 | Codex, recording owner acceptance | Closed US-05-04 at f1302b8 after owner-reported quick UI smoke; formal tester/device evidence remains deferred and only US-05-05 planning opens. |
 | 0.3.0 | 2026-08-31 | Codex | Recorded implementation at f1302b8, final 80/374 quality evidence, fresh Pet delivery, idempotent Home handoff and deferred formal tester status; Story awaits owner acceptance. |
 | 0.2.0 | 2026-08-31 | Codex, recording owner approval | Recorded approval of US0504-CONFIRM-01…08 and opened implementation from exact SHA 8c66dd5; US-05-05 remains closed. |
 | 0.1.0 | 2026-08-31 | Codex, for owner review | Closed accepted a66d8a9 dependency audit; proposed fresh Pet bridge, idempotent Continue, committed Home refresh, fixtures, tests and deferred tester contracts. No production implementation. |
