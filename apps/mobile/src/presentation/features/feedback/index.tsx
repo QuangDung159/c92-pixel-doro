@@ -7,12 +7,12 @@ import {
   LoadingState,
   PixelPanel,
   PrimaryButton,
-  PrototypeBadge,
   PrototypeScreen,
   ScreenHeader,
   SecondaryButton,
   SectionLabel,
-} from '@/presentation/components/prototype-ui';
+} from '@/presentation/components';
+import { PrototypeBadge } from '@/presentation/prototype/components';
 import { palette } from '@/presentation/theme/palette';
 
 type SubmitState = 'idle' | 'submitting' | 'success' | 'error';

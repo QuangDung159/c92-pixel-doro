@@ -5,10 +5,10 @@ import {
   PixelCompanion,
   PixelPanel,
   PrimaryButton,
-  PrototypeBadge,
   PrototypeScreen,
   ScreenHeader,
-} from '@/presentation/components/prototype-ui';
+} from '@/presentation/components';
+import { PrototypeBadge } from '@/presentation/prototype/components';
 import { palette } from '@/presentation/theme/palette';
 
 export const OnboardingScreen = ({ onStartTrial }: { readonly onStartTrial: () => void }) => (
@@ -42,7 +42,7 @@ export const OnboardingScreen = ({ onStartTrial }: { readonly onStartTrial: () =
     </InlineNotice>
     <PrimaryButton label="Thử phiên 5 phút" onPress={onStartTrial} />
     <Text style={styles.decisionNote}>
-      Pet và tên chính thức vẫn đang chờ quyết định. Hình hiện tại là placeholder trung tính.
+      Người bạn mặc định trong MVP là Mèo Dev. Tên riêng và tính năng chọn Pet thuộc phase sau.
     </Text>
   </PrototypeScreen>
 );

@@ -2,6 +2,7 @@ import { Children, isValidElement, type ReactElement } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { RecoveryBoundaryContent } from './bootstrap-boundary';
+import { ErrorState } from './status-surface';
 
 vi.mock('react-native', () => ({
   ActivityIndicator: 'ActivityIndicator',
@@ -11,10 +12,10 @@ vi.mock('react-native', () => ({
   View: 'View',
 }));
 
-interface PressableTestProps {
-  readonly accessibilityLabel: string;
-  readonly accessibilityRole: string;
-  readonly onPress: () => void;
+interface ErrorStateTestProps {
+  readonly title: string;
+  readonly body: string;
+  readonly onRetry: () => void;
 }
 
 describe('RecoveryBoundaryContent', () => {
@@ -22,20 +23,20 @@ describe('RecoveryBoundaryContent', () => {
     const onRetry = vi.fn();
     const tree = RecoveryBoundaryContent({ onRetry });
     const children = Children.toArray(tree.props.children);
-    const retry = children.find(
-      (child): child is ReactElement<PressableTestProps> =>
-        isValidElement(child) && child.type === 'Pressable',
+    const errorState = children.find(
+      (child): child is ReactElement<ErrorStateTestProps> =>
+        isValidElement(child) && child.type === ErrorState,
     );
 
     expect(tree.props).toMatchObject({
       accessibilityRole: 'alert',
       accessibilityLabel: 'Không thể khởi động PixelDoro',
     });
-    expect(retry?.props).toMatchObject({
-      accessibilityRole: 'button',
-      accessibilityLabel: 'Thử lại khởi động PixelDoro',
+    expect(errorState?.props).toMatchObject({
+      title: 'PixelDoro chưa thể sẵn sàng',
+      body: 'Dữ liệu của bạn vẫn được giữ nguyên. Hãy thử lại để tiếp tục.',
     });
-    retry?.props.onPress();
+    errorState?.props.onRetry();
     expect(onRetry).toHaveBeenCalledOnce();
 
     const rendered = JSON.stringify(tree);

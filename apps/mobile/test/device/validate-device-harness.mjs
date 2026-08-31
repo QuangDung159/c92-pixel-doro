@@ -13,6 +13,11 @@ const derivedQueriesFlowPath = `${deviceDirectory}derived-queries-smoke.md`;
 const failureRecoveryFlowPath = `${deviceDirectory}failure-recovery-smoke.md`;
 const confirmedResetFlowPath = `${deviceDirectory}confirmed-reset-smoke.md`;
 const epic02ExitFlowPath = `${deviceDirectory}epic-02-exit-smoke.md`;
+const petBaseStateFlowPath = `${deviceDirectory}pet-base-state-smoke.md`;
+const petTerminalFeedbackFlowPath = `${deviceDirectory}pet-terminal-feedback-smoke.md`;
+const petArbitrationFlowPath = `${deviceDirectory}pet-arbitration-smoke.md`;
+const petAnimationLifecycleFlowPath = `${deviceDirectory}pet-animation-lifecycle-smoke.md`;
+const petAccessibilityFallbackFlowPath = `${deviceDirectory}pet-accessibility-fallback-smoke.md`;
 
 await access(flowPath);
 await access(sqliteFlowPath);
@@ -24,6 +29,11 @@ await access(derivedQueriesFlowPath);
 await access(failureRecoveryFlowPath);
 await access(confirmedResetFlowPath);
 await access(epic02ExitFlowPath);
+await access(petBaseStateFlowPath);
+await access(petTerminalFeedbackFlowPath);
+await access(petArbitrationFlowPath);
+await access(petAnimationLifecycleFlowPath);
+await access(petAccessibilityFallbackFlowPath);
 const flow = await readFile(flowPath, 'utf8');
 const sqliteFlow = await readFile(sqliteFlowPath, 'utf8');
 const schemaFlow = await readFile(schemaFlowPath, 'utf8');
@@ -34,6 +44,20 @@ const derivedQueriesFlow = await readFile(derivedQueriesFlowPath, 'utf8');
 const failureRecoveryFlow = await readFile(failureRecoveryFlowPath, 'utf8');
 const confirmedResetFlow = await readFile(confirmedResetFlowPath, 'utf8');
 const epic02ExitFlow = await readFile(epic02ExitFlowPath, 'utf8');
+const petBaseStateFlow = await readFile(petBaseStateFlowPath, 'utf8');
+const petTerminalFeedbackFlow = await readFile(
+  petTerminalFeedbackFlowPath,
+  'utf8',
+);
+const petArbitrationFlow = await readFile(petArbitrationFlowPath, 'utf8');
+const petAnimationLifecycleFlow = await readFile(
+  petAnimationLifecycleFlowPath,
+  'utf8',
+);
+const petAccessibilityFallbackFlow = await readFile(
+  petAccessibilityFallbackFlowPath,
+  'utf8',
+);
 
 const requiredLabels = [
   'Chào mừng đến PixelDoro',
@@ -244,6 +268,122 @@ for (const evidence of requiredEpic02ExitEvidence) {
 
 await access(
   `${mobileDirectory}/src/composition/diagnostics/run-epic-02-exit-probe.ts`,
+);
+
+const requiredPetBaseStateEvidence = [
+  'EXPO_PUBLIC_EPIC_04_PET_BASE_FIXTURE=idle',
+  'EXPO_PUBLIC_EPIC_04_PET_BASE_FIXTURE=focus',
+  'EXPO_PUBLIC_EPIC_04_PET_BASE_FIXTURE=short_break',
+  'EXPO_PUBLIC_EPIC_04_PET_BASE_FIXTURE=long_break',
+  'EXPO_PUBLIC_EPIC_04_PET_BASE_FIXTURE=error',
+  'unset EXPO_PUBLIC_EPIC_04_PET_BASE_FIXTURE',
+];
+
+for (const evidence of requiredPetBaseStateEvidence) {
+  if (!petBaseStateFlow.includes(evidence)) {
+    throw new Error(`Pet base-state device guide is missing: ${evidence}`);
+  }
+}
+
+await access(
+  `${mobileDirectory}/src/composition/review/pet-base-review-fixture.ts`,
+);
+
+const requiredPetTerminalFeedbackEvidence = [
+  'EXPO_PUBLIC_EPIC_04_TERMINAL_FIXTURE=completed',
+  'EXPO_PUBLIC_EPIC_04_TERMINAL_FIXTURE=strict_failed',
+  'EXPO_PUBLIC_EPIC_04_TERMINAL_FIXTURE=cancelled',
+  'EXPO_PUBLIC_EPIC_04_TERMINAL_FIXTURE=break_completed',
+  'EXPO_PUBLIC_EPIC_04_TERMINAL_FIXTURE=duplicate_completed',
+  'EXPO_PUBLIC_EPIC_04_TERMINAL_FIXTURE=playback_error',
+  '2.000 ms',
+  '1.500 ms',
+  'unset EXPO_PUBLIC_EPIC_04_TERMINAL_FIXTURE',
+];
+
+for (const evidence of requiredPetTerminalFeedbackEvidence) {
+  if (!petTerminalFeedbackFlow.includes(evidence)) {
+    throw new Error(`Pet terminal-feedback device guide is missing: ${evidence}`);
+  }
+}
+
+await access(
+  `${mobileDirectory}/src/composition/review/pet-terminal-review-fixture.ts`,
+);
+
+const requiredPetArbitrationEvidence = [
+  'EXPO_PUBLIC_EPIC_04_ARBITRATION_FIXTURE=preempt_break',
+  'EXPO_PUBLIC_EPIC_04_ARBITRATION_FIXTURE=preempt_focus',
+  'EXPO_PUBLIC_EPIC_04_ARBITRATION_FIXTURE=stale_after_active',
+  'EXPO_PUBLIC_EPIC_04_ARBITRATION_FIXTURE=conflicting_terminal',
+  'EXPO_PUBLIC_EPIC_04_ARBITRATION_FIXTURE=reopen_relaunch',
+  'EXPO_PUBLIC_EPIC_04_ARBITRATION_FIXTURE=background_discard',
+  'Emit Pet review fixture',
+  'unset EXPO_PUBLIC_EPIC_04_ARBITRATION_FIXTURE',
+];
+
+for (const evidence of requiredPetArbitrationEvidence) {
+  if (!petArbitrationFlow.includes(evidence)) {
+    throw new Error(`Pet arbitration device guide is missing: ${evidence}`);
+  }
+}
+
+await access(
+  `${mobileDirectory}/src/composition/review/pet-arbitration-review-fixture.ts`,
+);
+
+const requiredPetAnimationLifecycleEvidence = [
+  'EXPO_PUBLIC_EPIC_04_PET_BASE_FIXTURE=idle',
+  'EXPO_PUBLIC_EPIC_04_PET_BASE_FIXTURE=focus',
+  'EXPO_PUBLIC_EPIC_04_PET_BASE_FIXTURE=short_break',
+  'EXPO_PUBLIC_EPIC_04_TERMINAL_FIXTURE=completed',
+  'EXPO_PUBLIC_EPIC_04_TERMINAL_FIXTURE=strict_failed',
+  '30 phút',
+  'jank >100 ms',
+  'Reduce Motion',
+  'unset EXPO_PUBLIC_EPIC_04_PET_BASE_FIXTURE',
+  'unset EXPO_PUBLIC_EPIC_04_TERMINAL_FIXTURE',
+];
+
+for (const evidence of requiredPetAnimationLifecycleEvidence) {
+  if (!petAnimationLifecycleFlow.includes(evidence)) {
+    throw new Error(`Pet animation lifecycle guide is missing: ${evidence}`);
+  }
+}
+
+await access(
+  `${mobileDirectory}/src/presentation/animation/pet-animation-renderer.tsx`,
+);
+await access(
+  `${mobileDirectory}/src/presentation/hooks/use-pet-visual-visibility.ts`,
+);
+
+const requiredPetAccessibilityFallbackEvidence = [
+  'EXPO_PUBLIC_EPIC_04_ASSET_FIXTURE=playback_failure',
+  'EXPO_PUBLIC_EPIC_04_ASSET_FIXTURE=state_frame_missing',
+  'EXPO_PUBLIC_EPIC_04_ASSET_FIXTURE=all_art_missing',
+  'Reduce Motion',
+  'VoiceOver/TalkBack',
+  '2.000 ms',
+  '1.500 ms',
+  '[PixelDoro][PetVisual]',
+  'unset EXPO_PUBLIC_EPIC_04_ASSET_FIXTURE',
+];
+
+for (const evidence of requiredPetAccessibilityFallbackEvidence) {
+  if (!petAccessibilityFallbackFlow.includes(evidence)) {
+    throw new Error(`Pet accessibility fallback guide is missing: ${evidence}`);
+  }
+}
+
+await access(
+  `${mobileDirectory}/src/presentation/animation/pet-asset-catalog.ts`,
+);
+await access(
+  `${mobileDirectory}/src/presentation/components/neutral-pet-placeholder.tsx`,
+);
+await access(
+  `${mobileDirectory}/src/presentation/providers/reduced-motion-context.tsx`,
 );
 
 console.log(

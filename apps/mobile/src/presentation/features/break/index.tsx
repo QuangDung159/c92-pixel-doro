@@ -1,20 +1,24 @@
 import { useState } from 'react';
+import type { PetVisualProjection } from '@pixeldoro/application';
 import { StyleSheet, Text, View } from 'react-native';
 
 import {
   ConfirmationModal,
-  ControlButton,
   ErrorState,
   InlineNotice,
+  PetVisualStatus,
   PixelCompanion,
   PixelPanel,
   PrimaryButton,
-  PrototypeBadge,
-  PrototypeControls,
   PrototypeScreen,
   ScreenHeader,
   SecondaryButton,
-} from '@/presentation/components/prototype-ui';
+} from '@/presentation/components';
+import {
+  ControlButton,
+  PrototypeBadge,
+  PrototypeControls,
+} from '@/presentation/prototype/components';
 import type {
   BreakOutcome,
   PrototypeBreakResult,
@@ -28,11 +32,17 @@ export const BreakSessionScreen = ({
   session,
   onResolve,
   onMissingSession,
+  onRetryPet,
+  onDismissPetFeedbackError,
+  pet,
   cancelRequestToken = 0,
 }: {
   readonly session: BreakSession | null;
   readonly onResolve: (outcome: BreakOutcome) => void;
   readonly onMissingSession: () => void;
+  readonly onRetryPet: () => void;
+  readonly pet: PetVisualProjection;
+  readonly onDismissPetFeedbackError: () => void;
   readonly cancelRequestToken?: number;
 }) => {
   const [showCancel, setShowCancel] = useState(false);
@@ -62,7 +72,11 @@ export const BreakSessionScreen = ({
         <Text style={styles.timerValue}>{String(session.durationMinutes).padStart(2, '0')}:00</Text>
         <Text style={styles.timerCaption}>RỜI MÀN HÌNH. THỞ MỘT NHỊP.</Text>
       </View>
-      <PixelCompanion state="breaking" />
+      <PetVisualStatus
+        onDismissTerminalError={onDismissPetFeedbackError}
+        onRetryBase={onRetryPet}
+        projection={pet}
+      />
       <InlineNotice>
         Break không áp dụng Strict Mode và không nhận XP hoặc Coin. Background không làm Break thất bại.
       </InlineNotice>

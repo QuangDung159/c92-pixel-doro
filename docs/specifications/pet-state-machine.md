@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_PET_STATE_MACHINE_SPECIFICATION
 title: PixelDoro Mobile MVP — Pet State Machine Specification
-version: 1.0.0
+version: 1.0.2
 status: APPROVED
-last_updated: 2026-08-26
+last_updated: 2026-08-31
 owner: Dũng Lư
 owner_roles:
   - Tech Lead
@@ -44,14 +44,14 @@ Tài liệu này đặc tả Pet state machine của PixelDoro Mobile MVP, gồm
 
 Tài liệu này không quyết định lại session/timer/reward truth và không quyết định:
 
-- Pet mặc định là Cat, Dog hay Robot; Product `OPEN-001` vẫn `OPEN`.
+- Pet mặc định đã được Product chốt là Cat / Mèo Dev với stable ID `cat-dev`; Cat Dev sprite v1 đã được Product/Art duyệt.
 - Tên Pet trong onboarding; Product `OPEN-009` vẫn `OPEN`.
 - Item, shop, price, inventory content hoặc Product `OPEN-005`.
 - Contribution graph color threshold hoặc Product `OPEN-006`.
 - Pet evolution, Happiness, Energy hoặc nội dung `DEFERRED`.
 - Sprite artwork, frame count hoặc loài-specific motion trước khi Art/Product chốt asset tương ứng.
 
-Nếu có mâu thuẫn, Product Core 1.10.0 là nguồn sự thật sản phẩm ưu tiên cao nhất. Technical Overview 1.0.0, System Architecture 1.0.0, Project Structure 1.0.0, Timer Engine 1.0.1, Session Lifecycle 1.0.0 và ADR-001 đến ADR-008 là baseline đã duyệt.
+Nếu có mâu thuẫn, Product Core 1.15.0 là nguồn sự thật sản phẩm ưu tiên cao nhất. Technical Overview 1.0.0, System Architecture 1.0.0, Project Structure 1.0.0, Timer Engine 1.0.1, Session Lifecycle 1.0.0 và ADR-001 đến ADR-008 là baseline đã duyệt.
 
 ### 0.1. Trạng thái quyết định
 
@@ -70,7 +70,7 @@ Phiên bản `1.0.0` đã được Dũng Lư — Tech Lead/Product Owner review 
 
 | Nguồn | Phiên bản/trạng thái | Rule được kế thừa |
 |---|---|---|
-| `PIXELDORO_CORE_TRUTH.md` | 1.10.0 `ACTIVE` | Năm Pet state, mapping, companion principle, Break no-Strict và durable session/reward truth. |
+| `PIXELDORO_CORE_TRUTH.md` | 1.15.0 `ACTIVE` | Fixed Cat / Mèo Dev (`cat-dev`), năm Pet state, mapping, companion principle, Break no-Strict và durable session/reward truth. |
 | `TECHNICAL_DOCUMENTATION_CHECKLIST.md` | Hiện hành | Definition of done của Pet State Machine. |
 | `architecture/technical-overview.md` | 1.0.0 `APPROVED` | Reanimated + bundled sprite baseline, ephemeral visual state, reduced motion, performance/battery rule. |
 | `architecture/system-architecture.md` | 1.0.0 `APPROVED` | Pet state là Domain mapping/Presentation projection; durable commit trước transient side effect. |
@@ -105,7 +105,7 @@ type PetState =
   | 'bugged';
 ```
 
-Không thêm loài Pet, evolution stage hoặc mood/energy state vào enum này. Pet identity được biểu diễn độc lập bằng stable `<pet-id>` và Product `OPEN-001` vẫn chưa được chốt.
+Không thêm loài Pet, evolution stage hoặc mood/energy state vào enum này. Pet identity được biểu diễn độc lập bằng stable `<pet-id>`; Mobile MVP dùng `cat-dev`, không thêm species vào Pet-state enum.
 
 ### 2.2. Base state và transient feedback state
 
@@ -339,7 +339,7 @@ Fallback phải giữ core loop dùng được và không phụ thuộc mạng. 
 1. Dùng state sprite sheet bình thường.
 2. Nếu playback/Reanimated fail nhưng asset đọc được, render `fallbackFrame` tĩnh của cùng state.
 3. Nếu state sheet/fallback frame thiếu hoặc corrupt, render still frame `idle` khả dụng của cùng `<pet-id>` và status text/semantic label từ committed projection.
-4. Nếu toàn bộ Pet bitmap không tải được, render placeholder hình học trung tính bằng UI primitive cùng status text; placeholder không chọn Cat/Dog/Robot và không giải quyết Product `OPEN-001`.
+4. Nếu toàn bộ Pet bitmap không tải được, render placeholder hình học trung tính bằng UI primitive cùng status text; placeholder chỉ là failure fallback và không thay thế Cat / Mèo Dev hay phê duyệt artwork.
 5. Ghi sanitized diagnostic cục bộ; không log raw session payload/Pet name và không retry download vì core asset được bundle local.
 
 Reduced-motion rule:
@@ -505,6 +505,18 @@ Pet State Machine `1.0.0` được Dũng Lư — Tech Lead/Product Owner review 
 Các checkbox ở mục 13 là implementation acceptance criteria và vẫn để trống cho tới khi có test/device evidence; specification approval không thay thế implementation verification.
 
 ## 15. Change log
+
+### 1.0.2 — 2026-08-31
+
+- Ghi nhận Cat Dev sprite v1 đã được Product/Art duyệt và tích hợp bằng bundled typed manifest.
+- Giữ nguyên state mapping, lifecycle, fallback, reduced motion và semantic status contract.
+- Pet selector hoặc Cat/Dog/Rabbit roster tiếp tục ngoài Mobile MVP.
+
+### 1.0.1 — 2026-08-31
+
+- Đồng bộ Product `OPEN-001` đã `RESOLVED`: Pet Mobile MVP là Cat / Mèo Dev, stable ID `cat-dev`.
+- Giữ exact artwork ở Product/Art approval gate riêng; không đổi năm Pet state, transition, hold time, fallback hoặc reduced-motion behavior.
+- Xác nhận placeholder hình học chỉ là failure fallback, không phải Pet identity hay production artwork.
 
 ### 1.0.0 — 2026-08-26
 

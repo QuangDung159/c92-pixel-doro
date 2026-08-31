@@ -3,6 +3,30 @@ export {
   type CreateFoundationSnapshotDependencies,
   type FoundationSnapshot,
 } from './foundation/create-foundation-snapshot.use-case';
+export {
+  createHomeProfileProjection,
+  type HomeProfileProjection,
+} from './home/create-home-profile.projection';
+export {
+  loadPetCompanionProjection,
+  type PetCompanionProjection,
+  type PetCompanionSessionReader,
+} from './pet/load-pet-companion.projection';
+export { PetCompanionController } from './pet/pet-companion.controller';
+export {
+  PetTerminalFeedbackController,
+  type PetFeedbackScheduler,
+  type PetTerminalFeedbackControllerDependencies,
+  type PetTerminalFeedbackProjection,
+  type PetTerminalFeedbackRequestContext,
+  type PetTerminalFeedbackRequestResult,
+} from './pet/pet-terminal-feedback.controller';
+export {
+  PetVisualController,
+  type PetVisualBaseSource,
+  type PetVisualProjection,
+  type PetVisualTerminalSource,
+} from './pet/pet-visual.controller';
 export type { ClockPort } from './ports/clock.port';
 export type { IdPort } from './ports/id.port';
 export type {

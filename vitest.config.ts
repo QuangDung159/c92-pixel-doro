@@ -5,6 +5,12 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./apps/mobile/src', import.meta.url)),
+      'react-native-reanimated': fileURLToPath(
+        new URL(
+          './apps/mobile/test/mocks/react-native-reanimated.ts',
+          import.meta.url,
+        ),
+      ),
     },
   },
   test: {

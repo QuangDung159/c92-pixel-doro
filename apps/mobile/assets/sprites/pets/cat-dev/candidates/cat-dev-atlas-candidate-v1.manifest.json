@@ -1,0 +1,52 @@
+{
+  "assetId": "cat-dev-atlas-candidate-v1",
+  "status": "APPROVED_AND_PRODUCTION_INTEGRATED",
+  "approvedAt": "2026-08-31",
+  "approvedBy": "Dũng Lư",
+  "petId": "cat-dev",
+  "species": "cat",
+  "format": "png-rgba",
+  "width": 1374,
+  "height": 1145,
+  "columns": 6,
+  "rows": 5,
+  "frameWidth": 229,
+  "frameHeight": 229,
+  "framesPerState": 6,
+  "stateRows": [
+    "idle",
+    "working",
+    "breaking",
+    "celebrating",
+    "bugged"
+  ],
+  "sha256": "e5baa6bcccc271bdd68a67c24641866636d514aa20d10740c430bc009e3ae697",
+  "runtimeIntegrated": true,
+  "productionSheets": [
+    {
+      "state": "idle",
+      "file": "../cat-dev--idle--sheet.png",
+      "sha256": "645731c476da1db47864e8fc4174ee753b06d74df52f0894c3aeea97ed27bc33"
+    },
+    {
+      "state": "working",
+      "file": "../cat-dev--working--sheet.png",
+      "sha256": "90ac46ec44222aa27a9f3ef9d22e62e7e6a5e9e4a34fbfab193741677632ef68"
+    },
+    {
+      "state": "breaking",
+      "file": "../cat-dev--breaking--sheet.png",
+      "sha256": "edce5ac5f22fd0a4bb43c4757daa04baeaff9bb7d995f678b6340f23d76d5c94"
+    },
+    {
+      "state": "celebrating",
+      "file": "../cat-dev--celebrating--sheet.png",
+      "sha256": "c8c39a70a686e77fc90030bbad25ecc10586fb3e342a9051d40caa9f9d30bc74"
+    },
+    {
+      "state": "bugged",
+      "file": "../cat-dev--bugged--sheet.png",
+      "sha256": "943f51b26e5fbe406b3dcc204087334d39f4524b1ba9bd1e07ac31a49edbe66a"
+    }
+  ]
+}

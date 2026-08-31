@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_CORE_TRUTH
 title: PixelDoro Product Core — Single Source of Truth
-version: 1.13.0
+version: 1.15.0
 status: ACTIVE
-last_updated: 2026-08-27
+last_updated: 2026-08-31
 owner: Dũng Lư
 owner_roles:
   - Tech Lead
@@ -522,7 +522,10 @@ Tầm nhìn dài hạn có ba archetype:
 - Dog / Corgi Pixel.
 - Robot 8-bit.
 
-MVP chỉ có một Pet mặc định. Loài Pet cụ thể là `OPEN` và phải được chốt cùng art direction.
+MVP chỉ có một Pet mặc định: **Cat / Mèo Dev**, stable asset ID `cat-dev`. Đây là identity mặc định,
+không mở multiple Pet, evolution/species gameplay hoặc quyết định đặt tên Pet. Cat Dev sprite v1 đã
+được Product/Art duyệt ngày 2026-08-31. Chọn Cat/Dog/Rabbit hoặc roster khác là capability phase sau,
+không thuộc Mobile MVP và chỉ được thêm qua Product decision/data-needs riêng.
 
 ## 8.5. Evolution
 
@@ -1130,6 +1133,7 @@ Mobile MVP được xem là đủ điều kiện closed beta khi:
 
 | ID | Quyết định | Owner | Trạng thái | Ngày chốt |
 |---|---|---|---|---|
+| OPEN-001 | Pet mặc định của Mobile MVP là Cat / Mèo Dev với stable asset ID `cat-dev`; Cat Dev sprite v1 đã được Product/Art duyệt. | Product/Art | `RESOLVED` | 2026-08-31 |
 | OPEN-002 | Mobile MVP không hỗ trợ pause cho cả Focus session và Break session; người dùng có thể cancel hoặc để timer tiếp tục. | Product | `RESOLVED` | 2026-08-26 |
 | OPEN-003 | Sau bốn completed Focus kể từ completed Long Break gần nhất, Break kế tiếp là Long Break 15 phút. Trạng thái đến hạn giữ qua relaunch, chỉ reset khi Long Break completed; failed/cancelled Focus và cancelled Long Break không thay đổi/reset cadence. Quyết định chọn loại Break không đồng nghĩa auto-start. | Product | `RESOLVED` | 2026-08-26 |
 | OPEN-004 | Completed Focus nhận `XP = completedFocusMinutes` và `Coin = floor(completedFocusMinutes / 5)`; overtime không tạo thêm reward, failed/cancelled Focus và Break không nhận XP/Coin. | Product/Game Design | `RESOLVED` | 2026-08-26 |
@@ -1149,7 +1153,6 @@ Các mục sau chưa được chốt và phải được quyết định rõ tro
 
 | ID | Câu hỏi | Owner | Trạng thái |
 |---|---|---|---|
-| OPEN-001 | Pet mặc định của MVP là Cat, Dog hay Robot? | Product/Art | `OPEN` |
 | OPEN-006 | Contribution graph dùng các ngưỡng màu nào? | Product/Design | `OPEN` |
 | OPEN-009 | Người dùng có được đặt tên Pet trong onboarding không? | Product | `OPEN` |
 
@@ -1178,6 +1181,20 @@ Không mục nào trong bảng này được xem là requirement đã chốt cho
 ---
 
 # 22. Change Log
+
+## 1.15.0 — 2026-08-31
+
+- Owner Product/Art duyệt Cat Dev sprite v1 để tích hợp production trong `US-04-07`.
+- Khóa Mobile MVP ở một Pet mặc định; không có Pet selector hoặc Cat/Dog/Rabbit roster trong MVP.
+- Mọi Pet selection/multiple-Pet capability thuộc phase sau và cần Product scope/data-needs riêng.
+
+## 1.14.0 — 2026-08-31
+
+- Owner chốt `OPEN-001`: Pet mặc định của Mobile MVP là Cat / Mèo Dev, stable asset ID `cat-dev`.
+- Giữ một Pet duy nhất; không thêm persistence field, multiple Pet, evolution/species gameplay hoặc
+  resolve `OPEN-009` về user-defined Pet name.
+- Cho phép US-04-07 tạo art candidate nhưng production integration/acceptance vẫn cần Product/Art duyệt
+  exact asset set, attribution và device evidence.
 
 ## 1.13.0 — 2026-08-27
 

@@ -42,6 +42,13 @@ export type {
   AppLifecyclePort,
   AppLifecycleState,
 } from './ports/app-lifecycle.port';
+export type {
+  PetVisualDiagnostic,
+  PetVisualDiagnosticsPort,
+  PetVisualFallbackLayer,
+  PetVisualFallbackReason,
+  PetVisualStateName,
+} from './ports/pet-visual-diagnostics.port';
 export {
   bootstrapDataError,
   type BootstrapDataError,
@@ -82,6 +89,7 @@ export {
   type ReadinessController,
 } from './readiness/readiness-gate';
 export type { MobileApplicationFacade } from './mobile-application.facade';
+export { AppVisibilityController } from './visibility/app-visibility.controller';
 export type {
   AnalyticsDeliveryState,
   AnalyticsEventRecord,

@@ -1,5 +1,6 @@
 import {
   ConfirmedLocalDataReset,
+  AppVisibilityController,
   MobileBootstrap,
   ReadinessGate,
   type AppLifecyclePort,
@@ -8,11 +9,19 @@ import {
   type ConfirmedResetDiagnosticsPort,
   type ConfirmedResetPersistencePort,
   type MigrationPort,
+  type PetVisualDiagnosticsPort,
   type RecoveryDiagnosticsPort,
   type ResetNotificationCleanupPort,
   type StartupReconciliationPort,
 } from '@/application';
-import type { ClockPort, IdPort } from '@pixeldoro/application';
+import {
+  PetCompanionController,
+  PetTerminalFeedbackController,
+  PetVisualController,
+  type ClockPort,
+  type IdPort,
+  type PetCompanionSessionReader,
+} from '@pixeldoro/application';
 import { SQLiteBootstrapDataAdapter } from '@/infrastructure/database/bootstrap/sqlite-bootstrap-data.adapter';
 import { SQLiteBootstrapVerifier } from '@/infrastructure/database/bootstrap/sqlite-bootstrap-verifier';
 import { MigrationRunner } from '@/infrastructure/database/migration-runner';
@@ -30,10 +39,15 @@ import { DeviceClockAdapter } from '@/infrastructure/platform/clock/device-clock
 import { DeviceIdAdapter } from '@/infrastructure/platform/id/device-id.adapter';
 import { SafeConsoleRecoveryDiagnosticsAdapter } from '@/infrastructure/platform/diagnostics/safe-console-recovery-diagnostics.adapter';
 import { SafeConsoleConfirmedResetDiagnosticsAdapter } from '@/infrastructure/platform/diagnostics/safe-console-confirmed-reset-diagnostics.adapter';
+import { SafeConsolePetVisualDiagnosticsAdapter } from '@/infrastructure/platform/diagnostics/safe-console-pet-visual-diagnostics.adapter';
 import { NoopResetNotificationCleanupAdapter } from '@/infrastructure/platform/notifications/noop-reset-notification-cleanup.adapter';
+import { DeviceTimeoutScheduler } from '@/infrastructure/platform/timing/device-timeout.scheduler';
 
 import type { MobileApplication } from './mobile-application';
 import type { Epic02ExitCompletionCandidate } from './diagnostics/run-epic-02-exit-probe';
+import { createPetArbitrationReviewFixture } from './review/pet-arbitration-review-fixture';
+import { createPetBaseReviewSessionReader } from './review/pet-base-review-fixture';
+import { createPetTerminalReviewFixture } from './review/pet-terminal-review-fixture';
 import { NoopStartupReconciliationAdapter } from './startup/noop-startup-reconciliation.adapter';
 
 const PIXELDORO_DATABASE_NAME = 'pixeldoro.db';
@@ -49,6 +63,8 @@ export interface CreateMobileApplicationOptions {
   readonly diagnosticsEnabled?: boolean;
   readonly migration?: MigrationPort;
   readonly id?: IdPort;
+  readonly petCompanionSessions?: PetCompanionSessionReader;
+  readonly petVisualDiagnostics?: PetVisualDiagnosticsPort;
   readonly recoveryDiagnostics?: RecoveryDiagnosticsPort;
   readonly resetNotificationCleanup?: ResetNotificationCleanupPort;
   readonly sqliteDriver?: SQLiteDriver;
@@ -61,6 +77,11 @@ export const createMobileApplication = (
   const driver = options.sqliteDriver ?? new ExpoSQLiteDriver();
   const clock = options.clock ?? new DeviceClockAdapter();
   const id = options.id ?? new DeviceIdAdapter();
+  const appLifecycle =
+    options.appLifecycle ?? new ReactNativeAppLifecycleAdapter();
+  const appVisibility = new AppVisibilityController(
+    appLifecycle.getCurrentState(),
+  );
   const databaseOwner = new SQLiteDatabaseOwner(
     options.databaseName ?? PIXELDORO_DATABASE_NAME,
     driver,
@@ -78,8 +99,7 @@ export const createMobileApplication = (
       id,
     });
   const bootstrap = new MobileBootstrap({
-    appLifecycle:
-      options.appLifecycle ?? new ReactNativeAppLifecycleAdapter(),
+    appLifecycle,
     bootstrapData:
       options.bootstrapData ?? new SQLiteBootstrapDataAdapter(databaseOwner),
     bootstrapVerifier:
@@ -110,6 +130,35 @@ export const createMobileApplication = (
       new SQLiteConfirmedResetAdapter(transaction),
     transaction,
   });
+  const petReviewFixturesEnabled =
+    options.diagnosticsEnabled !== false &&
+    typeof __DEV__ !== 'undefined' &&
+    __DEV__;
+  const petArbitrationReviewFixture = createPetArbitrationReviewFixture(
+    process.env.EXPO_PUBLIC_EPIC_04_ARBITRATION_FIXTURE,
+    petReviewFixturesEnabled,
+  );
+  const petCompanion = new PetCompanionController(
+    options.petCompanionSessions ??
+      petArbitrationReviewFixture?.sessionReader ??
+      createPetBaseReviewSessionReader(
+        process.env.EXPO_PUBLIC_EPIC_04_PET_BASE_FIXTURE,
+        petReviewFixturesEnabled,
+      ) ??
+      persistence.sessions,
+  );
+  const petFeedbackScheduler = new DeviceTimeoutScheduler();
+  const petTerminalFeedback = new PetTerminalFeedbackController({
+    clock,
+    scheduler: petFeedbackScheduler,
+  });
+  const petVisual = new PetVisualController(petCompanion, petTerminalFeedback);
+  const petVisualDiagnostics =
+    options.petVisualDiagnostics ?? new SafeConsolePetVisualDiagnosticsAdapter();
+  const petTerminalReviewFixture = createPetTerminalReviewFixture(
+    process.env.EXPO_PUBLIC_EPIC_04_TERMINAL_FIXTURE,
+    petReviewFixturesEnabled,
+  );
   const sqliteKernelProbeEnabled =
     options.diagnosticsEnabled !== false &&
     typeof __DEV__ !== 'undefined' &&
@@ -157,6 +206,95 @@ export const createMobileApplication = (
     process.env.EXPO_PUBLIC_EPIC_02_EXIT_PROBE === '1';
   let probePromise: Promise<void> | undefined;
   let epic02ExitCompletion: Epic02ExitCompletionCandidate | undefined;
+  let unsubscribePetLifecycle: (() => void) | undefined;
+  let retryRecoveryPromise: Promise<void> | undefined;
+  let reviewFixturePromise: Promise<void> | undefined;
+  let cancelReviewWait: (() => void) | undefined;
+
+  const refreshPetCompanion = async (): Promise<void> => {
+    if (bootstrap.getSnapshot().status !== 'ready') return;
+    await petCompanion.refresh();
+  };
+
+  const startPetLifecycleRefresh = (): void => {
+    unsubscribePetLifecycle ??= appLifecycle.subscribe((state) => {
+      appVisibility.publish(state);
+      if (state === 'background') {
+        petTerminalFeedback.discardActive();
+        return;
+      }
+      void refreshPetCompanion();
+    });
+  };
+
+  const retryRecovery = (): Promise<void> => {
+    if (retryRecoveryPromise !== undefined) return retryRecoveryPromise;
+    const operation = bootstrap.retry().then(refreshPetCompanion);
+    retryRecoveryPromise = operation;
+    void operation.finally(() => {
+      if (retryRecoveryPromise === operation) retryRecoveryPromise = undefined;
+    });
+    return operation;
+  };
+
+  const requestReviewTransition = (
+    transition: Parameters<
+      PetTerminalFeedbackController['requestFreshTransition']
+    >[0],
+  ) => {
+    const base = petCompanion.getSnapshot();
+    return petTerminalFeedback.requestFreshTransition(transition, {
+      currentResultSessionId: transition.sessionId,
+      activeSessionId: base.status === 'ready' ? base.activeSessionId : null,
+    });
+  };
+
+  const waitForReview = (durationMs: number): Promise<void> =>
+    new Promise((resolve) => {
+      const cancel = petFeedbackScheduler.schedule(() => {
+        cancelReviewWait = undefined;
+        resolve();
+      }, durationMs);
+      cancelReviewWait = () => {
+        cancel();
+        cancelReviewWait = undefined;
+        resolve();
+      };
+    });
+
+  const runPetTerminalReviewFixture = async (): Promise<void> => {
+    if (petArbitrationReviewFixture !== undefined) {
+      for (const action of petArbitrationReviewFixture.actions) {
+        if (action.kind === 'wait') {
+          await waitForReview(action.durationMs);
+        } else if (action.kind === 'set_base') {
+          petArbitrationReviewFixture.setBaseScenario(action.scenario);
+          await refreshPetCompanion();
+        } else {
+          requestReviewTransition(action.transition);
+        }
+      }
+      return;
+    }
+    if (petTerminalReviewFixture === undefined) return;
+    const first = requestReviewTransition(petTerminalReviewFixture.transition);
+    if (petTerminalReviewFixture.repeat) {
+      requestReviewTransition(petTerminalReviewFixture.transition);
+    }
+    if (petTerminalReviewFixture.reportVisualFailure && first.accepted) {
+      petTerminalFeedback.reportVisualFailure(first.feedbackId);
+    }
+  };
+
+  const triggerPetTerminalReviewFixture = (): Promise<void> => {
+    if (reviewFixturePromise !== undefined) return reviewFixturePromise;
+    const operation = runPetTerminalReviewFixture();
+    reviewFixturePromise = operation;
+    void operation.finally(() => {
+      if (reviewFixturePromise === operation) reviewFixturePromise = undefined;
+    });
+    return operation;
+  };
 
   const runProbeIfEnabled = (): Promise<void> => {
     if (
@@ -252,9 +390,16 @@ export const createMobileApplication = (
   };
 
   return {
+    appVisibility,
     bootstrap,
     confirmedReset,
     criticalRecovery: bootstrap,
+    petCompanion,
+    petTerminalFeedback,
+    petVisual,
+    petTerminalReviewFixtureAvailable:
+      petTerminalReviewFixture !== undefined ||
+      petArbitrationReviewFixture !== undefined,
     persistence,
     readiness,
     transaction,
@@ -273,8 +418,37 @@ export const createMobileApplication = (
         );
         console.info('[PixelDoro][Epic02ExitProbe]', JSON.stringify(report));
       }
+      if (bootstrap.getSnapshot().status === 'ready') {
+        startPetLifecycleRefresh();
+        await petCompanion.refresh();
+      }
     },
-    retryRecovery: () => bootstrap.retry(),
-    dispose: () => bootstrap.dispose(),
+    dismissPetTerminalFeedbackError: () => petTerminalFeedback.dismissRecovery(),
+    discardPetTerminalFeedback: () => petTerminalFeedback.discardActive(),
+    refreshPetCompanion,
+    recordPetVisualDiagnostic: (diagnostic) => {
+      try {
+        petVisualDiagnostics.record(diagnostic);
+      } catch {
+        // Visual diagnostics are best effort and cannot affect application truth.
+      }
+    },
+    reportPetVisualComplete: (feedbackId) =>
+      petTerminalFeedback.reportVisualComplete(feedbackId),
+    reportPetVisualFailure: (feedbackId) =>
+      petTerminalFeedback.reportVisualFailure(feedbackId),
+    retryRecovery,
+    triggerPetTerminalReviewFixture,
+    dispose: () => {
+      unsubscribePetLifecycle?.();
+      unsubscribePetLifecycle = undefined;
+      cancelReviewWait?.();
+      cancelReviewWait = undefined;
+      appVisibility.dispose();
+      petVisual.dispose();
+      petCompanion.dispose();
+      petTerminalFeedback.dispose();
+      return bootstrap.dispose();
+    },
   };
 };
