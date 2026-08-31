@@ -91,6 +91,13 @@ export {
 export type { MobileApplicationFacade } from './mobile-application.facade';
 export { AppVisibilityController } from './visibility/app-visibility.controller';
 export {
+  OnboardingTrialRunningController,
+  type OnboardingTrialRunningControllerDependencies,
+  type OnboardingTrialRunningErrorCode,
+  type OnboardingTrialRunningProjection,
+  type TrialTickScheduler,
+} from './onboarding-trial';
+export {
   FirstUseEntryController,
   type FirstUseEntryControllerDependencies,
   type FirstUseEntryDestination,

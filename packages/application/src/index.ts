@@ -30,6 +30,42 @@ export {
 export type { ClockPort } from './ports/clock.port';
 export type { IdPort } from './ports/id.port';
 export type {
+  LocalCalendarError,
+  LocalCalendarPort,
+  LocalCalendarSnapshot,
+} from './ports/local-calendar.port';
+export {
+  CancelOnboardingTrialUseCase,
+  type CancelOnboardingTrialDependencies,
+  type CancelOnboardingTrialError,
+  type CancelOnboardingTrialErrorCode,
+  type CancelOnboardingTrialOutcome,
+} from './onboarding-trial/cancel-onboarding-trial.use-case';
+export {
+  createOnboardingTrialRecord,
+  isRunningOnboardingTrial,
+  MVP_PROFILE_ID,
+  ONBOARDING_TRIAL_DURATION_MINUTES,
+  ONBOARDING_TRIAL_DURATION_MS,
+  type OnboardingTrialRecordError,
+  type OnboardingTrialRecordInput,
+} from './onboarding-trial/onboarding-trial-record';
+export {
+  createOnboardingTrialRemainingProjection,
+  type OnboardingTrialRemainingProjection,
+} from './onboarding-trial/onboarding-trial-remaining.projection';
+export {
+  SessionCommandCoordinator,
+  type SessionCommandCoordinatorPort,
+} from './onboarding-trial/session-command.coordinator';
+export {
+  StartOnboardingTrialUseCase,
+  type StartOnboardingTrialDependencies,
+  type StartOnboardingTrialError,
+  type StartOnboardingTrialErrorCode,
+  type StartOnboardingTrialOutcome,
+} from './onboarding-trial/start-onboarding-trial.use-case';
+export type {
   CatalogItemRecord,
   CatalogRepository,
 } from './persistence/catalog.repository';

@@ -11,6 +11,7 @@ export interface ConfirmationDialogProps {
   readonly confirmLabel: string;
   readonly onConfirm: () => void;
   readonly onDismiss: () => void;
+  readonly busy?: boolean;
 }
 
 export const ConfirmationDialog = ({
@@ -20,6 +21,7 @@ export const ConfirmationDialog = ({
   confirmLabel,
   onConfirm,
   onDismiss,
+  busy = false,
 }: ConfirmationDialogProps) => (
   <Modal animationType="fade" onRequestClose={onDismiss} transparent visible={visible}>
     <View style={styles.scrim}>
@@ -28,8 +30,8 @@ export const ConfirmationDialog = ({
           {title}
         </Text>
         <Text style={styles.body}>{body}</Text>
-        <PrimaryButton label="Tiếp tục" onPress={onDismiss} />
-        <SecondaryButton label={confirmLabel} onPress={onConfirm} />
+        <PrimaryButton busy={busy} label="Tiếp tục" onPress={onDismiss} />
+        <SecondaryButton busy={busy} label={busy ? 'Đang dừng phiên…' : confirmLabel} onPress={onConfirm} />
       </View>
     </View>
   </Modal>

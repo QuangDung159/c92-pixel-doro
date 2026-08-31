@@ -13,11 +13,15 @@ import { palette } from '@/presentation/theme/palette';
 export interface OnboardingScreenProps {
   readonly onStartTrial: () => void;
   readonly startTrialEnabled: boolean;
+  readonly startTrialBusy?: boolean;
+  readonly startTrialError?: string | null;
 }
 
 export const OnboardingScreen = ({
   onStartTrial,
   startTrialEnabled,
+  startTrialBusy = false,
+  startTrialError = null,
 }: OnboardingScreenProps) => (
   <ScreenShell>
     <ScreenHeader
@@ -46,9 +50,13 @@ export const OnboardingScreen = ({
     <InlineNotice>
       Bắt đầu bằng phiên dùng thử Relax 5 phút. Không cần chọn chế độ hay loại công việc.
     </InlineNotice>
+    {startTrialError === null ? null : (
+      <InlineNotice>{startTrialError}</InlineNotice>
+    )}
     <Button
-      disabled={!startTrialEnabled}
-      label="Thử phiên 5 phút"
+      busy={startTrialBusy}
+      disabled={!startTrialEnabled || startTrialBusy}
+      label={startTrialBusy ? 'Đang bắt đầu phiên…' : 'Thử phiên 5 phút'}
       onPress={onStartTrial}
     />
     <Text style={styles.decisionNote}>

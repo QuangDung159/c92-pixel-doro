@@ -1,9 +1,10 @@
 ---
 document_id: PIXELDORO_US_05_02_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-05-02 Implementation Plan
-version: 0.1.0
-status: PROPOSED_OWNER_REVIEW
-implementation_status: NOT_STARTED
+version: 0.3.0
+status: IMPLEMENTED_AWAITING_OWNER_MANUAL
+implementation_status: IMPLEMENTED_AWAITING_OWNER_MANUAL
+implementation_started_at: 2026-08-31
 created_at: 2026-08-31
 last_updated: 2026-08-31
 owner: Dũng Lư
@@ -12,6 +13,7 @@ reviewer_role: Tech Lead/Product Owner
 language: vi
 branch: feats/epic-05
 baseline_sha: f2efd62168886b429c1d8bf360dd99cf35fced97
+implementation_start_sha: 9a519748fd62bd08624275e59ff18c4729265314
 scope:
   - mobile_mvp
   - epic_05
@@ -54,9 +56,10 @@ rồi mới quay lại Intro.
 
 **Blocks:** US-05-03. Story completion/reward không được mở trong implementation của US-05-02.
 
-**Planning status:** `PROPOSED — OWNER REVIEW`.
-**Implementation status:** `NOT STARTED`. Production implementation chỉ bắt đầu sau khi owner duyệt
-toàn bộ `US0502-CONFIRM-01`…`07` ở §14.
+**Planning status:** `APPROVED` ngày 2026-08-31.
+**Implementation status:** `IN_PROGRESS` từ baseline
+`9a519748fd62bd08624275e59ff18c4729265314`. Owner duyệt toàn bộ
+`US0502-CONFIRM-01`…`07` và yêu cầu triển khai ngày 2026-08-31.
 
 ### 0.1. Readiness gate
 
@@ -66,8 +69,23 @@ toàn bộ `US0502-CONFIRM-01`…`07` ở §14.
 - [x] Existing schema/repository/transaction/clock/lifecycle contracts được audit.
 - [x] Không cần schema, migration, index, dependency hoặc native permission mới.
 - [x] Phạm vi deadline trước US-05-03 được xác định là completion-pending, không fake success.
-- [ ] Owner duyệt technical directions và evidence strategy của plan này.
-- [ ] Chỉ sau approval mới chuyển Story sang `READY` và bắt đầu production implementation.
+- [x] Owner duyệt technical directions và evidence strategy của plan này ngày 2026-08-31.
+- [x] Story chuyển sang `READY`, sau đó `IN_PROGRESS` theo yêu cầu triển khai của owner.
+
+### 0.2. Implementation update — 2026-08-31
+
+- Implementation start SHA: `9a519748fd62bd08624275e59ff18c4729265314`.
+- Shared Start/Cancel commands, FIFO coordinator, local calendar port, timestamp projection và mobile
+  running controller đã được triển khai trong working tree.
+- Intro CTA, durable Running route, real countdown, lifecycle resume, deadline-pending và committed
+  Cancel flow đã thay mock trial branch; Standard Focus prototype vẫn tách biệt.
+- Finite dev-only failure/fast-clock fixtures, host SQLite reopen test và Development Build guide đã
+  được thêm.
+- Final root quality pass: `71` test files / `339` tests; lint không warning; device harness,
+  boundary validation và repository hygiene đều pass.
+- Không có schema/migration/dependency/native/reward/profile/analytics/notification change.
+- Owner Development Build/manual evidence và final implementation commit còn `PENDING`; Story chưa
+  `DONE` và US-05-03 chưa mở.
 
 ## 1. Authority contract và phạm vi khóa
 
@@ -552,34 +570,34 @@ screenshots failure/pending/a11y; before/after session/reward/profile facts; pas
 
 ## 13. Definition of Done
 
-- [ ] Owner duyệt `US0502-CONFIRM-01`…`07`; implementation start SHA được ghi lại.
-- [ ] Start creates/reuses exactly one committed exact-invariant trial before navigation.
-- [ ] Duplicate/concurrent start and active conflict matrix pass.
-- [ ] Running derives wall-clock remaining; background/cold relaunch resume same session.
-- [ ] Deadline stays truthful pending with Cancel disabled; no completion/reward/result.
-- [ ] Cancel dismiss is no-op; confirm conditionally commits reward-free cancelled before Intro.
-- [ ] Failure/retry/offline states remain truthful and preserve durable facts.
-- [ ] Durable trial route has no prototype/mock/Strict/Complete controls; Standard prototype unaffected.
-- [ ] Pet working→idle refresh follows committed Start/Cancel; no terminal celebration.
-- [ ] Targeted tests, root quality, diff check, boundaries, hygiene and line-count gates pass.
-- [ ] No schema/migration/dependency/native/reward/profile/analytics/notification change.
-- [ ] Implementation report binds evidence to exact SHA and lists transferred US-05-03 behavior.
+- [x] Owner duyệt `US0502-CONFIRM-01`…`07`; implementation start SHA được ghi lại.
+- [x] Start creates/reuses exactly one committed exact-invariant trial before navigation.
+- [x] Duplicate/concurrent start and active conflict matrix pass.
+- [x] Running derives wall-clock remaining; background/cold relaunch resume same session.
+- [x] Deadline stays truthful pending with Cancel disabled; no completion/reward/result.
+- [x] Cancel dismiss is no-op; confirm conditionally commits reward-free cancelled before Intro.
+- [x] Failure/retry/offline states remain truthful and preserve durable facts in automated coverage.
+- [x] Durable trial route has no prototype/mock/Strict/Complete controls; Standard prototype unaffected.
+- [x] Pet working→idle refresh follows committed Start/Cancel; no terminal celebration path exists.
+- [x] Targeted tests, root quality, diff check, boundaries, hygiene and line-count gates pass.
+- [x] No schema/migration/dependency/native/reward/profile/analytics/notification change.
+- [ ] Implementation report binds evidence to final exact SHA after owner-requested commit; transferred US-05-03 behavior is already listed.
 - [ ] Owner manually accepts Development Build evidence before Story becomes `DONE_OWNER_ACCEPTED`.
 
 ## 14. Owner confirmation gate
 
-Owner có thể duyệt một lần bằng `Duyệt 0502` nếu đồng ý toàn bộ bảng. Approval chỉ chuyển plan sang
-`READY`; production code bắt đầu khi owner yêu cầu implement.
+Owner đã duyệt toàn bộ bằng xác nhận “Duyệt confirmation => tiến hành triển khai cho 05-02” ngày
+2026-08-31. Approval đồng thời mở production implementation theo đúng plan, không mở US-05-03.
 
 | ID | Confirmation | Recommendation | Status |
 | --- | --- | --- | --- |
-| `US0502-CONFIRM-01` | Shared Start/Cancel/pure projection; mobile lifecycle controller | Approve TD-05-02-A | `PENDING` |
-| `US0502-CONFIRM-02` | Injected LocalCalendarPort snapshots end local date/offset | Approve TD-05-02-B | `PENDING` |
-| `US0502-CONFIRM-03` | FIFO serialized Start; existing running trial is idempotent success, other active is conflict | Approve TD-05-02-C | `PENDING` |
-| `US0502-CONFIRM-04` | Conditional reward-free Cancel; at/after deadline refuse mutation | Approve TD-05-02-D | `PENDING` |
-| `US0502-CONFIRM-05` | Timestamp-derived controller; background pauses display only; deadline pending | Approve TD-05-02-E | `PENDING` |
-| `US0502-CONFIRM-06` | Durable trial production route wins; existing Standard Focus prototype remains isolated | Approve TD-05-02-F | `PENDING` |
-| `US0502-CONFIRM-07` | Finite dev-only failure/fast-clock fixture plus SQLite durability evidence | Approve TD-05-02-G | `PENDING` |
+| `US0502-CONFIRM-01` | Shared Start/Cancel/pure projection; mobile lifecycle controller | Approve TD-05-02-A | `APPROVED 2026-08-31` |
+| `US0502-CONFIRM-02` | Injected LocalCalendarPort snapshots end local date/offset | Approve TD-05-02-B | `APPROVED 2026-08-31` |
+| `US0502-CONFIRM-03` | FIFO serialized Start; existing running trial is idempotent success, other active is conflict | Approve TD-05-02-C | `APPROVED 2026-08-31` |
+| `US0502-CONFIRM-04` | Conditional reward-free Cancel; at/after deadline refuse mutation | Approve TD-05-02-D | `APPROVED 2026-08-31` |
+| `US0502-CONFIRM-05` | Timestamp-derived controller; background pauses display only; deadline pending | Approve TD-05-02-E | `APPROVED 2026-08-31` |
+| `US0502-CONFIRM-06` | Durable trial production route wins; existing Standard Focus prototype remains isolated | Approve TD-05-02-F | `APPROVED 2026-08-31` |
+| `US0502-CONFIRM-07` | Finite dev-only failure/fast-clock fixture plus SQLite durability evidence | Approve TD-05-02-G | `APPROVED 2026-08-31` |
 
 ## 15. References
 
@@ -594,4 +612,6 @@ Owner có thể duyệt một lần bằng `Duyệt 0502` nếu đồng ý toàn
 
 | Version | Date | Author | Change |
 | --- | --- | --- | --- |
+| 0.3.0 | 2026-08-31 | Codex | Implemented the approved host slice; final root 71 files/339 tests pass; marked Story awaiting owner Development Build evidence and final commit SHA. |
+| 0.2.0 | 2026-08-31 | Codex, recording owner approval | Recorded approval of US0502-CONFIRM-01…07 and opened implementation at 9a51974; US-05-03 remains gated. |
 | 0.1.0 | 2026-08-31 | Codex, for owner review | Audited accepted f2efd62 baseline; proposed exact Start/Cancel, concurrency, clock/calendar, lifecycle, deadline-pending, route, fixture, test and manual evidence contracts. No production implementation. |

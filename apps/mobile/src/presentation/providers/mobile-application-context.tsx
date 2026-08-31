@@ -17,6 +17,7 @@ import type {
   BootstrapProjection,
   FirstUseEntryProjection,
   MobileApplicationFacade,
+  OnboardingTrialRunningProjection,
   PetVisualDiagnostic,
 } from '@/application';
 
@@ -73,6 +74,33 @@ export const useFirstUseEntryRefresh = (): (() => Promise<void>) => {
   const { refreshFirstUseEntry } = useMobileApplication();
   return refreshFirstUseEntry;
 };
+
+export const useOnboardingTrialRunningProjection = (): OnboardingTrialRunningProjection => {
+  const { onboardingTrialRunning } = useMobileApplication();
+  return useSyncExternalStore(
+    onboardingTrialRunning.subscribe,
+    onboardingTrialRunning.getSnapshot,
+    onboardingTrialRunning.getSnapshot,
+  );
+};
+
+export const useOnboardingTrialRunningActions = () => {
+  const {
+    onboardingTrialRunning,
+    refreshOnboardingTrialRunning,
+  } = useMobileApplication();
+  return {
+    activate: onboardingTrialRunning.activate,
+    deactivate: onboardingTrialRunning.deactivate,
+    refresh: refreshOnboardingTrialRunning,
+  };
+};
+
+export const useStartOnboardingTrial = () =>
+  useMobileApplication().startOnboardingTrial;
+
+export const useCancelOnboardingTrial = () =>
+  useMobileApplication().cancelOnboardingTrial;
 
 export const useHomeProfileProjection = (): HomeProfileProjection | null => {
   const projection = useBootstrapProjection();

@@ -18,6 +18,7 @@ const petTerminalFeedbackFlowPath = `${deviceDirectory}pet-terminal-feedback-smo
 const petArbitrationFlowPath = `${deviceDirectory}pet-arbitration-smoke.md`;
 const petAnimationLifecycleFlowPath = `${deviceDirectory}pet-animation-lifecycle-smoke.md`;
 const petAccessibilityFallbackFlowPath = `${deviceDirectory}pet-accessibility-fallback-smoke.md`;
+const onboardingTrialFlowPath = `${deviceDirectory}onboarding-trial-smoke.md`;
 
 await access(flowPath);
 await access(sqliteFlowPath);
@@ -34,6 +35,7 @@ await access(petTerminalFeedbackFlowPath);
 await access(petArbitrationFlowPath);
 await access(petAnimationLifecycleFlowPath);
 await access(petAccessibilityFallbackFlowPath);
+await access(onboardingTrialFlowPath);
 const flow = await readFile(flowPath, 'utf8');
 const sqliteFlow = await readFile(sqliteFlowPath, 'utf8');
 const schemaFlow = await readFile(schemaFlowPath, 'utf8');
@@ -58,6 +60,22 @@ const petAccessibilityFallbackFlow = await readFile(
   petAccessibilityFallbackFlowPath,
   'utf8',
 );
+const onboardingTrialFlow = await readFile(onboardingTrialFlowPath, 'utf8');
+
+const requiredOnboardingTrialEvidence = [
+  'EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE=trial_start_failure',
+  'EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE=trial_cancel_failure',
+  'EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE=trial_running_fast_clock',
+  'EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE=trial_deadline_pending',
+  'endsAt-startedAt=300000',
+  'unset EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE',
+];
+
+for (const evidence of requiredOnboardingTrialEvidence) {
+  if (!onboardingTrialFlow.includes(evidence)) {
+    throw new Error(`Onboarding trial device flow is missing: ${evidence}`);
+  }
+}
 
 const requiredLabels = [
   'Chào mừng đến PixelDoro',

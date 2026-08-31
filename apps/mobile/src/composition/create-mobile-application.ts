@@ -3,6 +3,7 @@ import {
   AppVisibilityController,
   FirstUseEntryController,
   MobileBootstrap,
+  OnboardingTrialRunningController,
   ReadinessGate,
   type AppLifecyclePort,
   type BootstrapDataPort,
@@ -21,8 +22,12 @@ import {
   PetCompanionController,
   PetTerminalFeedbackController,
   PetVisualController,
+  CancelOnboardingTrialUseCase,
+  SessionCommandCoordinator,
+  StartOnboardingTrialUseCase,
   type ClockPort,
   type IdPort,
+  type LocalCalendarPort,
   type PetCompanionSessionReader,
 } from '@pixeldoro/application';
 import { SQLiteBootstrapDataAdapter } from '@/infrastructure/database/bootstrap/sqlite-bootstrap-data.adapter';
@@ -39,6 +44,7 @@ import { SQLiteTransaction } from '@/infrastructure/database/sqlite-transaction'
 import { SQLiteConfirmedResetAdapter } from '@/infrastructure/database/reset/sqlite-confirmed-reset.adapter';
 import { ReactNativeAppLifecycleAdapter } from '@/infrastructure/platform/app-lifecycle/react-native-app-lifecycle.adapter';
 import { DeviceClockAdapter } from '@/infrastructure/platform/clock/device-clock.adapter';
+import { DeviceLocalCalendarAdapter } from '@/infrastructure/platform/clock/device-local-calendar.adapter';
 import { DeviceIdAdapter } from '@/infrastructure/platform/id/device-id.adapter';
 import { SafeConsoleRecoveryDiagnosticsAdapter } from '@/infrastructure/platform/diagnostics/safe-console-recovery-diagnostics.adapter';
 import { SafeConsoleConfirmedResetDiagnosticsAdapter } from '@/infrastructure/platform/diagnostics/safe-console-confirmed-reset-diagnostics.adapter';
@@ -52,6 +58,7 @@ import { createPetArbitrationReviewFixture } from './review/pet-arbitration-revi
 import { createPetBaseReviewSessionReader } from './review/pet-base-review-fixture';
 import { createPetTerminalReviewFixture } from './review/pet-terminal-review-fixture';
 import { createFirstUseEntryReviewFixture } from './review/first-use-entry-review-fixture';
+import { createOnboardingTrialReviewFixture } from './review/onboarding-trial-review-fixture';
 import { NoopStartupReconciliationAdapter } from './startup/noop-startup-reconciliation.adapter';
 
 const PIXELDORO_DATABASE_NAME = 'pixeldoro.db';
@@ -67,6 +74,7 @@ export interface CreateMobileApplicationOptions {
   readonly diagnosticsEnabled?: boolean;
   readonly migration?: MigrationPort;
   readonly id?: IdPort;
+  readonly localCalendar?: LocalCalendarPort;
   readonly firstUseInstallation?: FirstUseInstallationReader;
   readonly firstUseSessions?: FirstUseSessionReader;
   readonly petCompanionSessions?: PetCompanionSessionReader;
@@ -81,8 +89,9 @@ export const createMobileApplication = (
   options: CreateMobileApplicationOptions = {},
 ): MobileApplication => {
   const driver = options.sqliteDriver ?? new ExpoSQLiteDriver();
-  const clock = options.clock ?? new DeviceClockAdapter();
+  const baseClock = options.clock ?? new DeviceClockAdapter();
   const id = options.id ?? new DeviceIdAdapter();
+  const localCalendar = options.localCalendar ?? new DeviceLocalCalendarAdapter();
   const appLifecycle =
     options.appLifecycle ?? new ReactNativeAppLifecycleAdapter();
   const appVisibility = new AppVisibilityController(
@@ -98,6 +107,36 @@ export const createMobileApplication = (
     options.diagnosticsEnabled !== false &&
     typeof __DEV__ !== 'undefined' &&
     __DEV__;
+  const onboardingTrialReviewFixture = createOnboardingTrialReviewFixture(
+    process.env.EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE,
+    reviewFixturesEnabled,
+    baseClock,
+    persistence.sessions,
+  );
+  const clock = onboardingTrialReviewFixture?.clock ?? baseClock;
+  const onboardingTrialSessions =
+    onboardingTrialReviewFixture?.sessions ?? persistence.sessions;
+  const sessionCommands = new SessionCommandCoordinator();
+  const startOnboardingTrialUseCase = new StartOnboardingTrialUseCase({
+    calendar: localCalendar,
+    clock,
+    coordinator: sessionCommands,
+    id,
+    sessions: onboardingTrialSessions,
+    transaction,
+  });
+  const cancelOnboardingTrialUseCase = new CancelOnboardingTrialUseCase({
+    clock,
+    coordinator: sessionCommands,
+    sessions: onboardingTrialSessions,
+    transaction,
+  });
+  const onboardingTrialRunning = new OnboardingTrialRunningController({
+    appInitiallyVisible: appLifecycle.getCurrentState() === 'active',
+    clock,
+    scheduler: new DeviceTimeoutScheduler(),
+    sessions: onboardingTrialSessions,
+  });
   const firstUseEntryReviewFixture = createFirstUseEntryReviewFixture(
     process.env.EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE,
     reviewFixturesEnabled,
@@ -110,7 +149,7 @@ export const createMobileApplication = (
     sessions:
       options.firstUseSessions ??
       firstUseEntryReviewFixture?.sessions ??
-      persistence.sessions,
+      onboardingTrialSessions,
   });
   const readiness = new ReadinessGate();
   const migration =
@@ -165,7 +204,7 @@ export const createMobileApplication = (
         process.env.EXPO_PUBLIC_EPIC_04_PET_BASE_FIXTURE,
         reviewFixturesEnabled,
       ) ??
-      persistence.sessions,
+      onboardingTrialSessions,
   );
   const petFeedbackScheduler = new DeviceTimeoutScheduler();
   const petTerminalFeedback = new PetTerminalFeedbackController({
@@ -239,6 +278,7 @@ export const createMobileApplication = (
   const startPetLifecycleRefresh = (): void => {
     unsubscribePetLifecycle ??= appLifecycle.subscribe((state) => {
       appVisibility.publish(state);
+      onboardingTrialRunning.setAppVisible(state === 'active');
       if (state === 'background') {
         petTerminalFeedback.discardActive();
         return;
@@ -418,6 +458,7 @@ export const createMobileApplication = (
     confirmedReset,
     criticalRecovery: bootstrap,
     firstUseEntry,
+    onboardingTrialRunning,
     petCompanion,
     petTerminalFeedback,
     petVisual,
@@ -447,10 +488,24 @@ export const createMobileApplication = (
         await Promise.all([firstUseEntry.refresh(), petCompanion.refresh()]);
       }
     },
+    cancelOnboardingTrial: async (sessionId) => {
+      const allowed = readiness.run(() => cancelOnboardingTrialUseCase.execute(sessionId));
+      if (!allowed.ok) return allowed;
+      const result = await allowed.value;
+      if (result.ok) {
+        await Promise.all([
+          firstUseEntry.refresh(),
+          onboardingTrialRunning.refresh(),
+          refreshPetCompanion(),
+        ]);
+      }
+      return result;
+    },
     dismissPetTerminalFeedbackError: () => petTerminalFeedback.dismissRecovery(),
     discardPetTerminalFeedback: () => petTerminalFeedback.discardActive(),
     refreshPetCompanion,
     refreshFirstUseEntry: () => firstUseEntry.refresh(),
+    refreshOnboardingTrialRunning: () => onboardingTrialRunning.refresh(),
     recordPetVisualDiagnostic: (diagnostic) => {
       try {
         petVisualDiagnostics.record(diagnostic);
@@ -463,6 +518,19 @@ export const createMobileApplication = (
     reportPetVisualFailure: (feedbackId) =>
       petTerminalFeedback.reportVisualFailure(feedbackId),
     retryRecovery,
+    startOnboardingTrial: async () => {
+      const allowed = readiness.run(() => startOnboardingTrialUseCase.execute());
+      if (!allowed.ok) return allowed;
+      const result = await allowed.value;
+      if (result.ok) {
+        await Promise.all([
+          firstUseEntry.refresh(),
+          onboardingTrialRunning.refresh(),
+          refreshPetCompanion(),
+        ]);
+      }
+      return result;
+    },
     triggerPetTerminalReviewFixture,
     dispose: () => {
       unsubscribePetLifecycle?.();
@@ -471,6 +539,7 @@ export const createMobileApplication = (
       cancelReviewWait = undefined;
       appVisibility.dispose();
       firstUseEntry.dispose();
+      onboardingTrialRunning.dispose();
       petVisual.dispose();
       petCompanion.dispose();
       petTerminalFeedback.dispose();

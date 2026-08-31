@@ -49,4 +49,17 @@ describe('OnboardingScreen', () => {
     expect(rendered).toContain('Relax 5 phút');
     expect(rendered).not.toMatch(/PrototypeBadge|MOCK COUNTDOWN|Strict|ChoiceChip|Skip/);
   });
+
+  it('renders committed-start busy and recoverable error props without prototype controls', () => {
+    const tree = OnboardingScreen({
+      onStartTrial: vi.fn(),
+      startTrialEnabled: true,
+      startTrialBusy: true,
+      startTrialError: 'Chưa thể bắt đầu. Dữ liệu của bạn chưa thay đổi.',
+    });
+    const rendered = JSON.stringify(tree);
+    expect(rendered).toContain('Đang bắt đầu phiên');
+    expect(rendered).toContain('Dữ liệu của bạn chưa thay đổi');
+    expect(rendered).not.toMatch(/PrototypeBadge|MOCK COUNTDOWN|Strict|ChoiceChip|Skip/);
+  });
 });
