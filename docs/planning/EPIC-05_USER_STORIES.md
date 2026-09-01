@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_05_USER_STORIES
-version: 0.15.0
-status: US_05_05_IN_PROGRESS
+version: 0.16.0
+status: US_05_05_IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE
 date: 2026-09-01
 owner: Dũng Lư
 baseline_sha: 91cb459c05fdcfa1f114c9ed13ac143fdc7fd7d2
@@ -222,7 +222,7 @@ Onboarding, Trial Running, Result, and route files may only arrange components, 
 | G05-UX | US-05-01/02/04 | CLOSED | Owner approved Option 1 for DEC-05-01, DEC-05-03, and DEC-05-04 on 2026-08-31. |
 | G05-ANALYTICS | US-05-05 | CLOSED | Owner approved Option 1 for DEC-05-02 on 2026-08-31. |
 | G05-DATA | Each story | CONDITIONAL | Existing schema appears sufficient. Any proven schema gap stops implementation for separate owner/authority review; no silent migration. |
-| G05-STORY-N | Next story | US-05-05 IN PROGRESS | Owner approved US0505-CONFIRM-01…08; implementation opened at exact SHA `2080d15`. EPIC-05 exit and EPIC-06 remain owner-gated. |
+| G05-STORY-N | Next story | US-05-05 AWAITS OWNER | Implementation is frozen at exact SHA `580f559`; automated quality passes, formal tester is deferred. EPIC-05 exit and EPIC-06 remain owner-gated. |
 
 ## 9. Story overview
 
@@ -232,7 +232,7 @@ Onboarding, Trial Running, Result, and route files may only arrange components, 
 | 2 | US-05-02 — Start, Run, Resume, or Cancel Trial | CTA starts a real five-minute trial; countdown resumes after background/relaunch; cancel safely returns to intro. | MUST | P0 | US-05-01, DEC-05-03 | US-05-03 | DONE_OWNER_ACCEPTED — `ef05b207`; TESTER DEFERRED |
 | 3 | US-05-03 — Complete and Reward Exactly Once | Deadline produces one committed completion and reward; Result reads `5 XP`/`1 Coin` from durable truth. | MUST | P0 | US-05-02, DEC-05-04 | US-05-04/05 | DONE_OWNER_ACCEPTED — `a66d8a9e`; QUICK SMOKE PASS; TESTER DEFERRED |
 | 4 | US-05-04 — Pet Celebration and Home Handoff | Fresh completion celebrates once; explicit Continue lands in production Home with committed totals. | MUST | P1 | US-05-03, EPIC-04, DEC-05-04 | US-05-05 | DONE_OWNER_ACCEPTED — `f1302b8`; QUICK SMOKE PASS; TESTER DEFERRED |
-| 5 | US-05-05 — First-use Integrity and Exit Evidence | Full offline/relaunch/a11y journey is reviewable; exclusions and analytics semantics are proven without later-epic scope. | MUST | P1 | US-05-04, DEC-05-02 | EPIC-05 exit / EPIC-06 gate | IN_PROGRESS — confirmations approved; start `2080d15` |
+| 5 | US-05-05 — First-use Integrity and Exit Evidence | Full offline/relaunch/a11y journey is reviewable; exclusions and analytics semantics are proven without later-epic scope. | MUST | P1 | US-05-04, DEC-05-02 | EPIC-05 exit / EPIC-06 gate | IMPLEMENTED — `580f559`; OWNER ACCEPTANCE REQUIRED; TESTER DEFERRED |
 
 `MVP Priority` says every capability is mandatory for the MVP outcome. `Dependency Priority` expresses correctness/rework risk: P0 establishes durable truth before polished handoff; P1 closes integration and evidence; no P2 story is proposed.
 
@@ -716,8 +716,9 @@ Evidence to send: Git SHA; platform; device/simulator; OS; fresh/reopen/relaunch
 - **Dependencies:** US-05-04, DEC-05-02, all prior gates.
 - **Blocks:** EPIC-05 owner acceptance and EPIC-06 start gate.
 - **Product/technical gate:** Analytics event semantics must be owner-approved; provider/vendor delivery remains out of scope.
-- **Current status:** `IN_PROGRESS`; owner approved `US0505-CONFIRM-01…08` on 2026-09-01 and
-  implementation opened at exact SHA `2080d15d5ddcce5033610490076e5ff0ae4b7019`.
+- **Current status:** `IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE` at exact SHA
+  `580f559016e192b95d3d286a61d161b3af460a1d`; automated/root gates pass and formal tester remains
+  deferred. EPIC-05 is not closed and EPIC-06 is not opened by this implementation record.
 
 **In scope**
 
@@ -845,7 +846,7 @@ No box below is checked by planning. Owner/device evidence is required.
 | Start/double tap/background/relaunch/cancel/offline | US-05-02 | `ef05b207` | DEFERRED — formal tester phase | DEFERRED | Automated SQLite facts accepted; manual facts deferred | OWNER ACCEPTED — FORMAL TEST DEFERRED |
 | Deadline/race/rollback/reopen/relaunch reward | US-05-03 | `a66d8a9e` | Not supplied; formal tester deferred | Owner reports quick smoke done; captures not supplied | Automated real SQLite facts pass; raw manual facts deferred | PASS — OWNER ACCEPTED QUICK SMOKE; FORMAL TESTER DEFERRED |
 | Fresh/reopen celebration/Continue/Home/Reduce Motion | US-05-04 | `f1302b8` | Not supplied; formal tester deferred | Owner reports quick UI smoke done; captures not supplied | Automated fresh/reopen/failure, SQLite handoff and 80/374 root quality pass | PASS — OWNER ACCEPTED QUICK SMOKE; FORMAL TESTER DEFERRED |
-| Full journey/exclusions/failures/a11y | US-05-05 | [ ] | [ ] | [ ] | [ ] | [ ] |
+| Full journey/exclusions/failures/a11y | US-05-05 | `580f559` | DEFERRED — formal tester phase | DEFERRED | Real SQLite exact fingerprints + 82/391 automated pass | AWAITING OWNER ACCEPTANCE |
 
 Every evidence record must state pass/fail per step and must not use an automated simulator result as a substitute for owner device acceptance.
 
@@ -1015,11 +1016,15 @@ One-pass review requested. No implementation starts until these are answered.
 - [x] `US-05-04` implementation committed at `f1302b8`; root 80 files/374 tests, SQLite handoff, fresh/reopen/failure and scope gates pass; formal tester deferred.
 - [x] Owner closed US-05-04 on `f1302b8` after quick UI smoke; formal tester remains deferred; only US-05-05 planning opens.
 - [x] `US-05-05_IMPLEMENTATION_PLAN.md` confirmations approved; implementation opened at `2080d15`.
+- [x] `US-05-05` implementation committed at `580f559`; real SQLite exclusion journey, analytics
+  idempotency, fixture/static/a11y gates and root `82/391` pass; formal tester remains deferred.
+- [ ] Owner accepts exact US-05-05 implementation SHA before EPIC-05 closes or EPIC-06 opens.
 
 ## 20. Change log
 
 | Version | Date | Author | Change |
 | --- | --- | --- | --- |
+| 0.16.0 | 2026-09-01 | Codex | Recorded US-05-05 implementation at exact SHA 580f559 with 82/391 automated quality, SQLite exclusion/analytics proof and deferred tester evidence; EPIC-05 still awaits owner acceptance. |
 | 0.15.0 | 2026-09-01 | Codex, recording owner approval | Recorded US0505-CONFIRM-01…08 approval and opened US-05-05 implementation at exact SHA 2080d15; EPIC-05 exit and EPIC-06 remain owner-gated. |
 | 0.14.0 | 2026-08-31 | Codex, recording owner acceptance | Closed US-05-04 at f1302b8 after owner-reported quick UI smoke, retained formal tester evidence as deferred, and opened only US-05-05 plan review. |
 | 0.13.0 | 2026-08-31 | Codex | Recorded US-05-04 implementation at f1302b8 and automated/SQLite evidence; Story awaits owner acceptance, formal tester remains deferred, US-05-05 stays gated. |
