@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
 
-import { FocusSessionScreen } from '@/presentation/features/focus';
 import { OnboardingTrialRunningScreen } from '@/presentation/features/onboarding-trial';
 import { ErrorState, LoadingState, ScreenShell } from '@/presentation/components';
 import {
@@ -14,10 +13,9 @@ import {
   usePetCompanionRefresh,
   usePetVisualProjection,
 } from '@/presentation/providers/mobile-application-context';
-import { usePrototype } from '@/presentation/prototype/prototype-context';
-
 import { useSessionCancelBack } from '../use-session-cancel-back';
 import { PetRouteVisibility } from '../pet-route-visibility';
+import { PrototypeSessionBranch } from './prototype-session-branch';
 
 export default function FocusSessionRoute() {
   const router = useRouter();
@@ -37,12 +35,6 @@ export default function FocusSessionRoute() {
     deactivate: deactivateTrial,
     refresh: refreshTrial,
   } = useOnboardingTrialRunningActions();
-  const { activeSession, resolveFocus } = usePrototype();
-  const session =
-    activeSession?.kind === 'trial' || activeSession?.kind === 'focus'
-      ? activeSession
-      : null;
-
   useFocusEffect(
     useCallback(() => {
       activateTrial();
@@ -132,19 +124,11 @@ export default function FocusSessionRoute() {
   }
 
   return (
-    <PetRouteVisibility>
-      <FocusSessionScreen
-        cancelRequestToken={cancelRequestToken}
-        onMissingSession={() => router.replace('/(tabs)')}
-        onDismissPetFeedbackError={dismissPetFeedbackError}
-        onRetryPet={() => void refreshPet()}
-        onResolve={(outcome) => {
-          resolveFocus(outcome);
-          router.replace('/focus/result');
-        }}
-        pet={pet}
-        session={session}
-      />
-    </PetRouteVisibility>
+    <PrototypeSessionBranch
+      cancelRequestToken={cancelRequestToken}
+      onDismissPetFeedbackError={dismissPetFeedbackError}
+      onRetryPet={() => void refreshPet()}
+      pet={pet}
+    />
   );
 }

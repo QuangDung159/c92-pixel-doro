@@ -32,3 +32,11 @@ export {
   type OnboardingTrialPetFeedbackBridgeDependencies,
   type OnboardingTrialPetFeedbackBridgeProjection,
 } from './onboarding-trial-pet-feedback.bridge';
+export {
+  OnboardingAnalyticsRecorder,
+  type OnboardingAnalyticsRecorderDependencies,
+  type OnboardingAnalyticsRecorderPort,
+  type OnboardingAnalyticsRecordError,
+  type OnboardingAnalyticsRecordErrorCode,
+  type OnboardingAnalyticsRecordOutcome,
+} from './onboarding-analytics.recorder';

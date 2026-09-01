@@ -21,6 +21,7 @@ const petAccessibilityFallbackFlowPath = `${deviceDirectory}pet-accessibility-fa
 const onboardingTrialFlowPath = `${deviceDirectory}onboarding-trial-smoke.md`;
 const onboardingTrialCompletionFlowPath = `${deviceDirectory}onboarding-trial-completion-smoke.md`;
 const onboardingTrialHandoffFlowPath = `${deviceDirectory}onboarding-trial-handoff-smoke.md`;
+const epic05ExitFlowPath = `${deviceDirectory}epic-05-exit-smoke.md`;
 
 await access(flowPath);
 await access(sqliteFlowPath);
@@ -40,6 +41,7 @@ await access(petAccessibilityFallbackFlowPath);
 await access(onboardingTrialFlowPath);
 await access(onboardingTrialCompletionFlowPath);
 await access(onboardingTrialHandoffFlowPath);
+await access(epic05ExitFlowPath);
 const flow = await readFile(flowPath, 'utf8');
 const sqliteFlow = await readFile(sqliteFlowPath, 'utf8');
 const schemaFlow = await readFile(schemaFlowPath, 'utf8');
@@ -73,6 +75,7 @@ const onboardingTrialHandoffFlow = await readFile(
   onboardingTrialHandoffFlowPath,
   'utf8',
 );
+const epic05ExitFlow = await readFile(epic05ExitFlowPath, 'utf8');
 
 const requiredOnboardingTrialEvidence = [
   'EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE=trial_start_failure',
@@ -116,6 +119,23 @@ const requiredOnboardingTrialHandoffEvidence = [
 for (const evidence of requiredOnboardingTrialHandoffEvidence) {
   if (!onboardingTrialHandoffFlow.includes(evidence)) {
     throw new Error(`Onboarding handoff device flow is missing: ${evidence}`);
+  }
+}
+
+const requiredEpic05ExitEvidence = [
+  'EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE=epic_05_fresh_end_to_end',
+  'EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE=epic_05_exclusion_seed',
+  'DEFERRED_TO_LATER_PHASE',
+  '<implementation-sha>',
+  'Reduce Motion',
+  'screen reader',
+  'offline',
+  'unset EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE',
+];
+
+for (const evidence of requiredEpic05ExitEvidence) {
+  if (!epic05ExitFlow.includes(evidence)) {
+    throw new Error(`EPIC-05 exit device flow is missing: ${evidence}`);
   }
 }
 

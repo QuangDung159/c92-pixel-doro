@@ -6,7 +6,7 @@ import {
   type SQLInputValue,
   type StatementSync,
 } from 'node:sqlite';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   CancelOnboardingTrialUseCase,
   CompleteOnboardingTrialUseCase,
@@ -18,6 +18,7 @@ import {
 import {
   CompleteFirstUseHandoffUseCase,
   FirstUseEntryController,
+  OnboardingAnalyticsRecorder,
 } from '@/application';
 
 import { MigrationRunner } from '@/infrastructure/database/migration-runner';
@@ -31,6 +32,14 @@ import type {
   SQLiteWriteResult,
 } from '@/infrastructure/database/sqlite-driver';
 import { SQLiteTransaction } from '@/infrastructure/database/sqlite-transaction';
+import { createMobileApplication } from '@/composition/create-mobile-application';
+
+vi.mock('react-native', () => ({
+  AppState: {
+    currentState: 'active',
+    addEventListener: () => ({ remove: vi.fn() }),
+  },
+}));
 
 const temporaryDirectories: string[] = [];
 const initialNow = 1_788_163_200_000;
@@ -104,6 +113,238 @@ afterEach(async () => {
 });
 
 describe('onboarding trial SQLite integration', () => {
+  it('keeps committed Start and Continue successful when analytics throws', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'pixeldoro-us0505-best-effort-'));
+    temporaryDirectories.push(directory);
+    let counter = 0;
+    let now = initialNow;
+    const recordStarted = vi.fn(() => {
+      throw new Error('analytics unavailable');
+    });
+    const recordCompleted = vi.fn(() => {
+      throw new Error('analytics unavailable');
+    });
+    const application = createMobileApplication({
+      appLifecycle: {
+        getCurrentState: () => 'active',
+        subscribe: () => vi.fn(),
+      },
+      clock: { nowMs: () => now },
+      id: { nextId: () => `best-effort-${++counter}` },
+      localCalendar: { snapshot: () => ({
+        ok: true,
+        value: { localDate: '2026-09-01', utcOffsetMinutes: 420 },
+      }) },
+      onboardingAnalytics: { recordStarted, recordCompleted },
+      sqliteDriver: new HostDriver(directory),
+      databaseName: 'best-effort.db',
+    });
+
+    await application.boot();
+    const started = await application.startOnboardingTrial();
+    expect(started).toMatchObject({ ok: true, value: { outcome: 'started' } });
+    if (!started.ok) throw new Error('trial did not start');
+    expect(recordStarted).toHaveBeenCalledWith(
+      started.value.session.id,
+      started.value.session.startedAt,
+    );
+
+    now += 300_000;
+    expect(await application.reconcileOnboardingTrial(started.value.session.id))
+      .toMatchObject({ ok: true, value: { outcome: 'completed_fresh' } });
+    await application.refreshOnboardingTrialResult();
+    const result = application.onboardingTrialResult.getSnapshot();
+    if (result.status !== 'ready') throw new Error('trial result was not ready');
+    now += 1_000;
+    expect(await application.completeFirstUseHandoff(result.result)).toMatchObject({
+      ok: true,
+      value: { outcome: 'completed_fresh', completedAt: now },
+    });
+    expect(recordCompleted).toHaveBeenCalledWith(now);
+    expect(await application.persistence.profile.find()).toMatchObject({
+      ok: true,
+      value: { totalXp: 5, coinBalance: 1 },
+    });
+    await application.dispose();
+  });
+
+  it('proves the production Epic journey, analytics idempotency, and every standard exclusion', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'pixeldoro-us0505-exit-'));
+    temporaryDirectories.push(directory);
+    const driver = new HostDriver(directory);
+    const databaseName = 'epic-05-exit.db';
+    const opened = await openGraph(driver, databaseName);
+    let counter = 0;
+    let now = initialNow;
+    const id = { nextId: () => `us0505-${++counter}` };
+    const clock = { nowMs: () => now };
+    expect(await new MigrationRunner({
+      owner: opened.owner,
+      transaction: opened.transaction,
+      registry: productionMigrationRegistry,
+      clock,
+      id,
+    }).migrate()).toMatchObject({ ok: true });
+
+    const coordinator = new SessionCommandCoordinator();
+    const start = new StartOnboardingTrialUseCase({
+      calendar: { snapshot: () => ({
+        ok: true,
+        value: { localDate: '2026-09-01', utcOffsetMinutes: 420 },
+      }) },
+      clock,
+      coordinator,
+      id,
+      sessions: opened.graph.sessions,
+      transaction: opened.transaction,
+    });
+    const analytics = new OnboardingAnalyticsRecorder({
+      isCaptureEnabled: () => true,
+      queue: opened.graph.analyticsQueue,
+    });
+    const started = await start.execute();
+    if (!started.ok) throw new Error('trial did not start');
+    const sessionId = started.value.session.id;
+    const startedEventId = `onboarding_started:${sessionId}`;
+    expect(await analytics.recordStarted(sessionId, started.value.session.startedAt))
+      .toMatchObject({ ok: true, value: { outcome: 'enqueued', eventId: startedEventId } });
+    expect(await analytics.recordStarted(sessionId, started.value.session.startedAt))
+      .toMatchObject({ ok: true, value: { outcome: 'already_queued' } });
+
+    now += 300_000;
+    const complete = new CompleteOnboardingTrialUseCase({
+      clock,
+      coordinator,
+      id,
+      profile: opened.graph.profile,
+      rewards: opened.graph.rewards,
+      sessions: opened.graph.sessions,
+      transaction: opened.transaction,
+    });
+    expect(await complete.execute(sessionId)).toMatchObject({
+      ok: true,
+      value: { outcome: 'completed_fresh' },
+    });
+    expect(await complete.execute(sessionId)).toMatchObject({
+      ok: true,
+      value: { outcome: 'already_completed' },
+    });
+
+    now += 1_000;
+    const handoff = new CompleteFirstUseHandoffUseCase({
+      clock,
+      installation: opened.graph.installation,
+    });
+    const completed = await handoff.execute();
+    expect(completed).toEqual({
+      ok: true,
+      value: { outcome: 'completed_fresh', completedAt: now },
+    });
+    if (!completed.ok) throw new Error('handoff did not complete');
+    const completedEventId = `onboarding_completed:1:${completed.value.completedAt}`;
+    expect(await analytics.recordCompleted(completed.value.completedAt)).toMatchObject({
+      ok: true,
+      value: { outcome: 'enqueued', eventId: completedEventId },
+    });
+    expect(await analytics.recordCompleted(completed.value.completedAt)).toMatchObject({
+      ok: true,
+      value: { outcome: 'already_queued' },
+    });
+    now += 1_000;
+    expect(await handoff.execute()).toEqual({
+      ok: true,
+      value: { outcome: 'already_completed', completedAt: now - 1_000 },
+    });
+
+    const assertExitFacts = async (
+      database: Awaited<ReturnType<typeof openGraph>>,
+    ): Promise<void> => {
+      expect(await database.graph.sessions.findById(sessionId)).toMatchObject({
+        ok: true,
+        value: {
+          focusVariant: 'onboarding_trial',
+          status: 'completed',
+          xpEarned: 5,
+          coinsEarned: 1,
+        },
+      });
+      expect(await database.graph.rewards.findBySessionId(sessionId)).toMatchObject({
+        ok: true,
+        value: { xpDelta: 5, coinDelta: 1 },
+      });
+      expect(await database.graph.profile.find()).toMatchObject({
+        ok: true,
+        value: { totalXp: 5, coinBalance: 1 },
+      });
+      expect(await database.graph.installation.find()).toMatchObject({
+        ok: true,
+        value: { onboardingCompletedAt: completed.value.completedAt },
+      });
+      expect(await database.graph.analyticsEvents.findById(startedEventId)).toMatchObject({
+        ok: true,
+        value: { eventName: 'onboarding_started', properties: {} },
+      });
+      expect(await database.graph.analyticsEvents.findById(completedEventId)).toMatchObject({
+        ok: true,
+        value: { eventName: 'onboarding_completed', properties: {} },
+      });
+      expect(await database.graph.standardFocusHistory.list({
+        profileId: 1,
+        limit: 10,
+        cursor: null,
+      })).toEqual({ ok: true, value: { entries: [], nextCursor: null } });
+      expect(await database.graph.contribution.listRange({
+        profileId: 1,
+        startLocalDate: '2026-09-01',
+        endLocalDate: '2026-09-01',
+      })).toEqual({ ok: true, value: [] });
+      expect(await database.graph.longBreakCadence.getFacts(1)).toEqual({
+        ok: true,
+        value: {
+          profileId: 1,
+          completedStandardFocusCountSinceLastCompletedLongBreak: 0,
+          latestCompletedLongBreak: null,
+        },
+      });
+      expect(await database.graph.storeReviewFacts.getFacts({
+        profileId: 1,
+        appVersion: '0.1.0',
+        nowMs: now,
+      })).toMatchObject({
+        ok: true,
+        value: {
+          completedStandardFocusCount: 0,
+          distinctStandardFocusActiveDayCount: 0,
+          latestAttempt: null,
+          rolling365DayAttemptCount: 0,
+          currentVersionAttempted: false,
+        },
+      });
+      const eventCounts = await database.owner.withConnection((connection) =>
+        connection.getAllAsync<{ readonly event_name: string; readonly count: number }>(
+          'SELECT event_name, COUNT(*) AS count FROM analytics_events GROUP BY event_name ORDER BY event_name',
+          [],
+        ));
+      expect(eventCounts).toEqual([
+        { event_name: 'onboarding_completed', count: 1 },
+        { event_name: 'onboarding_started', count: 1 },
+      ]);
+    };
+
+    await assertExitFacts(opened);
+    await opened.owner.close();
+    const reopened = await openGraph(driver, databaseName);
+    await assertExitFacts(reopened);
+    const entry = new FirstUseEntryController({
+      installation: reopened.graph.installation,
+      sessions: reopened.graph.sessions,
+    });
+    await entry.refresh();
+    expect(entry.getSnapshot()).toEqual({ status: 'ready', destination: 'home' });
+    entry.dispose();
+    await reopened.owner.close();
+  });
+
   it('commits one trial, survives reopen, and cancels without reward/profile mutation', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'pixeldoro-us0502-'));
     temporaryDirectories.push(directory);

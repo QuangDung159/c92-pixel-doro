@@ -18,7 +18,9 @@ export type OnboardingTrialReviewScenario =
   | 'trial_reward_write_failure'
   | 'trial_completed_fresh'
   | 'trial_completed_reopen'
-  | 'trial_continue_failure';
+  | 'trial_continue_failure'
+  | 'epic_05_fresh_end_to_end'
+  | 'epic_05_exclusion_seed';
 
 export interface OnboardingTrialReviewFixture {
   readonly scenario: OnboardingTrialReviewScenario;
@@ -43,6 +45,8 @@ const scenarios: readonly OnboardingTrialReviewScenario[] = [
   'trial_completed_fresh',
   'trial_completed_reopen',
   'trial_continue_failure',
+  'epic_05_fresh_end_to_end',
+  'epic_05_exclusion_seed',
 ];
 
 class OffsetReviewClock implements ClockPort {
@@ -183,13 +187,15 @@ export const createOnboardingTrialReviewFixture = (
     ? 30
     : scenario === 'trial_deadline_pending' ||
         scenario === 'trial_complete_race' ||
-        scenario === 'trial_reward_write_failure'
+        scenario === 'trial_reward_write_failure' ||
+        scenario === 'epic_05_fresh_end_to_end'
       ? 1_000
       : 1;
   const overdueClock = scenario === 'trial_overdue_running' ||
     scenario === 'trial_completed_fresh' ||
     scenario === 'trial_completed_reopen' ||
-    scenario === 'trial_continue_failure'
+    scenario === 'trial_continue_failure' ||
+    scenario === 'epic_05_exclusion_seed'
     ? new OffsetReviewClock(baseClock)
     : undefined;
   return {
@@ -208,7 +214,10 @@ export const createOnboardingTrialReviewFixture = (
           const result = await start.execute();
           if (!result.ok) return false;
           overdueClock.advanceBy(300_001);
-          if (scenario === 'trial_completed_reopen') {
+          if (
+            scenario === 'trial_completed_reopen' ||
+            scenario === 'epic_05_exclusion_seed'
+          ) {
             const completed = await complete.execute(result.value.session.id);
             return completed.ok &&
               (completed.value.outcome === 'completed_fresh' ||

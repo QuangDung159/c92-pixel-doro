@@ -4,6 +4,7 @@ import {
   AppVisibilityController,
   FirstUseEntryController,
   MobileBootstrap,
+  OnboardingAnalyticsRecorder,
   OnboardingTrialCompletionController,
   OnboardingTrialHandoffController,
   OnboardingTrialPetFeedbackBridge,
@@ -18,6 +19,7 @@ import {
   type FirstUseInstallationReader,
   type FirstUseSessionReader,
   type MigrationPort,
+  type OnboardingAnalyticsRecorderPort,
   type PetVisualDiagnosticsPort,
   type RecoveryDiagnosticsPort,
   type ResetNotificationCleanupPort,
@@ -80,6 +82,7 @@ export interface CreateMobileApplicationOptions {
   readonly databaseName?: string;
   readonly diagnosticsEnabled?: boolean;
   readonly migration?: MigrationPort;
+  readonly onboardingAnalytics?: OnboardingAnalyticsRecorderPort;
   readonly id?: IdPort;
   readonly localCalendar?: LocalCalendarPort;
   readonly firstUseInstallation?: FirstUseInstallationReader;
@@ -225,6 +228,16 @@ export const createMobileApplication = (
             ),
       ),
   });
+  const onboardingAnalytics =
+    options.onboardingAnalytics ??
+    new OnboardingAnalyticsRecorder({
+      isCaptureEnabled: () => {
+        const projection = bootstrap.getSnapshot();
+        return projection.status === 'ready' &&
+          projection.snapshot.settings.analyticsEnabled;
+      },
+      queue: persistence.analyticsQueue,
+    });
   const confirmedReset = new ConfirmedLocalDataReset({
     activeSessions: persistence.sessions,
     bootstrap,
@@ -337,6 +350,16 @@ export const createMobileApplication = (
   const refreshPetCompanion = async (): Promise<void> => {
     if (bootstrap.getSnapshot().status !== 'ready') return;
     await petCompanion.refresh();
+  };
+
+  const recordOnboardingAnalyticsBestEffort = (
+    operation: () => Promise<unknown>,
+  ): void => {
+    try {
+      void operation().catch(() => undefined);
+    } catch {
+      // Local analytics is best effort and cannot affect committed onboarding truth.
+    }
   };
 
   const startPetLifecycleRefresh = (): void => {
@@ -585,7 +608,13 @@ export const createMobileApplication = (
     completeFirstUseHandoff: async (result) => {
       const allowed = readiness.run(() => onboardingTrialHandoff.complete(result));
       if (!allowed.ok) return allowed;
-      return allowed.value;
+      const completed = await allowed.value;
+      if (completed.ok) {
+        recordOnboardingAnalyticsBestEffort(() =>
+          onboardingAnalytics.recordCompleted(completed.value.completedAt),
+        );
+      }
+      return completed;
     },
     dismissPetTerminalFeedbackError: () => {
       petTerminalFeedback.dismissRecovery();
@@ -624,6 +653,12 @@ export const createMobileApplication = (
           onboardingTrialRunning.refresh(),
           refreshPetCompanion(),
         ]);
+        recordOnboardingAnalyticsBestEffort(() =>
+          onboardingAnalytics.recordStarted(
+            result.value.session.id,
+            result.value.session.startedAt,
+          ),
+        );
       }
       return result;
     },

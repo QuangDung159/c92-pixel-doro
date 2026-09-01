@@ -94,6 +94,21 @@ describe('createOnboardingTrialReviewFixture', () => {
     expect(fixture?.clock.nowMs()).toBe(31_000);
   });
 
+  it('provides a finite fresh Epic exit journey without pre-seeding durable state', () => {
+    let now = 1_000;
+    const fixture = createOnboardingTrialReviewFixture(
+      'epic_05_fresh_end_to_end',
+      true,
+      { nowMs: () => now },
+      createSessions(),
+      createRewards(),
+    );
+    expect(fixture?.scenario).toBe('epic_05_fresh_end_to_end');
+    expect(fixture?.prepareForStartup).toBeUndefined();
+    now = 2_000;
+    expect(fixture?.clock.nowMs()).toBe(1_001_000);
+  });
+
   it('fails only the first reward insert for the completion recovery fixture', async () => {
     const rewards = createRewards();
     const fixture = createOnboardingTrialReviewFixture(
@@ -156,6 +171,31 @@ describe('createOnboardingTrialReviewFixture', () => {
       { execute: complete } as never,
     )).resolves.toBe(true);
     expect(complete).toHaveBeenCalledWith('trial-1');
+  });
+
+  it('prepares the exclusion fixture through production Start and Complete commands', async () => {
+    const fixture = createOnboardingTrialReviewFixture(
+      'epic_05_exclusion_seed',
+      true,
+      { nowMs: () => 1_000 },
+      createSessions(),
+      createRewards(),
+    );
+    const start = vi.fn(async () => ({
+      ok: true as const,
+      value: { outcome: 'started' as const, session: { id: 'trial-exclusion' } },
+    }));
+    const complete = vi.fn(async () => ({
+      ok: true as const,
+      value: { outcome: 'completed_fresh' as const },
+    }));
+
+    await expect(fixture?.prepareForStartup?.(
+      { execute: start } as never,
+      { execute: complete } as never,
+    )).resolves.toBe(true);
+    expect(start).toHaveBeenCalledOnce();
+    expect(complete).toHaveBeenCalledWith('trial-exclusion');
   });
 
   it('fails only the first Continue installation write', async () => {

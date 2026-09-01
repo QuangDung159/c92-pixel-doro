@@ -115,6 +115,12 @@ export {
   OnboardingTrialPetFeedbackBridge,
   type OnboardingTrialPetFeedbackBridgeDependencies,
   type OnboardingTrialPetFeedbackBridgeProjection,
+  OnboardingAnalyticsRecorder,
+  type OnboardingAnalyticsRecorderDependencies,
+  type OnboardingAnalyticsRecorderPort,
+  type OnboardingAnalyticsRecordError,
+  type OnboardingAnalyticsRecordErrorCode,
+  type OnboardingAnalyticsRecordOutcome,
 } from './onboarding-trial';
 export {
   FirstUseEntryController,

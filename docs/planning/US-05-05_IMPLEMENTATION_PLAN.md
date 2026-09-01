@@ -1,11 +1,11 @@
 ---
 document_id: PIXELDORO_US_05_05_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-05-05 Implementation Plan
-version: 0.1.0
-status: READY_FOR_OWNER_CONFIRMATION
-implementation_status: NOT_STARTED
+version: 0.2.0
+status: APPROVED
+implementation_status: IN_PROGRESS
 created_at: 2026-08-31
-last_updated: 2026-08-31
+last_updated: 2026-09-01
 owner: Dũng Lư
 reviewer: Dũng Lư
 reviewer_role: Tech Lead/Product Owner
@@ -13,6 +13,8 @@ language: vi
 branch: feats/epic-05
 baseline_sha: fc7521ff96a04913dda3b49223fcf6dccb3cc21b
 accepted_dependency_sha: f1302b8c0ae8035f67b56aa410b197890498ddc9
+implementation_start_sha: 2080d15d5ddcce5033610490076e5ff0ae4b7019
+implementation_started_at: 2026-09-01
 formal_tester_status: DEFERRED_TO_LATER_PHASE
 scope:
   - mobile_mvp
@@ -55,9 +57,10 @@ exit mà không mở provider/PostHog hay EPIC-06 behavior.
 `f1302b8c0ae8035f67b56aa410b197890498ddc9` sau quick UI smoke. Formal tester/device evidence vẫn
 `DEFERRED_TO_LATER_PHASE`.
 
-**Planning status:** `READY_FOR_OWNER_CONFIRMATION`.
-**Implementation status:** `NOT_STARTED`. Không production implementation trước khi owner duyệt
-`US0505-CONFIRM-01`…`08`.
+**Planning status:** `APPROVED`.
+**Implementation status:** `IN_PROGRESS`. Owner đã duyệt toàn bộ
+`US0505-CONFIRM-01`…`08` ngày 2026-09-01; implementation mở tại exact SHA
+`2080d15d5ddcce5033610490076e5ff0ae4b7019`.
 
 ### 0.1. Readiness gate
 
@@ -72,7 +75,7 @@ exit mà không mở provider/PostHog hay EPIC-06 behavior.
 - [x] Existing SQLite schema đủ; không cần migration/index/dependency/native change.
 - [x] Final root US-05-04 baseline `80` files / `374` tests pass.
 - [x] Formal tester execution tiếp tục deferred; automated/SQLite/static gates là bắt buộc.
-- [ ] Owner duyệt toàn bộ confirmations trước khi Story chuyển `READY/IN_PROGRESS`.
+- [x] Owner duyệt toàn bộ confirmations; Story chuyển `IN_PROGRESS` tại exact SHA `2080d15`.
 
 ## 1. Baseline audit và gap map
 
@@ -433,7 +436,7 @@ pnpm start --clear
 
 ## 9. Definition of Done
 
-- [ ] Owner approves `US0505-CONFIRM-01`…`08`; implementation start SHA recorded.
+- [x] Owner approves `US0505-CONFIRM-01`…`08`; implementation start SHA recorded.
 - [ ] Exactly two onboarding milestone types record only after their durable commits.
 - [ ] Deterministic IDs make duplicate Start/Continue idempotent; no hydration/backfill emission.
 - [ ] Analytics disabled skips capture; analytics failure never changes core outcome/navigation.
@@ -451,14 +454,14 @@ pnpm start --clear
 
 | ID | Confirmation | Recommendation | Status |
 | --- | --- | --- | --- |
-| `US0505-CONFIRM-01` | Deterministic typed IDs/timestamps for exactly started/completed onboarding milestones | Approve TD-05-05-A | `PENDING OWNER` |
-| `US0505-CONFIRM-02` | Commit-first best-effort queue; opt-out skip, no startup backfill, no core failure | Approve TD-05-05-B | `PENDING OWNER` |
-| `US0505-CONFIRM-03` | Exact `{}` properties; never standard Focus/reward events for trial | Approve TD-05-05-C | `PENDING OWNER` |
-| `US0505-CONFIRM-04` | One production SQLite journey proves all exclusions/fingerprints/reopen | Approve TD-05-05-D | `PENDING OWNER` |
-| `US0505-CONFIRM-05` | Two finite full-journey/exclusion fixtures through production paths | Approve TD-05-05-E | `PENDING OWNER` |
-| `US0505-CONFIRM-06` | Isolate prototype fallback and enforce import/≤300/common/fixture static gates | Approve TD-05-05-F | `PENDING OWNER` |
-| `US0505-CONFIRM-07` | Offline/failure/a11y/motion automated gates mandatory; formal tester deferred | Approve TD-05-05-G | `PENDING OWNER` |
-| `US0505-CONFIRM-08` | No schema/provider/dependencies/EPIC-06; Epic exit remains owner-gated | Approve TD-05-05-H | `PENDING OWNER` |
+| `US0505-CONFIRM-01` | Deterministic typed IDs/timestamps for exactly started/completed onboarding milestones | Approve TD-05-05-A | `APPROVED — 2026-09-01` |
+| `US0505-CONFIRM-02` | Commit-first best-effort queue; opt-out skip, no startup backfill, no core failure | Approve TD-05-05-B | `APPROVED — 2026-09-01` |
+| `US0505-CONFIRM-03` | Exact `{}` properties; never standard Focus/reward events for trial | Approve TD-05-05-C | `APPROVED — 2026-09-01` |
+| `US0505-CONFIRM-04` | One production SQLite journey proves all exclusions/fingerprints/reopen | Approve TD-05-05-D | `APPROVED — 2026-09-01` |
+| `US0505-CONFIRM-05` | Two finite full-journey/exclusion fixtures through production paths | Approve TD-05-05-E | `APPROVED — 2026-09-01` |
+| `US0505-CONFIRM-06` | Isolate prototype fallback and enforce import/≤300/common/fixture static gates | Approve TD-05-05-F | `APPROVED — 2026-09-01` |
+| `US0505-CONFIRM-07` | Offline/failure/a11y/motion automated gates mandatory; formal tester deferred | Approve TD-05-05-G | `APPROVED — 2026-09-01` |
+| `US0505-CONFIRM-08` | No schema/provider/dependencies/EPIC-06; Epic exit remains owner-gated | Approve TD-05-05-H | `APPROVED — 2026-09-01` |
 
 Owner có thể duyệt một lần bằng `Duyệt US0505-CONFIRM-01…08` hoặc nêu ID cần chỉnh. Approval chỉ
 mở implementation US-05-05; không tự đóng EPIC-05 hoặc mở implementation EPIC-06.
@@ -493,4 +496,5 @@ mở implementation US-05-05; không tự đóng EPIC-05 hoặc mở implementat
 
 | Version | Date | Author | Change |
 | --- | --- | --- | --- |
+| 0.2.0 | 2026-09-01 | Codex, recording owner approval | Recorded approval of US0505-CONFIRM-01…08 and opened implementation at exact SHA 2080d15; EPIC-05 exit remains owner-gated and EPIC-06 remains closed. |
 | 0.1.0 | 2026-08-31 | Codex, for owner review | Closed accepted f1302b8 dependency audit; proposed deterministic onboarding milestone hooks, production-journey exclusion proof, fixture/static/a11y gates and owner-gated EPIC-05 exit. No production implementation. |
