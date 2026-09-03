@@ -1,4 +1,6 @@
 import {
+  CancelStandardFocusUseCase,
+  LoadStandardFocusCancelledResultUseCase,
   StartStandardFocusUseCase,
   type ClockPort,
   type IdPort,
@@ -10,11 +12,14 @@ import {
 } from '@pixeldoro/application';
 
 import {
+  StandardFocusCancelController,
+  StandardFocusResultController,
   StandardFocusSessionController,
   StandardFocusSetupController,
   type CommandReadinessPort,
   type StandardFocusSetupErrorCode,
   type StandardFocusSetupStartResult,
+  type TickScheduler,
 } from '@/application';
 
 export interface CreateStandardFocusSliceDependencies {
@@ -26,11 +31,15 @@ export interface CreateStandardFocusSliceDependencies {
   readonly readiness: CommandReadinessPort;
   readonly sessions: SessionRepository;
   readonly transaction: TransactionPort;
+  readonly scheduler: TickScheduler;
+  readonly appInitiallyVisible: boolean;
 }
 
 export interface StandardFocusSlice {
   readonly setup: StandardFocusSetupController;
   readonly session: StandardFocusSessionController;
+  readonly cancel: StandardFocusCancelController;
+  readonly result: StandardFocusResultController;
   dispose(): void;
 }
 
@@ -52,7 +61,26 @@ export const createStandardFocusSlice = (
     transaction: dependencies.transaction,
   });
   const session = new StandardFocusSessionController({
+    appInitiallyVisible: dependencies.appInitiallyVisible,
+    clock: dependencies.clock,
+    scheduler: dependencies.scheduler,
     sessions: dependencies.sessions,
+  });
+  const cancelUseCase = new CancelStandardFocusUseCase({
+    clock: dependencies.clock,
+    coordinator: dependencies.coordinator,
+    sessions: dependencies.sessions,
+    transaction: dependencies.transaction,
+  });
+  const result = new StandardFocusResultController(
+    new LoadStandardFocusCancelledResultUseCase({ sessions: dependencies.sessions }),
+  );
+  const cancel = new StandardFocusCancelController({
+    cancel: async (sessionId) => {
+      const allowed = dependencies.readiness.run(() => cancelUseCase.execute(sessionId));
+      return allowed.ok ? allowed.value : allowed;
+    },
+    refreshPet: () => dependencies.petCompanion.refresh(),
   });
   const start = async (
     configuration: Parameters<StartStandardFocusUseCase['execute']>[0],
@@ -88,9 +116,13 @@ export const createStandardFocusSlice = (
   return {
     setup,
     session,
+    cancel,
+    result,
     dispose: () => {
       setup.dispose();
       session.dispose();
+      cancel.dispose();
+      result.dispose();
     },
   };
 };

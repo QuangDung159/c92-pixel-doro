@@ -15,8 +15,8 @@ import {
   usePetVisualProjection,
 } from '@/presentation/providers/mobile-application-context';
 import {
+  useStandardFocusSessionActions,
   useStandardFocusSessionProjection,
-  useStandardFocusSessionRefresh,
 } from '@/presentation/providers/standard-focus-hooks';
 import { useSessionCancelBack } from '../use-session-cancel-back';
 import { PetRouteVisibility } from '../pet-route-visibility';
@@ -36,7 +36,11 @@ export default function FocusSessionRoute() {
   const trial = useOnboardingTrialRunningProjection();
   const completion = useOnboardingTrialCompletionProjection();
   const standardFocus = useStandardFocusSessionProjection();
-  const refreshStandardFocus = useStandardFocusSessionRefresh();
+  const {
+    activate: activateStandardFocus,
+    deactivate: deactivateStandardFocus,
+    refresh: refreshStandardFocus,
+  } = useStandardFocusSessionActions();
   const { retry: retryCompletion } = useOnboardingTrialCompletionActions();
   const {
     activate: activateTrial,
@@ -46,9 +50,16 @@ export default function FocusSessionRoute() {
   useFocusEffect(
     useCallback(() => {
       activateTrial();
+      activateStandardFocus();
       void Promise.all([refreshPet(), refreshStandardFocus()]);
-      return deactivateTrial;
-    }, [activateTrial, deactivateTrial, refreshPet, refreshStandardFocus]),
+      return () => {
+        deactivateTrial();
+        deactivateStandardFocus();
+      };
+    }, [
+      activateStandardFocus, activateTrial, deactivateStandardFocus,
+      deactivateTrial, refreshPet, refreshStandardFocus,
+    ]),
   );
 
   useSessionCancelBack(() => setCancelRequestToken((token) => token + 1));
@@ -147,6 +158,7 @@ export default function FocusSessionRoute() {
   if (branch === 'standard' && standardFocus.status === 'ready') {
     return (
       <StandardFocusStartedBranch
+        cancelRequestToken={cancelRequestToken}
         onDismissPetFeedbackError={dismissPetFeedbackError}
         onRetryPet={() => void refreshPet()}
         pet={pet}

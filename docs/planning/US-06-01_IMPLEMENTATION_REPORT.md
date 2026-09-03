@@ -1,16 +1,17 @@
 ---
 document_id: PIXELDORO_US_06_01_IMPLEMENTATION_REPORT
 title: PixelDoro US-06-01 — Production Standard Focus Start Implementation Report
-version: 0.1.2
-status: IMPLEMENTED_AUTOMATED_VERIFIED_AWAITING_OWNER_ACCEPTANCE
+version: 0.1.3
+status: DONE_OWNER_ACCEPTED_QUICK_UI
 story: US-06-01
 date: 2026-09-03
 owner: Dũng Lư
 branch: feats/epic-06
 implementation_start_sha: aa7f561c2eb8bca8302a1f6a072665819d653dbe
-implementation_candidate: UNCOMMITTED_WORKTREE_ON_aa7f561c2eb8bca8302a1f6a072665819d653dbe
-exact_implementation_sha: PENDING_COMMIT
-manual_device_status: NOT_RUN
+implementation_candidate: COMMITTED
+exact_implementation_sha: 68f2c54d3630817385b320622476c55c67caea13
+manual_device_status: OWNER_QUICK_UI_SMOKE_REPORTED
+owner_acceptance_status: ACCEPTED_TO_OPEN_US_06_02_PLANNING
 formal_tester_status: DEFERRED_TO_LATER_PHASE
 language: vi
 ---
@@ -33,8 +34,10 @@ US-06-01 đã được triển khai trên working tree theo `US0601-CONFIRM-01`�
 - Production trial vẫn ưu tiên; prototype chỉ fallback sau khi cả hai durable reader xác nhận
   `missing`, không flash fake UI trong lúc loading/error.
 
-Candidate chưa có commit nên chưa thể ghi exact implementation SHA. Story chưa owner-accepted và
-`US-06-02` chưa được mở.
+Candidate đã được commit tại `68f2c54d3630817385b320622476c55c67caea13`. Owner báo cáo đã
+test nhanh UI và yêu cầu tiến hành implementation planning cho `US-06-02`; đây là acceptance đủ để
+đóng gate Story 01 và mở planning Story 02. Báo cáo không suy diễn quick smoke thành full manual
+matrix; formal tester vẫn được ghi riêng là deferred.
 
 ## 2. Implemented architecture
 
@@ -124,15 +127,21 @@ Final working-tree candidate gate sau code và report edit:
 - Prototype Running chỉ còn fallback cho confirmed no-durable review state.
 - Mọi production UI source file mới/thay đổi đều dưới hard limit `300` dòng.
 
-## 7. Manual / Development Build evidence — not run
+## 7. Manual / Development Build evidence — owner quick smoke reported
 
 Guide đầy đủ:
 
 `apps/mobile/test/device/standard-focus-start-smoke.md`
 
-Các evidence chưa được chạy/cung cấp:
+Evidence đã xác minh/được owner báo cáo:
 
-- [ ] Exact committed implementation SHA, platform, device/simulator, OS và app/build version.
+- [x] Exact committed implementation SHA:
+  `68f2c54d3630817385b320622476c55c67caea13`.
+- [x] Owner báo cáo đã test nhanh UI và chủ động mở planning `US-06-02` ngày 2026-09-03.
+
+Các case chi tiết chưa có evidence riêng nên vẫn để mở:
+
+- [ ] Platform, device/simulator, OS và app/build version được ghi thành evidence có cấu trúc.
 - [ ] Default Setup, bounds/steps, all modes/tags và fresh-entry reset trên device.
 - [ ] Rapid double tap chỉ tạo một durable row và chỉ navigate sau commit.
 - [ ] Write failure giữ draft; Retry commit đúng một row.
@@ -142,13 +151,14 @@ Các evidence chưa được chạy/cung cấp:
 - [ ] Screenshots/video và sanitized durable before/after facts.
 - [ ] Dev-only reset confirmation xóa local data và quay lại onboarding; production build không có CTA.
 
-Không manual/device box nào được báo cáo là pass trong lượt này. Formal tester vẫn
-`DEFERRED_TO_LATER_PHASE`.
+Không checkbox chi tiết nào ở trên được tự đánh dấu pass chỉ từ câu xác nhận quick UI. Formal tester
+vẫn `DEFERRED_TO_LATER_PHASE`.
 
 ## 8. Remaining gates and transferred scope
 
-- Cần commit candidate để có exact implementation SHA rồi chạy/recount final quality trên SHA đó.
-- Owner review/acceptance quyết định đóng US-06-01 và có mở planning US-06-02 hay không.
+- US-06-01 đã có exact implementation SHA và được owner chấp nhận ở mức quick UI để đóng gate/mở
+  planning US-06-02.
+- Full manual matrix và formal tester vẫn là deferred evidence; chúng không bị ghi giả là pass.
 - Countdown, background/foreground/relaunch reconciliation semantics, deadline và Cancel thuộc
   `US-06-02`; current screen chỉ là committed-start handoff trung thực.
 - Strict evidence/grace thuộc `US-06-03`; completion/reward/Result thuộc `US-06-04`; notification/
@@ -169,13 +179,14 @@ Không manual/device box nào được báo cáo là pass trong lượt này. Fo
 - Prototype import count trong production Setup/committed handoff files: `0`.
 - Largest changed/new Focus UI source: Session route `166` lines, dưới hard limit `300`.
 - Branch/upstream: `feats/epic-06` / `origin/feats/epic-06`.
-- Candidate vẫn là uncommitted working tree trên start SHA `aa7f561…`; exact implementation SHA vẫn
-  `PENDING_COMMIT`, vì user chưa yêu cầu tạo commit.
+- Exact implementation SHA là `68f2c54d3630817385b320622476c55c67caea13`; working tree sạch khi
+  mở planning US-06-02.
 
 ## 10. Change log
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.1.3 | 2026-09-03 | Codex | Recorded exact implementation SHA and owner-reported quick UI acceptance that closes Story 01's progression gate and opens US-06-02 planning; detailed manual/formal evidence remains truthful and deferred. |
 | 0.1.2 | 2026-09-03 | Codex | Added owner-approved Development Build reset CTA through the existing confirmed local-data reset, with production gating and real SQLite integration coverage. |
 | 0.1.1 | 2026-09-03 | Codex | Moved Focus Session arbitration helper/test outside the Expo Router route tree after device bundling exposed Vitest/Vite inclusion; verified a clean iOS export bundle. |
 | 0.1.0 | 2026-09-03 | Codex | Recorded implemented working-tree candidate, architecture, automated/SQLite evidence, scope audit and truthful pending exact-SHA/manual/owner gates. |

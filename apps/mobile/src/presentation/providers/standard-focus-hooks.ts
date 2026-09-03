@@ -1,6 +1,8 @@
 import { useSyncExternalStore } from 'react';
 
 import type {
+  StandardFocusCancelProjection,
+  StandardFocusResultProjection,
   StandardFocusSessionProjection,
   StandardFocusSetupProjection,
 } from '@/application';
@@ -37,6 +39,41 @@ export const useStandardFocusSessionProjection = (): StandardFocusSessionProject
 
 export const useStandardFocusSessionRefresh = (): (() => Promise<void>) =>
   useMobileApplication().standardFocusSession.refresh;
+
+export const useStandardFocusSessionActions = () => {
+  const { standardFocusSession } = useMobileApplication();
+  return {
+    activate: standardFocusSession.activate,
+    deactivate: standardFocusSession.deactivate,
+    refresh: standardFocusSession.refresh,
+  };
+};
+
+export const useStandardFocusCancelProjection = (): StandardFocusCancelProjection => {
+  const { standardFocusCancel } = useMobileApplication();
+  return useSyncExternalStore(
+    standardFocusCancel.subscribe,
+    standardFocusCancel.getSnapshot,
+    standardFocusCancel.getSnapshot,
+  );
+};
+
+export const useStandardFocusCancelActions = () => {
+  const { standardFocusCancel } = useMobileApplication();
+  return { cancel: standardFocusCancel.cancel, reset: standardFocusCancel.reset };
+};
+
+export const useStandardFocusResultProjection = (): StandardFocusResultProjection => {
+  const { standardFocusResult } = useMobileApplication();
+  return useSyncExternalStore(
+    standardFocusResult.subscribe,
+    standardFocusResult.getSnapshot,
+    standardFocusResult.getSnapshot,
+  );
+};
+
+export const useStandardFocusResultRefresh = () =>
+  useMobileApplication().standardFocusResult.refresh;
 
 export const useStandardFocusReviewReset = () => {
   const application = useMobileApplication();

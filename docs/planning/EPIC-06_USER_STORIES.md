@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_EPIC_06_USER_STORIES
 title: PixelDoro EPIC-06 — Standard Focus User Stories
-version: 0.3.0
-status: US_06_01_IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE
+version: 0.4.0
+status: US_06_02_IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE
 date: 2026-09-03
 owner: Dũng Lư
 reviewed_by: Dũng Lư
@@ -13,7 +13,7 @@ owner_review_sha: aa7f561c2eb8bca8302a1f6a072665819d653dbe
 upstream: origin/feats/epic-06
 epic: EPIC-06
 epic_state: IN_PROGRESS
-implementation_state: US_06_01_AUTOMATED_VERIFIED_OWNER_REVIEW
+implementation_state: US_06_01_DONE_US_06_02_AUTOMATED_VERIFIED_OWNER_REVIEW
 formal_tester_status: DEFERRED_TO_LATER_PHASE
 language: vi
 authority: PLANNING
@@ -61,8 +61,12 @@ Nếu nội dung phía dưới mâu thuẫn authority cao hơn, authority cao h�
 sửa trước khi implementation tiếp tục. Owner Dũng Lư đã review và duyệt Option A cho toàn bộ
 confirmation ở mục 12 ngày 2026-09-03, đồng thời cho phép tạo implementation plan riêng cho
 `US-06-01`. Owner sau đó duyệt Option A cho toàn bộ implementation confirmations và yêu cầu triển
-khai code. Working-tree candidate hiện đã qua automated/SQLite/quality gates; exact implementation
-SHA, manual/device evidence và owner acceptance vẫn còn mở.
+khai code. US-06-01 hiện có exact implementation SHA
+`68f2c54d3630817385b320622476c55c67caea13`; owner đã báo cáo quick UI smoke và yêu cầu mở
+implementation planning cho US-06-02. Full manual matrix/formal tester không bị suy diễn là pass và
+vẫn được giữ deferred. Owner đã duyệt `US0602-CONFIRM-01`→`10` Option A; US-06-02 production
+candidate hiện đã automated/SQLite/bundle verified, còn exact implementation SHA, owner quick UI và
+owner acceptance.
 
 ## 1. Kết luận audit baseline
 
@@ -1048,7 +1052,9 @@ future scope untouched; formal tester remains deferred if not actually executed.
   DoR/DoD.
 - [x] Common Component Reuse Matrix và line-count guardrail được lập.
 - [x] Owner confirmation register được duyệt Option A ngày 2026-09-03.
-- [x] US-06-01 production working-tree candidate đã được triển khai và automated-verified.
+- [x] US-06-01 production implementation đã có exact SHA, automated verification và owner quick UI
+  acceptance để mở Story 02 planning.
+- [x] US-06-02 plan đã được owner duyệt và production candidate đã automated/SQLite/bundle verified.
 - [ ] Formal tester execution hoàn tất.
 
 Retained limitations:
@@ -1058,16 +1064,19 @@ Retained limitations:
 3. `OPEN-006` contribution colors và `OPEN-009` Pet naming vẫn mở, không block EPIC-06.
 4. Wall-clock/device lifecycle limitation giữ đúng approved specifications.
 5. Prototype là UX evidence, không phải production timer/session/reward evidence.
-6. Owner review đã hoàn tất; chỉ `US-06-01` được mở cho implementation planning. Production code
-   vẫn chờ approval riêng của implementation plan.
+6. US-06-01 đã đóng progression gate. US-06-02 candidate còn chờ commit/exact SHA, owner quick UI và
+   owner acceptance; US-06-03 chưa được mở.
 
 ## 15. Change log
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.4.0 | 2026-09-03 | Codex | Recorded owner approval and US-06-02 implemented working-tree candidate with automated/SQLite/bundle verification; exact SHA, manual UI and owner acceptance remain pending. |
+| 0.3.1 | 2026-09-03 | Codex | Recorded US-06-01 exact SHA and owner quick-UI acceptance; opened owner-gated US-06-02 planning while keeping detailed manual/formal evidence deferred. |
 | 0.3.0 | 2026-09-03 | Codex | Recorded US-06-01 working-tree implementation and automated verification; exact SHA, manual/device evidence and owner acceptance remain pending. |
 | 0.2.0 | 2026-09-03 | Codex | Recorded owner approval of `US0600-CONFIRM-01`→`10` as Option A and opened owner-gated implementation planning for `US-06-01`; production implementation remains not started. |
 | 0.1.0 | 2026-09-03 | Codex | Created the EPIC-06 Story plan and owner confirmation register. |
 
-**EPIC-06 is in progress. US-06-01 awaits exact-SHA review, manual/device disposition and owner
-acceptance; US-06-02 has not started.**
+**EPIC-06 is in progress. US-06-01 is owner-accepted at exact SHA
+`68f2c54d3630817385b320622476c55c67caea13`; US-06-02 is implemented and automated-verified on an
+uncommitted candidate, awaiting exact SHA, owner quick UI and acceptance.**

@@ -47,3 +47,7 @@ export {
   type StandardFocusConfigurationInput,
   type WorkTag,
 } from './focus/standard-focus-configuration';
+export {
+  projectRemainingTime,
+  type RemainingTimeProjection,
+} from './session/remaining-time.projection';

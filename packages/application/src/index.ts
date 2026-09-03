@@ -89,6 +89,20 @@ export {
   type StandardFocusRecordInput,
 } from './standard-focus/standard-focus-record';
 export {
+  CancelStandardFocusUseCase,
+  type CancelStandardFocusDependencies,
+  type CancelStandardFocusError,
+  type CancelStandardFocusErrorCode,
+  type CancelStandardFocusOutcome,
+} from './standard-focus/cancel-standard-focus.use-case';
+export {
+  LoadStandardFocusCancelledResultUseCase,
+  type LoadStandardFocusCancelledResultDependencies,
+  type LoadStandardFocusCancelledResultError,
+  type LoadStandardFocusCancelledResultOutcome,
+  type StandardFocusCancelledResult,
+} from './standard-focus/load-standard-focus-cancelled-result.use-case';
+export {
   StartStandardFocusUseCase,
   type StartStandardFocusDependencies,
   type StartStandardFocusError,
@@ -171,4 +185,6 @@ export {
   STANDARD_FOCUS_DURATION_STEP_MINUTES,
   STANDARD_FOCUS_MAX_DURATION_MINUTES,
   STANDARD_FOCUS_MIN_DURATION_MINUTES,
+  projectRemainingTime,
+  type RemainingTimeProjection,
 } from '@pixeldoro/domain';

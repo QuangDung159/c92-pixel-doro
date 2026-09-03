@@ -5,6 +5,17 @@ export {
   type StandardFocusSessionProjection,
 } from './standard-focus-session.controller';
 export {
+  StandardFocusCancelController,
+  type StandardFocusCancelControllerDependencies,
+  type StandardFocusCancelErrorCode,
+  type StandardFocusCancelProjection,
+  type StandardFocusCancelResult,
+} from './standard-focus-cancel.controller';
+export {
+  StandardFocusResultController,
+  type StandardFocusResultProjection,
+} from './standard-focus-result.controller';
+export {
   DEFAULT_STANDARD_FOCUS_CONFIGURATION,
   StandardFocusSetupController,
   type StandardFocusSetupConfiguration,

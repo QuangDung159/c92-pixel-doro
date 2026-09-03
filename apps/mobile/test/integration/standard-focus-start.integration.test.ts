@@ -8,6 +8,8 @@ import {
 } from 'node:sqlite';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
+  CancelStandardFocusUseCase,
+  LoadStandardFocusCancelledResultUseCase,
   SessionCommandCoordinator,
   StartStandardFocusUseCase,
 } from '@pixeldoro/application';
@@ -112,6 +114,60 @@ afterEach(async () => {
 });
 
 describe('Standard Focus Start SQLite integration', () => {
+  it('commits Relax cancel, preserves zero reward and reloads the exact Result', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'pixeldoro-us0602-cancel-'));
+    temporaryDirectories.push(directory);
+    const driver = new HostDriver(directory);
+    const databaseName = 'standard-focus-cancel.db';
+    const first = await openDatabase(driver, databaseName);
+    const coordinator = new SessionCommandCoordinator();
+    const start = new StartStandardFocusUseCase({
+      calendar: { snapshot: () => ({
+        ok: true, value: { localDate: '2026-09-03', utcOffsetMinutes: 420 },
+      }) },
+      clock: { nowMs: () => now }, coordinator,
+      id: { nextId: () => 'relax-1' }, sessions: first.graph.sessions,
+      transaction: first.transaction,
+    });
+    expect(await start.execute({
+      durationMinutes: 15, mode: 'relax', workTag: 'coding',
+    })).toMatchObject({ ok: true, value: { session: { id: 'relax-1' } } });
+    const profileBefore = await first.graph.profile.find();
+    const cancel = new CancelStandardFocusUseCase({
+      clock: { nowMs: () => now + 1_000 }, coordinator,
+      sessions: first.graph.sessions, transaction: first.transaction,
+    });
+    expect(await cancel.execute('relax-1')).toEqual({
+      ok: true, value: { outcome: 'cancelled', sessionId: 'relax-1' },
+    });
+    expect(await first.graph.sessions.findActive()).toEqual({ ok: true, value: null });
+    expect(await first.graph.rewards.findBySessionId('relax-1')).toEqual({ ok: true, value: null });
+    expect(await first.graph.profile.find()).toEqual(profileBefore);
+    expect(await cancel.execute('relax-1')).toEqual({
+      ok: true, value: { outcome: 'already_cancelled', sessionId: 'relax-1' },
+    });
+    await first.owner.close();
+
+    const reopened = await openDatabase(driver, databaseName);
+    const loadResult = new LoadStandardFocusCancelledResultUseCase({
+      sessions: reopened.graph.sessions,
+    });
+    expect(await loadResult.execute('relax-1')).toMatchObject({
+      ok: true,
+      value: {
+        outcome: 'ready',
+        result: {
+          sessionId: 'relax-1', mode: 'relax', workTag: 'coding',
+          durationMinutes: 15, resolvedAt: now + 1_000, xpEarned: 0, coinsEarned: 0,
+        },
+      },
+    });
+    expect(await loadResult.execute('other')).toEqual({
+      ok: true, value: { outcome: 'missing' },
+    });
+    await reopened.owner.close();
+  });
+
   it('commits once, survives reopen, restores Session and routes cold entry', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'pixeldoro-us0601-'));
     temporaryDirectories.push(directory);
@@ -162,10 +218,15 @@ describe('Standard Focus Start SQLite integration', () => {
     await first.owner.close();
 
     const reopened = await openDatabase(driver, databaseName);
-    const session = new StandardFocusSessionController({ sessions: reopened.graph.sessions });
+    const session = new StandardFocusSessionController({
+      clock: { nowMs: () => now },
+      scheduler: { schedule: () => () => undefined },
+      sessions: reopened.graph.sessions,
+    });
     await session.refresh();
     expect(session.getSnapshot()).toEqual({
       status: 'ready',
+      phase: 'strict_handoff',
       sessionId: 'focus-1',
       durationMinutes: 25,
       mode: 'strict',

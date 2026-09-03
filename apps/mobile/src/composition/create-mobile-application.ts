@@ -70,6 +70,7 @@ import { createFirstUseEntryReviewFixture } from './review/first-use-entry-revie
 import { createOnboardingTrialReviewFixture } from './review/onboarding-trial-review-fixture';
 import { createStandardFocusStartReviewFixture } from './review/standard-focus-start-review-fixture';
 import { OnboardingTrialStartupReconciliationAdapter } from './startup/onboarding-trial-startup-reconciliation.adapter';
+import { ActiveSessionStartupReconciliationAdapter } from './startup/active-session-startup-reconciliation.adapter';
 import { createStandardFocusSlice } from './standard-focus/create-standard-focus-slice';
 
 const PIXELDORO_DATABASE_NAME = 'pixeldoro.db';
@@ -170,10 +171,11 @@ export const createMobileApplication = (
     completeOnboardingTrialUseCase,
     onboardingTrialResult,
   );
+  const sessionTickScheduler = new DeviceTimeoutScheduler();
   const onboardingTrialRunning = new OnboardingTrialRunningController({
     appInitiallyVisible: appLifecycle.getCurrentState() === 'active',
     clock,
-    scheduler: new DeviceTimeoutScheduler(),
+    scheduler: sessionTickScheduler,
     sessions: onboardingTrialSessions,
     onDeadlineReached: (sessionId) => {
       void onboardingTrialCompletion.reconcile(sessionId);
@@ -220,14 +222,17 @@ export const createMobileApplication = (
     readiness,
     startupReconciliation:
       options.startupReconciliation ??
-      new OnboardingTrialStartupReconciliationAdapter(
-        onboardingTrialCompletion,
-        onboardingTrialReviewFixture?.prepareForStartup === undefined
-          ? undefined
-          : () => onboardingTrialReviewFixture.prepareForStartup!(
-              startOnboardingTrialUseCase,
-              completeOnboardingTrialUseCase,
-            ),
+      new ActiveSessionStartupReconciliationAdapter(
+        new OnboardingTrialStartupReconciliationAdapter(
+          onboardingTrialCompletion,
+          onboardingTrialReviewFixture?.prepareForStartup === undefined
+            ? undefined
+            : () => onboardingTrialReviewFixture.prepareForStartup!(
+                startOnboardingTrialUseCase,
+                completeOnboardingTrialUseCase,
+              ),
+        ),
+        persistence.sessions,
       ),
   });
   const onboardingAnalytics =
@@ -278,15 +283,18 @@ export const createMobileApplication = (
   const standardFocusReviewFixture = createStandardFocusStartReviewFixture(
     process.env.EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE,
     reviewFixturesEnabled,
+    clock,
     persistence.sessions,
   );
   const standardFocus = createStandardFocusSlice({
+    appInitiallyVisible: appLifecycle.getCurrentState() === 'active',
     calendar: localCalendar,
-    clock,
+    clock: standardFocusReviewFixture?.clock ?? clock,
     coordinator: sessionCommands,
     id,
     petCompanion,
     readiness,
+    scheduler: sessionTickScheduler,
     sessions: standardFocusReviewFixture?.sessions ?? persistence.sessions,
     transaction,
   });
@@ -383,6 +391,7 @@ export const createMobileApplication = (
     unsubscribePetLifecycle ??= appLifecycle.subscribe((state) => {
       appVisibility.publish(state);
       onboardingTrialRunning.setAppVisible(state === 'active');
+      standardFocus.session.setAppVisible(state === 'active');
       if (state === 'background') {
         petTerminalFeedback.discardActive();
         return;
@@ -574,6 +583,8 @@ export const createMobileApplication = (
     firstUseEntry,
     standardFocusSetup: standardFocus.setup,
     standardFocusSession: standardFocus.session,
+    standardFocusCancel: standardFocus.cancel,
+    standardFocusResult: standardFocus.result,
     standardFocusReviewResetAvailable: reviewFixturesEnabled,
     onboardingTrialRunning,
     onboardingTrialCompletion,

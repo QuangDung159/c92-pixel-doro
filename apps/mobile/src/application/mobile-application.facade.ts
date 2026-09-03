@@ -18,6 +18,8 @@ import type {
 } from './readiness/readiness-gate';
 import type { AppVisibilityController } from './visibility/app-visibility.controller';
 import type {
+  StandardFocusCancelController,
+  StandardFocusResultController,
   StandardFocusSessionController,
   StandardFocusSetupController,
 } from './standard-focus';
@@ -37,6 +39,8 @@ export interface MobileApplicationFacade {
   readonly firstUseEntry: FirstUseEntryController;
   readonly standardFocusSetup: StandardFocusSetupController;
   readonly standardFocusSession: StandardFocusSessionController;
+  readonly standardFocusCancel: StandardFocusCancelController;
+  readonly standardFocusResult: StandardFocusResultController;
   readonly standardFocusReviewResetAvailable: boolean;
   readonly onboardingTrialRunning: OnboardingTrialRunningController;
   readonly onboardingTrialCompletion: OnboardingTrialCompletionController;

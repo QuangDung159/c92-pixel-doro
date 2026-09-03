@@ -18,6 +18,7 @@ describe('createStandardFocusSlice', () => {
     readiness.open();
     const petRefresh = vi.fn(async () => undefined);
     const slice = createStandardFocusSlice({
+      appInitiallyVisible: true,
       calendar: { snapshot: () => ({
         ok: true, value: { localDate: '2026-09-03', utcOffsetMinutes: 420 },
       }) },
@@ -26,6 +27,7 @@ describe('createStandardFocusSlice', () => {
       id: { nextId: () => 'focus-1' },
       petCompanion: { refresh: petRefresh } as never,
       readiness,
+      scheduler: { schedule: vi.fn(() => vi.fn()) },
       sessions: {
         findActive: async () => ({ ok: true, value: active }),
         findActiveInTransaction: async () => ({ ok: true, value: active }),
@@ -52,10 +54,12 @@ describe('createStandardFocusSlice', () => {
   it('does not write while core commands are not ready', async () => {
     const insert = vi.fn();
     const slice = createStandardFocusSlice({
+      appInitiallyVisible: true,
       calendar: { snapshot: vi.fn() }, clock: { nowMs: vi.fn() },
       coordinator: new SessionCommandCoordinator(), id: { nextId: vi.fn() },
       petCompanion: { refresh: vi.fn() } as never,
       readiness: new ReadinessGate(),
+      scheduler: { schedule: vi.fn(() => vi.fn()) },
       sessions: { insertRunningInTransaction: insert } as never,
       transaction: { execute: vi.fn() },
     });

@@ -1,5 +1,6 @@
 import {
   persistenceError,
+  type ClockPort,
   type RunningSessionRecord,
   type SessionRepository,
 } from '@pixeldoro/application';
@@ -9,10 +10,14 @@ export type StandardFocusStartReviewScenario =
   | 'standard_start_active_conflict'
   | 'standard_start_write_failure_once'
   | 'standard_start_committed_relaunch'
-  | 'standard_start_read_failure';
+  | 'standard_start_read_failure'
+  | 'standard_running_fast_clock'
+  | 'standard_deadline_pending'
+  | 'standard_cancel_write_failure_once';
 
 export interface StandardFocusStartReviewFixture {
   readonly scenario: StandardFocusStartReviewScenario;
+  readonly clock: ClockPort;
   readonly sessions: SessionRepository;
   readonly prepareCommittedRelaunch: boolean;
 }
@@ -23,6 +28,9 @@ const scenarios = new Set<StandardFocusStartReviewScenario>([
   'standard_start_write_failure_once',
   'standard_start_committed_relaunch',
   'standard_start_read_failure',
+  'standard_running_fast_clock',
+  'standard_deadline_pending',
+  'standard_cancel_write_failure_once',
 ]);
 
 const conflictRecord: RunningSessionRecord = Object.freeze({
@@ -55,6 +63,7 @@ const decorateSessions = (
   scenario: StandardFocusStartReviewScenario,
 ): SessionRepository => {
   let failWrite = scenario === 'standard_start_write_failure_once';
+  let failCancel = scenario === 'standard_cancel_write_failure_once';
   return {
     findById: (id) => delegate.findById(id),
     findActive: () => scenario === 'standard_start_read_failure'
@@ -81,19 +90,47 @@ const decorateSessions = (
     },
     recordBackgroundedAtInTransaction: (scope, input) =>
       delegate.recordBackgroundedAtInTransaction(scope, input),
-    transitionFromRunningInTransaction: (scope, input) =>
-      delegate.transitionFromRunningInTransaction(scope, input),
+    transitionFromRunningInTransaction: (scope, input) => {
+      if (failCancel && input.status === 'cancelled') {
+        failCancel = false;
+        return Promise.resolve({
+          ok: false,
+          error: persistenceError('PERSISTENCE_WRITE_FAILED', 'sessions'),
+        });
+      }
+      return delegate.transitionFromRunningInTransaction(scope, input);
+    },
   };
 };
+
+class AcceleratedStandardReviewClock implements ClockPort {
+  private readonly realAnchor: number;
+
+  constructor(private readonly base: ClockPort, private readonly factor: number) {
+    this.realAnchor = base.nowMs();
+  }
+
+  nowMs(): number {
+    return Math.floor(
+      this.realAnchor + (this.base.nowMs() - this.realAnchor) * this.factor,
+    );
+  }
+}
 
 export const createStandardFocusStartReviewFixture = (
   value: string | undefined,
   enabled: boolean,
+  baseClock: ClockPort,
   sessions: SessionRepository,
 ): StandardFocusStartReviewFixture | undefined => {
   if (!enabled || value === undefined || !isScenario(value)) return undefined;
   return {
     scenario: value,
+    clock: value === 'standard_running_fast_clock'
+      ? new AcceleratedStandardReviewClock(baseClock, 30)
+      : value === 'standard_deadline_pending'
+        ? new AcceleratedStandardReviewClock(baseClock, 1_000)
+        : baseClock,
     sessions: decorateSessions(sessions, value),
     prepareCommittedRelaunch: value === 'standard_start_committed_relaunch',
   };

@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_06_01_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-06-01 Implementation Plan
-version: 0.3.0
-status: IMPLEMENTED_AUTOMATED_VERIFIED_AWAITING_OWNER_REVIEW
-implementation_status: AWAITING_OWNER_ACCEPTANCE
+version: 0.3.1
+status: DONE_OWNER_ACCEPTED_QUICK_UI
+implementation_status: DONE_OWNER_ACCEPTED
 date: 2026-09-03
 owner: Dũng Lư
 reviewer: Dũng Lư
@@ -14,6 +14,9 @@ language: vi
 branch: feats/epic-06
 planning_baseline_sha: aa7f561c2eb8bca8302a1f6a072665819d653dbe
 implementation_start_sha: aa7f561c2eb8bca8302a1f6a072665819d653dbe
+exact_implementation_sha: 68f2c54d3630817385b320622476c55c67caea13
+manual_device_status: OWNER_QUICK_UI_SMOKE_REPORTED
+formal_tester_status: DEFERRED_TO_LATER_PHASE
 scope:
   - mobile_mvp
   - epic_06
@@ -61,8 +64,13 @@ giữ nguyên draft, không điều hướng giả và không tạo partial sess
 **Blocks:** `US-06-02`. Story tiếp theo không được active trước khi US-06-01 có exact-SHA evidence,
 manual status trung thực và owner acceptance.
 
-**Planning status:** `OWNER_APPROVED`.
-**Implementation status:** `IMPLEMENTED_AUTOMATED_VERIFIED_AWAITING_OWNER_REVIEW`.
+**Block disposition ngày 2026-09-03:** satisfied. Exact SHA đã có; owner quick UI acceptance mở
+planning US-06-02; full manual/formal evidence vẫn được giữ deferred trung thực.
+
+**Planning status:** `DONE_OWNER_ACCEPTED_QUICK_UI`.
+**Implementation status:** `DONE_OWNER_ACCEPTED`; exact implementation SHA
+`68f2c54d3630817385b320622476c55c67caea13`. Owner quick UI smoke đủ để mở planning Story 02;
+full manual matrix/formal tester vẫn được ghi riêng là deferred.
 
 ### 0.1. Readiness gate tại thời điểm tạo plan
 
@@ -1204,9 +1212,10 @@ proceed within the locked scope of this plan.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.3.1 | 2026-09-03 | Codex | Recorded exact implementation SHA and owner quick-UI acceptance; closed the US-06-01 progression gate and opened US-06-02 planning without overstating detailed manual/formal evidence. |
 | 0.3.0 | 2026-09-03 | Codex | Recorded implemented working-tree candidate, automated/SQLite/quality evidence and remaining exact-SHA, manual/device and owner-acceptance gates. |
 | 0.2.0 | 2026-09-03 | Codex | Recorded owner approval of `US0601-CONFIRM-01`→`08` as Option A and implementation-start SHA; implementation moved to `IN_PROGRESS`. |
 | 0.1.0 | 2026-09-03 | Codex | Created owner-gated implementation plan for production Standard Focus Setup/Start, durable handoff, minimal relaunch routing, common component split, fixtures and evidence; production implementation remains not started. |
 
-**US-06-01 is implemented and automated-verified; exact implementation SHA, manual/device evidence
-and owner acceptance remain pending.**
+**US-06-01 is implemented at exact SHA `68f2c54d3630817385b320622476c55c67caea13`, automated-verified
+and owner-accepted from quick UI review. Detailed manual matrix and formal tester remain deferred.**

@@ -23,6 +23,7 @@ const onboardingTrialCompletionFlowPath = `${deviceDirectory}onboarding-trial-co
 const onboardingTrialHandoffFlowPath = `${deviceDirectory}onboarding-trial-handoff-smoke.md`;
 const epic05ExitFlowPath = `${deviceDirectory}epic-05-exit-smoke.md`;
 const standardFocusStartFlowPath = `${deviceDirectory}standard-focus-start-smoke.md`;
+const standardFocusRelaxFlowPath = `${deviceDirectory}standard-focus-relax-running-smoke.md`;
 
 await access(flowPath);
 await access(sqliteFlowPath);
@@ -44,6 +45,7 @@ await access(onboardingTrialCompletionFlowPath);
 await access(onboardingTrialHandoffFlowPath);
 await access(epic05ExitFlowPath);
 await access(standardFocusStartFlowPath);
+await access(standardFocusRelaxFlowPath);
 const flow = await readFile(flowPath, 'utf8');
 const sqliteFlow = await readFile(sqliteFlowPath, 'utf8');
 const schemaFlow = await readFile(schemaFlowPath, 'utf8');
@@ -79,6 +81,24 @@ const onboardingTrialHandoffFlow = await readFile(
 );
 const epic05ExitFlow = await readFile(epic05ExitFlowPath, 'utf8');
 const standardFocusStartFlow = await readFile(standardFocusStartFlowPath, 'utf8');
+const standardFocusRelaxFlow = await readFile(standardFocusRelaxFlowPath, 'utf8');
+
+const requiredStandardFocusRelaxEvidence = [
+  'EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE=standard_running_fast_clock',
+  'EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE=standard_deadline_pending',
+  'EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE=standard_cancel_write_failure_once',
+  'status=cancelled',
+  'Reset dữ liệu test',
+  'DEFERRED_TO_LATER_PHASE',
+  '<implementation-sha>',
+  'unset EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE',
+];
+
+for (const evidence of requiredStandardFocusRelaxEvidence) {
+  if (!standardFocusRelaxFlow.includes(evidence)) {
+    throw new Error(`Standard Focus Relax device flow is missing: ${evidence}`);
+  }
+}
 
 const requiredStandardFocusStartEvidence = [
   'EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE=standard_start_success',

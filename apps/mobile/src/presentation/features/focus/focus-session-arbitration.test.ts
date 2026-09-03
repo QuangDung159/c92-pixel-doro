@@ -21,15 +21,17 @@ describe('Focus Session production arbitration', () => {
         endsAt: 2_000, remainingMs: 1_000, displaySeconds: 1,
       },
       {
-        status: 'ready', sessionId: 'focus-1', durationMinutes: 25,
+        status: 'ready', phase: 'running', sessionId: 'focus-1', durationMinutes: 25,
         mode: 'relax', workTag: 'coding', startedAt: 1_000, endsAt: 2_000,
+        remainingMs: 1_000, displaySeconds: 1,
       },
     )).toBe('trial');
     expect(decideFocusSessionBranch(
       { status: 'missing' },
       {
-        status: 'ready', sessionId: 'focus-1', durationMinutes: 25,
+        status: 'ready', phase: 'running', sessionId: 'focus-1', durationMinutes: 25,
         mode: 'relax', workTag: 'coding', startedAt: 1_000, endsAt: 2_000,
+        remainingMs: 1_000, displaySeconds: 1,
       },
     )).toBe('standard');
     expect(decideFocusSessionBranch(
