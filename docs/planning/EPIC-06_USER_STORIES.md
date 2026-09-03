@@ -1,16 +1,19 @@
 ---
 document_id: PIXELDORO_EPIC_06_USER_STORIES
 title: PixelDoro EPIC-06 — Standard Focus User Stories
-version: 0.1.0
-status: PROPOSED_OWNER_REVIEW
+version: 0.2.0
+status: OWNER_APPROVED_US_06_01_PLANNING_READY
 date: 2026-09-03
 owner: Dũng Lư
-branch: feats/epic-05
+reviewed_by: Dũng Lư
+reviewed_at: 2026-09-03
+branch: feats/epic-06
 baseline_sha: 658b708825e633916692b4e19d4086885fd50ce1
-upstream: origin/feats/epic-05
+owner_review_sha: aa7f561c2eb8bca8302a1f6a072665819d653dbe
+upstream: origin/feats/epic-06
 epic: EPIC-06
 epic_state: PLANNING_READY
-implementation_state: NOT_STARTED
+implementation_state: US_06_01_IMPLEMENTATION_PLANNING
 formal_tester_status: DEFERRED_TO_LATER_PHASE
 language: vi
 authority: PLANNING
@@ -55,8 +58,9 @@ Authority order khi triển khai hoặc review:
 6. Schema/code hiện có là implementation baseline, không được tự thay requirement.
 
 Nếu nội dung phía dưới mâu thuẫn authority cao hơn, authority cao hơn thắng và tài liệu này phải được
-sửa trước khi implementation tiếp tục. Mọi confirmation ở mục 12 đều đang `PENDING_OWNER`; không
-được suy diễn recommendation thành approval.
+sửa trước khi implementation tiếp tục. Owner Dũng Lư đã review và duyệt Option A cho toàn bộ
+confirmation ở mục 12 ngày 2026-09-03, đồng thời cho phép tạo implementation plan riêng cho
+`US-06-01`. Approval này chưa phải quyền bắt đầu production implementation.
 
 ## 1. Kết luận audit baseline
 
@@ -818,7 +822,7 @@ future scope untouched; formal tester remains deferred if not actually executed.
 | Deadline complete | running, no winning violation | `ReconcileActiveSession` | completed + receipt + profile delta atomically | cleanup, completion/reward analytics, fresh Celebrate |
 | Open/reopen Result | terminal committed facts | result query | unchanged | no replay/no grant |
 
-## 12. Owner confirmations — tất cả `PENDING_OWNER`
+## 12. Owner confirmations — `APPROVED` ngày 2026-09-03
 
 ### US0600-CONFIRM-01 — Story decomposition và order
 
@@ -827,7 +831,7 @@ future scope untouched; formal tester remains deferred if not actually executed.
 - **Trade-off:** A tạo vertical output và cô lập recovery risk; B ít Story nhưng slice lớn; C cho
   completed demo sớm hơn nhưng Result/reconcile phải sửa lại khi Strict precedence xuất hiện.
 - **Recommendation:** A. **Nếu chưa duyệt:** không mở implementation `US-06-01`.
-- [ ] Owner approved option: ______
+- [x] Owner approved option: A — 2026-09-03.
 
 ### US0600-CONFIRM-02 — Schema/no-schema decision
 
@@ -838,7 +842,7 @@ future scope untouched; formal tester remains deferred if not actually executed.
   C phù hợp chỉ khi implementation phát hiện contradiction thật.
 - **Recommendation:** A; tự động chuyển sang C nếu có evidence gap, tuyệt đối không chọn B silently.
 - **Nếu chưa duyệt:** mọi Story bị chặn khỏi schema/migration mutation.
-- [ ] Owner approved option: ______
+- [x] Owner approved option: A — 2026-09-03.
 
 ### US0600-CONFIRM-03 — Prototype retirement boundary
 
@@ -847,7 +851,7 @@ future scope untouched; formal tester remains deferred if not actually executed.
   xóa toàn bộ prototype một lượt; C giữ production fallback tới Epic exit.
 - **Trade-off:** A giảm rủi ro và không phá Break/secondary review; B gây scope creep; C dễ lẫn fake truth.
 - **Recommendation:** A. **Nếu chưa duyệt:** không đổi route authority/prototype files.
-- [ ] Owner approved option: ______
+- [x] Owner approved option: A — 2026-09-03.
 
 ### US0600-CONFIRM-04 — Common component reuse/migration plan
 
@@ -855,7 +859,7 @@ future scope untouched; formal tester remains deferred if not actually executed.
 - **Options:** A matrix/split ở mục 4; B giữ mọi component feature-local; C tạo design system lớn.
 - **Trade-off:** A reuse có consumer thật và giữ file nhỏ; B duplicate; C speculative abstraction.
 - **Recommendation:** A. **Nếu chưa duyệt:** không tạo/đổi common API.
-- [ ] Owner approved option: ______
+- [x] Owner approved option: A — 2026-09-03.
 
 ### US0600-CONFIRM-05 — Relax/Strict/cancel/relaunch ownership
 
@@ -866,7 +870,7 @@ future scope untouched; formal tester remains deferred if not actually executed.
   route/layer boundary.
 - **Recommendation:** A, giữ trial invariant bằng strategy/typed branch chứ không copy writer.
 - **Nếu chưa duyệt:** `US-06-02/03/04` không bắt đầu.
-- [ ] Owner approved option: ______
+- [x] Owner approved option: A — 2026-09-03.
 
 ### US0600-CONFIRM-06 — Result/Break boundary
 
@@ -876,7 +880,7 @@ future scope untouched; formal tester remains deferred if not actually executed.
 - **Trade-off:** A không lừa user/không tạo Break; B gây dead-end/noise; C trộn fake production truth.
 - **Recommendation:** A. Failed/cancelled luôn không có Break. **Nếu chưa duyệt:** Result exit actions
   chưa thể khóa.
-- [ ] Owner approved option: ______
+- [x] Owner approved option: A — 2026-09-03.
 
 ### US0600-CONFIRM-07 — Notification/analytics best-effort boundary
 
@@ -885,7 +889,7 @@ future scope untouched; formal tester remains deferred if not actually executed.
   đưa side effects vào core transaction.
 - **Trade-off:** A đúng authority/offline; B/C scope/risk cao và vi phạm plan.
 - **Recommendation:** A. **Nếu chưa duyệt:** chỉ triển khai core Stories, không side-effect hook.
-- [ ] Owner approved option: ______
+- [x] Owner approved option: A — 2026-09-03.
 
 ### US0600-CONFIRM-08 — Fixture, quick smoke và formal tester strategy
 
@@ -895,7 +899,7 @@ future scope untouched; formal tester remains deferred if not actually executed.
 - **Trade-off:** A deterministic và trung thực; B chậm/khó race; C không chứng minh production truth.
 - **Recommendation:** A, mọi evidence ghi SHA/device/OS/class. **Nếu chưa duyệt:** fixture/device guide
   chưa được tạo.
-- [ ] Owner approved option: ______
+- [x] Owner approved option: A — 2026-09-03.
 
 ### US0600-CONFIRM-09 — Setup initial work-tag/default behavior
 
@@ -907,7 +911,7 @@ future scope untouched; formal tester remains deferred if not actually executed.
   Standard schema/Product tag requirement.
 - **Recommendation:** A; duration `25`, mode `relax`, tag `coding`, draft không auto-persist.
 - **Nếu chưa duyệt:** Setup validation/initial view model chưa khóa.
-- [ ] Owner approved option: ______
+- [x] Owner approved option: A — 2026-09-03.
 
 ### US0600-CONFIRM-10 — Notification dependency/native gate
 
@@ -921,7 +925,7 @@ future scope untouched; formal tester remains deferred if not actually executed.
 - **Recommendation:** A; approval này chỉ cho phép lập technical plan tiếp theo, không cài package
   trong planning task hiện tại. **Nếu chưa duyệt:** `US-06-05` notification exit bị chặn, core Stories
   vẫn có thể triển khai sau các confirmation khác.
-- [ ] Owner approved option: ______
+- [x] Owner approved option: A — 2026-09-03.
 
 ## 13. Epic-level checklists
 
@@ -931,8 +935,8 @@ future scope untouched; formal tester remains deferred if not actually executed.
 - [x] Completion commit `658b708…` được xác minh.
 - [x] EPIC-01→05 owner-accepted và EPIC-06 `NOT_STARTED` được xác minh.
 - [x] Formal tester deferred và `OPEN-006/009` được giữ nguyên.
-- [ ] Owner duyệt toàn bộ confirmation cần thiết.
-- [ ] Implementation baseline SHA cho `US-06-01` được ghi sau owner review.
+- [x] Owner duyệt toàn bộ confirmation theo Option A ngày 2026-09-03.
+- [x] Owner-review SHA cho planning `US-06-01` được ghi là `aa7f561…`.
 
 ### 13.2. Code/data/UI audit checklist
 
@@ -942,20 +946,20 @@ future scope untouched; formal tester remains deferred if not actually executed.
 - [x] Audit Start/cancel/reconcile/complete/reward/Strict/notification/analytics gaps.
 - [x] Audit schema và kết luận proposed `NO SCHEMA CHANGE`.
 - [x] Audit component reuse/duplication/responsibility/line count.
-- [ ] Owner confirms audit decisions.
+- [x] Owner confirms audit decisions ngày 2026-09-03.
 
 ### 13.3. Owner confirmation checklist
 
-- [ ] `US0600-CONFIRM-01` Story order.
-- [ ] `US0600-CONFIRM-02` no-schema.
-- [ ] `US0600-CONFIRM-03` prototype retirement.
-- [ ] `US0600-CONFIRM-04` common reuse.
-- [ ] `US0600-CONFIRM-05` lifecycle ownership.
-- [ ] `US0600-CONFIRM-06` Result/Break.
-- [ ] `US0600-CONFIRM-07` side effects.
-- [ ] `US0600-CONFIRM-08` evidence strategy.
-- [ ] `US0600-CONFIRM-09` Setup defaults.
-- [ ] `US0600-CONFIRM-10` notification technical gate.
+- [x] `US0600-CONFIRM-01` Story order — Option A.
+- [x] `US0600-CONFIRM-02` no-schema — Option A.
+- [x] `US0600-CONFIRM-03` prototype retirement — Option A.
+- [x] `US0600-CONFIRM-04` common reuse — Option A.
+- [x] `US0600-CONFIRM-05` lifecycle ownership — Option A.
+- [x] `US0600-CONFIRM-06` Result/Break — Option A.
+- [x] `US0600-CONFIRM-07` side effects — Option A.
+- [x] `US0600-CONFIRM-08` evidence strategy — Option A.
+- [x] `US0600-CONFIRM-09` Setup defaults — Option A.
+- [x] `US0600-CONFIRM-10` notification technical gate — Option A; package/config vẫn cần plan riêng.
 
 ### 13.4. Per-Story acceptance checklist
 
@@ -1041,7 +1045,7 @@ future scope untouched; formal tester remains deferred if not actually executed.
 - [x] Mỗi Story có acceptance, automated checklist, executable manual guide, recovery/race/a11y và
   DoR/DoD.
 - [x] Common Component Reuse Matrix và line-count guardrail được lập.
-- [x] Owner confirmation register được lập và chưa mục nào bị đánh dấu approved.
+- [x] Owner confirmation register được duyệt Option A ngày 2026-09-03.
 - [ ] Production implementation bắt đầu.
 - [ ] Formal tester execution hoàn tất.
 
@@ -1052,6 +1056,14 @@ Retained limitations:
 3. `OPEN-006` contribution colors và `OPEN-009` Pet naming vẫn mở, không block EPIC-06.
 4. Wall-clock/device lifecycle limitation giữ đúng approved specifications.
 5. Prototype là UX evidence, không phải production timer/session/reward evidence.
-6. Tài liệu dừng tại owner review; không tạo `US-06-01_IMPLEMENTATION_PLAN.md` trước approval.
+6. Owner review đã hoàn tất; chỉ `US-06-01` được mở cho implementation planning. Production code
+   vẫn chờ approval riêng của implementation plan.
+
+## 15. Change log
+
+| Version | Date | Author | Change |
+|---|---|---|---|
+| 0.2.0 | 2026-09-03 | Codex | Recorded owner approval of `US0600-CONFIRM-01`→`10` as Option A and opened owner-gated implementation planning for `US-06-01`; production implementation remains not started. |
+| 0.1.0 | 2026-09-03 | Codex | Created the EPIC-06 Story plan and owner confirmation register. |
 
 **EPIC-06 implementation has not started.**
