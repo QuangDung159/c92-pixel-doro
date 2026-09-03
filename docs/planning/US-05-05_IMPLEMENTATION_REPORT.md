@@ -1,16 +1,18 @@
 ---
 document_id: PIXELDORO_US_05_05_IMPLEMENTATION_REPORT
 title: PixelDoro US-05-05 — First-use Integrity and Exit Evidence Implementation Report
-version: 0.1.0
-status: IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE
+version: 0.2.0
+status: DONE_OWNER_ACCEPTED
 story: US-05-05
-date: 2026-09-01
+date: 2026-09-03
 owner: Dũng Lư
 branch: feats/epic-05
 implementation_start_commit: 2080d15d5ddcce5033610490076e5ff0ae4b7019
 implementation_sha: 580f559016e192b95d3d286a61d161b3af460a1d
 formal_tester_status: DEFERRED_TO_LATER_PHASE
 automated_quality_status: PASS_82_FILES_391_TESTS
+quick_smoke_status: OWNER_REPORTED_PASS
+owner_accepted_at: 2026-09-03
 language: vi
 ---
 
@@ -32,8 +34,9 @@ US-05-05 đã được triển khai tại exact behavior SHA
 - Production trial branches không gọi prototype authority; later-epic prototype fallback vẫn được
   giữ trong hai child cô lập.
 
-Story đang `IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE`. Formal tester/device evidence vẫn
-`DEFERRED_TO_LATER_PHASE`; report không claim manual pass và không tự đóng EPIC-05.
+Owner đã xác nhận quick UI test done ngày 2026-09-03 và đóng Story `DONE_OWNER_ACCEPTED` trên exact
+implementation SHA. Formal tester/device evidence vẫn `DEFERRED_TO_LATER_PHASE`; report chỉ ghi
+owner-reported quick smoke, không claim full manual/device pass và không tự đóng EPIC-05.
 
 ## 2. Contract đã triển khai
 
@@ -71,7 +74,7 @@ fixture ownership, common primitive reuse và scoped source `≤300` lines.
 - Cả hai chỉ tồn tại trong finite allowlist sau `__DEV__` + diagnostics gate; default absent.
 - Device guide: `apps/mobile/test/device/epic-05-exit-smoke.md`.
 - Guide covers fresh/relaunch/duplicate/offline/failure/screen-reader/large-text/Reduce Motion and
-  exact evidence identity, nhưng chưa được tester thực thi.
+  exact evidence identity. Owner đã báo quick UI test done; full formal matrix chưa được cung cấp.
 
 ## 4. Automated evidence
 
@@ -104,16 +107,18 @@ Không có thay đổi schema, migration, index, package, dependency, lockfile, 
 analytics provider/network worker, Settings UI, Standard Focus behavior hoặc EPIC-06 feature.
 Existing queue/event allowlist/query semantics được reuse; không arbitrary screen analytics API.
 
-## 6. Owner gate còn lại
+## 6. Owner acceptance và gate còn lại
 
 - [x] Exact implementation SHA recorded.
 - [x] Automated/root/SQLite/static/device-harness evidence pass.
 - [x] Formal tester limitation recorded as deferred.
-- [ ] Owner reviews and accepts exact SHA `580f559016e192b95d3d286a61d161b3af460a1d`.
-- [ ] Only after that acceptance may EPIC-05/MVP status close or EPIC-06 planning/implementation open.
+- [x] Owner reports quick UI test done and accepts exact SHA
+  `580f559016e192b95d3d286a61d161b3af460a1d` on 2026-09-03.
+- [ ] EPIC-05/MVP close and EPIC-06 gate require a separate explicit owner action.
 
 ## 7. Change log
 
 | Version | Date | Author | Change |
 | --- | --- | --- | --- |
+| 0.2.0 | 2026-09-03 | Codex, recording owner acceptance | Closed US-05-05 at 580f559 after owner-reported quick UI test; retained formal tester as deferred and left EPIC-05/MVP/EPIC-06 gates unchanged. |
 | 0.1.0 | 2026-09-01 | Codex | Bound deterministic best-effort milestones, production SQLite exclusion proof, fixture/static/a11y gates and 82/391 quality to exact implementation SHA 580f559; owner acceptance and formal tester remain pending/deferred respectively. |
