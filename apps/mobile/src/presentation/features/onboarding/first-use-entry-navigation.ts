@@ -13,6 +13,7 @@ const paths: Record<FirstUseEntryDestination, FirstUseEntryPath> = {
   onboarding_intro: '/(onboarding)',
   trial_running: '/focus/session',
   trial_result: '/focus/result',
+  standard_focus_running: '/focus/session',
   home: '/(tabs)',
 };
 

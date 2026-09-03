@@ -149,6 +149,19 @@ export type {
   UpdateAnalyticsDeliveryInput,
 } from './persistence';
 export {
+  DEFAULT_STANDARD_FOCUS_CONFIGURATION,
+  StandardFocusSessionController,
+  StandardFocusSetupController,
+  type StandardFocusSessionControllerDependencies,
+  type StandardFocusSessionErrorCode,
+  type StandardFocusSessionProjection,
+  type StandardFocusSetupConfiguration,
+  type StandardFocusSetupControllerDependencies,
+  type StandardFocusSetupErrorCode,
+  type StandardFocusSetupProjection,
+  type StandardFocusSetupStartResult,
+} from './standard-focus';
+export {
   ANALYTICS_EVENT_TTL_MS,
   ANALYTICS_QUEUE_CAPACITY,
   BoundedAnalyticsQueue,

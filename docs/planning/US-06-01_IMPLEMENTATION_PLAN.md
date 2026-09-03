@@ -1,16 +1,19 @@
 ---
 document_id: PIXELDORO_US_06_01_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-06-01 Implementation Plan
-version: 0.1.0
-status: PROPOSED_OWNER_REVIEW
-implementation_status: NOT_STARTED
+version: 0.3.0
+status: IMPLEMENTED_AUTOMATED_VERIFIED_AWAITING_OWNER_REVIEW
+implementation_status: AWAITING_OWNER_ACCEPTANCE
 date: 2026-09-03
 owner: Dũng Lư
 reviewer: Dũng Lư
 reviewer_role: Tech Lead/Product Owner
+approved_by: Dũng Lư
+approved_at: 2026-09-03
 language: vi
 branch: feats/epic-06
 planning_baseline_sha: aa7f561c2eb8bca8302a1f6a072665819d653dbe
+implementation_start_sha: aa7f561c2eb8bca8302a1f6a072665819d653dbe
 scope:
   - mobile_mvp
   - epic_06
@@ -58,8 +61,8 @@ giữ nguyên draft, không điều hướng giả và không tạo partial sess
 **Blocks:** `US-06-02`. Story tiếp theo không được active trước khi US-06-01 có exact-SHA evidence,
 manual status trung thực và owner acceptance.
 
-**Planning status:** `PROPOSED_OWNER_REVIEW`.
-**Implementation status:** `NOT_STARTED`.
+**Planning status:** `OWNER_APPROVED`.
+**Implementation status:** `IMPLEMENTED_AUTOMATED_VERIFIED_AWAITING_OWNER_REVIEW`.
 
 ### 0.1. Readiness gate tại thời điểm tạo plan
 
@@ -69,8 +72,8 @@ manual status trung thực và owner acceptance.
 - [x] Owner duyệt defaults `25 / relax / coding`; Setup draft không auto-persist.
 - [x] Owner duyệt generic lifecycle ownership cho Story sau và Result/Break boundary.
 - [x] Chỉ implementation planning của `US-06-01` được mở; production implementation chưa bắt đầu.
-- [ ] Owner duyệt các technical direction và confirmation riêng của plan này.
-- [ ] Implementation-start SHA được ghi sau approval, trước production edit đầu tiên.
+- [x] Owner duyệt Option A cho `US0601-CONFIRM-01`→`08` ngày 2026-09-03.
+- [x] Implementation-start SHA được ghi là `aa7f561c2eb8bca8302a1f6a072665819d653dbe` trước production edit đầu tiên.
 
 ## 1. Authority contract và current-state review
 
@@ -1073,28 +1076,28 @@ implementation.
 
 ## 13. Definition of Ready cho implementation
 
-- [ ] Owner approves `TD-06-01-A`→`H`.
-- [ ] Owner approves `US0601-CONFIRM-01`→`08` below.
-- [ ] Exact implementation-start SHA/branch/upstream/working tree recorded.
-- [ ] Planned target names/ownership and file split accepted.
-- [ ] Active conflict, draft lifecycle and committed-handoff recovery behavior locked.
-- [ ] Finite fixture/evidence classification approved.
-- [ ] No schema/dependency/native gate is open.
+- [x] Owner approves `TD-06-01-A`→`H`.
+- [x] Owner approves `US0601-CONFIRM-01`→`08` below.
+- [x] Exact implementation-start SHA/branch/upstream/working tree recorded.
+- [x] Planned target names/ownership and file split accepted.
+- [x] Active conflict, draft lifecycle and committed-handoff recovery behavior locked.
+- [x] Finite fixture/evidence classification approved.
+- [x] No schema/dependency/native gate is open.
 
 ## 14. Definition of Done cho US-06-01
 
-- [ ] Default production Setup is exact `25/relax/coding` and contains no prototype authority.
-- [ ] Domain and Application reject every invalid duration/mode/tag without durable write.
-- [ ] Successful Start commits exact running Standard Focus before navigation.
-- [ ] Active conflict/double tap/write failure cannot create multiple/partial rows.
-- [ ] Draft persists through error and Retry follows approved lifecycle.
-- [ ] Committed Session handoff reads SQLite truth and contains no fake countdown/outcome/reward.
-- [ ] Cold relaunch routes the same active Standard Focus without a second Start.
-- [ ] Pet Working derives from committed active session; no new Pet/session truth.
-- [ ] Common component reuse and all old/new consumer regressions pass.
-- [ ] All UI files satisfy split review/hard 300-line guardrail.
-- [ ] Targeted tests, real SQLite integration, root quality, boundaries, device guide and diff checks pass.
-- [ ] No schema/migration/dependency/native/provider/later-Story implementation changed.
+- [x] Default production Setup is exact `25/relax/coding` and contains no prototype authority.
+- [x] Domain and Application reject every invalid duration/mode/tag without durable write.
+- [x] Successful Start commits exact running Standard Focus before navigation.
+- [x] Active conflict/double tap/write failure cannot create multiple/partial rows.
+- [x] Draft persists through error and Retry follows approved lifecycle.
+- [x] Committed Session handoff reads SQLite truth and contains no fake countdown/outcome/reward.
+- [x] Cold relaunch routes the same active Standard Focus without a second Start.
+- [x] Pet Working derives from committed active session; no new Pet/session truth.
+- [x] Common component reuse and all old/new consumer regressions pass.
+- [x] All UI files satisfy split review/hard 300-line guardrail.
+- [x] Targeted tests, real SQLite integration, root quality, boundaries, device guide and diff checks pass.
+- [x] No schema/migration/dependency/native analytics-notification provider/later-Story implementation changed.
 - [ ] Exact-SHA implementation report and factual manual evidence status recorded.
 - [ ] Owner accepts US-06-01 before US-06-02 becomes active.
 
@@ -1109,7 +1112,7 @@ EPIC-level confirmations are already approved. The following implementation deta
 - **Option B:** Application-only validation.
 - **Option C:** silently clamp/round command input as prototype does.
 - **Trade-off:** A gives one pure/testable Product rule; B weakens Domain ownership; C hides defects.
-- [ ] Owner approved option: ______
+- [x] Owner approved option: A — 2026-09-03.
 
 ### US0601-CONFIRM-02 — Active session and retry policy
 
@@ -1119,7 +1122,7 @@ EPIC-level confirmations are already approved. The following implementation deta
 - **Option C:** replace/cancel active session automatically.
 - **Trade-off:** A preserves user intent and one-active invariant; B can attach to unrelated config;
   C mutates truth outside explicit cancel flow.
-- [ ] Owner approved option: ______
+- [x] Owner approved option: A — 2026-09-03.
 
 ### US0601-CONFIRM-03 — Setup draft lifecycle
 
@@ -1129,7 +1132,7 @@ EPIC-level confirmations are already approved. The following implementation deta
 - **Option C:** persist last selection now.
 - **Trade-off:** A is deterministic and within approved scope; B creates hidden runtime preference;
   C opens EPIC-10 Settings behavior/schema semantics.
-- [ ] Owner approved option: ______
+- [x] Owner approved option: A — 2026-09-03.
 
 ### US0601-CONFIRM-04 — Story-01 Running handoff
 
@@ -1138,7 +1141,7 @@ EPIC-level confirmations are already approved. The following implementation deta
 - **Option B:** keep user on Setup after commit.
 - **Option C:** reuse prototype Running temporarily.
 - **Trade-off:** A is truthful and owner-visible; B violates approved navigation; C conflates fake truth.
-- [ ] Owner approved option: ______
+- [x] Owner approved option: A — 2026-09-03.
 
 ### US0601-CONFIRM-05 — Cold relaunch entry behavior
 
@@ -1148,7 +1151,7 @@ EPIC-level confirmations are already approved. The following implementation deta
 - **Option C:** implement full reconciliation now.
 - **Trade-off:** A satisfies durable recovery with minimal scope; B loses active journey; C pulls
   Stories 02–04 forward.
-- [ ] Owner approved option: ______
+- [x] Owner approved option: A — 2026-09-03.
 
 ### US0601-CONFIRM-06 — UI split/common component plan
 
@@ -1157,7 +1160,7 @@ EPIC-level confirmations are already approved. The following implementation deta
 - **Option B:** extend current 241-line mixed file.
 - **Option C:** build broad form/design system.
 - **Trade-off:** A follows approved reuse and test boundaries; B crosses split threshold; C speculative.
-- [ ] Owner approved option: ______
+- [x] Owner approved option: A — 2026-09-03.
 
 ### US0601-CONFIRM-07 — Prototype retirement boundary
 
@@ -1166,7 +1169,7 @@ EPIC-level confirmations are already approved. The following implementation deta
 - **Option B:** delete all Focus prototype now.
 - **Option C:** let prototype branch render active Standard after commit.
 - **Trade-off:** A avoids later-Epic breakage and fake truth; B broad scope; C invalid evidence.
-- [ ] Owner approved option: ______
+- [x] Owner approved option: A — 2026-09-03.
 
 ### US0601-CONFIRM-08 — Fixture and side-effect boundary
 
@@ -1175,9 +1178,10 @@ EPIC-level confirmations are already approved. The following implementation deta
 - **Option B:** create placeholder side-effect adapters now.
 - **Option C:** use prototype reducer as success/failure fixture.
 - **Trade-off:** A avoids speculative API and false truth; B creates unused abstraction; C proves only UI.
-- [ ] Owner approved option: ______
+- [x] Owner approved option: A — 2026-09-03.
 
-Implementation must not start until all eight items are explicitly approved or amended in this file.
+All eight implementation confirmations were approved as Option A on 2026-09-03. Implementation may
+proceed within the locked scope of this plan.
 
 ## 16. References
 
@@ -1200,6 +1204,9 @@ Implementation must not start until all eight items are explicitly approved or a
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.3.0 | 2026-09-03 | Codex | Recorded implemented working-tree candidate, automated/SQLite/quality evidence and remaining exact-SHA, manual/device and owner-acceptance gates. |
+| 0.2.0 | 2026-09-03 | Codex | Recorded owner approval of `US0601-CONFIRM-01`→`08` as Option A and implementation-start SHA; implementation moved to `IN_PROGRESS`. |
 | 0.1.0 | 2026-09-03 | Codex | Created owner-gated implementation plan for production Standard Focus Setup/Start, durable handoff, minimal relaunch routing, common component split, fixtures and evidence; production implementation remains not started. |
 
-**US-06-01 implementation has not started.**
+**US-06-01 is implemented and automated-verified; exact implementation SHA, manual/device evidence
+and owner acceptance remain pending.**

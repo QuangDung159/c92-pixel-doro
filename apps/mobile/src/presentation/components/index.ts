@@ -1,5 +1,6 @@
 export { Button, PrimaryButton, SecondaryButton, type ButtonProps } from './button';
 export { ChoiceChip, type ChoiceChipProps } from './choice-chip';
+export { DurationControl, type DurationControlProps } from './duration-control';
 export {
   ConfirmationDialog,
   ConfirmationModal,

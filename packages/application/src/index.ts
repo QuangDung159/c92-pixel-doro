@@ -82,6 +82,20 @@ export {
   type StartOnboardingTrialErrorCode,
   type StartOnboardingTrialOutcome,
 } from './onboarding-trial/start-onboarding-trial.use-case';
+export {
+  createStandardFocusRecord,
+  isRunningStandardFocus,
+  type StandardFocusRecordError,
+  type StandardFocusRecordInput,
+} from './standard-focus/standard-focus-record';
+export {
+  StartStandardFocusUseCase,
+  type StartStandardFocusDependencies,
+  type StartStandardFocusError,
+  type StartStandardFocusErrorCode,
+  type StartStandardFocusInput,
+  type StartStandardFocusOutcome,
+} from './standard-focus/start-standard-focus.use-case';
 export type {
   CatalogItemRecord,
   CatalogRepository,
@@ -153,3 +167,8 @@ export type {
   ApplicationResult,
   ApplicationWarning,
 } from './result/application-result';
+export {
+  STANDARD_FOCUS_DURATION_STEP_MINUTES,
+  STANDARD_FOCUS_MAX_DURATION_MINUTES,
+  STANDARD_FOCUS_MIN_DURATION_MINUTES,
+} from '@pixeldoro/domain';

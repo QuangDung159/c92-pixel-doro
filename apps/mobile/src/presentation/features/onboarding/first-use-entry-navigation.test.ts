@@ -10,6 +10,7 @@ describe('first-use entry navigation', () => {
     ['onboarding_intro', '/(onboarding)'],
     ['trial_running', '/focus/session'],
     ['trial_result', '/focus/result'],
+    ['standard_focus_running', '/focus/session'],
     ['home', '/(tabs)'],
   ] as const)('maps %s to %s', (destination, path) => {
     expect(pathForFirstUseDestination(destination)).toBe(path);

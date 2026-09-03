@@ -68,7 +68,9 @@ import { createPetBaseReviewSessionReader } from './review/pet-base-review-fixtu
 import { createPetTerminalReviewFixture } from './review/pet-terminal-review-fixture';
 import { createFirstUseEntryReviewFixture } from './review/first-use-entry-review-fixture';
 import { createOnboardingTrialReviewFixture } from './review/onboarding-trial-review-fixture';
+import { createStandardFocusStartReviewFixture } from './review/standard-focus-start-review-fixture';
 import { OnboardingTrialStartupReconciliationAdapter } from './startup/onboarding-trial-startup-reconciliation.adapter';
+import { createStandardFocusSlice } from './standard-focus/create-standard-focus-slice';
 
 const PIXELDORO_DATABASE_NAME = 'pixeldoro.db';
 
@@ -273,6 +275,21 @@ export const createMobileApplication = (
     scheduler: petFeedbackScheduler,
   });
   const petVisual = new PetVisualController(petCompanion, petTerminalFeedback);
+  const standardFocusReviewFixture = createStandardFocusStartReviewFixture(
+    process.env.EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE,
+    reviewFixturesEnabled,
+    persistence.sessions,
+  );
+  const standardFocus = createStandardFocusSlice({
+    calendar: localCalendar,
+    clock,
+    coordinator: sessionCommands,
+    id,
+    petCompanion,
+    readiness,
+    sessions: standardFocusReviewFixture?.sessions ?? persistence.sessions,
+    transaction,
+  });
   const completeFirstUseHandoffUseCase = new CompleteFirstUseHandoffUseCase({
     clock,
     installation: onboardingTrialInstallation,
@@ -555,6 +572,8 @@ export const createMobileApplication = (
     confirmedReset,
     criticalRecovery: bootstrap,
     firstUseEntry,
+    standardFocusSetup: standardFocus.setup,
+    standardFocusSession: standardFocus.session,
     onboardingTrialRunning,
     onboardingTrialCompletion,
     onboardingTrialHandoff,
@@ -585,6 +604,14 @@ export const createMobileApplication = (
         console.info('[PixelDoro][Epic02ExitProbe]', JSON.stringify(report));
       }
       if (bootstrap.getSnapshot().status === 'ready') {
+        if (standardFocusReviewFixture?.prepareCommittedRelaunch === true) {
+          const completedAt = clock.nowMs();
+          await persistence.installation.setOnboardingCompleted(
+            completedAt,
+            completedAt,
+          );
+          await standardFocus.setup.start();
+        }
         startPetLifecycleRefresh();
         await Promise.all([firstUseEntry.refresh(), petCompanion.refresh()]);
       }
@@ -670,6 +697,7 @@ export const createMobileApplication = (
       cancelReviewWait = undefined;
       appVisibility.dispose();
       firstUseEntry.dispose();
+      standardFocus.dispose();
       onboardingTrialRunning.dispose();
       onboardingTrialHandoff.dispose();
       onboardingTrialPetFeedback.dispose();

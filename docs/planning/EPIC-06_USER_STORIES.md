@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_EPIC_06_USER_STORIES
 title: PixelDoro EPIC-06 — Standard Focus User Stories
-version: 0.2.0
-status: OWNER_APPROVED_US_06_01_PLANNING_READY
+version: 0.3.0
+status: US_06_01_IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE
 date: 2026-09-03
 owner: Dũng Lư
 reviewed_by: Dũng Lư
@@ -12,8 +12,8 @@ baseline_sha: 658b708825e633916692b4e19d4086885fd50ce1
 owner_review_sha: aa7f561c2eb8bca8302a1f6a072665819d653dbe
 upstream: origin/feats/epic-06
 epic: EPIC-06
-epic_state: PLANNING_READY
-implementation_state: US_06_01_IMPLEMENTATION_PLANNING
+epic_state: IN_PROGRESS
+implementation_state: US_06_01_AUTOMATED_VERIFIED_OWNER_REVIEW
 formal_tester_status: DEFERRED_TO_LATER_PHASE
 language: vi
 authority: PLANNING
@@ -60,7 +60,9 @@ Authority order khi triển khai hoặc review:
 Nếu nội dung phía dưới mâu thuẫn authority cao hơn, authority cao hơn thắng và tài liệu này phải được
 sửa trước khi implementation tiếp tục. Owner Dũng Lư đã review và duyệt Option A cho toàn bộ
 confirmation ở mục 12 ngày 2026-09-03, đồng thời cho phép tạo implementation plan riêng cho
-`US-06-01`. Approval này chưa phải quyền bắt đầu production implementation.
+`US-06-01`. Owner sau đó duyệt Option A cho toàn bộ implementation confirmations và yêu cầu triển
+khai code. Working-tree candidate hiện đã qua automated/SQLite/quality gates; exact implementation
+SHA, manual/device evidence và owner acceptance vẫn còn mở.
 
 ## 1. Kết luận audit baseline
 
@@ -314,8 +316,8 @@ Validation/clamp lives in Presentation prototype and there is no Standard Start 
 
 Before Start: no new session; Setup draft is transient. After success: exactly one `sessions` row
 with `focus/standard`, valid config, `running`, `started_at`, `ends_at`, local-day facts and zero/null
-terminal/reward fields. Navigation, haptic, notification ensure and analytics enqueue happen only
-after commit; any best-effort failure cannot invalidate Start.
+terminal/reward fields. Story này chỉ refresh committed Session/Pet projections sau commit; không
+thêm haptic, notification hoặc analytics hook. Các best-effort side effect đó vẫn thuộc `US-06-05`.
 
 ### 6.7. UI reuse, target ownership và line estimate
 
@@ -328,24 +330,24 @@ after commit; any best-effort failure cannot invalidate Start.
 
 ### 6.8. Acceptance criteria
 
-- [ ] Default is exactly `25` minutes and approved initial mode/tag behavior.
-- [ ] Only duration `15..120` divisible by `5`, approved mode and tag can Start.
-- [ ] Direct malformed application input is rejected without write.
-- [ ] Start persists one Standard Focus with correct timestamps/local-day facts.
-- [ ] Existing active session returns typed conflict and creates no second row.
-- [ ] UI navigates only after commit; write/transaction failure remains on Setup.
-- [ ] Double tap is coalesced/serialized and cannot create two sessions.
-- [ ] Draft is not a second durable truth and is not auto-written to Settings.
-- [ ] Route/screen contain no SQL, reward, timestamp or navigation-success guess.
+- [x] Default is exactly `25` minutes and approved initial mode/tag behavior.
+- [x] Only duration `15..120` divisible by `5`, approved mode and tag can Start.
+- [x] Direct malformed application input is rejected without write.
+- [x] Start persists one Standard Focus with correct timestamps/local-day facts.
+- [x] Existing active session returns typed conflict and creates no second row.
+- [x] UI navigates only after commit; write/transaction failure remains on Setup.
+- [x] Double tap is coalesced/serialized and cannot create two sessions.
+- [x] Draft is not a second durable truth and is not auto-written to Settings.
+- [x] Route/screen contain no SQL, reward, timestamp or navigation-success guess.
 
 ### 6.9. Automated test checklist
 
-- [ ] Domain matrix: min/max/step/mode/tag/overflow/timestamp.
-- [ ] Use-case tests: success, active conflict, read/write/transaction/calendar failure, duplicate tap.
-- [ ] Real SQLite integration: exact row, unique active backstop, rollback/no partial row.
-- [ ] Controller/route tests: busy, preserve draft, no pre-commit navigation, warning isolation.
+- [x] Domain matrix: min/max/step/mode/tag/overflow/timestamp.
+- [x] Use-case tests: success, active conflict, read/write/transaction/calendar failure, duplicate tap.
+- [x] Real SQLite integration: exact row, unique active backstop, rollback/no partial row.
+- [x] Controller/route tests: busy, preserve draft, no pre-commit navigation, warning isolation.
 - [ ] Component tests: duration bounds, chip semantics, large-text layout contract.
-- [ ] Existing onboarding Start and common component regressions pass.
+- [x] Existing onboarding Start and common component regressions pass.
 
 ### 6.10. Manual UI test guide
 
@@ -1046,7 +1048,7 @@ future scope untouched; formal tester remains deferred if not actually executed.
   DoR/DoD.
 - [x] Common Component Reuse Matrix và line-count guardrail được lập.
 - [x] Owner confirmation register được duyệt Option A ngày 2026-09-03.
-- [ ] Production implementation bắt đầu.
+- [x] US-06-01 production working-tree candidate đã được triển khai và automated-verified.
 - [ ] Formal tester execution hoàn tất.
 
 Retained limitations:
@@ -1063,7 +1065,9 @@ Retained limitations:
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.3.0 | 2026-09-03 | Codex | Recorded US-06-01 working-tree implementation and automated verification; exact SHA, manual/device evidence and owner acceptance remain pending. |
 | 0.2.0 | 2026-09-03 | Codex | Recorded owner approval of `US0600-CONFIRM-01`→`10` as Option A and opened owner-gated implementation planning for `US-06-01`; production implementation remains not started. |
 | 0.1.0 | 2026-09-03 | Codex | Created the EPIC-06 Story plan and owner confirmation register. |
 
-**EPIC-06 implementation has not started.**
+**EPIC-06 is in progress. US-06-01 awaits exact-SHA review, manual/device disposition and owner
+acceptance; US-06-02 has not started.**

@@ -17,6 +17,10 @@ import type {
   CommandReadinessPort,
 } from './readiness/readiness-gate';
 import type { AppVisibilityController } from './visibility/app-visibility.controller';
+import type {
+  StandardFocusSessionController,
+  StandardFocusSetupController,
+} from './standard-focus';
 import type { PetVisualDiagnostic } from './ports/pet-visual-diagnostics.port';
 import type {
   CompleteFirstUseHandoffOutcome,
@@ -31,6 +35,8 @@ import type {
 export interface MobileApplicationFacade {
   readonly bootstrap: MobileBootstrap;
   readonly firstUseEntry: FirstUseEntryController;
+  readonly standardFocusSetup: StandardFocusSetupController;
+  readonly standardFocusSession: StandardFocusSessionController;
   readonly onboardingTrialRunning: OnboardingTrialRunningController;
   readonly onboardingTrialCompletion: OnboardingTrialCompletionController;
   readonly onboardingTrialHandoff: OnboardingTrialHandoffController;

@@ -1,7 +1,7 @@
 import { useRouter } from 'expo-router';
 import type { PetVisualProjection } from '@pixeldoro/application';
 
-import { FocusSessionScreen } from '@/presentation/features/focus';
+import { PrototypeFocusSessionScreen } from '@/presentation/features/focus';
 import { usePrototype } from '@/presentation/prototype/prototype-context';
 
 import { PetRouteVisibility } from '../pet-route-visibility';
@@ -28,7 +28,7 @@ export function PrototypeSessionBranch({
 
   return (
     <PetRouteVisibility>
-      <FocusSessionScreen
+      <PrototypeFocusSessionScreen
         cancelRequestToken={cancelRequestToken}
         onMissingSession={() => router.replace('/(tabs)')}
         onDismissPetFeedbackError={onDismissPetFeedbackError}

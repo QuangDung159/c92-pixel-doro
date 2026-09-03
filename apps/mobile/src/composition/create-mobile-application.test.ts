@@ -101,6 +101,7 @@ describe('mobile composition root', () => {
         }),
       },
       firstUseSessions: {
+        findActive: async () => ({ ok: true, value: null }),
         findLatestOnboardingTrial: async () => ({ ok: true, value: null }),
       },
       petCompanionSessions: {
