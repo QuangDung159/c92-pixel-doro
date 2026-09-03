@@ -20,7 +20,7 @@ language: vi
 
 ## 1. Outcome
 
-US-06-02 đã được triển khai trên working tree theo `US0602-CONFIRM-01`→`10` Option A:
+US-06-02 đã được triển khai và commit theo `US0602-CONFIRM-01`→`10` Option A:
 
 - Relax Running hiển thị countdown suy ra từ timestamp; tick chỉ chạy khi route/app visible và
   foreground re-anchor từ clock thay vì cộng/trừ interval local.

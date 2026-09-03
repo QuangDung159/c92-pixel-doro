@@ -129,7 +129,8 @@ Nếu plan này mâu thuẫn authority cao hơn, authority cao hơn thắng và 
 1. Không có pure Domain decision cho grace/deadline/missing-evidence precedence.
 2. Lifecycle root không capture background timestamp trước khi enqueue và chưa persist Strict episode.
 3. Repository chưa có conditional clear `backgroundedAt` theo exact episode.
-4. Existing record-background update chưa bảo vệ stale callback bằng episode/update-time contract.
+4. Existing record-background update chưa bảo vệ stale callback bằng lifecycle sequence và
+   episode/update-time contract.
 5. Foreground/startup chưa reconcile Strict, chưa có barrier chống flash stale Running/Home.
 6. Strict vẫn ở `strict_handoff`, chưa có countdown, grace notice và production Cancel behavior.
 7. Cancel hiện chỉ nhận Relax; nếu mở thẳng cho Strict có thể cho user né violation đã đủ evidence.
@@ -215,7 +216,8 @@ Domain không đọc DB, không gọi clock, không clear field, không cấp re
 3. Application-scoped lifecycle controller enqueue command vào shared session coordinator.
 4. Transaction đọc active record và chỉ ghi khi valid Standard Strict running, episode đang null,
    timestamp trước deadline và callback không stale.
-5. Duplicate background giữ earliest active episode; không kéo dài grace bằng callback sau.
+5. Duplicate background giữ earliest active episode; lifecycle sequence loại callback cũ và không
+   kéo dài grace bằng callback sau.
 6. Read/write/transaction uncertainty vào critical recovery; app không tiếp tục giả Strict an toàn.
 
 ### 4.3. Foreground an toàn
@@ -342,8 +344,9 @@ interface ClearSessionBackgroundInput {
 
 SQL condition phải gồm exact ID, `running/focus/standard/strict` và
 `backgrounded_at = expectedBackgroundedAt`. Để chặn delayed pre-foreground background callback,
-record-background contract phải reject timestamp không mới hơn durable `updatedAt`; safe clear ghi
-`updatedAt=foregroundCapturedAt`.
+lifecycle controller dùng monotonic event sequence trong cùng runtime; repository reject captured
+timestamp **cũ hơn** durable `updatedAt`; safe clear ghi `updatedAt=foregroundCapturedAt`. Trường hợp
+cùng millisecond được phân biệt bằng event sequence, không bằng cách tự cộng timestamp.
 
 ### 6.3. Reconciliation outcomes
 
@@ -364,7 +367,8 @@ type ReconcileStandardFocusOutcome =
 ```
 
 Only `fresh_commit` may produce navigation/Pet fresh event. `existing_terminal` is idempotent truth,
-not a replay instruction.
+not a replay instruction. Public reconcile và Cancel cùng gọi một transaction decision service dưới
+**một** coordinator lease của command hiện tại; không acquire coordinator lồng nhau.
 
 ### 6.4. Runtime outcome handoff
 
@@ -439,7 +443,7 @@ Failed UI:
 |---|---|
 | Duplicate background callbacks | First valid active episode remains; duplicate no-op. |
 | Background queued, foreground captured later | Background persists, foreground decision sees same episode and clears/fails. |
-| Foreground clear commits, old background callback arrives late | Old callback rejected by captured timestamp vs durable `updatedAt`. |
+| Foreground clear commits, old background callback arrives late | Old callback rejected by lifecycle sequence và captured timestamp so với durable `updatedAt`. |
 | New background after safe clear | Newer timestamp opens a new episode. |
 | Cancel before any violation/evidence write | Cancelled terminal wins; later lifecycle command no-op. |
 | Evidence exists, Cancel before grace | Cancel may win if still before deadline. |
@@ -471,7 +475,7 @@ Exact filenames may be adjusted to existing naming conventions, nhưng ownership
 ### T03 — Repository episode CAS
 
 - Add exact conditional clear port/input.
-- Strengthen record episode behavior with stale-event protection.
+- Strengthen record episode behavior with lifecycle sequence + stale timestamp protection.
 - Implement SQLite queries in existing repository; no migration.
 - Mapper/schema stay unchanged; repository unit/integration tests cover conditional misses.
 
@@ -484,15 +488,17 @@ Exact filenames may be adjusted to existing naming conventions, nhưng ownership
 ### T05 — Standard reconcile use case
 
 - Add shared foreground/startup/deadline/cancel-guard reconciliation.
-- Use Domain decision, clear CAS or failed terminal CAS, then re-read race winner.
+- Use shared in-transaction decision service, clear CAS or failed terminal CAS, then re-read race
+  winner; public use case owns one coordinator lease, never nested.
 - Keep `completion_due` non-mutating in Story 03.
 - Emit freshness only from this call's successful failed update.
 
 ### T06 — Strict-aware Cancel
 
 - Extend existing Standard Cancel identity to Strict.
-- Run Strict decision before cancel mutation.
-- Route `failed_due` through same reconciliation authority; reject deadline pending.
+- Run shared in-transaction Strict decision before cancel mutation under Cancel's single coordinator
+  lease.
+- Resolve `failed_due` through the same transaction service; reject deadline pending.
 - Preserve Relax behavior and existing cancelled invariant.
 
 ### T07 — Lifecycle/startup composition
@@ -683,8 +689,9 @@ Quick owner smoke and formal tester evidence must be recorded separately. Unrun 
 
 ### US0603-CONFIRM-04 — Episode idempotency/stale callback
 
-- **Option A (recommended):** preserve earliest active episode; duplicate no-op; safe clear advances
-  `updatedAt`; reject stale captured timestamp so old callbacks cannot reopen evidence.
+- **Option A (recommended):** preserve earliest active episode; duplicate no-op; monotonic lifecycle
+  sequence plus durable `updatedAt` reject stale callbacks; same-ms order uses sequence, not invented
+  time, so old callbacks cannot reopen evidence.
 - **Option B:** every background callback overwrites timestamp.
 - **Option C:** keep only in-memory generation without durable guard.
 - **Trade-off:** A prevents grace extension and false restore across queue/relaunch.
@@ -701,9 +708,9 @@ Quick owner smoke and formal tester evidence must be recorded separately. Unrun 
 
 ### US0603-CONFIRM-06 — One reconciliation boundary
 
-- **Option A (recommended):** shared Standard reconcile use case for foreground/startup/deadline and
-  Strict Cancel guard, composed under one active-session coordinator alongside existing trial
-  strategy; conditional miss always re-reads winner.
+- **Option A (recommended):** shared in-transaction Standard decision service used by public
+  foreground/startup/deadline reconciliation and Strict Cancel under one non-nested coordinator
+  lease, composed alongside existing trial strategy; conditional miss always re-reads winner.
 - **Option B:** separate startup/foreground writers.
 - **Option C:** route-local reconciliation only.
 - **Trade-off:** A prevents multiple terminal authorities and stale startup UI.

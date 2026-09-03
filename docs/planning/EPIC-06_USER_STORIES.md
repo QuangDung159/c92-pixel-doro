@@ -970,7 +970,7 @@ future scope untouched; formal tester remains deferred if not actually executed.
 
 ### 13.4. Per-Story acceptance checklist
 
-- [ ] `US-06-01` accepted on exact SHA.
+- [x] `US-06-01` accepted on exact SHA `68f2c54d3630817385b320622476c55c67caea13`.
 - [x] `US-06-02` accepted on exact SHA `9a8e3d87d44612b7bd9aa8bf9e592099300d9e2e`.
 - [ ] `US-06-03` accepted on exact SHA.
 - [ ] `US-06-04` accepted on exact SHA.

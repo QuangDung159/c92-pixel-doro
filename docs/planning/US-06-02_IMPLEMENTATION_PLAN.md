@@ -718,7 +718,7 @@ Full guide sẽ nằm ở `apps/mobile/test/device/standard-focus-relax-running-
 - [ ] No schema/dependency/native drift.
 - [ ] Manual status recorded honestly.
 - [ ] Implementation report references exact SHA.
-- [ ] Owner accepts US-06-02 before US-06-03 planning/implementation becomes active.
+- [x] Owner accepts US-06-02 before US-06-03 planning/implementation becomes active.
 
 ## 12. Risks và mitigations
 
