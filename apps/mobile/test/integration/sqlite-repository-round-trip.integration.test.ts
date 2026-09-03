@@ -119,6 +119,71 @@ afterEach(async () => {
 });
 
 describe('SQLite repository durable round trip', () => {
+  it('selects the latest onboarding trial deterministically and excludes Standard Focus', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'pixeldoro-us0501-'));
+    temporaryDirectories.push(directory);
+    const driver = new HostSQLiteDriver(directory);
+    const databaseName = 'first-use-entry.db';
+    const first = await createDatabase(driver, databaseName);
+
+    const commitTerminalSession = async (
+      record: RunningSessionRecord,
+      status: 'completed' | 'cancelled',
+    ) => first.transaction.execute(async (scope) => {
+      const inserted = await first.graph.sessions.insertRunningInTransaction(scope, record);
+      if (!inserted.ok) return inserted;
+      const resolvedAt = record.endsAt;
+      return first.graph.sessions.transitionFromRunningInTransaction(scope, {
+        sessionId: record.id,
+        status,
+        resolvedAt,
+        xpEarned: status === 'completed' ? record.configuredDurationMinutes : 0,
+        coinsEarned: status === 'completed'
+          ? Math.floor(record.configuredDurationMinutes / 5)
+          : 0,
+        rewardClaimedAt: status === 'completed' ? resolvedAt : null,
+        updatedAt: resolvedAt,
+      });
+    });
+
+    const baseTrial: RunningSessionRecord = {
+      id: 'trial-a', profileId: 1, sessionType: 'focus', focusVariant: 'onboarding_trial',
+      mode: 'relax', status: 'running', workTag: null, configuredDurationMinutes: 5,
+      startedAt: timestamp, endsAt: timestamp + 300_000, backgroundedAt: null,
+      resolvedAt: null, xpEarned: 0, coinsEarned: 0, rewardClaimedAt: null,
+      scheduledEndLocalDate: '2026-08-28', scheduledEndUtcOffsetMinutes: 420,
+      createdAt: timestamp, updatedAt: timestamp,
+    };
+    expect(await commitTerminalSession(baseTrial, 'cancelled')).toMatchObject({ ok: true });
+    expect(await commitTerminalSession({ ...baseTrial, id: 'trial-b' }, 'cancelled'))
+      .toMatchObject({ ok: true });
+    expect(await commitTerminalSession({
+      ...baseTrial,
+      id: 'newer-standard',
+      focusVariant: 'standard',
+      mode: 'relax',
+      workTag: 'coding',
+      configuredDurationMinutes: 25,
+      startedAt: timestamp + 1,
+      endsAt: timestamp + 1 + 1_500_000,
+      createdAt: timestamp + 1,
+      updatedAt: timestamp + 1,
+    }, 'completed')).toMatchObject({ ok: true });
+
+    expect(await first.graph.sessions.findLatestOnboardingTrial()).toMatchObject({
+      ok: true,
+      value: { id: 'trial-b', focusVariant: 'onboarding_trial', status: 'cancelled' },
+    });
+    await first.owner.close();
+
+    const reopened = await createDatabase(driver, databaseName);
+    expect(await reopened.graph.sessions.findLatestOnboardingTrial()).toMatchObject({
+      ok: true,
+      value: { id: 'trial-b', status: 'cancelled' },
+    });
+    await reopened.owner.close();
+  });
+
   it('commits cross-entity values, reopens them exactly and rolls failures back', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'pixeldoro-us0205-'));
     temporaryDirectories.push(directory);

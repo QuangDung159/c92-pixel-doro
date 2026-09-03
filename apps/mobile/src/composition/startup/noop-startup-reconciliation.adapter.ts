@@ -11,6 +11,6 @@ export class NoopStartupReconciliationAdapter
   async reconcileAtStartup(): ReturnType<
     StartupReconciliationPort['reconcileAtStartup']
   > {
-    return { ok: true, value: undefined };
+    return { ok: true, value: { durableDataChanged: false } };
   }
 }

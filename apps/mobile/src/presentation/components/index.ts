@@ -14,6 +14,7 @@ export { PetStatusText, type PetStatusTextProps } from './pet-status-text';
 export { PetVisualStatus, type PetVisualStatusProps } from './pet-visual-status';
 export { ScreenHeader, type ScreenHeaderProps } from './screen-header';
 export { ScreenShell, ScreenShell as PrototypeScreen } from './screen-shell';
+export { RewardSummary, type RewardSummaryProps } from './reward-summary';
 export { SectionLabel } from './section-label';
 export { Stat, StatDisplay, type StatDisplayProps } from './stat-display';
 export { EmptyState, ErrorState, LoadingState } from './status-surface';

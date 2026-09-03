@@ -80,6 +80,21 @@ export class SQLiteRewardReceiptRepository implements RewardReceiptRepository {
     return this.find(`${rewardSelect} WHERE session_id = ?`, [sessionId], sessionId);
   }
 
+  findBySessionIdInTransaction(
+    scope: TransactionScope,
+    sessionId: string,
+  ): ReturnType<RewardReceiptRepository['findBySessionIdInTransaction']> {
+    if (!isNonEmptyString(sessionId)) return invalidQuery('reward_transactions', 'session_id');
+    return withTransactionExecutor(this.transaction, scope, 'reward_transactions', (executor) =>
+      readMappedOne(
+        executor,
+        'reward_transactions',
+        `${rewardSelect} WHERE session_id = ?`,
+        [sessionId],
+        mapRewardReceiptRow,
+      ));
+  }
+
   insertInTransaction(
     scope: TransactionScope,
     record: RewardReceiptRecord,

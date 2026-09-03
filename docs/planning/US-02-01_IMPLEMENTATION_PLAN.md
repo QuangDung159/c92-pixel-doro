@@ -1,10 +1,10 @@
 ---
 document_id: PIXELDORO_US_02_01_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-02-01 Implementation Plan
-version: 1.1.0
-status: APPROVED
+version: 1.2.0
+status: DONE
 implementation_status: DONE
-last_updated: 2026-08-28
+last_updated: 2026-09-03
 owner: Dũng Lư
 reviewer: Dũng Lư
 reviewer_role: Tech Lead
@@ -50,8 +50,9 @@ kiểm chứng được.
 iOS runtime probe đều pass trên final implementation commit.
 
 **Planning status:** `APPROVED`. Owner đã duyệt technical direction và test strategy ngày
-2026-08-27. **Implementation status:** `DONE` ngày 2026-08-28; không có native artifact
-hoặc probe database nào được commit.
+2026-08-27. **Document/implementation status:** `DONE` ngày 2026-08-28; metadata được
+chuẩn hóa trong completion audit ngày 2026-09-03. Không có native artifact hoặc probe database
+nào được commit.
 
 ### 0.1. Readiness gate — đã đạt
 
@@ -761,3 +762,9 @@ contribution color, Timer/Session behavior hoặc reward/purchase behavior.
 - [ADR-004 — Domain and Platform Boundaries](../architecture/decisions/ADR-004-domain-and-platform-boundaries.md)
 - [Expo SQLite documentation](https://docs.expo.dev/versions/latest/sdk/sqlite/)
 - [Expo issue #41986 — exclusive transaction connection/FK caveat](https://github.com/expo/expo/issues/41986)
+
+## 16. Change log
+
+| Version | Date | Author | Change |
+| --- | --- | --- | --- |
+| 1.2.0 | 2026-09-03 | Codex, completion audit | Normalized the document status to `DONE` so it matches the implementation status and accepted EPIC-02 evidence; no behavior or evidence claim changed. |

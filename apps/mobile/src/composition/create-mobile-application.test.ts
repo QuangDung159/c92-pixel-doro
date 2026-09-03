@@ -27,6 +27,7 @@ vi.mock('react-native', () => ({
 
 afterEach(() => {
   delete process.env.EXPO_PUBLIC_EPIC_02_EXIT_PROBE;
+  delete process.env.EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE;
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
 });
@@ -84,7 +85,23 @@ describe('mobile composition root', () => {
         }),
       },
       startupReconciliation: {
-        reconcileAtStartup: async () => ({ ok: true, value: undefined }),
+        reconcileAtStartup: async () => ({ ok: true, value: { durableDataChanged: false } }),
+      },
+      firstUseInstallation: {
+        find: async () => ({
+          ok: true,
+          value: {
+            id: 1,
+            installedAt: 42,
+            onboardingCompletedAt: null,
+            anonymousAnalyticsId: null,
+            createdAt: 42,
+            updatedAt: 42,
+          },
+        }),
+      },
+      firstUseSessions: {
+        findLatestOnboardingTrial: async () => ({ ok: true, value: null }),
       },
       petCompanionSessions: {
         findActive: () => {
@@ -101,6 +118,10 @@ describe('mobile composition root', () => {
 
     await application.boot();
     expect(application.bootstrap.getSnapshot().status).toBe('ready');
+    expect(application.firstUseEntry.getSnapshot()).toEqual({
+      status: 'ready',
+      destination: 'onboarding_intro',
+    });
     expect(application.petCompanion.getSnapshot()).toEqual({
       status: 'ready',
       baseState: 'idle',
@@ -187,6 +208,33 @@ describe('mobile composition root', () => {
     expect(driver.connection.closeCalls).toBe(1);
   });
 
+  it('gates the first-use review fixture behind dev diagnostics', async () => {
+    process.env.EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE = 'first_use_returning';
+    vi.stubGlobal('__DEV__', true);
+
+    const enabled = createMobileApplication({
+      sqliteDriver: new FakeSQLiteDriver(),
+    });
+    await enabled.refreshFirstUseEntry();
+    expect(enabled.firstUseEntry.getSnapshot()).toEqual({
+      status: 'ready',
+      destination: 'home',
+    });
+
+    const disabled = createMobileApplication({
+      diagnosticsEnabled: false,
+      sqliteDriver: new FakeSQLiteDriver(),
+    });
+    await disabled.refreshFirstUseEntry();
+    expect(disabled.firstUseEntry.getSnapshot()).toEqual({
+      status: 'error',
+      error: { code: 'FIRST_USE_ENTRY_READ_FAILED' },
+    });
+
+    await enabled.dispose();
+    await disabled.dispose();
+  });
+
   it('publishes aggregate exit success only after the normal bootstrap reaches ready', async () => {
     process.env.EXPO_PUBLIC_EPIC_02_EXIT_PROBE = '1';
     vi.stubGlobal('__DEV__', true);
@@ -253,7 +301,7 @@ describe('mobile composition root', () => {
         }),
       },
       startupReconciliation: {
-        reconcileAtStartup: async () => ({ ok: true, value: undefined }),
+        reconcileAtStartup: async () => ({ ok: true, value: { durableDataChanged: false } }),
       },
     });
 

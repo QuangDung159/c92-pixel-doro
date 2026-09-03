@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_CORE_TRUTH
 title: PixelDoro Product Core — Single Source of Truth
-version: 1.15.0
+version: 1.16.0
 status: ACTIVE
-last_updated: 2026-08-31
+last_updated: 2026-09-03
 owner: Dũng Lư
 owner_roles:
   - Tech Lead
@@ -1101,14 +1101,14 @@ Roadmap phases không phải cam kết thời gian và không tự động trở
 
 Mobile MVP được xem là đủ điều kiện closed beta khi:
 
-- [ ] Người dùng mới hiểu được giá trị Pet companion qua onboarding.
+- [x] Người dùng mới hiểu được giá trị Pet companion qua onboarding.
 - [ ] Người dùng có thể bắt đầu Relax hoặc Strict focus session.
 - [ ] Timer vẫn đúng sau background/foreground.
 - [ ] App reconcile đúng session sau crash/relaunch thông thường.
 - [ ] Strict grace period 10 giây hoạt động theo rule.
 - [ ] Completed session chỉ được cấp reward một lần.
 - [ ] Failed/cancelled session không nhận reward.
-- [ ] Pet thể hiện đúng Idle, Working, Break, Celebrating và Bugged.
+- [x] Pet thể hiện đúng Idle, Working, Break, Celebrating và Bugged.
 - [ ] Local notification hoạt động khi được cấp quyền.
 - [ ] Permission bị từ chối không làm hỏng timer.
 - [ ] XP/Coin và inventory persist sau khi restart app.
@@ -1116,14 +1116,19 @@ Mobile MVP được xem là đủ điều kiện closed beta khi:
 - [ ] Purchase không làm Coin âm, không debit/unlock hai lần và commit Coin debit + ownership atomically.
 - [ ] Item đã sở hữu persist sau restart, equip miễn phí và không bị xóa do unequip hoặc session outcome.
 - [ ] Lịch sử hiển thị đúng completed/failed/cancelled session.
-- [ ] Completed onboarding trial 5 phút nhận đúng 5 XP/1 Coin tối đa một lần và không ảnh hưởng standard history/cadence/store-review/core Focus analytics.
-- [ ] Onboarding trial persist `mode = relax`, `workTag = null`, không hiển thị selector tương ứng và không thể fail bởi Strict violation.
+- [x] Completed onboarding trial 5 phút nhận đúng 5 XP/1 Coin tối đa một lần và không ảnh hưởng standard history/cadence/store-review/core Focus analytics.
+- [x] Onboarding trial persist `mode = relax`, `workTag = null`, không hiển thị selector tương ứng và không thể fail bởi Strict violation.
 - [ ] Contribution graph chỉ tính completed standard Focus minutes và loại onboarding trial.
 - [ ] Người dùng có thể tắt audio và haptic.
 - [ ] Người dùng có thể gửi feedback.
 - [ ] Các analytics event chính không phát trùng ngoài chủ đích.
 - [ ] Không có crash/blocker đã biết trong core focus flow.
-- [ ] Có cơ chế reset/xóa dữ liệu local.
+- [x] Có cơ chế reset/xóa dữ liệu local.
+
+Checkbox được tick theo evidence của EPIC-01–05, không theo dự đoán roadmap. Các mục Standard
+Focus, Strict, notification, economy UI, History/Contribution UI, Settings, Feedback, provider
+analytics và Beta Readiness vẫn mở cho EPIC-06–12. `Contribution graph` ở trên chưa tick dù query
+exclusion đã có, vì production graph UI thuộc EPIC-09.
 
 ---
 
@@ -1181,6 +1186,16 @@ Không mục nào trong bảng này được xem là requirement đã chốt cho
 ---
 
 # 22. Change Log
+
+## 1.16.0 — 2026-09-03
+
+- Đồng bộ closure năm Epic đầu: Foundation, durable data/bootstrap, approved clickable UX,
+  production Pet Companion và onboarding trial đều owner-accepted.
+- Tick đúng acceptance đã có evidence: onboarding value, toàn bộ Pet states, exact trial reward/
+  exclusions, Relax/no-tag trial invariant và confirmed local-data reset mechanism.
+- Giữ các acceptance thuộc EPIC-06–12 chưa tick; đặc biệt không coi derived contribution query là
+  production Contribution Graph UI và không coi quick smoke là full formal device matrix.
+- `OPEN-006` và `OPEN-009` tiếp tục open, không bị closure EPIC-05 chốt ngầm.
 
 ## 1.15.0 — 2026-08-31
 

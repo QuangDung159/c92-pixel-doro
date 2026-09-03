@@ -42,7 +42,7 @@ class CountingReconciliation implements StartupReconciliationPort {
   > {
     this.calls += 1;
     this.onCall?.();
-    return { ok: true, value: undefined };
+    return { ok: true, value: { durableDataChanged: false } };
   }
 }
 

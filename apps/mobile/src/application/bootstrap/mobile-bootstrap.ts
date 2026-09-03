@@ -3,6 +3,7 @@ import type {
   BootstrapDataPort,
   BootstrapDurableSnapshot,
 } from '../ports/bootstrap-data.port';
+import type { ApplicationResult } from '@pixeldoro/application';
 import type { BootstrapVerifierPort } from '../ports/bootstrap-verifier.port';
 import type { DatabaseLifecyclePort } from '../ports/database-lifecycle.port';
 import type { MigrationPort, MigrationRunError } from '../ports/migration.port';
@@ -52,6 +53,15 @@ export interface MobileBootstrapDependencies {
   readonly startupReconciliation: StartupReconciliationPort;
 }
 
+export type BootstrapRefreshErrorCode =
+  | 'BOOTSTRAP_REFRESH_NOT_READY'
+  | 'BOOTSTRAP_REFRESH_READ_FAILED';
+
+export interface BootstrapRefreshError {
+  readonly kind: 'bootstrap_refresh_error';
+  readonly code: BootstrapRefreshErrorCode;
+}
+
 const migrationRecoveryReason = (
   error: MigrationRunError,
 ): RecoveryReasonCode =>
@@ -66,6 +76,9 @@ export class MobileBootstrap
   private unsubscribeLifecycle: (() => void) | undefined;
   private listeners = new Set<() => void>();
   private attemptPromise: Promise<void> | undefined;
+  private refreshPromise:
+    | Promise<ApplicationResult<BootstrapDurableSnapshot, BootstrapRefreshError>>
+    | undefined;
   private disposePromise: Promise<void> | undefined;
   private generation = 0;
   private attemptNumber = 0;
@@ -117,6 +130,29 @@ export class MobileBootstrap
       reasonCode: this.projection.error.code,
     };
     return this.startAttempt(true, previousFailure);
+  }
+
+  refreshReadySnapshot(): Promise<
+    ApplicationResult<BootstrapDurableSnapshot, BootstrapRefreshError>
+  > {
+    if (this.refreshPromise !== undefined) return this.refreshPromise;
+    if (this.projection.status !== 'ready') {
+      return Promise.resolve({
+        ok: false,
+        error: {
+          kind: 'bootstrap_refresh_error',
+          code: 'BOOTSTRAP_REFRESH_NOT_READY',
+        },
+      });
+    }
+
+    const generation = this.generation;
+    const operation = this.runReadySnapshotRefresh(generation);
+    this.refreshPromise = operation;
+    void operation.finally(() => {
+      if (this.refreshPromise === operation) this.refreshPromise = undefined;
+    });
+    return operation;
   }
 
   enterRecovery(reasonCode: RuntimeRecoveryReasonCode): void {
@@ -315,10 +351,22 @@ export class MobileBootstrap
         return;
       }
 
+      let finalSnapshot = dataResult.value;
+      if (reconciliationResult.value.durableDataChanged) {
+        this.updateBooting('hydrating');
+        const refreshedData = await this.dependencies.bootstrapData.read();
+        if (!this.isCurrent(generation)) return;
+        if (!refreshedData.ok) {
+          this.recover('hydrating', refreshedData.error.code);
+          return;
+        }
+        finalSnapshot = refreshedData.value;
+      }
+
       this.dependencies.readiness.open();
       this.updateProjection({
         status: 'ready',
-        snapshot: dataResult.value,
+        snapshot: finalSnapshot,
         lifecycleState: this.lifecycleState,
       });
 
@@ -335,6 +383,48 @@ export class MobileBootstrap
       const current = this.projection;
       const phase = current.status === 'booting' ? current.phase : 'opening';
       this.recover(phase, this.unexpectedReasonFor(phase));
+    }
+  }
+
+  private async runReadySnapshotRefresh(
+    generation: number,
+  ): Promise<ApplicationResult<BootstrapDurableSnapshot, BootstrapRefreshError>> {
+    try {
+      const refreshed = await this.dependencies.bootstrapData.read();
+      if (
+        generation !== this.generation ||
+        this.projection.status !== 'ready'
+      ) {
+        return {
+          ok: false,
+          error: {
+            kind: 'bootstrap_refresh_error',
+            code: 'BOOTSTRAP_REFRESH_NOT_READY',
+          },
+        };
+      }
+      if (!refreshed.ok) {
+        return {
+          ok: false,
+          error: {
+            kind: 'bootstrap_refresh_error',
+            code: 'BOOTSTRAP_REFRESH_READ_FAILED',
+          },
+        };
+      }
+      this.updateProjection({
+        ...this.projection,
+        snapshot: refreshed.value,
+      });
+      return { ok: true, value: refreshed.value };
+    } catch {
+      return {
+        ok: false,
+        error: {
+          kind: 'bootstrap_refresh_error',
+          code: 'BOOTSTRAP_REFRESH_READ_FAILED',
+        },
+      };
     }
   }
 

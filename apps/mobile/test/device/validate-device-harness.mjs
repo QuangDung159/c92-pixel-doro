@@ -18,6 +18,10 @@ const petTerminalFeedbackFlowPath = `${deviceDirectory}pet-terminal-feedback-smo
 const petArbitrationFlowPath = `${deviceDirectory}pet-arbitration-smoke.md`;
 const petAnimationLifecycleFlowPath = `${deviceDirectory}pet-animation-lifecycle-smoke.md`;
 const petAccessibilityFallbackFlowPath = `${deviceDirectory}pet-accessibility-fallback-smoke.md`;
+const onboardingTrialFlowPath = `${deviceDirectory}onboarding-trial-smoke.md`;
+const onboardingTrialCompletionFlowPath = `${deviceDirectory}onboarding-trial-completion-smoke.md`;
+const onboardingTrialHandoffFlowPath = `${deviceDirectory}onboarding-trial-handoff-smoke.md`;
+const epic05ExitFlowPath = `${deviceDirectory}epic-05-exit-smoke.md`;
 
 await access(flowPath);
 await access(sqliteFlowPath);
@@ -34,6 +38,10 @@ await access(petTerminalFeedbackFlowPath);
 await access(petArbitrationFlowPath);
 await access(petAnimationLifecycleFlowPath);
 await access(petAccessibilityFallbackFlowPath);
+await access(onboardingTrialFlowPath);
+await access(onboardingTrialCompletionFlowPath);
+await access(onboardingTrialHandoffFlowPath);
+await access(epic05ExitFlowPath);
 const flow = await readFile(flowPath, 'utf8');
 const sqliteFlow = await readFile(sqliteFlowPath, 'utf8');
 const schemaFlow = await readFile(schemaFlowPath, 'utf8');
@@ -58,6 +66,78 @@ const petAccessibilityFallbackFlow = await readFile(
   petAccessibilityFallbackFlowPath,
   'utf8',
 );
+const onboardingTrialFlow = await readFile(onboardingTrialFlowPath, 'utf8');
+const onboardingTrialCompletionFlow = await readFile(
+  onboardingTrialCompletionFlowPath,
+  'utf8',
+);
+const onboardingTrialHandoffFlow = await readFile(
+  onboardingTrialHandoffFlowPath,
+  'utf8',
+);
+const epic05ExitFlow = await readFile(epic05ExitFlowPath, 'utf8');
+
+const requiredOnboardingTrialEvidence = [
+  'EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE=trial_start_failure',
+  'EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE=trial_cancel_failure',
+  'EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE=trial_running_fast_clock',
+  'EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE=trial_deadline_pending',
+  'endsAt-startedAt=300000',
+  'unset EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE',
+];
+
+for (const evidence of requiredOnboardingTrialEvidence) {
+  if (!onboardingTrialFlow.includes(evidence)) {
+    throw new Error(`Onboarding trial device flow is missing: ${evidence}`);
+  }
+}
+
+const requiredOnboardingTrialCompletionEvidence = [
+  'EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE=trial_overdue_running',
+  'EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE=trial_complete_race',
+  'EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE=trial_reward_write_failure',
+  'onboarding_trial_completed',
+  'DEFERRED_TO_LATER_PHASE',
+  'unset EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE',
+];
+
+for (const evidence of requiredOnboardingTrialCompletionEvidence) {
+  if (!onboardingTrialCompletionFlow.includes(evidence)) {
+    throw new Error(`Onboarding completion device flow is missing: ${evidence}`);
+  }
+}
+
+const requiredOnboardingTrialHandoffEvidence = [
+  'EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE=trial_completed_fresh',
+  'EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE=trial_completed_reopen',
+  'EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE=trial_continue_failure',
+  'Vào Pet Room',
+  'onboarding_completed_at',
+  'unset EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE',
+];
+
+for (const evidence of requiredOnboardingTrialHandoffEvidence) {
+  if (!onboardingTrialHandoffFlow.includes(evidence)) {
+    throw new Error(`Onboarding handoff device flow is missing: ${evidence}`);
+  }
+}
+
+const requiredEpic05ExitEvidence = [
+  'EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE=epic_05_fresh_end_to_end',
+  'EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE=epic_05_exclusion_seed',
+  'DEFERRED_TO_LATER_PHASE',
+  '<implementation-sha>',
+  'Reduce Motion',
+  'screen reader',
+  'offline',
+  'unset EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE',
+];
+
+for (const evidence of requiredEpic05ExitEvidence) {
+  if (!epic05ExitFlow.includes(evidence)) {
+    throw new Error(`EPIC-05 exit device flow is missing: ${evidence}`);
+  }
+}
 
 const requiredLabels = [
   'Chào mừng đến PixelDoro',

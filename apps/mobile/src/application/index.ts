@@ -1,5 +1,7 @@
 export {
   MobileBootstrap,
+  type BootstrapRefreshError,
+  type BootstrapRefreshErrorCode,
   type BootstrapProjection,
   type MobileBootstrapDependencies,
 } from './bootstrap/mobile-bootstrap';
@@ -90,6 +92,45 @@ export {
 } from './readiness/readiness-gate';
 export type { MobileApplicationFacade } from './mobile-application.facade';
 export { AppVisibilityController } from './visibility/app-visibility.controller';
+export {
+  OnboardingTrialRunningController,
+  type OnboardingTrialRunningControllerDependencies,
+  type OnboardingTrialRunningErrorCode,
+  type OnboardingTrialRunningProjection,
+  type TrialTickScheduler,
+  OnboardingTrialCompletionController,
+  type OnboardingTrialCompletionProjection,
+  OnboardingTrialResultController,
+  type OnboardingTrialResultProjection,
+  CompleteFirstUseHandoffUseCase,
+  type CompleteFirstUseHandoffDependencies,
+  type CompleteFirstUseHandoffError,
+  type CompleteFirstUseHandoffErrorCode,
+  type CompleteFirstUseHandoffOutcome,
+  OnboardingTrialHandoffController,
+  type OnboardingTrialHandoffControllerDependencies,
+  type OnboardingTrialHandoffError,
+  type OnboardingTrialHandoffErrorCode,
+  type OnboardingTrialHandoffProjection,
+  OnboardingTrialPetFeedbackBridge,
+  type OnboardingTrialPetFeedbackBridgeDependencies,
+  type OnboardingTrialPetFeedbackBridgeProjection,
+  OnboardingAnalyticsRecorder,
+  type OnboardingAnalyticsRecorderDependencies,
+  type OnboardingAnalyticsRecorderPort,
+  type OnboardingAnalyticsRecordError,
+  type OnboardingAnalyticsRecordErrorCode,
+  type OnboardingAnalyticsRecordOutcome,
+} from './onboarding-trial';
+export {
+  FirstUseEntryController,
+  type FirstUseEntryControllerDependencies,
+  type FirstUseEntryDestination,
+  type FirstUseEntryErrorCode,
+  type FirstUseEntryProjection,
+  type FirstUseInstallationReader,
+  type FirstUseSessionReader,
+} from './first-use';
 export type {
   AnalyticsDeliveryState,
   AnalyticsEventRecord,
