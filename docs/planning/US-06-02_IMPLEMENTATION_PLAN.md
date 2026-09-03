@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_06_02_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-06-02 Relax Running, timestamp countdown, cancel và relaunch plan
-version: 0.3.0
-status: IMPLEMENTED_AUTOMATED_VERIFIED_AWAITING_OWNER_REVIEW
-implementation_status: AWAITING_OWNER_ACCEPTANCE
+version: 0.3.1
+status: DONE_OWNER_ACCEPTED_QUICK_UI
+implementation_status: DONE_OWNER_ACCEPTED
 date: 2026-09-03
 owner: Dũng Lư
 reviewer: Dũng Lư
@@ -14,10 +14,13 @@ language: vi
 branch: feats/epic-06
 planning_baseline_sha: 68f2c54d3630817385b320622476c55c67caea13
 implementation_start_sha: 68f2c54d3630817385b320622476c55c67caea13
-implementation_candidate: UNCOMMITTED_WORKTREE_ON_68f2c54d3630817385b320622476c55c67caea13
+implementation_candidate: COMMITTED
+exact_implementation_sha: 9a8e3d87d44612b7bd9aa8bf9e592099300d9e2e
 us_06_01_implementation_sha: 68f2c54d3630817385b320622476c55c67caea13
 us_06_01_acceptance: OWNER_QUICK_UI_ACCEPTED_TO_OPEN_PLANNING
 formal_tester_status: DEFERRED_TO_LATER_PHASE
+manual_device_status: OWNER_QUICK_UI_SMOKE_REPORTED
+owner_acceptance_status: ACCEPTED_TO_OPEN_US_06_03_PLANNING
 scope:
   - mobile_mvp
   - epic_06
@@ -63,10 +66,11 @@ sau khi `running → cancelled` commit thành công mới mở Result đọc đ�
 
 **Planning status:** `OWNER_APPROVED` ngày 2026-09-03.
 
-**Implementation status:** `IMPLEMENTED_AUTOMATED_VERIFIED_AWAITING_OWNER_REVIEW`. Owner đã duyệt
-Option A cho toàn bộ `US0602-CONFIRM-01`→`10`; candidate hiện là uncommitted working tree trên
-implementation-start SHA `68f2c54d3630817385b320622476c55c67caea13`. Manual/device UI chưa
-được chạy trong implementation turn này và exact implementation SHA còn chờ commit.
+**Implementation status:** `DONE_OWNER_ACCEPTED`. Owner đã duyệt Option A cho toàn bộ
+`US0602-CONFIRM-01`→`10`; implementation đã commit tại exact SHA
+`9a8e3d87d44612b7bd9aa8bf9e592099300d9e2e`. Owner báo cáo đã hoàn tất quick UI smoke và yêu cầu
+mở planning US-06-03. Full structured manual matrix không bị suy diễn là pass; formal tester vẫn
+deferred.
 
 ### 0.1. Gate được mở từ US-06-01
 
@@ -859,10 +863,11 @@ Full guide sẽ nằm ở `apps/mobile/test/device/standard-focus-relax-running-
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.3.1 | 2026-09-03 | Codex | Recorded exact implementation SHA and owner quick-UI progression acceptance; closed US-06-02 and opened owner-gated US-06-03 planning while retaining manual/formal evidence limitations. |
 | 0.3.0 | 2026-09-03 | Codex | Recorded implemented working-tree candidate, automated/SQLite/quality/iOS bundle evidence and remaining exact-SHA/manual/owner gates. |
 | 0.2.0 | 2026-09-03 | Codex | Recorded owner approval of Option A for `US0602-CONFIRM-01`→`10` and implementation-start SHA; production implementation moved to `IN_PROGRESS`. |
 | 0.1.0 | 2026-09-03 | Codex | Created owner-gated implementation plan for Relax timestamp Running, lifecycle re-anchor, durable Cancel, exact cancelled Result, generic countdown migration, fixtures and evidence. Production implementation remains not started. |
 
-**US-06-02 is implemented and automated-verified on an uncommitted candidate based on
-`68f2c54d3630817385b320622476c55c67caea13`; exact implementation SHA, owner quick UI and owner
-acceptance remain pending.**
+**US-06-02 is owner-accepted at exact implementation SHA
+`9a8e3d87d44612b7bd9aa8bf9e592099300d9e2e`. Owner quick UI opens US-06-03 planning; detailed
+manual matrix and formal tester evidence remain deferred.**

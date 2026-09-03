@@ -1,16 +1,17 @@
 ---
 document_id: PIXELDORO_US_06_02_IMPLEMENTATION_REPORT
 title: PixelDoro US-06-02 — Relax Running, Cancel and Cancelled Result Implementation Report
-version: 0.1.0
-status: IMPLEMENTED_AUTOMATED_VERIFIED_AWAITING_OWNER_ACCEPTANCE
+version: 0.1.1
+status: DONE_OWNER_ACCEPTED_QUICK_UI
 story: US-06-02
 date: 2026-09-03
 owner: Dũng Lư
 branch: feats/epic-06
 implementation_start_sha: 68f2c54d3630817385b320622476c55c67caea13
-implementation_candidate: UNCOMMITTED_WORKTREE_ON_68f2c54d3630817385b320622476c55c67caea13
-exact_implementation_sha: PENDING_COMMIT
-manual_device_status: NOT_RUN
+implementation_candidate: COMMITTED
+exact_implementation_sha: 9a8e3d87d44612b7bd9aa8bf9e592099300d9e2e
+manual_device_status: OWNER_QUICK_UI_SMOKE_REPORTED
+owner_acceptance_status: ACCEPTED_TO_OPEN_US_06_03_PLANNING
 formal_tester_status: DEFERRED_TO_LATER_PHASE
 language: vi
 ---
@@ -33,8 +34,10 @@ US-06-02 đã được triển khai trên working tree theo `US0602-CONFIRM-01`�
 - Startup active-session barrier giữ trial reconciliation và fail closed cho malformed Standard
   truth; Relax foreground/background không tạo terminal write.
 
-Candidate chưa có commit nên exact implementation SHA là `PENDING_COMMIT`. Manual/device UI chưa
-được chạy trong lượt này; formal tester vẫn deferred. US-06-03 chưa được mở.
+Implementation đã được commit tại exact SHA
+`9a8e3d87d44612b7bd9aa8bf9e592099300d9e2e`. Owner báo cáo đã hoàn tất quick UI smoke và yêu cầu
+mở implementation planning cho US-06-03. Báo cáo này không suy diễn quick smoke thành full manual
+matrix; formal tester vẫn deferred.
 
 ## 2. Implemented architecture
 
@@ -130,13 +133,15 @@ Final candidate gates using pinned Node `22.23.2` / pnpm `11.24.0`:
 - Không implement Break, pause/resume hoặc prototype terminal truth.
 - Trial countdown/cancel/completion/result regressions vẫn pass.
 
-## 8. Manual / Development Build evidence — not run
+## 8. Manual / Development Build evidence — owner quick UI reported
 
 Guide đầy đủ:
 
 `apps/mobile/test/device/standard-focus-relax-running-smoke.md`
 
-Chưa có device evidence trong implementation turn này:
+Owner báo cáo ngày 2026-09-03: **đã test nhanh UI và chấp nhận mở US-06-03 planning**. Phạm vi
+quick smoke không kèm structured per-step artifact trong thread, vì vậy checklist chi tiết bên dưới
+không được tự đánh dấu pass:
 
 - [ ] Exact committed implementation SHA, device/simulator, OS và build version.
 - [ ] Relax countdown visible và Pet Working.
@@ -148,17 +153,21 @@ Chưa có device evidence trong implementation turn này:
 - [ ] Offline, screen reader, large text và Reduce Motion.
 - [ ] Screenshot/video + sanitized durable before/after facts.
 
-Không manual checkbox nào được báo cáo pass. Formal tester giữ `DEFERRED_TO_LATER_PHASE`.
+Owner quick smoke là progression acceptance, không phải formal manual evidence. Formal tester giữ
+`DEFERRED_TO_LATER_PHASE`.
 
-## 9. Remaining gates
+## 9. Exit gate
 
-- Commit candidate để có exact implementation SHA.
-- Owner chạy quick UI guide và xác nhận acceptance hoặc issue.
-- Nếu accepted, đóng US-06-02 và mới mở US-06-03 Strict planning/implementation.
-- Full formal tester có thể tiếp tục deferred nhưng phải giữ trạng thái trung thực.
+- [x] Candidate committed tại exact SHA
+  `9a8e3d87d44612b7bd9aa8bf9e592099300d9e2e`.
+- [x] Owner báo cáo quick UI smoke và chấp nhận mở US-06-03 planning.
+- [x] US-06-02 đóng progression gate; US-06-03 được phép lập owner-gated plan.
+- [ ] Full structured manual matrix chưa được cung cấp.
+- [ ] Formal tester tiếp tục `DEFERRED_TO_LATER_PHASE`.
 
 ## 10. Change log
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.1.1 | 2026-09-03 | Codex | Recorded exact implementation SHA and owner-reported quick UI acceptance to open US-06-03 planning; detailed manual matrix and formal tester remain explicitly deferred. |
 | 0.1.0 | 2026-09-03 | Codex | Recorded implemented Relax Running/Cancel/Result candidate, automated/SQLite/bundle evidence, scope audit and truthful pending exact-SHA/manual/owner gates. |
