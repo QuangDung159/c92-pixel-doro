@@ -2,7 +2,10 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
 
 import { OnboardingTrialRunningScreen } from '@/presentation/features/onboarding-trial';
-import { decideFocusSessionBranch } from '@/presentation/features/focus/focus-session-arbitration';
+import {
+  decideFocusSessionBranch,
+  shouldOpenOnboardingTrialResult,
+} from '@/presentation/features/focus/focus-session-arbitration';
 import { ErrorState, LoadingState, ScreenShell } from '@/presentation/components';
 import {
   useCancelOnboardingTrial,
@@ -68,8 +71,10 @@ export default function FocusSessionRoute() {
   const branch = decideFocusSessionBranch(trial, standardFocus);
 
   useEffect(() => {
-    if (completion.status === 'committed') router.replace('/focus/result');
-  }, [completion.status, router]);
+    if (shouldOpenOnboardingTrialResult(branch, completion.status)) {
+      router.replace('/focus/result');
+    }
+  }, [branch, completion.status, router]);
 
   useEffect(() => {
     if (standardOutcome.status === 'failed') {

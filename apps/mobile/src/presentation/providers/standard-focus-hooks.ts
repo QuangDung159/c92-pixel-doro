@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from 'react';
+import { useCallback, useSyncExternalStore } from 'react';
 
 import type {
   StandardFocusCancelProjection,
@@ -87,7 +87,11 @@ export const useStandardFocusOutcomeProjection = (): StandardFocusOutcomeProject
 
 export const useStandardFocusOutcomeActions = () => {
   const { standardFocusOutcome } = useMobileApplication();
-  return { consume: standardFocusOutcome.consume };
+  const consume = useCallback(
+    (sessionId: string) => standardFocusOutcome.consume(sessionId),
+    [standardFocusOutcome],
+  );
+  return { consume };
 };
 
 export const useStandardFocusReviewReset = () => {

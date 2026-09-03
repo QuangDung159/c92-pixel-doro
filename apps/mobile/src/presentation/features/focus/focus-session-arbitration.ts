@@ -1,4 +1,5 @@
 import type {
+  OnboardingTrialCompletionProjection,
   OnboardingTrialRunningProjection,
   StandardFocusSessionProjection,
 } from '@/application';
@@ -10,6 +11,11 @@ export type FocusSessionBranch =
   | 'standard_error'
   | 'standard'
   | 'prototype';
+
+export const shouldOpenOnboardingTrialResult = (
+  branch: FocusSessionBranch,
+  completionStatus: OnboardingTrialCompletionProjection['status'],
+): boolean => branch === 'trial' && completionStatus === 'committed';
 
 export const decideFocusSessionBranch = (
   trial: OnboardingTrialRunningProjection,

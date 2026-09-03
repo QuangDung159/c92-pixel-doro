@@ -17,4 +17,15 @@ describe('StandardFocusOutcomeController', () => {
     expect(controller.getSnapshot()).toEqual({ status: 'idle' });
     expect(listener).toHaveBeenCalledTimes(2);
   });
+
+  it('keeps public actions safe when presentation passes them as callbacks', () => {
+    const controller = new StandardFocusOutcomeController();
+    const publishFreshFailure = controller.publishFreshFailure;
+    const consume = controller.consume;
+
+    publishFreshFailure('strict-1', 21_000);
+    consume('strict-1');
+
+    expect(controller.getSnapshot()).toEqual({ status: 'idle' });
+  });
 });

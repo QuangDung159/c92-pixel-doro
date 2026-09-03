@@ -19,7 +19,7 @@ export class StandardFocusOutcomeController {
     return () => this.listeners.delete(listener);
   };
 
-  publishFreshFailure(sessionId: string, resolvedAt: number): void {
+  publishFreshFailure = (sessionId: string, resolvedAt: number): void => {
     if (
       this.disposed ||
       sessionId.trim().length === 0 ||
@@ -27,19 +27,19 @@ export class StandardFocusOutcomeController {
       resolvedAt < 0
     ) return;
     this.publish(Object.freeze({ status: 'failed', sessionId, resolvedAt }));
-  }
+  };
 
-  consume(sessionId: string): void {
+  consume = (sessionId: string): void => {
     if (
       !this.disposed &&
       this.projection.status === 'failed' &&
       this.projection.sessionId === sessionId
     ) this.publish({ status: 'idle' });
-  }
+  };
 
-  reset(): void {
+  reset = (): void => {
     if (!this.disposed) this.publish({ status: 'idle' });
-  }
+  };
 
   dispose(): void {
     this.disposed = true;

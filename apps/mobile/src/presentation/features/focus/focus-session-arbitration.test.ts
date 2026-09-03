@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { decideFocusSessionBranch } from './focus-session-arbitration';
+import {
+  decideFocusSessionBranch,
+  shouldOpenOnboardingTrialResult,
+} from './focus-session-arbitration';
 
 describe('Focus Session production arbitration', () => {
   it('waits for both durable readers before allowing prototype fallback', () => {
@@ -38,5 +41,12 @@ describe('Focus Session production arbitration', () => {
       { status: 'missing' },
       { status: 'error', error: { code: 'STANDARD_FOCUS_READ_FAILED' } },
     )).toBe('standard_error');
+  });
+
+  it('opens the trial result only while the trial branch is active', () => {
+    expect(shouldOpenOnboardingTrialResult('trial', 'committed')).toBe(true);
+    expect(shouldOpenOnboardingTrialResult('standard', 'committed')).toBe(false);
+    expect(shouldOpenOnboardingTrialResult('loading', 'committed')).toBe(false);
+    expect(shouldOpenOnboardingTrialResult('trial', 'idle')).toBe(false);
   });
 });
