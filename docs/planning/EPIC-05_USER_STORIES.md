@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_05_USER_STORIES
-version: 0.17.0
-status: US_05_05_DONE_OWNER_ACCEPTED_EPIC_EXIT_PENDING
+version: 0.18.0
+status: DONE_OWNER_ACCEPTED
 date: 2026-09-03
 owner: Dũng Lư
 baseline_sha: 91cb459c05fdcfa1f114c9ed13ac143fdc7fd7d2
@@ -222,7 +222,7 @@ Onboarding, Trial Running, Result, and route files may only arrange components, 
 | G05-UX | US-05-01/02/04 | CLOSED | Owner approved Option 1 for DEC-05-01, DEC-05-03, and DEC-05-04 on 2026-08-31. |
 | G05-ANALYTICS | US-05-05 | CLOSED | Owner approved Option 1 for DEC-05-02 on 2026-08-31. |
 | G05-DATA | Each story | CONDITIONAL | Existing schema appears sufficient. Any proven schema gap stops implementation for separate owner/authority review; no silent migration. |
-| G05-STORY-N | Next story | US-05-05 CLOSED; EPIC EXIT PENDING | Owner accepted exact SHA `580f559` after quick UI test; formal tester is deferred. EPIC-05/MVP close and EPIC-06 remain separately owner-gated. |
+| G05-STORY-N | Next story | EPIC-05 CLOSED; EPIC-06 PLANNING READY | Owner accepted exact SHA `580f559`, then authorized five-Epic closure on 2026-09-03. Formal tester is deferred; EPIC-06 implementation still requires its own plan/confirmations. |
 
 ## 9. Story overview
 
@@ -286,14 +286,14 @@ This order first removes incorrect launch/prototype truth, then commits a recove
 
 **Acceptance criteria**
 
-- [ ] New installation with no trial shows the approved Cat/Mèo Dev intro and `Thử phiên 5 phút`.
-- [ ] No name, species, mode, work-tag, or Strict selector is visible.
-- [ ] Completed onboarding routes directly to production Home/Pet Room.
-- [ ] Running trial routes to Running; completed trial without onboarding completion routes to Result; cancelled trial routes per DEC-05-03.
-- [ ] Loading/error/retry avoids flashing an incorrect screen and never fabricates durable state.
-- [ ] Route/screen imports no repository, SQL, prototype reducer, or business rule.
-- [ ] Production routes no longer depend on `PrototypeProvider` for eligibility.
-- [ ] Cat static/reduced-motion behavior remains equivalent.
+- [x] New installation with no trial shows the approved Cat/Mèo Dev intro and `Thử phiên 5 phút`.
+- [x] No name, species, mode, work-tag, or Strict selector is visible.
+- [x] Completed onboarding routes directly to production Home/Pet Room.
+- [x] Running trial routes to Running; completed trial without onboarding completion routes to Result; cancelled trial routes per DEC-05-03.
+- [x] Loading/error/retry avoids flashing an incorrect screen and never fabricates durable state.
+- [x] Route/screen imports no repository, SQL, prototype reducer, or business rule.
+- [x] Production routes no longer depend on `PrototypeProvider` for eligibility.
+- [x] Cat static/reduced-motion behavior remains equivalent.
 
 **Layer boundaries**
 
@@ -396,14 +396,14 @@ Evidence to send: Git SHA; platform; device/simulator; OS; screenshots/video of 
 
 **Acceptance criteria**
 
-- [ ] CTA commits exactly one `running` session with `focusVariant=onboarding_trial`, configured/XP minutes `5`, `mode=relax`, and `workTag=null` before navigation.
-- [ ] Duplicate taps/concurrent starts cannot create two running trials.
-- [ ] Running UI derives remaining time from durable timestamps and a clock, not decrement-only screen state.
-- [ ] Background and cold relaunch before deadline resume the same session with plausible remaining time.
-- [ ] No mode/tag/Strict/grace/failure control or branch exists.
-- [ ] Cancel dialog dismissal preserves running; confirm commits `cancelled`, returns to intro, and creates no reward/profile increment.
-- [ ] Start/cancel persistence failure keeps the user on a recoverable screen and does not claim success.
-- [ ] Offline start/run/cancel works against local durable storage.
+- [x] CTA commits exactly one `running` session with `focusVariant=onboarding_trial`, configured/XP minutes `5`, `mode=relax`, and `workTag=null` before navigation.
+- [x] Duplicate taps/concurrent starts cannot create two running trials.
+- [x] Running UI derives remaining time from durable timestamps and a clock, not decrement-only screen state.
+- [x] Background and cold relaunch before deadline resume the same session with plausible remaining time.
+- [x] No mode/tag/Strict/grace/failure control or branch exists.
+- [x] Cancel dialog dismissal preserves running; confirm commits `cancelled`, returns to intro, and creates no reward/profile increment.
+- [x] Start/cancel persistence failure keeps the user on a recoverable screen and does not claim success.
+- [x] Offline start/run/cancel works against local durable storage.
 
 **Layer boundaries**
 
@@ -511,14 +511,14 @@ Evidence to send: Git SHA; platform; device/simulator; OS; start/background/rela
 
 **Acceptance criteria**
 
-- [ ] Deadline resolution commits session `completed`, reward receipt, and profile totals in one transaction.
-- [ ] Committed values are exactly `5 XP` and `1 Coin`, with onboarding-trial reward reason and one receipt per session.
-- [ ] Result reads committed session/reward facts; screen performs no formula and has no claim button.
-- [ ] Duplicate deadline callbacks, foreground/startup reconciliation, concurrent completes, and Result reopen keep one reward and one profile increment.
-- [ ] A transaction failure leaves no partial completion/reward/profile mutation and offers recovery.
-- [ ] Relaunch with overdue running session reconciles before showing Result; relaunch with completed session reads the existing result.
-- [ ] Trial remains Relax: background time counts, and no failed terminal status is introduced.
-- [ ] A fresh committed terminal event is emitted only after commit, contains stable identity, and is not emitted for hydrated old completion.
+- [x] Deadline resolution commits session `completed`, reward receipt, and profile totals in one transaction.
+- [x] Committed values are exactly `5 XP` and `1 Coin`, with onboarding-trial reward reason and one receipt per session.
+- [x] Result reads committed session/reward facts; screen performs no formula and has no claim button.
+- [x] Duplicate deadline callbacks, foreground/startup reconciliation, concurrent completes, and Result reopen keep one reward and one profile increment.
+- [x] A transaction failure leaves no partial completion/reward/profile mutation and offers recovery.
+- [x] Relaunch with overdue running session reconciles before showing Result; relaunch with completed session reads the existing result.
+- [x] Trial remains Relax: background time counts, and no failed terminal status is introduced.
+- [x] A fresh committed terminal event is emitted only after commit, contains stable identity, and is not emitted for hydrated old completion.
 
 **Layer boundaries**
 
@@ -625,14 +625,14 @@ Evidence to send: Git SHA; platform; device/simulator; OS; normal/race/failure/r
 
 **Acceptance criteria**
 
-- [ ] Only a fresh post-commit completion triggers EPIC-04 terminal feedback; hydrated/reopened Result uses base projection and does not replay.
-- [ ] Celebration uses approved Cat assets/controller and never writes session, reward, or profile.
-- [ ] CTA is available throughout or within the EPIC-04 ≤2s feedback contract and motion never blocks navigation.
-- [ ] Reduce Motion/static fallback communicates the same success without animation.
-- [ ] `Vào Pet Room` persists onboarding completion before routing; failure stays on truthful Result with retry.
-- [ ] Home reads production projection and displays committed totals including exactly `5 XP`/`1 Coin`.
-- [ ] Subsequent cold launch goes directly Home with no onboarding/result flash.
-- [ ] Back/navigation behavior cannot create reward or replay celebration.
+- [x] Only a fresh post-commit completion triggers EPIC-04 terminal feedback; hydrated/reopened Result uses base projection and does not replay.
+- [x] Celebration uses approved Cat assets/controller and never writes session, reward, or profile.
+- [x] CTA is available throughout or within the EPIC-04 ≤2s feedback contract and motion never blocks navigation.
+- [x] Reduce Motion/static fallback communicates the same success without animation.
+- [x] `Vào Pet Room` persists onboarding completion before routing; failure stays on truthful Result with retry.
+- [x] Home reads production projection and displays committed totals including exactly `5 XP`/`1 Coin`.
+- [x] Subsequent cold launch goes directly Home with no onboarding/result flash.
+- [x] Back/navigation behavior cannot create reward or replay celebration.
 
 **Layer boundaries**
 
@@ -739,15 +739,15 @@ Evidence to send: Git SHA; platform; device/simulator; OS; fresh/reopen/relaunch
 
 **Acceptance criteria**
 
-- [ ] Fresh install completes Intro→Running→Result→Home with durable recovery and exact reward.
-- [ ] Trial is absent from standard history, contribution, Long Break cadence, store-review eligibility, and standard/core Focus event stream.
-- [ ] Onboarding event hooks follow DEC-05-02 and are idempotent at their durable milestones; no provider is added.
-- [ ] Duplicate complete/reconcile/result reopen/relaunch/Continue never duplicate reward, completion, event milestone, or celebration.
-- [ ] Offline and injected storage failures recover truthfully without partial facts.
-- [ ] Screen reader, large text, contrast/status semantics, touch targets, and Reduce Motion meet existing contracts.
-- [ ] No production screen imports repository/SQL/prototype authority; no duplicated common primitive or UI/source >300 lines.
-- [ ] No naming/species/selector/Strict/Standard Focus/EPIC-08/09/11 behavior enters the slice.
-- [ ] Root quality gate and documented evidence inventory pass; device/platform checks remain pending until owner supplies evidence.
+- [x] Fresh install completes Intro→Running→Result→Home with durable recovery and exact reward.
+- [x] Trial is absent from standard history, contribution, Long Break cadence, store-review eligibility, and standard/core Focus event stream.
+- [x] Onboarding event hooks follow DEC-05-02 and are idempotent at their durable milestones; no provider is added.
+- [x] Duplicate complete/reconcile/result reopen/relaunch/Continue never duplicate reward, completion, event milestone, or celebration.
+- [x] Offline and injected storage failures recover truthfully without partial facts.
+- [x] Screen reader, large text, contrast/status semantics, touch targets, and Reduce Motion meet existing contracts.
+- [x] No production screen imports repository/SQL/prototype authority; no duplicated common primitive or UI/source >300 lines.
+- [x] No naming/species/selector/Strict/Standard Focus/EPIC-08/09/11 behavior enters the slice.
+- [x] Root quality gate and documented evidence inventory pass; device/platform checks remain pending until owner supplies evidence.
 
 **Layer boundaries**
 
@@ -869,42 +869,43 @@ Every evidence record must state pass/fail per step and must not use an automate
 
 A story may move from `PROPOSED — OWNER REVIEW` to `READY` only when:
 
-- [ ] Owner has approved this document, authoritative order, and decisions that gate the story.
-- [ ] Previous story exit condition is closed; no other EPIC-05 story is active.
-- [ ] User-visible output, in/out scope, fake remaining, and evidence expectations are understood.
-- [ ] Relevant production/prototype boundaries and component migration are named.
-- [ ] Required repository/application APIs are confirmed against baseline; any schema gap is raised, not silently changed.
-- [ ] Automated tests and owner manual fixture are feasible without new dependency/native work.
-- [ ] Expected file ownership/splits keep every UI source below 300 lines.
+- [x] Owner has approved this document, authoritative order, and decisions that gate the story.
+- [x] Previous story exit condition is closed; no other EPIC-05 story is active.
+- [x] User-visible output, in/out scope, fake remaining, and evidence expectations are understood.
+- [x] Relevant production/prototype boundaries and component migration are named.
+- [x] Required repository/application APIs are confirmed against baseline; any schema gap is raised, not silently changed.
+- [x] Automated tests and owner manual fixture are feasible without new dependency/native work.
+- [x] Expected file ownership/splits keep every UI source below 300 lines.
 
 ## 16. Story Definition of Done
 
-No item is pre-accepted by this planning pass.
+Closure audit 2026-09-03 marks the completed evidence below. Formal device fields remain deferred
+where the owner accepted quick smoke/automated evidence instead of a full tester matrix.
 
-- [ ] User-visible outcome and tangible output work through production commands/projections.
-- [ ] All acceptance criteria and automated tests for the story pass.
-- [ ] `pnpm run quality` passes on the recorded Git SHA.
-- [ ] Error, offline, relaunch/background, a11y, and reduced-motion cases relevant to the story are evidenced.
-- [ ] Manual guide was run; platform/device/OS and pass/fail evidence are recorded by owner/reviewer.
-- [ ] Durable before/after facts match expectations and contain no partial/duplicate writes.
-- [ ] Common components are reused; migrations/regressions pass; screens remain composition-only.
-- [ ] No UI source exceeds 300 lines and no speculative/duplicate abstraction was added.
-- [ ] No schema/migration/dependency/native artifact or later-epic scope was introduced without a separately approved gate.
-- [ ] Story report records remaining fake explicitly and closes its exit condition before the next story starts.
+- [x] User-visible outcome and tangible output work through production commands/projections.
+- [x] All acceptance criteria and automated tests for the story pass.
+- [x] `pnpm run quality` passes on the recorded Git SHA.
+- [x] Error, offline, relaunch/background, a11y, and reduced-motion cases relevant to the story are evidenced.
+- [x] Manual evidence was run or explicitly owner-deferred with quick-smoke/full-tester distinction recorded.
+- [x] Durable before/after facts match expectations and contain no partial/duplicate writes.
+- [x] Common components are reused; migrations/regressions pass; screens remain composition-only.
+- [x] No UI source exceeds 300 lines and no speculative/duplicate abstraction was added.
+- [x] No schema/migration/dependency/native artifact or later-epic scope was introduced without a separately approved gate.
+- [x] Story report records remaining fake explicitly and closes its exit condition before the next story starts.
 
 ## 17. Epic Definition of Done
 
-- [ ] A new user completes the approved Intro→5-minute Relax trial→committed Result→Home/Pet Room journey.
-- [ ] Trial is always `onboarding_trial`, 5 minutes, Relax, null tag, with no selectors/Strict failure.
-- [ ] Completion, reward receipt, and profile update are automatic, atomic, idempotent, and exactly 5 XP/1 Coin.
-- [ ] Relaunch/background/startup recovery uses durable facts and produces no duplicate reward/event/celebration.
-- [ ] EPIC-04 Cat celebration consumes only a fresh committed event and never mutates session/reward.
-- [ ] Explicit Continue persists onboarding completion; Home and later launch show correct committed state.
-- [ ] Trial is excluded from standard history/contribution/cadence/store-review/core Focus analytics.
-- [ ] Offline/error/a11y/reduced-motion paths and all common-component/boundary/size regressions pass.
-- [ ] No naming/species/selector/Standard Focus/later analytics provider or unapproved schema/native/dependency scope exists.
-- [ ] All five stories, automated gates, manual evidence, and owner confirmation are accepted.
-- [ ] EPIC-05 exit report/MVP status is updated only in the future closure pass, not in this planning pass.
+- [x] A new user completes the approved Intro→5-minute Relax trial→committed Result→Home/Pet Room journey.
+- [x] Trial is always `onboarding_trial`, 5 minutes, Relax, null tag, with no selectors/Strict failure.
+- [x] Completion, reward receipt, and profile update are automatic, atomic, idempotent, and exactly 5 XP/1 Coin.
+- [x] Relaunch/background/startup recovery uses durable facts and produces no duplicate reward/event/celebration.
+- [x] EPIC-04 Cat celebration consumes only a fresh committed event and never mutates session/reward.
+- [x] Explicit Continue persists onboarding completion; Home and later launch show correct committed state.
+- [x] Trial is excluded from standard history/contribution/cadence/store-review/core Focus analytics.
+- [x] Offline/error/a11y/reduced-motion paths and all common-component/boundary/size regressions pass.
+- [x] No naming/species/selector/Standard Focus/later analytics provider or unapproved schema/native/dependency scope exists.
+- [x] All five stories, automated gates, owner quick-smoke/deferred-tester evidence and owner confirmation are accepted.
+- [x] EPIC-05 exit report and master MVP status were updated in the explicit closure pass.
 
 ## 18. Risk and decision register
 
@@ -997,15 +998,15 @@ No item is pre-accepted by this planning pass.
 
 One-pass review requested. No implementation starts until these are answered.
 
-- [ ] Approve five-story decomposition and exact solo execution order.
-- [ ] Approve EPIC-05 scope/out-of-scope, especially no naming/selector/Standard Focus/provider work.
+- [x] Approve five-story decomposition and exact solo execution order.
+- [x] Approve EPIC-05 scope/out-of-scope, especially no naming/selector/Standard Focus/provider work.
 - [x] DEC-05-01: Option 1 approved on 2026-08-31 (mandatory, no Skip).
 - [x] DEC-05-02: Option 1 approved on 2026-08-31 (analytics completion after explicit Continue commit).
 - [x] DEC-05-03: Option 1 approved on 2026-08-31 (cancel→Intro).
 - [x] DEC-05-04: Option 1 approved on 2026-08-31 (automatic commit then Result).
-- [ ] Confirm `OPEN-009` stays open and Cat/Mèo Dev default is sufficient.
-- [ ] Approve UI reuse/generalization plan: common `RewardSummary`, feature-local `TrialCountdown`, no speculative input/icon/status abstractions.
-- [ ] Approve manual fixture strategy using the existing Development Build and pinned Node path.
+- [x] Confirm `OPEN-009` stays open and Cat/Mèo Dev default is sufficient.
+- [x] Approve UI reuse/generalization plan: common `RewardSummary`, feature-local `TrialCountdown`, no speculative input/icon/status abstractions.
+- [x] Approve manual fixture strategy using the existing Development Build and pinned Node path.
 - [x] `US-05-01` authorized to move to `READY` through approval of `US0501-CONFIRM-01`…`06` on 2026-08-31; remaining Epic-wide confirmations stay open for their owning Story/exit gate.
 - [x] `US-05-01` closed `DONE_OWNER_ACCEPTED` at `f2efd62` on 2026-08-31.
 - [x] `US-05-02_IMPLEMENTATION_PLAN.md` confirmations `US0502-CONFIRM-01`…`07` approved 2026-08-31; implementation opened at `9a51974`.
@@ -1020,12 +1021,14 @@ One-pass review requested. No implementation starts until these are answered.
 - [x] `US-05-05` implementation committed at `580f559`; real SQLite exclusion journey, analytics
   idempotency, fixture/static/a11y gates and root `82/391` pass; formal tester remains deferred.
 - [x] Owner accepted exact US-05-05 implementation SHA `580f559` after quick UI test on 2026-09-03.
-- [ ] Owner separately authorizes EPIC-05/MVP close and the EPIC-06 gate.
+- [x] Owner authorized EPIC-05/master checklist closure and opened only the EPIC-06 planning gate
+  on 2026-09-03; EPIC-06 production implementation remains unstarted.
 
 ## 20. Change log
 
 | Version | Date | Author | Change |
 | --- | --- | --- | --- |
+| 0.18.0 | 2026-09-03 | Codex, recording five-Epic closure | Closed EPIC-05 after all five Stories were owner-accepted, updated the master completion gate, and opened only EPIC-06 planning; formal tester evidence remains deferred. |
 | 0.17.0 | 2026-09-03 | Codex, recording owner acceptance | Closed US-05-05 at 580f559 after owner-reported quick UI test, retained formal tester as deferred, and left EPIC-05/MVP close plus EPIC-06 gate pending explicit authorization. |
 | 0.16.0 | 2026-09-01 | Codex | Recorded US-05-05 implementation at exact SHA 580f559 with 82/391 automated quality, SQLite exclusion/analytics proof and deferred tester evidence; EPIC-05 still awaits owner acceptance. |
 | 0.15.0 | 2026-09-01 | Codex, recording owner approval | Recorded US0505-CONFIRM-01…08 approval and opened US-05-05 implementation at exact SHA 2080d15; EPIC-05 exit and EPIC-06 remain owner-gated. |

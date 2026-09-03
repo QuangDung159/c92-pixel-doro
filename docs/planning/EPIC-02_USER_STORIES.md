@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_EPIC_02_USER_STORIES
 title: PixelDoro Mobile MVP — EPIC-02 User Stories
-version: 1.26.0
-status: DONE
-last_updated: 2026-08-30
+version: 1.27.0
+status: DONE_OWNER_ACCEPTED
+last_updated: 2026-09-03
 owner: Dũng Lư
 reviewer: Dũng Lư
 reviewer_role: Tech Lead
@@ -969,6 +969,13 @@ Một Story chỉ được đánh dấu `[x]` khi:
 - [x] Dũng Lư review, phê duyệt closeout và re-baseline ngày 2026-08-30.
 
 ## 10. Change log
+
+### 1.27.0 — 2026-09-03
+
+- Normalized completed Epic metadata to `DONE_OWNER_ACCEPTED` during the five-Epic documentation
+  audit; retained the owner-approved revised exit boundary.
+- Final same-release-candidate-SHA iOS/Android aggregate remains explicitly transferred to
+  `EPIC-12`; no missing native result is represented as pass.
 
 ### 1.26.0 — 2026-08-30
 

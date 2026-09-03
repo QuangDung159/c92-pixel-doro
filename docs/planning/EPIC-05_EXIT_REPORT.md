@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_EPIC_05_EXIT_REPORT
 title: PixelDoro EPIC-05 — First-use Onboarding Trial Exit Report
-version: 0.2.0
-status: AWAITING_EPIC_CLOSE_AUTHORIZATION
+version: 1.0.0
+status: DONE_OWNER_ACCEPTED
 date: 2026-09-03
 owner: Dũng Lư
 branch: feats/epic-05
@@ -10,21 +10,23 @@ candidate_sha: 580f559016e192b95d3d286a61d161b3af460a1d
 formal_tester_status: DEFERRED_TO_LATER_PHASE
 us_05_05_status: DONE_OWNER_ACCEPTED
 quick_smoke_status: OWNER_REPORTED_PASS
+epic_closed_at: 2026-09-03
+next_gate: EPIC_06_PLANNING_READY
 language: vi
 ---
 
-# EPIC-05 Exit Report — Owner-gated Candidate
+# EPIC-05 Exit Report
 
 ## 1. Exit candidate
 
 EPIC-05 có implementation candidate tại exact behavior SHA
 `580f559016e192b95d3d286a61d161b3af460a1d`. Automated evidence cho toàn bộ production first-use
-slice đã pass và owner đã chấp nhận US-05-05 sau quick UI test ngày 2026-09-03. Report này vẫn
-`AWAITING_EPIC_CLOSE_AUTHORIZATION` vì chưa có lệnh đóng Epic/MVP hoặc mở EPIC-06.
+slice đã pass, owner đã chấp nhận US-05-05 sau quick UI test và sau đó xác nhận hoàn thành năm Epic
+đầu vào ngày 2026-09-03. EPIC-05 hiện `DONE_OWNER_ACCEPTED`; chỉ planning gate EPIC-06 được mở.
 
-Không checkbox nào trong `MVP_EPICS.md` được đóng bởi draft này. EPIC-06 vẫn khóa cho tới khi owner
-ủy quyền đóng EPIC-05/MVP và mở next-Epic gate; formal tester/device matrix tiếp tục deferred và
-không được suy ra từ automated simulator/host tests.
+Master checkbox EPIC-05 đã được đóng bằng owner authorization này. Formal tester/device matrix tiếp
+tục deferred và không được suy ra từ automated simulator/host tests. Closure không tự bắt đầu
+EPIC-06 implementation và không đánh dấu toàn bộ Mobile MVP/closed beta hoàn tất.
 
 ## 2. Story inventory
 
@@ -68,14 +70,15 @@ relaunch, offline, failure, screen-reader, large-text and Reduce Motion matrix. 
 - [x] Deferred tester limitation is explicit.
 - [x] Owner accepts US-05-05 exact SHA `580f559016e192b95d3d286a61d161b3af460a1d`
   after owner-reported quick UI test on 2026-09-03.
-- [ ] Owner authorizes EPIC-05 close/MVP checklist update and next-Epic gate.
+- [x] Owner authorizes EPIC-05 close/master checklist update and EPIC-06 planning gate on 2026-09-03.
 
-Until the pending Epic close authorization is resolved, authoritative state remains
-`US_05_05_DONE_OWNER_ACCEPTED_EPIC_EXIT_PENDING`.
+Authoritative state is `DONE_OWNER_ACCEPTED`. EPIC-06 remains `PLANNING_READY` / implementation
+`NOT_STARTED` until its own Story breakdown, confirmations and implementation plan are approved.
 
 ## 6. Change log
 
 | Version | Date | Author | Change |
 | --- | --- | --- | --- |
+| 1.0.0 | 2026-09-03 | Codex, recording five-Epic closure | Closed EPIC-05 as DONE_OWNER_ACCEPTED, synchronized the master checklist, opened only EPIC-06 planning, and retained formal tester evidence as deferred. |
 | 0.2.0 | 2026-09-03 | Codex, recording owner acceptance | Recorded US-05-05 quick UI test done and exact-SHA acceptance; formal tester remains deferred and explicit EPIC-05/MVP close authorization is still pending. |
 | 0.1.0 | 2026-09-01 | Codex | Created owner-gated EPIC-05 exit candidate bound to 580f559; automated evidence passes, formal tester remains deferred, Epic/MVP/EPIC-06 status stays open/locked. |

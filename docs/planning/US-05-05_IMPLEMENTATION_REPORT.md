@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_US_05_05_IMPLEMENTATION_REPORT
 title: PixelDoro US-05-05 — First-use Integrity and Exit Evidence Implementation Report
-version: 0.2.0
+version: 0.3.0
 status: DONE_OWNER_ACCEPTED
 story: US-05-05
 date: 2026-09-03
@@ -114,11 +114,13 @@ Existing queue/event allowlist/query semantics được reuse; không arbitrary 
 - [x] Formal tester limitation recorded as deferred.
 - [x] Owner reports quick UI test done and accepts exact SHA
   `580f559016e192b95d3d286a61d161b3af460a1d` on 2026-09-03.
-- [ ] EPIC-05/MVP close and EPIC-06 gate require a separate explicit owner action.
+- [x] Owner separately authorized EPIC-05/master close and opened only EPIC-06 planning on
+  2026-09-03; EPIC-06 implementation remains unstarted.
 
 ## 7. Change log
 
 | Version | Date | Author | Change |
 | --- | --- | --- | --- |
+| 0.3.0 | 2026-09-03 | Codex, five-Epic closure sync | Recorded the separate EPIC-05/master close authorization and EPIC-06 planning-ready gate; behavior SHA and deferred formal tester truth are unchanged. |
 | 0.2.0 | 2026-09-03 | Codex, recording owner acceptance | Closed US-05-05 at 580f559 after owner-reported quick UI test; retained formal tester as deferred and left EPIC-05/MVP/EPIC-06 gates unchanged. |
 | 0.1.0 | 2026-09-01 | Codex | Bound deterministic best-effort milestones, production SQLite exclusion proof, fixture/static/a11y gates and 82/391 quality to exact implementation SHA 580f559; owner acceptance and formal tester remain pending/deferred respectively. |

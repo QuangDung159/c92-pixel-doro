@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_EPIC_01_USER_STORIES
 title: PixelDoro Mobile MVP — EPIC-01 User Stories
-version: 1.0.0
-status: APPROVED
-last_updated: 2026-08-27
+version: 1.1.0
+status: DONE_OWNER_ACCEPTED
+last_updated: 2026-09-03
 owner: Dũng Lư
 reviewer: Dũng Lư
 reviewer_role: Tech Lead
@@ -542,6 +542,13 @@ Một Story chỉ được đánh dấu `[x]` khi:
 - [x] Dũng Lư review và phê duyệt Story breakdown trước khi tạo Task IDs.
 
 ## 9. Change log
+
+### 1.1.0 — 2026-09-03
+
+- Normalized metadata to `DONE_OWNER_ACCEPTED` during the five-Epic documentation audit; no Story,
+  implementation or evidence semantics changed.
+- Cross-platform foundation/build/route-smoke evidence remains authoritative in
+  `EPIC-01_IMPLEMENTATION_EVIDENCE.md`; pre-production OTA gates remain later release work.
 
 ### 1.0.0 — 2026-08-27
 

@@ -8,6 +8,9 @@ Checklist này dùng để quản lý tám tài liệu kỹ thuật bắt buộc
 
 **Documentation preparation status:** `DONE` — Dũng Lư phê duyệt ngày 2026-08-27; bộ tài liệu hiện là baseline để bắt đầu implementation Mobile MVP.
 
+**Latest consistency audit:** `PASS` — 2026-09-03 sau khi EPIC-01–05 hoàn tất; normative technical
+documents vẫn approved, các implementation/deferred gates được giữ ở planning/evidence owner.
+
 ## Quy ước trạng thái
 
 - [ ] Chưa bắt đầu
@@ -19,13 +22,13 @@ Checklist này dùng để quản lý tám tài liệu kỹ thuật bắt buộc
 
 Một tài liệu chỉ được đánh dấu hoàn thành khi đáp ứng tất cả điều kiện sau:
 
-- [ ] Đã tạo đúng file và đặt trong thư mục quy định.
-- [ ] Nội dung phản ánh đúng phạm vi Mobile MVP hiện tại.
-- [ ] Không còn quyết định quan trọng ở trạng thái mơ hồ hoặc `TBD` mà không có owner.
-- [ ] Có acceptance criteria hoặc quy tắc đủ rõ để triển khai và kiểm thử.
-- [ ] Các thuật ngữ, enum và tên trạng thái nhất quán với những tài liệu còn lại.
-- [ ] Với indie solo project: owner đã self-review có ghi nhận ngày, hoàn tất consistency audit giữa các tài liệu và tự phê duyệt trong vai trò Tech Lead/Product Owner. Nếu có contributor/reviewer khác tham gia sau này, peer review được khuyến nghị nhưng không phải điều kiện hồi tố của baseline hiện tại.
-- [ ] Các quyết định kỹ thuật quan trọng đã được ghi lại bằng ADR nếu cần.
+- [x] Đã tạo đúng file và đặt trong thư mục quy định.
+- [x] Nội dung phản ánh đúng phạm vi Mobile MVP hiện tại.
+- [x] Không còn quyết định quan trọng ở trạng thái mơ hồ hoặc `TBD` mà không có owner.
+- [x] Có acceptance criteria hoặc quy tắc đủ rõ để triển khai và kiểm thử.
+- [x] Các thuật ngữ, enum và tên trạng thái nhất quán với những tài liệu còn lại.
+- [x] Với indie solo project: owner đã self-review có ghi nhận ngày, hoàn tất consistency audit giữa các tài liệu và tự phê duyệt trong vai trò Tech Lead/Product Owner. Nếu có contributor/reviewer khác tham gia sau này, peer review được khuyến nghị nhưng không phải điều kiện hồi tố của baseline hiện tại.
+- [x] Các quyết định kỹ thuật quan trọng đã được ghi lại bằng ADR nếu cần.
 
 ## Tổng quan tiến độ
 
@@ -243,4 +246,4 @@ Milestone là governance gate, không phải quyết định sản phẩm. Imple
 
 **Tech lead:** Dũng Lư
 
-**Ghi chú chung:** `DONE` cho giai đoạn chuẩn bị tài liệu của indie solo project. Cả tám tài liệu kỹ thuật bắt buộc đã được self-review và phê duyệt; consistency audit về enum, state mapping, durable truth, reward idempotency và edge-case acceptance đã hoàn tất. Product `OPEN-001` đã `RESOLVED` ngày 2026-08-31 với Cat / Mèo Dev (`cat-dev`) và Cat Dev sprite v1 đã được Product/Art duyệt; `OPEN-006` và `OPEN-009` vẫn có owner/review milestone và không chặn implementation ngoài phần chức năng trực tiếp phụ thuộc. Implementation acceptance tiếp tục cần code/test/device evidence; documentation approval không tự đánh dấu các acceptance checkbox trong specification.
+**Ghi chú chung:** `DONE` cho giai đoạn chuẩn bị tài liệu của indie solo project. Cả tám tài liệu kỹ thuật bắt buộc đã được self-review và phê duyệt; consistency audit về enum, state mapping, durable truth, reward idempotency và edge-case acceptance đã hoàn tất, gần nhất ngày 2026-09-03 sau closure EPIC-01–05. Product `OPEN-001` đã `RESOLVED` ngày 2026-08-31 với Cat / Mèo Dev (`cat-dev`) và Cat Dev sprite v1 đã được Product/Art duyệt; `OPEN-006` và `OPEN-009` vẫn có owner/review milestone và không chặn implementation ngoài phần chức năng trực tiếp phụ thuộc. Implementation acceptance tiếp tục cần code/test/device evidence; documentation approval không tự đánh dấu các acceptance checkbox trong specification.

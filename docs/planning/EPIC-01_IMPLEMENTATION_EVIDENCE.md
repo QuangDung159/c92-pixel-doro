@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_EPIC_01_IMPLEMENTATION_EVIDENCE
 title: PixelDoro Mobile MVP — EPIC-01 Implementation Evidence
-version: 0.1.0
-status: IN_PROGRESS_MANUAL_BUILD_GATES
-last_updated: 2026-08-27
+version: 0.2.0
+status: COMPLETE_OWNER_ACCEPTED
+last_updated: 2026-09-03
 owner: Dũng Lư
 language: vi
 scope:
@@ -24,6 +24,10 @@ baseline ngày 2026-08-27.
 
 Không có Timer, Session, Pet identity, gamification, SQLite schema, backend, cloud sync,
 desktop hoặc Product decision đang `OPEN` được triển khai trong Epic này.
+
+Metadata được normalized ngày 2026-09-03 từ stale `IN_PROGRESS_MANUAL_BUILD_GATES` sang
+`COMPLETE_OWNER_ACCEPTED`. Toàn bộ closure checklist bên dưới đã pass từ 2026-08-27; thay đổi này
+không tạo evidence mới hoặc claim preview/production OTA đã chạy.
 
 ## 2. Configuration đã resolve
 

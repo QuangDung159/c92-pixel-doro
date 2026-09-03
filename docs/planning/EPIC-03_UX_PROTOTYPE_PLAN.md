@@ -1,9 +1,10 @@
 ---
 document_id: PIXELDORO_EPIC_03_UX_PROTOTYPE_PLAN
 title: PixelDoro EPIC-03 — UX Prototype Plan
-version: 1.0.0
-status: UX_APPROVED
-last_updated: 2026-08-30
+version: 1.1.0
+status: DONE_OWNER_ACCEPTED
+ux_status: UX_APPROVED
+last_updated: 2026-09-03
 owner: Dũng Lư
 language: vi
 scope:
@@ -27,7 +28,8 @@ direction và cách biểu đạt reward loop trong tài liệu này. Chỉ sau 
 clickable React Native prototype ở Phase B.
 
 Phase A đạt approval ngày 2026-08-30 khi owner duyệt cả sáu lựa chọn UX ở mục 9. Sau Phase B,
-owner tiếp tục duyệt clickable prototype ngày 2026-08-30. Trạng thái cuối: `UX_APPROVED`.
+owner tiếp tục duyệt clickable prototype ngày 2026-08-30. Epic completion được normalized ngày
+2026-09-03 thành `DONE_OWNER_ACCEPTED`; UX artifact vẫn giữ semantic status `UX_APPROVED`.
 
 ## 2. Baseline audit
 

@@ -1,9 +1,10 @@
 ---
 document_id: PIXELDORO_US_05_05_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-05-05 Implementation Plan
-version: 0.4.0
+version: 0.5.0
 status: DONE_OWNER_ACCEPTED
 implementation_status: DONE_OWNER_ACCEPTED
+epic_status: DONE_OWNER_ACCEPTED
 created_at: 2026-08-31
 last_updated: 2026-09-03
 owner: Dũng Lư
@@ -104,6 +105,12 @@ test done ngày 2026-09-03.
 - Quick smoke được ghi là owner-reported pass. Platform/device/OS, captures, raw durable facts và
   full formal tester matrix chưa được cung cấp nên vẫn `DEFERRED_TO_LATER_PHASE`.
 - Acceptance này đóng riêng US-05-05; không tự đóng EPIC-05/MVP hoặc mở EPIC-06.
+
+### 0.4. Epic closure sync — 2026-09-03
+
+- Owner sau đó xác nhận hoàn thành năm Epic đầu, cho phép đóng EPIC-05 và master checkbox.
+- Chỉ EPIC-06 planning gate được mở; production implementation vẫn `NOT_STARTED` và cần plan/
+  confirmations riêng.
 
 ## 1. Baseline audit và gap map
 
@@ -524,6 +531,7 @@ mở implementation US-05-05; không tự đóng EPIC-05 hoặc mở implementat
 
 | Version | Date | Author | Change |
 | --- | --- | --- | --- |
+| 0.5.0 | 2026-09-03 | Codex, five-Epic closure sync | Synced EPIC-05 DONE_OWNER_ACCEPTED and EPIC-06 planning-ready state after the separate owner closure authorization; no implementation scope changed. |
 | 0.4.0 | 2026-09-03 | Codex, recording owner acceptance | Closed US-05-05 at exact SHA 580f559 after owner-reported quick UI test; formal tester remains deferred and EPIC-05/MVP/EPIC-06 gates remain unchanged. |
 | 0.3.0 | 2026-09-01 | Codex | Bound deterministic analytics, real SQLite exclusion proof, fixtures/static/a11y gates and 82/391 quality evidence to exact implementation SHA 580f559; Story awaits owner acceptance and formal tester remains deferred. |
 | 0.2.0 | 2026-09-01 | Codex, recording owner approval | Recorded approval of US0505-CONFIRM-01…08 and opened implementation at exact SHA 2080d15; EPIC-05 exit remains owner-gated and EPIC-06 remains closed. |

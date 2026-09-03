@@ -1,16 +1,16 @@
 ---
 document_id: PIXELDORO_MVP_EPIC_BREAKDOWN
 title: PixelDoro Mobile MVP — Epic Breakdown
-version: 1.4.0
-status: APPROVED
-last_updated: 2026-08-31
+version: 1.5.0
+status: EPIC_01_TO_05_DONE_EPIC_06_PLANNING_READY
+last_updated: 2026-09-03
 owner: Dũng Lư
 reviewer: Dũng Lư
 reviewer_role: Tech Lead
 approved_by: Dũng Lư
 approver_role: Product Owner
 approved_at: 2026-08-27
-amended_at: 2026-08-31
+amended_at: 2026-09-03
 amendment_approved_by: Dũng Lư
 language: vi
 scope:
@@ -125,7 +125,7 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 - [x] `02 / EPIC-02 / W1` — Durable Data & Bootstrap.
 - [x] `03 / EPIC-03 / W2` — MVP Experience Prototype & User-flow Validation.
 - [x] `04 / EPIC-04 / W3` — Pet Companion — `DONE_OWNER_ACCEPTED` 2026-08-31.
-- [ ] `05 / EPIC-05 / W3` — Onboarding Trial.
+- [x] `05 / EPIC-05 / W3` — Onboarding Trial — `DONE_OWNER_ACCEPTED` 2026-09-03.
 - [ ] `06 / EPIC-06 / W3` — Standard Focus.
 - [ ] `07 / EPIC-07 / W3` — Break & Cadence.
 - [ ] `08 / EPIC-08 / W3` — Progression & Shop.
@@ -133,6 +133,21 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 - [ ] `10 / EPIC-10 / W3` — Settings & Data Control.
 - [ ] `11 / EPIC-11 / W3` — Analytics, Feedback & Store Review.
 - [ ] `12 / EPIC-12 / W4` — Beta Readiness.
+
+### 2.4. Trạng thái sau năm Epic đầu tiên
+
+| Phạm vi | Trạng thái | Evidence/gate |
+|---|---|---|
+| `EPIC-01` | `DONE_OWNER_ACCEPTED` | Foundation, build, route smoke và delivery baseline đã được owner chấp nhận. |
+| `EPIC-02` | `DONE_OWNER_ACCEPTED` | Durable data/bootstrap hoàn tất theo revised exit; final same-SHA iOS/Android aggregate giữ ở EPIC-12. |
+| `EPIC-03` | `DONE_OWNER_ACCEPTED` / `UX_APPROVED` | Clickable primary flow và data-needs map đã được owner duyệt. |
+| `EPIC-04` | `DONE_OWNER_ACCEPTED` | Pet/Home production slice, Cat Dev asset và device/performance evidence hoàn tất. |
+| `EPIC-05` | `DONE_OWNER_ACCEPTED` | Exact implementation SHA `580f559`; root `82/391`, SQLite exclusions và owner quick UI smoke pass. Formal tester matrix deferred. |
+| `EPIC-06` | `PLANNING_READY` | Start gate mở; implementation vẫn `NOT_STARTED` và cần Story/confirmation plan riêng. |
+
+Năm Epic đầu đã hoàn thành không đồng nghĩa Mobile MVP hoàn tất. `EPIC-06`–`12` vẫn là `MUST` và
+giữ nguyên execution order. Không được dùng closure này để nhận là Standard Focus, Break, Shop,
+History, Settings, provider analytics hoặc Beta Readiness đã production-ready.
 
 ## 3. Critical path và delivery gates
 
@@ -409,6 +424,8 @@ scenario matrix và 30-minute performance pass trên frozen SHA `5b3a182`.
 - **MVP priority:** `MUST`
 - **Delivery wave:** `W3_VERTICAL_MVP`
 - **Execution order:** `05`
+- **Status:** `DONE_OWNER_ACCEPTED` — exact implementation SHA `580f559`; quick UI smoke được owner
+  xác nhận ngày 2026-09-03; formal tester matrix vẫn deferred.
 - **Start gate:** `EPIC-04 DONE`; approved prototype flow là baseline. `GATE-PET-NAMING` chỉ phải
   đóng trước production naming persistence/copy nếu approved flow thực sự cần naming.
 
@@ -430,16 +447,21 @@ scenario matrix và 30-minute performance pass trên frozen SHA `5b3a182`.
 
 **Epic completion checklist:**
 
-- [ ] First-use path không đưa người dùng qua Standard Focus Setup.
-- [ ] Trial duration/mode/tag được persist đúng invariant.
-- [ ] Background/lock/crash/kill dùng Relax lifecycle.
-- [ ] Trial không thể resolve `failed` bởi Strict violation.
-- [ ] Completed trial nhận đúng 5 XP/1 Coin tối đa một lần.
-- [ ] Cancelled/incomplete trial không nhận partial reward.
-- [ ] Trial không xuất hiện trong standard history/contribution/cadence/store-review queries.
-- [ ] Trial chỉ dùng onboarding analytics events theo allowlist.
-- [ ] Relaunch không tạo duplicate reward hoặc replay terminal animation cũ.
-- [ ] Pet naming chỉ được triển khai sau `OPEN-009` resolved; chưa chốt thì không thêm schema/requirement.
+- [x] First-use path không đưa người dùng qua Standard Focus Setup.
+- [x] Trial duration/mode/tag được persist đúng invariant.
+- [x] Background/lock/crash/kill dùng Relax lifecycle.
+- [x] Trial không thể resolve `failed` bởi Strict violation.
+- [x] Completed trial nhận đúng 5 XP/1 Coin tối đa một lần.
+- [x] Cancelled/incomplete trial không nhận partial reward.
+- [x] Trial không xuất hiện trong standard history/contribution/cadence/store-review queries.
+- [x] Trial chỉ dùng onboarding analytics events theo allowlist.
+- [x] Relaunch không tạo duplicate reward hoặc replay terminal animation cũ.
+- [x] Pet naming chỉ được triển khai sau `OPEN-009` resolved; chưa chốt thì không thêm schema/requirement.
+
+**Completion evidence:** `US-05-01`–`US-05-05` đều `DONE_OWNER_ACCEPTED`; exact final behavior SHA
+`580f559016e192b95d3d286a61d161b3af460a1d`; root quality `82/391`, production SQLite full journey,
+analytics/exclusion/static/a11y gates pass. Owner xác nhận quick UI smoke; formal tester/device
+matrix tiếp tục `DEFERRED_TO_LATER_PHASE` và được carry sang later validation thay vì fabricated.
 
 **Out of scope:** Standard Focus duration selector, Strict trial, custom work tag và tutorial economy/gameplay phức tạp.
 
@@ -794,6 +816,9 @@ Các checkbox trong mục này được giữ trống có chủ đích: chúng l
 
 Một Epic chỉ được đánh dấu `[x]` khi:
 
+Các checkbox dưới đây là template áp dụng cho từng Epic, không phải một checklist global được tick
+một lần. Closure thực tế của `EPIC-01`–`05` được tổng hợp ở matrix 8.1 và các exit/evidence report.
+
 - [ ] Outcome của Epic có thể demo/kiểm thử end-to-end ở phạm vi đã định nghĩa.
 - [ ] Với Product Epic: clickable UI/user flow đã được owner duyệt trước production technical plan.
 - [ ] Với prototype Epic: fake data/navigation được gắn nhãn rõ và không bị trình bày như production behavior.
@@ -807,24 +832,51 @@ Một Epic chỉ được đánh dấu `[x]` khi:
 - [ ] Không kéo nội dung `OPEN`/`DEFERRED` vào implementation mà chưa được duyệt.
 - [ ] Documentation/ADR được cập nhật nếu implementation tạo decision mới.
 
+### 8.1. Closure audit EPIC-01 đến EPIC-05
+
+| Definition dimension | EPIC-01 | EPIC-02 | EPIC-03 | EPIC-04 | EPIC-05 |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Outcome demo/evidence | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Story/phase scope hoàn tất | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Boundary và scope guardrails | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Error/recovery/offline/privacy theo phạm vi | ✓ | ✓ | prototype-scoped | ✓ | ✓ |
+| Automated evidence phù hợp | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Owner acceptance | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Deferred evidence ghi minh bạch | n/a | EPIC-12 aggregate | n/a | metadata gap only | formal tester matrix |
+
+Các deferred item trong matrix không phải pass giả và không mở rộng Definition of Done của Epic đã
+được owner re-baseline. Chúng vẫn phải được thực hiện tại Epic sở hữu (`EPIC-12` hoặc formal testing
+phase) trước closed beta khi roadmap yêu cầu.
+
 ## 9. Checklist trước khi chia User Story
 
-Việc duyệt master Epic plan hoàn tất item đầu tiên. Các item còn lại là refinement gate
-áp dụng riêng trước khi khóa User Story cho từng Product Epic tương lai; chúng không
-block trạng thái `APPROVED` của master plan hoặc `DONE` của Epic 1.
+Các item dưới đã được thực hiện cho primary flow và các Product Epic 03–05. Chúng phải được
+re-validate theo capability trước khi khóa Story của từng Epic 06–11; dấu `[x]` không tự phê duyệt
+Story hoặc implementation tương lai.
 
 - [x] Dũng Lư review và phê duyệt danh sách, outcome và thứ tự Epic.
-- [ ] Tạo/review tài liệu user flow end-to-end trước khi khóa Story cho các Product Epic.
-- [ ] Tạo clickable UI mock bằng fake data/fake navigation trước mọi schema/domain plan mới.
-- [ ] Gắn mỗi flow với Epic owner và source requirement.
-- [ ] Xác định happy path, alternate path, error/recovery path và exit state cho từng flow.
-- [ ] Ghi decision gate vào Story bị ảnh hưởng; `OPEN-001` đã resolved, `OPEN-006`/`OPEN-009` còn open.
-- [ ] Chỉ chia Story đủ nhỏ sau khi flow và acceptance boundary rõ ràng.
-- [ ] Lập data-needs map sau UX approval; không suy ngược UX từ schema hiện có.
-- [ ] Sau Story mới tạo Task theo layer và test level.
-- [ ] Không estimate deadline trước khi Story refinement hoàn tất.
+- [x] Tạo/review tài liệu user flow end-to-end trước khi khóa Story cho các Product Epic.
+- [x] Tạo clickable UI mock bằng fake data/fake navigation trước mọi schema/domain plan mới.
+- [x] Gắn mỗi flow với Epic owner và source requirement.
+- [x] Xác định happy path, alternate path, error/recovery path và exit state cho từng flow.
+- [x] Ghi decision gate vào Story bị ảnh hưởng; `OPEN-001` đã resolved, `OPEN-006`/`OPEN-009` còn open.
+- [x] Chỉ chia Story đủ nhỏ sau khi flow và acceptance boundary rõ ràng.
+- [x] Lập data-needs map sau UX approval; không suy ngược UX từ schema hiện có.
+- [x] Sau Story mới tạo Task theo layer và test level.
+- [x] Không estimate deadline trước khi Story refinement hoàn tất.
 
 ## 10. Change log
+
+### 1.5.0 — 2026-09-03
+
+- Đóng `EPIC-05` ở `DONE_OWNER_ACCEPTED` trên exact SHA `580f559` sau owner quick UI smoke; giữ
+  formal tester matrix deferred minh bạch.
+- Đồng bộ master checklist: `EPIC-01`–`05` hoàn tất; `EPIC-06` chỉ mở planning gate và vẫn chưa
+  implementation.
+- Tick toàn bộ EPIC-05 completion criteria, thêm closure audit năm Epic và làm rõ generic Definition
+  of Epic Done/refinement checklist không tự phê duyệt các Epic tương lai.
+- Giữ `OPEN-006`/`OPEN-009`, EPIC-02 cross-platform aggregate và mọi EPIC-06–12 outcome đúng owner;
+  không claim Mobile MVP hoặc closed beta đã hoàn tất.
 
 ### 1.4.0 — 2026-08-31
 

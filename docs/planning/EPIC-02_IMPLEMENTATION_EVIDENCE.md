@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_EPIC_02_IMPLEMENTATION_EVIDENCE
 title: PixelDoro Mobile MVP — EPIC-02 Implementation Evidence
-version: 0.20.0
-status: COMPLETE
-last_updated: 2026-08-30
+version: 0.21.0
+status: COMPLETE_OWNER_ACCEPTED
+last_updated: 2026-09-03
 owner: Dũng Lư
 language: vi
 scope:
@@ -23,6 +23,9 @@ us_02_09_plan: ./US-02-09_IMPLEMENTATION_PLAN.md
 ---
 
 # PixelDoro Mobile MVP — EPIC-02 Implementation Evidence
+
+> Closure metadata normalized on 2026-09-03. The final same-SHA iOS/Android aggregate remains
+> transferred to EPIC-12 exactly as recorded below; this update does not fabricate a native pass.
 
 ## 1. Kết luận hiện tại
 
