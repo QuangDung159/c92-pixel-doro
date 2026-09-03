@@ -15,9 +15,9 @@ import {
 } from '@/presentation/components';
 import { palette } from '@/presentation/theme/palette';
 
-type RelaxProjection = Extract<
+type RunningProjection = Extract<
   StandardFocusSessionProjection,
-  { readonly status: 'ready'; readonly mode: 'relax' }
+  { readonly status: 'ready' }
 >;
 
 const tagLabels = {
@@ -25,7 +25,7 @@ const tagLabels = {
 } as const;
 
 export interface StandardFocusRunningScreenProps {
-  readonly projection: RelaxProjection;
+  readonly projection: RunningProjection;
   readonly pet: PetVisualProjection;
   readonly cancelBusy: boolean;
   readonly cancelError: string | null;
@@ -49,16 +49,19 @@ export const StandardFocusRunningScreen = ({
   const [dismissedCancelToken, setDismissedCancelToken] = useState(0);
   const [showReset, setShowReset] = useState(false);
   const pending = projection.phase === 'deadline_pending';
+  const strict = projection.mode === 'strict';
   const cancelVisible = !pending && (showCancel || cancelRequestToken > dismissedCancelToken);
   return (
     <ScreenShell>
       <ScreenHeader
-        description="Relax tiếp tục theo đồng hồ kể cả khi bạn khóa màn hình hoặc chuyển app."
-        eyebrow={`RELAX · ${projection.durationMinutes} PHÚT`}
+        description={strict
+          ? 'Strict có grace 10 giây khi bạn khóa màn hình hoặc chuyển app.'
+          : 'Relax tiếp tục theo đồng hồ kể cả khi bạn khóa màn hình hoặc chuyển app.'}
+        eyebrow={`${projection.mode.toUpperCase()} · ${projection.durationMinutes} PHÚT`}
         title={pending ? 'Đang chờ xác nhận kết quả.' : 'Đang tập trung.'}
       />
       <View style={styles.sessionRow}>
-        <Text style={styles.mode}>RELAX</Text>
+        <Text style={styles.mode}>{projection.mode.toUpperCase()}</Text>
         <Text style={styles.tag}>{tagLabels[projection.workTag]}</Text>
       </View>
       <CountdownDisplay
@@ -74,7 +77,9 @@ export const StandardFocusRunningScreen = ({
       <InlineNotice>
         {pending
           ? 'Phiên đã tới deadline. Chưa có trạng thái hoàn thành hoặc phần thưởng nào được ghi.'
-          : 'Thời gian hiển thị được tính từ phiên đã lưu, không phụ thuộc số nhịp tick trên màn hình.'}
+          : strict
+            ? 'Rời PixelDoro quá 10 giây trước deadline sẽ kết thúc phiên Strict mà không có phần thưởng.'
+            : 'Thời gian hiển thị được tính từ phiên đã lưu, không phụ thuộc số nhịp tick trên màn hình.'}
       </InlineNotice>
       {cancelError === null ? null : <InlineNotice>{cancelError}</InlineNotice>}
       <SecondaryButton

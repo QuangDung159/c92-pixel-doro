@@ -15,6 +15,10 @@ const running = (): RunningSessionRecord => ({
   scheduledEndLocalDate: '2026-09-03', scheduledEndUtcOffsetMinutes: 420,
   createdAt: 1_000, updatedAt: 1_000,
 });
+const clearBackgroundedAtInTransaction = vi.fn(async () => ({
+  ok: true as const,
+  value: 'updated' as const,
+}));
 
 describe('CancelStandardFocusUseCase', () => {
   it('commits Relax cancellation with zero reward', async () => {
@@ -22,6 +26,7 @@ describe('CancelStandardFocusUseCase', () => {
     const useCase = new CancelStandardFocusUseCase({
       clock: { nowMs: () => 2_000 }, coordinator: new SessionCommandCoordinator(),
       sessions: {
+        clearBackgroundedAtInTransaction,
         findByIdInTransaction: async () => ({ ok: true, value: running() }),
         transitionFromRunningInTransaction: transition,
       },
@@ -44,6 +49,7 @@ describe('CancelStandardFocusUseCase', () => {
     const useCase = new CancelStandardFocusUseCase({
       clock: { nowMs: () => nowMs }, coordinator: new SessionCommandCoordinator(),
       sessions: {
+        clearBackgroundedAtInTransaction,
         findByIdInTransaction: async () => ({ ok: true, value: running() }),
         transitionFromRunningInTransaction: transition,
       }, transaction,
@@ -54,18 +60,53 @@ describe('CancelStandardFocusUseCase', () => {
     expect(transition).not.toHaveBeenCalled();
   });
 
-  it('keeps Strict outside the Relax story', async () => {
+  it('allows Strict cancellation before a violation is proven', async () => {
     const strict = { ...running(), mode: 'strict' as const };
     const useCase = new CancelStandardFocusUseCase({
       clock: { nowMs: () => 2_000 }, coordinator: new SessionCommandCoordinator(),
       sessions: {
+        clearBackgroundedAtInTransaction,
         findByIdInTransaction: async () => ({ ok: true, value: strict }),
-        transitionFromRunningInTransaction: vi.fn(),
+        transitionFromRunningInTransaction: vi.fn(async () => ({
+          ok: true as const,
+          value: 'updated' as const,
+        })),
       }, transaction,
     });
     expect(await useCase.execute('focus-1')).toMatchObject({
-      ok: false, error: { code: 'SESSION_MODE_NOT_OWNED' },
+      ok: true, value: { outcome: 'cancelled', sessionId: 'focus-1' },
     });
+  });
+
+  it('commits failed instead of allowing Cancel to escape a proven Strict violation', async () => {
+    const strict = {
+      ...running(),
+      mode: 'strict' as const,
+      endsAt: 21_000,
+      backgroundedAt: 11_000,
+      updatedAt: 11_000,
+    };
+    const transition = vi.fn(async (_scope: TransactionScope, input: { status: string }) => ({
+      ok: true as const,
+      value: input.status === 'failed' ? 'updated' as const : 'not_updated' as const,
+    }));
+    const useCase = new CancelStandardFocusUseCase({
+      clock: { nowMs: () => 21_000 }, coordinator: new SessionCommandCoordinator(),
+      sessions: {
+        clearBackgroundedAtInTransaction,
+        findByIdInTransaction: async () => ({ ok: true, value: strict }),
+        transitionFromRunningInTransaction: transition,
+      }, transaction,
+    });
+    expect(await useCase.execute('focus-1')).toEqual({
+      ok: true,
+      value: {
+        outcome: 'failed', sessionId: 'focus-1',
+        resolvedAt: 21_000, freshness: 'fresh_commit',
+      },
+    });
+    expect(transition).toHaveBeenCalledOnce();
+    expect(transition.mock.calls[0]?.[1]).toMatchObject({ status: 'failed' });
   });
 
   it('re-reads a conditional race winner and treats cancelled as idempotent', async () => {
@@ -76,6 +117,7 @@ describe('CancelStandardFocusUseCase', () => {
     const useCase = new CancelStandardFocusUseCase({
       clock: { nowMs: () => 2_000 }, coordinator: new SessionCommandCoordinator(),
       sessions: {
+        clearBackgroundedAtInTransaction,
         findByIdInTransaction: async () => ({
           ok: true, value: reads++ === 0 ? running() : cancelled,
         }),
@@ -94,6 +136,7 @@ describe('CancelStandardFocusUseCase', () => {
     const useCase = new CancelStandardFocusUseCase({
       clock: { nowMs: () => 2_000 }, coordinator: new SessionCommandCoordinator(),
       sessions: {
+        clearBackgroundedAtInTransaction,
         findByIdInTransaction: async () => ({ ok: true, value: completed }),
         transitionFromRunningInTransaction: vi.fn(),
       }, transaction,

@@ -65,15 +65,15 @@ describe('StandardFocusSessionController', () => {
     expect(deps.scheduler.schedule).not.toHaveBeenCalled();
   });
 
-  it('keeps Strict as a truthful handoff without a Relax tick', async () => {
+  it('projects Strict through the same timestamp countdown', async () => {
     const deps = dependencies(2_000, 'strict');
     const controller = new StandardFocusSessionController(deps);
     controller.activate();
     await controller.refresh();
     expect(controller.getSnapshot()).toMatchObject({
-      status: 'ready', phase: 'strict_handoff', mode: 'strict', sessionId: 'focus-1',
+      status: 'ready', phase: 'running', mode: 'strict', sessionId: 'focus-1',
     });
-    expect(deps.scheduler.schedule).not.toHaveBeenCalled();
+    expect(deps.scheduler.schedule).toHaveBeenCalledOnce();
   });
 
   it('coalesces concurrent reads and publishes missing for another valid branch', async () => {

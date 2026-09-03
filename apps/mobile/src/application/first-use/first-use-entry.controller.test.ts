@@ -103,6 +103,25 @@ describe('FirstUseEntryController', () => {
     expect(findLatestOnboardingTrial).not.toHaveBeenCalled();
   });
 
+  it('routes a fresh startup Strict failure to its exact Result before Home', async () => {
+    const controller = new FirstUseEntryController({
+      installation: {
+        find: async () => ({ ok: true, value: installation(timestamp + 1) }),
+      },
+      sessions: {
+        findActive: vi.fn(),
+        findLatestOnboardingTrial: vi.fn(),
+      },
+      standardOutcome: {
+        getSnapshot: () => ({ status: 'failed', sessionId: 'strict-1' }),
+      },
+    });
+    await controller.refresh();
+    expect(controller.getSnapshot()).toEqual({
+      status: 'ready', destination: 'standard_focus_result', sessionId: 'strict-1',
+    });
+  });
+
   it('routes completed onboarding to the committed running Standard Focus', async () => {
     const standard: SessionRecord = {
       ...trial('running'),

@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_06_03_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-06-03 Strict Mode Lite, grace evidence, reconciliation và failed outcome plan
-version: 0.1.0
-status: PROPOSED_OWNER_REVIEW
-implementation_status: NOT_STARTED
+version: 0.3.0
+status: IMPLEMENTED_AUTOMATED_VERIFIED_AWAITING_OWNER_REVIEW
+implementation_status: AWAITING_OWNER_ACCEPTANCE
 date: 2026-09-03
 owner: Dũng Lư
 reviewer: Dũng Lư
@@ -11,7 +11,12 @@ reviewer_role: Tech Lead/Product Owner
 language: vi
 branch: feats/epic-06
 planning_baseline_sha: 9a8e3d87d44612b7bd9aa8bf9e592099300d9e2e
-implementation_start_sha: PENDING_OWNER_APPROVAL
+implementation_start_sha: bf5b1dda9dafd82c7053abf18d5857ea6e554289
+approved_by: Dũng Lư
+approved_at: 2026-09-03
+implementation_candidate: UNCOMMITTED_WORKTREE_ON_bf5b1dda9dafd82c7053abf18d5857ea6e554289
+exact_implementation_sha: PENDING_COMMIT
+manual_device_status: NOT_RUN
 us_06_02_implementation_sha: 9a8e3d87d44612b7bd9aa8bf9e592099300d9e2e
 us_06_02_acceptance: OWNER_QUICK_UI_ACCEPTED_TO_OPEN_PLANNING
 formal_tester_status: DEFERRED_TO_LATER_PHASE
@@ -60,10 +65,13 @@ Bugged chỉ phát một lần từ fresh failed commit.
 
 **Priority:** `P0`; execution order `03` trong EPIC-06.
 
-**Planning status:** `PROPOSED_OWNER_REVIEW`.
+**Planning status:** `OWNER_APPROVED` ngày 2026-09-03.
 
-**Implementation status:** `NOT_STARTED`. Owner cần duyệt các confirmation ở mục 13 trước production
-edit. Default proposal cho toàn bộ confirmation là **Option A**.
+**Implementation status:** `IMPLEMENTED_AUTOMATED_VERIFIED_AWAITING_OWNER_REVIEW`. Owner đã duyệt
+Option A cho toàn bộ `US0603-CONFIRM-01`→`11`. Candidate là uncommitted working tree trên
+implementation-start SHA `bf5b1dda9dafd82c7053abf18d5857ea6e554289`; exact implementation
+SHA còn chờ commit. Automated/SQLite/quality/iOS bundle đã pass; manual/device chưa chạy trong lượt
+này và formal tester vẫn deferred.
 
 ### 0.1. Gate được mở từ US-06-02
 
@@ -657,7 +665,7 @@ Quick owner smoke and formal tester evidence must be recorded separately. Unrun 
 | Result loads latest session | cross-session ambiguity | required exact sessionId + invariant validation |
 | New schema/dependency for convenience | migration/native risk | existing column/ports; explicit owner stop gate |
 
-## 13. Owner confirmations — proposed
+## 13. Owner confirmations — approved 2026-09-03
 
 ### US0603-CONFIRM-01 — Pure precedence contract
 
@@ -666,7 +674,7 @@ Quick owner smoke and formal tester evidence must be recorded separately. Unrun 
 - **Option B:** calculate grace separately in each use case.
 - **Option C:** calculate in lifecycle/UI.
 - **Trade-off:** A creates one testable authority; B/C can diverge at exact boundaries.
-- [ ] Owner selected option: `PENDING`.
+- [x] Owner selected option: A — 2026-09-03.
 
 ### US0603-CONFIRM-02 — US-06-03/04 completion boundary
 
@@ -676,7 +684,7 @@ Quick owner smoke and formal tester evidence must be recorded separately. Unrun 
 - **Option B:** implement zero-reward completion now.
 - **Option C:** keep evaluating Strict after deadline until grace ends.
 - **Trade-off:** A preserves precedence and Story ownership; B creates wrong reward; C can false-fail.
-- [ ] Owner selected option: `PENDING`.
+- [x] Owner selected option: A — 2026-09-03.
 
 ### US0603-CONFIRM-03 — Lifecycle timestamp/ownership
 
@@ -685,7 +693,7 @@ Quick owner smoke and formal tester evidence must be recorded separately. Unrun 
 - **Option B:** write directly in native AppState callback.
 - **Option C:** let Running screen own lifecycle state.
 - **Trade-off:** A gives serialization and testability; B/C split command/recovery ownership.
-- [ ] Owner selected option: `PENDING`.
+- [x] Owner selected option: A — 2026-09-03.
 
 ### US0603-CONFIRM-04 — Episode idempotency/stale callback
 
@@ -695,7 +703,7 @@ Quick owner smoke and formal tester evidence must be recorded separately. Unrun 
 - **Option B:** every background callback overwrites timestamp.
 - **Option C:** keep only in-memory generation without durable guard.
 - **Trade-off:** A prevents grace extension and false restore across queue/relaunch.
-- [ ] Owner selected option: `PENDING`.
+- [x] Owner selected option: A — 2026-09-03.
 
 ### US0603-CONFIRM-05 — Conditional clear port
 
@@ -704,7 +712,7 @@ Quick owner smoke and formal tester evidence must be recorded separately. Unrun 
 - **Option B:** unconditional clear by session ID.
 - **Option C:** set a sentinel timestamp instead of null.
 - **Trade-off:** A cannot delete newer evidence; B races; C violates schema semantics.
-- [ ] Owner selected option: `PENDING`.
+- [x] Owner selected option: A — 2026-09-03.
 
 ### US0603-CONFIRM-06 — One reconciliation boundary
 
@@ -714,7 +722,7 @@ Quick owner smoke and formal tester evidence must be recorded separately. Unrun 
 - **Option B:** separate startup/foreground writers.
 - **Option C:** route-local reconciliation only.
 - **Trade-off:** A prevents multiple terminal authorities and stale startup UI.
-- [ ] Owner selected option: `PENDING`.
+- [x] Owner selected option: A — 2026-09-03.
 
 ### US0603-CONFIRM-07 — Strict Cancel race
 
@@ -724,7 +732,7 @@ Quick owner smoke and formal tester evidence must be recorded separately. Unrun 
 - **Option B:** always allow Cancel while row says running.
 - **Option C:** disable Cancel for all Strict sessions.
 - **Trade-off:** A preserves existing Cancel UX without offering a violation escape hatch.
-- [ ] Owner selected option: `PENDING`.
+- [x] Owner selected option: A — 2026-09-03.
 
 ### US0603-CONFIRM-08 — Runtime persistence failure
 
@@ -733,7 +741,7 @@ Quick owner smoke and formal tester evidence must be recorded separately. Unrun 
 - **Option B:** show toast and continue Running.
 - **Option C:** assume background evidence was saved.
 - **Trade-off:** A never lies about evidence; B/C can create false pass/fail.
-- [ ] Owner selected option: `PENDING`.
+- [x] Owner selected option: A — 2026-09-03.
 
 ### US0603-CONFIRM-09 — Failed Result identity/actions
 
@@ -742,7 +750,7 @@ Quick owner smoke and formal tester evidence must be recorded separately. Unrun 
 - **Option B:** load latest failed Standard session.
 - **Option C:** keep failed result only in route memory.
 - **Trade-off:** A survives relaunch and prevents cross-session fallback.
-- [ ] Owner selected option: `PENDING`.
+- [x] Owner selected option: A — 2026-09-03.
 
 ### US0603-CONFIRM-10 — Fresh outcome handoff/Pet Bugged
 
@@ -751,7 +759,7 @@ Quick owner smoke and formal tester evidence must be recorded separately. Unrun 
 - **Option B:** infer feedback whenever Result status is failed.
 - **Option C:** persist a “Bugged played” flag.
 - **Trade-off:** A matches existing transient contract with no schema; B replays; C adds durable UI state.
-- [ ] Owner selected option: `PENDING`.
+- [x] Owner selected option: A — 2026-09-03.
 
 ### US0603-CONFIRM-11 — Fixtures/evidence/scope
 
@@ -761,7 +769,7 @@ Quick owner smoke and formal tester evidence must be recorded separately. Unrun 
 - **Option B:** persist invalid short Strict sessions.
 - **Option C:** wait real time and treat automated evidence as manual pass.
 - **Trade-off:** A gives fast, truthful boundary evidence without weakening business invariants.
-- [ ] Owner selected option: `PENDING`.
+- [x] Owner selected option: A — 2026-09-03.
 
 ## 14. Implementation start checklist sau approval
 
@@ -808,7 +816,10 @@ Quick owner smoke and formal tester evidence must be recorded separately. Unrun 
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.3.0 | 2026-09-03 | Codex | Recorded implemented working-tree candidate with Domain/application/lifecycle/Result/Pet/fixture delivery and automated/SQLite/quality/iOS bundle evidence; exact SHA, manual UI and owner acceptance remain pending. |
+| 0.2.0 | 2026-09-03 | Codex | Recorded owner approval of Option A for `US0603-CONFIRM-01`→`11` and implementation-start SHA; production implementation moved to `IN_PROGRESS`. |
 | 0.1.0 | 2026-09-03 | Codex | Created owner-gated implementation plan for Strict durable evidence, exact grace/deadline precedence, lifecycle/startup reconciliation, Strict-aware Cancel, failed Result, fresh Bugged, fixtures and evidence. Production implementation remains not started. |
 
-**US-06-03 remains `NOT_STARTED` until owner approves the confirmations. Default recommendation is
-Option A for `US0603-CONFIRM-01`→`11`.**
+**US-06-03 is implemented and automated-verified on an uncommitted candidate based on
+`bf5b1dda9dafd82c7053abf18d5857ea6e554289`; exact implementation SHA, owner quick UI and owner
+acceptance remain pending.**

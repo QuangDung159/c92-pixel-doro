@@ -62,4 +62,28 @@ describe('standard focus review fixture', () => {
     expect(await fixture.sessions.transitionFromRunningInTransaction(scope, input))
       .toMatchObject({ ok: true, value: 'updated' });
   });
+
+  it.each([
+    ['standard_strict_background_write_failure_once', 'recordBackgroundedAtInTransaction'],
+    ['standard_strict_clear_write_failure_once', 'clearBackgroundedAtInTransaction'],
+  ] as const)('fails one Strict episode write for %s', async (scenario, method) => {
+    const success = vi.fn(async () => ({ ok: true as const, value: 'updated' as const }));
+    const fixture = createStandardFocusStartReviewFixture(
+      scenario,
+      true,
+      { nowMs: () => 2_000 },
+      {
+        ...sessions,
+        recordBackgroundedAtInTransaction: success,
+        clearBackgroundedAtInTransaction: success,
+      } as SessionRepository,
+    );
+    if (fixture === undefined) throw new Error('fixture unavailable');
+    const write = fixture.sessions[method];
+    const scope = { transactionId: Symbol('strict-fixture') };
+    expect(await write(scope, {} as never)).toMatchObject({
+      ok: false, error: { code: 'PERSISTENCE_WRITE_FAILED' },
+    });
+    expect(await write(scope, {} as never)).toMatchObject({ ok: true, value: 'updated' });
+  });
 });

@@ -17,6 +17,7 @@ import {
 import {
   useStandardFocusResultProjection,
   useStandardFocusResultRefresh,
+  useStandardFocusOutcomeActions,
 } from '@/presentation/providers/standard-focus-hooks';
 
 import { PetRouteVisibility } from '../pet-route-visibility';
@@ -39,6 +40,7 @@ export default function FocusResultRoute() {
   const dismissPetFeedbackError = useDismissPetTerminalFeedbackError();
   const standardResult = useStandardFocusResultProjection();
   const refreshStandardResult = useStandardFocusResultRefresh();
+  const { consume: consumeStandardOutcome } = useStandardFocusOutcomeActions();
 
   useEffect(() => {
     return discardPetTerminalFeedback;
@@ -48,10 +50,11 @@ export default function FocusResultRoute() {
     useCallback(() => {
       if (!standardResultRequested) void refreshTrialResult();
       else if (standardSessionId !== null) void refreshStandardResult(standardSessionId);
+      if (standardSessionId !== null) consumeStandardOutcome(standardSessionId);
       void refreshPet();
     }, [
       refreshPet, refreshStandardResult, refreshTrialResult,
-      standardResultRequested, standardSessionId,
+      standardResultRequested, standardSessionId, consumeStandardOutcome,
     ]),
   );
 

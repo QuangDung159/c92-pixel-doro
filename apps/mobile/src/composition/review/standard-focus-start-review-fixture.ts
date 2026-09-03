@@ -13,7 +13,10 @@ export type StandardFocusStartReviewScenario =
   | 'standard_start_read_failure'
   | 'standard_running_fast_clock'
   | 'standard_deadline_pending'
-  | 'standard_cancel_write_failure_once';
+  | 'standard_cancel_write_failure_once'
+  | 'standard_strict_fast_grace'
+  | 'standard_strict_background_write_failure_once'
+  | 'standard_strict_clear_write_failure_once';
 
 export interface StandardFocusStartReviewFixture {
   readonly scenario: StandardFocusStartReviewScenario;
@@ -31,6 +34,9 @@ const scenarios = new Set<StandardFocusStartReviewScenario>([
   'standard_running_fast_clock',
   'standard_deadline_pending',
   'standard_cancel_write_failure_once',
+  'standard_strict_fast_grace',
+  'standard_strict_background_write_failure_once',
+  'standard_strict_clear_write_failure_once',
 ]);
 
 const conflictRecord: RunningSessionRecord = Object.freeze({
@@ -64,6 +70,8 @@ const decorateSessions = (
 ): SessionRepository => {
   let failWrite = scenario === 'standard_start_write_failure_once';
   let failCancel = scenario === 'standard_cancel_write_failure_once';
+  let failBackground = scenario === 'standard_strict_background_write_failure_once';
+  let failClear = scenario === 'standard_strict_clear_write_failure_once';
   return {
     findById: (id) => delegate.findById(id),
     findActive: () => scenario === 'standard_start_read_failure'
@@ -88,8 +96,26 @@ const decorateSessions = (
       }
       return delegate.insertRunningInTransaction(scope, record);
     },
-    recordBackgroundedAtInTransaction: (scope, input) =>
-      delegate.recordBackgroundedAtInTransaction(scope, input),
+    recordBackgroundedAtInTransaction: (scope, input) => {
+      if (failBackground) {
+        failBackground = false;
+        return Promise.resolve({
+          ok: false,
+          error: persistenceError('PERSISTENCE_WRITE_FAILED', 'sessions'),
+        });
+      }
+      return delegate.recordBackgroundedAtInTransaction(scope, input);
+    },
+    clearBackgroundedAtInTransaction: (scope, input) => {
+      if (failClear) {
+        failClear = false;
+        return Promise.resolve({
+          ok: false,
+          error: persistenceError('PERSISTENCE_WRITE_FAILED', 'sessions'),
+        });
+      }
+      return delegate.clearBackgroundedAtInTransaction(scope, input);
+    },
     transitionFromRunningInTransaction: (scope, input) => {
       if (failCancel && input.status === 'cancelled') {
         failCancel = false;
@@ -126,7 +152,7 @@ export const createStandardFocusStartReviewFixture = (
   if (!enabled || value === undefined || !isScenario(value)) return undefined;
   return {
     scenario: value,
-    clock: value === 'standard_running_fast_clock'
+    clock: value === 'standard_running_fast_clock' || value === 'standard_strict_fast_grace'
       ? new AcceleratedStandardReviewClock(baseClock, 30)
       : value === 'standard_deadline_pending'
         ? new AcceleratedStandardReviewClock(baseClock, 1_000)

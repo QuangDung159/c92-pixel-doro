@@ -1,11 +1,11 @@
 import { useRouter } from 'expo-router';
-import type { PetVisualProjection, StandardFocusCancelledResult } from '@pixeldoro/application';
+import type { PetVisualProjection, StandardFocusTerminalResult } from '@pixeldoro/application';
 
 import { StandardFocusCancelledResultScreen } from '@/presentation/features/focus';
 import { PetRouteVisibility } from '../pet-route-visibility';
 
 export interface StandardFocusCancelledResultBranchProps {
-  readonly result: StandardFocusCancelledResult;
+  readonly result: StandardFocusTerminalResult;
   readonly pet: PetVisualProjection;
   readonly onDismissPetFeedbackError: () => void;
   readonly onRetryPet: () => void;

@@ -22,6 +22,7 @@ describe('LoadStandardFocusCancelledResultUseCase', () => {
       value: {
         outcome: 'ready',
         result: {
+          status: 'cancelled',
           sessionId: 'focus-1', durationMinutes: 25, mode: 'relax', workTag: 'coding',
           startedAt: 1_000, endsAt: 1_501_000, resolvedAt: 2_000,
           xpEarned: 0, coinsEarned: 0,
@@ -33,7 +34,7 @@ describe('LoadStandardFocusCancelledResultUseCase', () => {
 
   it.each([
     { status: 'running', resolvedAt: null },
-    { mode: 'strict' },
+    { backgroundedAt: 1_500 },
     { xpEarned: 1 },
     { rewardClaimedAt: 2_000 },
   ])('fails closed for inconsistent exact facts', async (change) => {
@@ -42,6 +43,33 @@ describe('LoadStandardFocusCancelledResultUseCase', () => {
     });
     expect(await useCase.execute('focus-1')).toMatchObject({
       ok: false, error: { code: 'STANDARD_FOCUS_RESULT_INCONSISTENT' },
+    });
+  });
+
+  it('reads exact committed Strict failed facts', async () => {
+    const failed: SessionRecord = {
+      ...cancelled(),
+      mode: 'strict',
+      status: 'failed',
+      backgroundedAt: 10_000,
+      resolvedAt: 20_000,
+      updatedAt: 20_000,
+    };
+    const useCase = new LoadStandardFocusCancelledResultUseCase({
+      sessions: { findById: async () => ({ ok: true, value: failed }) },
+    });
+    expect(await useCase.execute('focus-1')).toMatchObject({
+      ok: true,
+      value: {
+        outcome: 'ready',
+        result: {
+          status: 'failed',
+          mode: 'strict',
+          backgroundedAt: 10_000,
+          xpEarned: 0,
+          coinsEarned: 0,
+        },
+      },
     });
   });
 });

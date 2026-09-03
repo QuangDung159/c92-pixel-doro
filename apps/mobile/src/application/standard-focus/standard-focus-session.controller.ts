@@ -28,19 +28,13 @@ export type StandardFocusSessionProjection =
   | { readonly status: 'idle' | 'loading' }
   | (StandardFocusReadyBase & {
       readonly phase: 'running';
-      readonly mode: 'relax';
       readonly remainingMs: number;
       readonly displaySeconds: number;
     })
   | (StandardFocusReadyBase & {
       readonly phase: 'deadline_pending';
-      readonly mode: 'relax';
       readonly remainingMs: 0;
       readonly displaySeconds: 0;
-    })
-  | (StandardFocusReadyBase & {
-      readonly phase: 'strict_handoff';
-      readonly mode: 'strict';
     })
   | { readonly status: 'missing' }
   | {
@@ -53,6 +47,7 @@ export interface StandardFocusSessionControllerDependencies {
   readonly scheduler: TickScheduler;
   readonly sessions: Pick<SessionRepository, 'findActive'>;
   readonly appInitiallyVisible?: boolean;
+  readonly onDeadlineReached?: (sessionId: string) => void;
 }
 
 export class StandardFocusSessionController {
@@ -65,6 +60,7 @@ export class StandardFocusSessionController {
   private routeActive = false;
   private appVisible: boolean;
   private disposed = false;
+  private deadlineNotifiedSessionId: string | null = null;
 
   constructor(private readonly dependencies: StandardFocusSessionControllerDependencies) {
     this.appVisible = dependencies.appInitiallyVisible ?? true;
@@ -155,11 +151,6 @@ export class StandardFocusSessionController {
       startedAt: this.session.startedAt,
       endsAt: this.session.endsAt,
     };
-    if (this.session.mode === 'strict') {
-      this.stopTick();
-      this.publish({ ...base, phase: 'strict_handoff', mode: 'strict' });
-      return;
-    }
     const remaining = projectRemainingTime(
       this.session.endsAt,
       this.dependencies.clock.nowMs(),
@@ -168,7 +159,14 @@ export class StandardFocusSessionController {
       this.publishError('STANDARD_FOCUS_STATE_INVALID');
       return;
     }
-    this.publish({ ...base, ...remaining, mode: 'relax' });
+    this.publish({ ...base, ...remaining, mode: this.session.mode! });
+    if (
+      remaining.phase === 'deadline_pending' &&
+      this.deadlineNotifiedSessionId !== this.session.id
+    ) {
+      this.deadlineNotifiedSessionId = this.session.id;
+      this.dependencies.onDeadlineReached?.(this.session.id);
+    }
     this.scheduleTick();
   }
 
@@ -198,6 +196,7 @@ export class StandardFocusSessionController {
 
   private publishError(code: StandardFocusSessionErrorCode): void {
     this.session = null;
+    this.deadlineNotifiedSessionId = null;
     this.stopTick();
     this.publish({ status: 'error', error: { code } });
   }

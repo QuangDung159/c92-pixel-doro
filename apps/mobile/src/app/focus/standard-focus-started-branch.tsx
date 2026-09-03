@@ -5,7 +5,6 @@ import type { PetVisualProjection } from '@pixeldoro/application';
 import type { StandardFocusSessionProjection } from '@/application';
 import {
   StandardFocusRunningScreen,
-  StandardFocusStartedScreen,
 } from '@/presentation/features/focus';
 import {
   useStandardFocusCancelActions,
@@ -51,15 +50,14 @@ export const StandardFocusStartedBranch = ({
     }).catch(() => setResetError(true)).finally(() => setResetBusy(false));
   };
 
-  if (projection.phase !== 'strict_handoff') {
-    const cancelError = cancelProjection.status !== 'error'
+  const cancelError = cancelProjection.status !== 'error'
       ? null
       : cancelProjection.error.code === 'DEADLINE_REACHED'
         ? 'Phiên đã tới deadline và không thể hủy. Chưa có kết quả giả nào được tạo.'
         : cancelProjection.error.code === 'ALREADY_TERMINAL'
           ? 'Phiên đã có kết quả khác. Hãy tải lại dữ liệu đã lưu.'
           : 'Chưa thể dừng. Phiên vẫn đang chạy và dữ liệu của bạn vẫn an toàn.';
-    return (
+  return (
       <PetRouteVisibility>
         <StandardFocusRunningScreen
           cancelBusy={cancelProjection.status === 'submitting'}
@@ -83,20 +81,4 @@ export const StandardFocusStartedBranch = ({
         />
       </PetRouteVisibility>
     );
-  }
-
-  return (
-    <PetRouteVisibility>
-      <StandardFocusStartedScreen
-        onDismissPetFeedbackError={onDismissPetFeedbackError}
-        onResetReviewData={resetReviewData}
-        onRetryPet={onRetryPet}
-        pet={pet}
-        projection={projection}
-        reviewResetAvailable={reviewReset.available}
-        reviewResetBusy={resetBusy}
-        reviewResetError={resetError}
-      />
-    </PetRouteVisibility>
-  );
 };

@@ -11,6 +11,7 @@ export type FirstUseEntryDestination =
   | 'trial_running'
   | 'trial_result'
   | 'standard_focus_running'
+  | 'standard_focus_result'
   | 'home';
 
 export type FirstUseEntryErrorCode =
@@ -22,7 +23,12 @@ export type FirstUseEntryProjection =
   | { readonly status: 'loading' }
   | {
       readonly status: 'ready';
-      readonly destination: FirstUseEntryDestination;
+      readonly destination: Exclude<FirstUseEntryDestination, 'standard_focus_result'>;
+    }
+  | {
+      readonly status: 'ready';
+      readonly destination: 'standard_focus_result';
+      readonly sessionId: string;
     }
   | {
       readonly status: 'error';
@@ -38,6 +44,11 @@ export type FirstUseSessionReader = Pick<
 export interface FirstUseEntryControllerDependencies {
   readonly installation: FirstUseInstallationReader;
   readonly sessions: FirstUseSessionReader;
+  readonly standardOutcome?: {
+    getSnapshot():
+      | { readonly status: 'idle' }
+      | { readonly status: 'failed'; readonly sessionId: string };
+  };
 }
 
 const errorProjection = (
@@ -136,6 +147,15 @@ export class FirstUseEntryController {
       }
 
       if (installation.value.onboardingCompletedAt !== null) {
+        const outcome = this.dependencies.standardOutcome?.getSnapshot();
+        if (outcome?.status === 'failed') {
+          this.publish({
+            status: 'ready',
+            destination: 'standard_focus_result',
+            sessionId: outcome.sessionId,
+          });
+          return;
+        }
         const active = await this.dependencies.sessions.findActive();
         if (!this.isCurrent(generation)) return;
         if (!active.ok) {

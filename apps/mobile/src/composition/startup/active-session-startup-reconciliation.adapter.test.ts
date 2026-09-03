@@ -35,4 +35,26 @@ describe('ActiveSessionStartupReconciliationAdapter', () => {
       ok: false, error: { code: 'STARTUP_RECONCILIATION_FAILED' },
     });
   });
+
+  it('publishes only a fresh Strict failed commit from startup reconciliation', async () => {
+    const publishFreshFailure = vi.fn();
+    const adapter = new ActiveSessionStartupReconciliationAdapter(
+      { reconcileAtStartup: async () => ({ ok: true, value: { durableDataChanged: false } }) },
+      { findActive: async () => ({ ok: true, value: null }) },
+      {
+        reconcile: async () => ({
+          ok: true,
+          value: {
+            outcome: 'failed', sessionId: 'strict-1',
+            freshness: 'fresh_commit', resolvedAt: 21_000,
+          },
+        }),
+        publishFreshFailure,
+      },
+    );
+    expect(await adapter.reconcileAtStartup()).toEqual({
+      ok: true, value: { durableDataChanged: true },
+    });
+    expect(publishFreshFailure).toHaveBeenCalledWith('strict-1', 21_000);
+  });
 });

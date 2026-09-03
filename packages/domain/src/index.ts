@@ -51,3 +51,10 @@ export {
   projectRemainingTime,
   type RemainingTimeProjection,
 } from './session/remaining-time.projection';
+export {
+  decideStrictReconciliation,
+  STRICT_BACKGROUND_GRACE_MS,
+  type StrictReconciliationDecision,
+  type StrictReconciliationInput,
+  type StrictReconciliationInvalidReason,
+} from './session/strict-reconciliation.decision';

@@ -17,7 +17,11 @@ export type StandardFocusCancelProjection =
   | { readonly status: 'error'; readonly error: { readonly code: StandardFocusCancelErrorCode } };
 
 export type StandardFocusCancelResult =
-  | { readonly ok: true; readonly sessionId: string }
+  | {
+      readonly ok: true;
+      readonly sessionId: string;
+      readonly terminalStatus: 'cancelled' | 'failed';
+    }
   | { readonly ok: false };
 
 export interface StandardFocusCancelControllerDependencies {
@@ -28,6 +32,7 @@ export interface StandardFocusCancelControllerDependencies {
     >
   >;
   refreshPet(): Promise<void>;
+  onFreshFailure?(sessionId: string, resolvedAt: number): void;
 }
 
 const mapError = (
@@ -93,12 +98,25 @@ export class StandardFocusCancelController {
       return { ok: false };
     }
     try {
-      void this.dependencies.refreshPet().catch(() => undefined);
+      await this.dependencies.refreshPet().catch(() => undefined);
     } catch {
       // Pet refresh is post-commit and cannot change the cancelled outcome.
     }
+    if (
+      result.value.outcome === 'failed' &&
+      result.value.freshness === 'fresh_commit'
+    ) {
+      this.dependencies.onFreshFailure?.(
+        result.value.sessionId,
+        result.value.resolvedAt,
+      );
+    }
     if (!this.disposed) this.publish({ status: 'idle' });
-    return { ok: true, sessionId: result.value.sessionId };
+    return {
+      ok: true,
+      sessionId: result.value.sessionId,
+      terminalStatus: result.value.outcome === 'failed' ? 'failed' : 'cancelled',
+    };
   }
 
   private publish(projection: StandardFocusCancelProjection): void {

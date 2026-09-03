@@ -1,11 +1,11 @@
 import type {
   LoadStandardFocusCancelledResultUseCase,
-  StandardFocusCancelledResult,
+  StandardFocusTerminalResult,
 } from '@pixeldoro/application';
 
 export type StandardFocusResultProjection =
   | { readonly status: 'idle' | 'loading' }
-  | { readonly status: 'ready'; readonly result: StandardFocusCancelledResult }
+  | { readonly status: 'ready'; readonly result: StandardFocusTerminalResult }
   | { readonly status: 'missing' }
   | {
       readonly status: 'error';

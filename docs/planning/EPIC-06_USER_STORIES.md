@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_EPIC_06_USER_STORIES
 title: PixelDoro EPIC-06 — Standard Focus User Stories
-version: 0.4.1
-status: US_06_03_PLANNING_OWNER_REVIEW
+version: 0.5.0
+status: US_06_03_IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE
 date: 2026-09-03
 owner: Dũng Lư
 reviewed_by: Dũng Lư
@@ -13,7 +13,7 @@ owner_review_sha: aa7f561c2eb8bca8302a1f6a072665819d653dbe
 upstream: origin/feats/epic-06
 epic: EPIC-06
 epic_state: IN_PROGRESS
-implementation_state: US_06_01_02_DONE_US_06_03_NOT_STARTED
+implementation_state: US_06_01_02_DONE_US_06_03_AUTOMATED_VERIFIED_OWNER_REVIEW
 formal_tester_status: DEFERRED_TO_LATER_PHASE
 language: vi
 authority: PLANNING
@@ -68,6 +68,9 @@ vẫn được giữ deferred. Owner đã duyệt `US0602-CONFIRM-01`→`10` Opt
 exact SHA `9a8e3d87d44612b7bd9aa8bf9e592099300d9e2e`, owner báo cáo quick UI smoke đạt mức chấp nhận để
 mở owner-gated implementation planning cho US-06-03. Full structured manual matrix/formal tester
 không bị suy diễn là pass.
+Owner tiếp tục duyệt `US0603-CONFIRM-01`→`11` Option A. US-06-03 production candidate đã triển
+khai và pass automated/real-SQLite/quality/iOS bundle; exact implementation SHA, owner quick UI và
+owner acceptance còn pending. US-06-04 chưa được mở.
 
 ## 1. Kết luận audit baseline
 
@@ -1065,13 +1068,14 @@ Retained limitations:
 3. `OPEN-006` contribution colors và `OPEN-009` Pet naming vẫn mở, không block EPIC-06.
 4. Wall-clock/device lifecycle limitation giữ đúng approved specifications.
 5. Prototype là UX evidence, không phải production timer/session/reward evidence.
-6. US-06-01 và US-06-02 đã đóng progression gate. US-06-03 được mở ở trạng thái owner-gated
-   planning; production implementation chưa bắt đầu.
+6. US-06-01 và US-06-02 đã đóng progression gate. US-06-03 candidate đã automated-verified nhưng
+   còn chờ commit/exact SHA, owner quick UI và acceptance; US-06-04 chưa được mở.
 
 ## 15. Change log
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.5.0 | 2026-09-03 | Codex | Recorded owner-approved US-06-03 implementation candidate with automated/SQLite/quality/iOS bundle verification; exact SHA, manual UI and owner acceptance remain pending. |
 | 0.4.1 | 2026-09-03 | Codex | Recorded US-06-02 exact SHA and owner quick-UI acceptance; opened owner-gated US-06-03 planning while retaining detailed manual/formal evidence limitations. |
 | 0.4.0 | 2026-09-03 | Codex | Recorded owner approval and US-06-02 implemented working-tree candidate with automated/SQLite/bundle verification; exact SHA, manual UI and owner acceptance remain pending. |
 | 0.3.1 | 2026-09-03 | Codex | Recorded US-06-01 exact SHA and owner quick-UI acceptance; opened owner-gated US-06-02 planning while keeping detailed manual/formal evidence deferred. |
@@ -1081,5 +1085,5 @@ Retained limitations:
 
 **EPIC-06 is in progress. US-06-01 is owner-accepted at exact SHA
 `68f2c54d3630817385b320622476c55c67caea13`; US-06-02 is owner-accepted at exact SHA
-`9a8e3d87d44612b7bd9aa8bf9e592099300d9e2e`; US-06-03 is open for owner-gated planning and its
-production implementation has not started.**
+`9a8e3d87d44612b7bd9aa8bf9e592099300d9e2e`; US-06-03 is implemented and automated-verified on
+an uncommitted candidate, awaiting exact SHA, owner quick UI and acceptance.**

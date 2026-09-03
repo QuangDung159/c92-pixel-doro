@@ -1,5 +1,6 @@
 import { validateStandardFocusConfiguration } from '@pixeldoro/domain';
 import { isRunningStandardFocus } from './standard-focus-record';
+import { reconcileStrictStandardFocusInTransaction } from './strict-standard-focus-transaction';
 
 import type { ClockPort } from '../ports/clock.port';
 import type { TransactionPort } from '../ports/transaction.port';
@@ -9,7 +10,13 @@ import type { SessionCommandCoordinatorPort } from '../onboarding-trial/session-
 
 export type CancelStandardFocusOutcome =
   | { readonly outcome: 'cancelled'; readonly sessionId: string }
-  | { readonly outcome: 'already_cancelled'; readonly sessionId: string };
+  | { readonly outcome: 'already_cancelled'; readonly sessionId: string }
+  | {
+      readonly outcome: 'failed';
+      readonly sessionId: string;
+      readonly resolvedAt: number;
+      readonly freshness: 'fresh_commit' | 'existing_terminal';
+    };
 
 export type CancelStandardFocusErrorCode =
   | 'SESSION_NOT_FOUND'
@@ -31,7 +38,9 @@ export interface CancelStandardFocusDependencies {
   readonly coordinator: SessionCommandCoordinatorPort;
   readonly sessions: Pick<
     SessionRepository,
-    'findByIdInTransaction' | 'transitionFromRunningInTransaction'
+    | 'findByIdInTransaction'
+    | 'clearBackgroundedAtInTransaction'
+    | 'transitionFromRunningInTransaction'
   >;
   readonly transaction: TransactionPort;
 }
@@ -49,7 +58,7 @@ const classifyIdentity = (
   if (session.sessionType !== 'focus' || session.focusVariant !== 'standard') {
     return failure('SESSION_NOT_STANDARD_FOCUS');
   }
-  if (session.mode !== 'relax') return failure('SESSION_MODE_NOT_OWNED');
+  if (session.mode === null) return failure('SESSION_MODE_NOT_OWNED');
   if (
     session.workTag === null ||
     !validateStandardFocusConfiguration({
@@ -108,7 +117,42 @@ export class CancelStandardFocusUseCase {
         if (found.value.status !== 'running') return classifyTerminal(found.value);
         const identity = classifyIdentity(found.value);
         if (!identity.ok) return identity;
-        if (now >= found.value.endsAt) return failure('SESSION_DEADLINE_REACHED');
+        if (found.value.mode === 'strict') {
+          const reconciled = await reconcileStrictStandardFocusInTransaction(
+            { sessions: this.dependencies.sessions },
+            scope,
+            found.value,
+            now,
+          );
+          if (!reconciled.ok) {
+            return failure(
+              reconciled.error.code === 'READ_FAILED'
+                ? 'SESSION_CANCEL_READ_FAILED'
+                : reconciled.error.code === 'WRITE_FAILED'
+                  ? 'SESSION_CANCEL_WRITE_FAILED'
+                  : 'SESSION_ALREADY_TERMINAL',
+            );
+          }
+          if (reconciled.value.outcome === 'completion_due') {
+            return failure('SESSION_DEADLINE_REACHED');
+          }
+          if (reconciled.value.outcome === 'failed') {
+            return {
+              ok: true,
+              value: {
+                outcome: 'failed',
+                sessionId,
+                resolvedAt: reconciled.value.resolvedAt,
+                freshness: reconciled.value.freshness,
+              },
+            };
+          }
+          if (reconciled.value.outcome === 'terminal_winner') {
+            return failure('SESSION_ALREADY_TERMINAL');
+          }
+        } else if (now >= found.value.endsAt) {
+          return failure('SESSION_DEADLINE_REACHED');
+        }
 
         const transitioned = await this.dependencies.sessions.transitionFromRunningInTransaction(
           scope,

@@ -10,6 +10,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   CancelStandardFocusUseCase,
   LoadStandardFocusCancelledResultUseCase,
+  RecordStrictBackgroundUseCase,
+  ReconcileStandardFocusUseCase,
   SessionCommandCoordinator,
   StartStandardFocusUseCase,
 } from '@pixeldoro/application';
@@ -226,13 +228,15 @@ describe('Standard Focus Start SQLite integration', () => {
     await session.refresh();
     expect(session.getSnapshot()).toEqual({
       status: 'ready',
-      phase: 'strict_handoff',
+      phase: 'running',
       sessionId: 'focus-1',
       durationMinutes: 25,
       mode: 'strict',
       workTag: 'study',
       startedAt: now,
       endsAt: now + 1_500_000,
+      remainingMs: 1_500_000,
+      displaySeconds: 1_500,
     });
     const entry = new FirstUseEntryController({
       installation: reopened.graph.installation,
@@ -242,6 +246,80 @@ describe('Standard Focus Start SQLite integration', () => {
     expect(entry.getSnapshot()).toEqual({
       status: 'ready',
       destination: 'standard_focus_running',
+    });
+    await reopened.owner.close();
+  });
+
+  it('persists Strict episodes, clears a safe return and commits a proven failure once', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'pixeldoro-us0603-strict-'));
+    temporaryDirectories.push(directory);
+    const driver = new HostDriver(directory);
+    const databaseName = 'standard-focus-strict.db';
+    const first = await openDatabase(driver, databaseName);
+    const coordinator = new SessionCommandCoordinator();
+    const start = new StartStandardFocusUseCase({
+      calendar: { snapshot: () => ({
+        ok: true, value: { localDate: '2026-09-03', utcOffsetMinutes: 420 },
+      }) },
+      clock: { nowMs: () => now }, coordinator,
+      id: { nextId: () => 'strict-1' }, sessions: first.graph.sessions,
+      transaction: first.transaction,
+    });
+    expect(await start.execute({
+      durationMinutes: 15, mode: 'strict', workTag: 'study',
+    })).toMatchObject({ ok: true, value: { session: { id: 'strict-1' } } });
+    const record = new RecordStrictBackgroundUseCase({
+      coordinator, sessions: first.graph.sessions, transaction: first.transaction,
+    });
+    expect(await record.execute(now + 1_000)).toMatchObject({
+      ok: true, value: { outcome: 'recorded' },
+    });
+    let reconcileNow = now + 10_999;
+    const reconcile = new ReconcileStandardFocusUseCase({
+      clock: { nowMs: () => reconcileNow }, coordinator,
+      sessions: first.graph.sessions, transaction: first.transaction,
+    });
+    expect(await reconcile.execute()).toMatchObject({
+      ok: true, value: { outcome: 'safe_episode_cleared' },
+    });
+    expect(await first.graph.sessions.findActive()).toMatchObject({
+      ok: true, value: { id: 'strict-1', backgroundedAt: null, status: 'running' },
+    });
+
+    expect(await record.execute(now + 20_000)).toMatchObject({
+      ok: true, value: { outcome: 'recorded' },
+    });
+    reconcileNow = now + 30_000;
+    expect(await reconcile.execute()).toEqual({
+      ok: true,
+      value: {
+        outcome: 'failed', sessionId: 'strict-1',
+        freshness: 'fresh_commit', resolvedAt: now + 30_000,
+      },
+    });
+    expect(await first.graph.sessions.findActive()).toEqual({ ok: true, value: null });
+    expect(await first.graph.rewards.findBySessionId('strict-1')).toEqual({
+      ok: true, value: null,
+    });
+    expect(await reconcile.execute('strict-1')).toMatchObject({
+      ok: true,
+      value: { outcome: 'failed', freshness: 'existing_terminal' },
+    });
+    await first.owner.close();
+
+    const reopened = await openDatabase(driver, databaseName);
+    const result = new LoadStandardFocusCancelledResultUseCase({
+      sessions: reopened.graph.sessions,
+    });
+    expect(await result.execute('strict-1')).toMatchObject({
+      ok: true,
+      value: {
+        outcome: 'ready',
+        result: {
+          status: 'failed', mode: 'strict', sessionId: 'strict-1',
+          backgroundedAt: now + 20_000, xpEarned: 0, coinsEarned: 0,
+        },
+      },
     });
     await reopened.owner.close();
   });

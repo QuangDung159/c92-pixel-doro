@@ -17,6 +17,7 @@ import {
 import {
   useStandardFocusSessionActions,
   useStandardFocusSessionProjection,
+  useStandardFocusOutcomeProjection,
 } from '@/presentation/providers/standard-focus-hooks';
 import { useSessionCancelBack } from '../use-session-cancel-back';
 import { PetRouteVisibility } from '../pet-route-visibility';
@@ -36,6 +37,7 @@ export default function FocusSessionRoute() {
   const trial = useOnboardingTrialRunningProjection();
   const completion = useOnboardingTrialCompletionProjection();
   const standardFocus = useStandardFocusSessionProjection();
+  const standardOutcome = useStandardFocusOutcomeProjection();
   const {
     activate: activateStandardFocus,
     deactivate: deactivateStandardFocus,
@@ -68,6 +70,15 @@ export default function FocusSessionRoute() {
   useEffect(() => {
     if (completion.status === 'committed') router.replace('/focus/result');
   }, [completion.status, router]);
+
+  useEffect(() => {
+    if (standardOutcome.status === 'failed') {
+      router.replace({
+        pathname: '/focus/result',
+        params: { sessionId: standardOutcome.sessionId },
+      });
+    }
+  }, [router, standardOutcome]);
 
   const confirmTrialCancel = (sessionId: string): void => {
     if (cancelOperation.current !== null) return;

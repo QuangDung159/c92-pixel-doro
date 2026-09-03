@@ -101,6 +101,8 @@ export {
   type LoadStandardFocusCancelledResultError,
   type LoadStandardFocusCancelledResultOutcome,
   type StandardFocusCancelledResult,
+  type StandardFocusFailedResult,
+  type StandardFocusTerminalResult,
 } from './standard-focus/load-standard-focus-cancelled-result.use-case';
 export {
   StartStandardFocusUseCase,
@@ -110,6 +112,18 @@ export {
   type StartStandardFocusInput,
   type StartStandardFocusOutcome,
 } from './standard-focus/start-standard-focus.use-case';
+export {
+  RecordStrictBackgroundUseCase,
+  type RecordStrictBackgroundDependencies,
+  type RecordStrictBackgroundError,
+  type RecordStrictBackgroundOutcome,
+} from './standard-focus/record-strict-background.use-case';
+export {
+  ReconcileStandardFocusUseCase,
+  type ReconcileStandardFocusDependencies,
+  type ReconcileStandardFocusError,
+  type ReconcileStandardFocusOutcome,
+} from './standard-focus/reconcile-standard-focus.use-case';
 export type {
   CatalogItemRecord,
   CatalogRepository,
@@ -159,6 +173,7 @@ export type {
 export type {
   FocusMode,
   FocusVariant,
+  ClearSessionBackgroundInput,
   RecordSessionBackgroundInput,
   RunningSessionRecord,
   SessionRecord,

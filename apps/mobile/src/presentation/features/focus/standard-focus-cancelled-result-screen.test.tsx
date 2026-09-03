@@ -15,6 +15,7 @@ describe('StandardFocusCancelledResultScreen', () => {
   it('renders neutral zero-reward Result with Home as the only action', () => {
     const tree = StandardFocusCancelledResultScreen({
       result: {
+        status: 'cancelled',
         sessionId: 'focus-1', durationMinutes: 15, mode: 'relax', workTag: 'coding',
         startedAt: 1_000, endsAt: 901_000, resolvedAt: 2_000, xpEarned: 0, coinsEarned: 0,
       },

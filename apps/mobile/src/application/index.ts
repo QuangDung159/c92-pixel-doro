@@ -155,6 +155,8 @@ export {
   StandardFocusCancelController,
   StandardFocusResultController,
   StandardFocusSetupController,
+  StandardFocusOutcomeController,
+  StandardFocusLifecycleController,
   type StandardFocusSessionControllerDependencies,
   type StandardFocusSessionErrorCode,
   type StandardFocusSessionProjection,
@@ -168,6 +170,8 @@ export {
   type StandardFocusSetupErrorCode,
   type StandardFocusSetupProjection,
   type StandardFocusSetupStartResult,
+  type StandardFocusOutcomeProjection,
+  type StandardFocusLifecycleControllerDependencies,
 } from './standard-focus';
 export {
   ANALYTICS_EVENT_TTL_MS,

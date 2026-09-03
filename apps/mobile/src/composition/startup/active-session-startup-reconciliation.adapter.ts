@@ -1,4 +1,10 @@
-import { isRunningStandardFocus, type SessionRepository } from '@pixeldoro/application';
+import {
+  isRunningStandardFocus,
+  type ApplicationResult,
+  type ReconcileStandardFocusError,
+  type ReconcileStandardFocusOutcome,
+  type SessionRepository,
+} from '@pixeldoro/application';
 import {
   startupReconciliationError,
   type StartupReconciliationPort,
@@ -8,12 +14,34 @@ export class ActiveSessionStartupReconciliationAdapter implements StartupReconci
   constructor(
     private readonly delegate: StartupReconciliationPort,
     private readonly sessions: Pick<SessionRepository, 'findActive'>,
+    private readonly standard?: {
+      reconcile(): Promise<
+        ApplicationResult<ReconcileStandardFocusOutcome, ReconcileStandardFocusError>
+      >;
+      publishFreshFailure(sessionId: string, resolvedAt: number): void;
+    },
   ) {}
 
   async reconcileAtStartup(): ReturnType<StartupReconciliationPort['reconcileAtStartup']> {
     const reconciled = await this.delegate.reconcileAtStartup();
     if (!reconciled.ok) return reconciled;
     try {
+      let standardChanged = false;
+      if (this.standard !== undefined) {
+        const standard = await this.standard.reconcile();
+        if (!standard.ok) return { ok: false, error: startupReconciliationError() };
+        if (standard.value.outcome === 'failed') {
+          standardChanged = standard.value.freshness === 'fresh_commit';
+          if (standardChanged) {
+            this.standard.publishFreshFailure(
+              standard.value.sessionId,
+              standard.value.resolvedAt,
+            );
+          }
+        } else if (standard.value.outcome === 'safe_episode_cleared') {
+          standardChanged = true;
+        }
+      }
       const active = await this.sessions.findActive();
       if (!active.ok) return { ok: false, error: startupReconciliationError() };
       if (
@@ -23,7 +51,13 @@ export class ActiveSessionStartupReconciliationAdapter implements StartupReconci
       ) {
         return { ok: false, error: startupReconciliationError() };
       }
-      return reconciled;
+      return {
+        ok: true,
+        value: {
+          durableDataChanged:
+            reconciled.value.durableDataChanged || standardChanged,
+        },
+      };
     } catch {
       return { ok: false, error: startupReconciliationError() };
     }

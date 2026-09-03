@@ -33,6 +33,8 @@ export interface CreateStandardFocusSliceDependencies {
   readonly transaction: TransactionPort;
   readonly scheduler: TickScheduler;
   readonly appInitiallyVisible: boolean;
+  readonly onDeadlineReached?: (sessionId: string) => void;
+  readonly onFreshFailure?: (sessionId: string, resolvedAt: number) => void;
 }
 
 export interface StandardFocusSlice {
@@ -65,6 +67,9 @@ export const createStandardFocusSlice = (
     clock: dependencies.clock,
     scheduler: dependencies.scheduler,
     sessions: dependencies.sessions,
+    ...(dependencies.onDeadlineReached === undefined
+      ? {}
+      : { onDeadlineReached: dependencies.onDeadlineReached }),
   });
   const cancelUseCase = new CancelStandardFocusUseCase({
     clock: dependencies.clock,
@@ -81,6 +86,9 @@ export const createStandardFocusSlice = (
       return allowed.ok ? allowed.value : allowed;
     },
     refreshPet: () => dependencies.petCompanion.refresh(),
+    ...(dependencies.onFreshFailure === undefined
+      ? {}
+      : { onFreshFailure: dependencies.onFreshFailure }),
   });
   const start = async (
     configuration: Parameters<StartStandardFocusUseCase['execute']>[0],

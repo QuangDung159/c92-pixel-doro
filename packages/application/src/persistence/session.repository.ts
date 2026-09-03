@@ -46,6 +46,12 @@ export interface RecordSessionBackgroundInput {
   readonly updatedAt: number;
 }
 
+export interface ClearSessionBackgroundInput {
+  readonly sessionId: string;
+  readonly expectedBackgroundedAt: number;
+  readonly updatedAt: number;
+}
+
 export interface TransitionSessionInput {
   readonly sessionId: string;
   readonly status: Exclude<SessionStatus, 'running'>;
@@ -74,6 +80,10 @@ export interface SessionRepository {
   recordBackgroundedAtInTransaction(
     scope: TransactionScope,
     input: RecordSessionBackgroundInput,
+  ): Promise<PersistenceResult<ConditionalWriteOutcome>>;
+  clearBackgroundedAtInTransaction(
+    scope: TransactionScope,
+    input: ClearSessionBackgroundInput,
   ): Promise<PersistenceResult<ConditionalWriteOutcome>>;
   transitionFromRunningInTransaction(
     scope: TransactionScope,

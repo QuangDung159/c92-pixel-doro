@@ -16,7 +16,11 @@ describe('StandardFocusCancelController', () => {
     expect(controller.getSnapshot()).toEqual({ status: 'submitting', sessionId: 'focus-1' });
     expect(refreshPet).not.toHaveBeenCalled();
     resolve({ ok: true, value: { outcome: 'cancelled', sessionId: 'focus-1' } });
-    await expect(first).resolves.toEqual({ ok: true, sessionId: 'focus-1' });
+    await expect(first).resolves.toEqual({
+      ok: true,
+      sessionId: 'focus-1',
+      terminalStatus: 'cancelled',
+    });
     expect(refreshPet).toHaveBeenCalledOnce();
   });
 

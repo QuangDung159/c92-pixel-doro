@@ -24,3 +24,11 @@ export {
   type StandardFocusSetupProjection,
   type StandardFocusSetupStartResult,
 } from './standard-focus-setup.controller';
+export {
+  StandardFocusOutcomeController,
+  type StandardFocusOutcomeProjection,
+} from './standard-focus-outcome.controller';
+export {
+  StandardFocusLifecycleController,
+  type StandardFocusLifecycleControllerDependencies,
+} from './standard-focus-lifecycle.controller';

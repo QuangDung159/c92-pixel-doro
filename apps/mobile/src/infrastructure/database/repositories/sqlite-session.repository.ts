@@ -135,8 +135,34 @@ export class SQLiteSessionRepository implements SessionRepository {
         const result = await executor.run(
           `UPDATE sessions SET backgrounded_at = ?, updated_at = ?
             WHERE id = ? AND status = 'running' AND session_type = 'focus'
-              AND focus_variant = 'standard' AND mode = 'strict' AND backgrounded_at IS NULL`,
-          [input.backgroundedAt, input.updatedAt, input.sessionId],
+              AND focus_variant = 'standard' AND mode = 'strict' AND backgrounded_at IS NULL
+              AND updated_at <= ?`,
+          [input.backgroundedAt, input.updatedAt, input.sessionId, input.backgroundedAt],
+        );
+        return { ok: true, value: result.changes === 1 ? 'updated' : 'not_updated' };
+      } catch (error) {
+        return { ok: false, error: mapWriteError(error, 'sessions') };
+      }
+    });
+  }
+
+  clearBackgroundedAtInTransaction(
+    scope: TransactionScope,
+    input: Parameters<SessionRepository['clearBackgroundedAtInTransaction']>[1],
+  ): ReturnType<SessionRepository['clearBackgroundedAtInTransaction']> {
+    if (!isNonEmptyString(input.sessionId) ||
+      !isSafeTimestamp(input.expectedBackgroundedAt) ||
+      !isSafeTimestamp(input.updatedAt)) return Promise.resolve({
+        ok: false,
+        error: persistenceError('PERSISTENCE_WRITE_FAILED', 'sessions', 'input'),
+      });
+    return withTransactionExecutor(this.transaction, scope, 'sessions', async (executor) => {
+      try {
+        const result = await executor.run(
+          `UPDATE sessions SET backgrounded_at = NULL, updated_at = ?
+            WHERE id = ? AND status = 'running' AND session_type = 'focus'
+              AND focus_variant = 'standard' AND mode = 'strict' AND backgrounded_at = ?`,
+          [input.updatedAt, input.sessionId, input.expectedBackgroundedAt],
         );
         return { ok: true, value: result.changes === 1 ? 'updated' : 'not_updated' };
       } catch (error) {

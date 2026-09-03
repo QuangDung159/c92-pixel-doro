@@ -1,4 +1,4 @@
-import type { PetVisualProjection, StandardFocusCancelledResult } from '@pixeldoro/application';
+import type { PetVisualProjection, StandardFocusTerminalResult } from '@pixeldoro/application';
 import { StyleSheet, Text, View } from 'react-native';
 
 import {
@@ -16,7 +16,7 @@ const tagLabels = {
 } as const;
 
 export interface StandardFocusCancelledResultScreenProps {
-  readonly result: StandardFocusCancelledResult;
+  readonly result: StandardFocusTerminalResult;
   readonly pet: PetVisualProjection;
   readonly onDismissPetFeedbackError: () => void;
   readonly onRetryPet: () => void;
@@ -25,31 +25,44 @@ export interface StandardFocusCancelledResultScreenProps {
 
 export const StandardFocusCancelledResultScreen = ({
   result, pet, onDismissPetFeedbackError, onRetryPet, onHome,
-}: StandardFocusCancelledResultScreenProps) => (
+}: StandardFocusCancelledResultScreenProps) => {
+  const failed = result.status === 'failed';
+  return (
   <ScreenShell>
     <ScreenHeader
-      description="Phiên đã được dừng và ghi nhận an toàn trên thiết bị."
-      eyebrow="FOCUS · CANCELLED"
-      title="Phiên đã dừng."
+      description={failed
+        ? 'Phiên Strict đã vượt quá thời gian grace và được ghi nhận an toàn.'
+        : 'Phiên đã được dừng và ghi nhận an toàn trên thiết bị.'}
+      eyebrow={failed ? 'FOCUS · STRICT · FAILED' : 'FOCUS · CANCELLED'}
+      title={failed ? 'Phiên Strict đã kết thúc.' : 'Phiên đã dừng.'}
     />
     <PetVisualStatus
       onDismissTerminalError={onDismissPetFeedbackError}
       onRetryBase={onRetryPet}
       projection={pet}
     />
-    <View accessible accessibilityLabel="Phiên đã dừng, không có phần thưởng" style={styles.summary}>
-      <Text style={styles.title}>RELAX · {tagLabels[result.workTag]}</Text>
+    <View
+      accessible
+      accessibilityLabel={failed
+        ? 'Phiên Strict thất bại, không có phần thưởng'
+        : 'Phiên đã dừng, không có phần thưởng'}
+      style={styles.summary}
+    >
+      <Text style={styles.title}>{result.mode.toUpperCase()} · {tagLabels[result.workTag]}</Text>
       <View style={styles.row}>
         <StatDisplay label="XP nhận" value="0" />
         <StatDisplay label="Coin nhận" value="0" />
       </View>
     </View>
     <InlineNotice>
-      Phiên bị hủy không nhận phần thưởng và không mở Break. Không có dữ liệu hoàn thành giả được tạo.
+      {failed
+        ? 'Bạn đã rời PixelDoro quá 10 giây trước deadline. Phiên không nhận phần thưởng và không mở Break.'
+        : 'Phiên bị hủy không nhận phần thưởng và không mở Break. Không có dữ liệu hoàn thành giả được tạo.'}
     </InlineNotice>
     <PrimaryButton label="Về Home" onPress={onHome} />
   </ScreenShell>
-);
+  );
+};
 
 const styles = StyleSheet.create({
   summary: {

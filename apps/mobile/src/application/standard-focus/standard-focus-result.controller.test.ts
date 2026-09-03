@@ -10,6 +10,7 @@ describe('StandardFocusResultController', () => {
         value: {
           outcome: 'ready' as const,
           result: {
+            status: 'cancelled' as const,
             sessionId, durationMinutes: 25, mode: 'relax' as const, workTag: 'coding' as const,
             startedAt: 1_000, endsAt: 1_501_000, resolvedAt: 2_000,
             xpEarned: 0 as const, coinsEarned: 0 as const,

@@ -5,6 +5,7 @@ import type {
   StandardFocusResultProjection,
   StandardFocusSessionProjection,
   StandardFocusSetupProjection,
+  StandardFocusOutcomeProjection,
 } from '@/application';
 import { useMobileApplication } from './mobile-application-context';
 
@@ -74,6 +75,20 @@ export const useStandardFocusResultProjection = (): StandardFocusResultProjectio
 
 export const useStandardFocusResultRefresh = () =>
   useMobileApplication().standardFocusResult.refresh;
+
+export const useStandardFocusOutcomeProjection = (): StandardFocusOutcomeProjection => {
+  const { standardFocusOutcome } = useMobileApplication();
+  return useSyncExternalStore(
+    standardFocusOutcome.subscribe,
+    standardFocusOutcome.getSnapshot,
+    standardFocusOutcome.getSnapshot,
+  );
+};
+
+export const useStandardFocusOutcomeActions = () => {
+  const { standardFocusOutcome } = useMobileApplication();
+  return { consume: standardFocusOutcome.consume };
+};
 
 export const useStandardFocusReviewReset = () => {
   const application = useMobileApplication();
