@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_US_06_01_IMPLEMENTATION_REPORT
 title: PixelDoro US-06-01 — Production Standard Focus Start Implementation Report
-version: 0.1.1
+version: 0.1.2
 status: IMPLEMENTED_AUTOMATED_VERIFIED_AWAITING_OWNER_ACCEPTANCE
 story: US-06-01
 date: 2026-09-03
@@ -66,6 +66,8 @@ Candidate chưa có commit nên chưa thể ghi exact implementation SHA. Story 
   lỗi và chỉ sau đó mới cho prototype fallback.
 - Committed screen hiển thị exact configured minutes/mode/tag và Pet state; không timer math hay
   terminal command.
+- Development Build có confirmed `Reset dữ liệu test` dùng existing local-data reset để lặp lại
+  review journey; control được khóa sau `__DEV__` diagnostics gate và không tồn tại ở production.
 
 ## 3. Durable and recovery evidence
 
@@ -87,7 +89,7 @@ Final working-tree candidate gate sau code và report edit:
 
 - Root typecheck: pass cho Domain, Application và Mobile.
 - ESLint: pass, không warning.
-- Vitest: `92` files / `439` tests pass.
+- Vitest: `92` files / `440` tests pass.
 - Real SQLite Standard Focus start/conflict/reopen/entry integration: pass.
 - Device harness: pass và nhận guide `standard-focus-start-smoke.md`.
 - Boundaries: `11` forbidden imports rejected; `3` valid imports accepted.
@@ -116,6 +118,8 @@ Final working-tree candidate gate sau code và report edit:
 - Không implement countdown/tick/deadline reconciliation, cancel, Strict violation, completion,
   reward, Result hoặc Break production behavior.
 - Không thêm notification, analytics, haptic/audio hoặc background task hook.
+- Dev-only reset CTA là review diagnostics, không transition/cancel riêng session và không đổi
+  production behavior.
 - Setup/committed production modules không import prototype state/provider/components.
 - Prototype Running chỉ còn fallback cho confirmed no-durable review state.
 - Mọi production UI source file mới/thay đổi đều dưới hard limit `300` dòng.
@@ -136,6 +140,7 @@ Các evidence chưa được chạy/cung cấp:
 - [ ] Force-close/cold relaunch mở lại cùng session ID, không Start lần hai.
 - [ ] Offline, screen reader, large text và Reduce Motion.
 - [ ] Screenshots/video và sanitized durable before/after facts.
+- [ ] Dev-only reset confirmation xóa local data và quay lại onboarding; production build không có CTA.
 
 Không manual/device box nào được báo cáo là pass trong lượt này. Formal tester vẫn
 `DEFERRED_TO_LATER_PHASE`.
@@ -155,7 +160,7 @@ Không manual/device box nào được báo cáo là pass trong lượt này. Fo
 - `pnpm run quality`: pass after the implementation-report edit.
 - Typecheck: Domain, Application và Mobile pass.
 - ESLint: pass, no warning.
-- Vitest: `92` files / `439` tests pass.
+- Vitest: `92` files / `440` tests pass.
 - Device harness, boundary validation và repository hygiene: pass.
 - Expo iOS export/Metro bundle: pass (`1684` modules) after keeping Vitest files outside the
   Expo Router `src/app` route tree.
@@ -171,5 +176,6 @@ Không manual/device box nào được báo cáo là pass trong lượt này. Fo
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.1.2 | 2026-09-03 | Codex | Added owner-approved Development Build reset CTA through the existing confirmed local-data reset, with production gating and real SQLite integration coverage. |
 | 0.1.1 | 2026-09-03 | Codex | Moved Focus Session arbitration helper/test outside the Expo Router route tree after device bundling exposed Vitest/Vite inclusion; verified a clean iOS export bundle. |
 | 0.1.0 | 2026-09-03 | Codex | Recorded implemented working-tree candidate, architecture, automated/SQLite evidence, scope audit and truthful pending exact-SHA/manual/owner gates. |

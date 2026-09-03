@@ -37,3 +37,11 @@ export const useStandardFocusSessionProjection = (): StandardFocusSessionProject
 
 export const useStandardFocusSessionRefresh = (): (() => Promise<void>) =>
   useMobileApplication().standardFocusSession.refresh;
+
+export const useStandardFocusReviewReset = () => {
+  const application = useMobileApplication();
+  return {
+    available: application.standardFocusReviewResetAvailable,
+    reset: application.resetStandardFocusReviewData,
+  };
+};

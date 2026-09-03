@@ -226,6 +226,8 @@ describe('mobile composition root', () => {
       diagnosticsEnabled: false,
       sqliteDriver: new FakeSQLiteDriver(),
     });
+    expect(disabled.standardFocusReviewResetAvailable).toBe(false);
+    await expect(disabled.resetStandardFocusReviewData()).resolves.toBe(false);
     await disabled.refreshFirstUseEntry();
     expect(disabled.firstUseEntry.getSnapshot()).toEqual({
       status: 'error',

@@ -574,6 +574,7 @@ export const createMobileApplication = (
     firstUseEntry,
     standardFocusSetup: standardFocus.setup,
     standardFocusSession: standardFocus.session,
+    standardFocusReviewResetAvailable: reviewFixturesEnabled,
     onboardingTrialRunning,
     onboardingTrialCompletion,
     onboardingTrialHandoff,
@@ -655,6 +656,22 @@ export const createMobileApplication = (
     reconcileOnboardingTrial: (sessionId) => onboardingTrialCompletion.reconcile(sessionId),
     retryOnboardingTrialCompletion: () => onboardingTrialCompletion.retry(),
     retryOnboardingTrialPetFeedback: () => onboardingTrialPetFeedback.retry(),
+    resetStandardFocusReviewData: async () => {
+      if (!reviewFixturesEnabled) return false;
+      const result = await confirmedReset.execute();
+      if (!result.ok) return false;
+      onboardingTrialCompletion.reset();
+      onboardingTrialHandoff.reset();
+      onboardingTrialPetFeedback.reset();
+      standardFocus.setup.reset();
+      await Promise.all([
+        firstUseEntry.refresh(),
+        onboardingTrialRunning.refresh(),
+        standardFocus.session.refresh(),
+        refreshPetCompanion(),
+      ]);
+      return true;
+    },
     recordPetVisualDiagnostic: (diagnostic) => {
       try {
         petVisualDiagnostics.record(diagnostic);

@@ -6,7 +6,7 @@ import {
   type SQLInputValue,
   type StatementSync,
 } from 'node:sqlite';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   SessionCommandCoordinator,
   StartStandardFocusUseCase,
@@ -27,6 +27,14 @@ import type {
   SQLiteWriteResult,
 } from '@/infrastructure/database/sqlite-driver';
 import { SQLiteTransaction } from '@/infrastructure/database/sqlite-transaction';
+import { createMobileApplication } from '@/composition/create-mobile-application';
+
+vi.mock('react-native', () => ({
+  AppState: {
+    currentState: 'active',
+    addEventListener: () => ({ remove: vi.fn() }),
+  },
+}));
 
 const temporaryDirectories: string[] = [];
 const now = 1_788_336_000_000;
@@ -98,6 +106,7 @@ const openDatabase = async (driver: SQLiteDriver, databaseName: string) => {
 };
 
 afterEach(async () => {
+  vi.unstubAllGlobals();
   await Promise.all(temporaryDirectories.splice(0).map((directory) =>
     rm(directory, { recursive: true, force: true })));
 });
@@ -174,5 +183,45 @@ describe('Standard Focus Start SQLite integration', () => {
       destination: 'standard_focus_running',
     });
     await reopened.owner.close();
+  });
+
+  it('uses the dev-only CTA operation to confirmed-reset local data and return first use', async () => {
+    vi.stubGlobal('__DEV__', true);
+    const directory = await mkdtemp(join(tmpdir(), 'pixeldoro-us0601-reset-'));
+    temporaryDirectories.push(directory);
+    let id = 0;
+    const application = createMobileApplication({
+      appLifecycle: {
+        getCurrentState: () => 'active',
+        subscribe: () => vi.fn(),
+      },
+      clock: { nowMs: () => now },
+      databaseName: 'standard-focus-reset.db',
+      id: { nextId: () => `review-${++id}` },
+      localCalendar: { snapshot: () => ({
+        ok: true,
+        value: { localDate: '2026-09-03', utcOffsetMinutes: 420 },
+      }) },
+      sqliteDriver: new HostDriver(directory),
+    });
+
+    await application.boot();
+    expect(application.standardFocusReviewResetAvailable).toBe(true);
+    expect(await application.standardFocusSetup.start()).toMatchObject({ ok: true });
+    expect(await application.persistence.sessions.findActive()).toMatchObject({
+      ok: true,
+      value: { focusVariant: 'standard', status: 'running' },
+    });
+
+    expect(await application.resetStandardFocusReviewData()).toBe(true);
+    expect(await application.persistence.sessions.findActive()).toEqual({
+      ok: true,
+      value: null,
+    });
+    expect(application.firstUseEntry.getSnapshot()).toEqual({
+      status: 'ready',
+      destination: 'onboarding_intro',
+    });
+    await application.dispose();
   });
 });

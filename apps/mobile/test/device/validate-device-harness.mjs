@@ -87,6 +87,7 @@ const requiredStandardFocusStartEvidence = [
   'EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE=standard_start_committed_relaunch',
   'EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE=standard_start_read_failure',
   'endsAt-startedAt=3000000',
+  'Reset dữ liệu test',
   'DEFERRED_TO_LATER_PHASE',
   '<implementation-sha>',
   'unset EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE',

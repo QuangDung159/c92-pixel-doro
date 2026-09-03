@@ -30,6 +30,11 @@ pnpm start --clear
 5. Force-close and cold relaunch. Confirm the same session opens without a second Start.
 6. Repeat offline; local durable Start and relaunch must remain available.
 
+Development Build only: the committed handoff exposes `Reset dữ liệu test`. Open it, confirm the
+destructive warning and verify the existing confirmed-reset flow clears local sessions/progress then
+returns to onboarding. This control must be absent from a production build and is not a session
+Cancel implementation.
+
 ## 3. Finite development fixtures
 
 Restart Metro between scenarios:

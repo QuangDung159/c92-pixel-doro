@@ -37,6 +37,7 @@ export interface MobileApplicationFacade {
   readonly firstUseEntry: FirstUseEntryController;
   readonly standardFocusSetup: StandardFocusSetupController;
   readonly standardFocusSession: StandardFocusSessionController;
+  readonly standardFocusReviewResetAvailable: boolean;
   readonly onboardingTrialRunning: OnboardingTrialRunningController;
   readonly onboardingTrialCompletion: OnboardingTrialCompletionController;
   readonly onboardingTrialHandoff: OnboardingTrialHandoffController;
@@ -78,6 +79,7 @@ export interface MobileApplicationFacade {
     OnboardingTrialCompletionController['retry']
   >;
   retryOnboardingTrialPetFeedback(): Promise<void>;
+  resetStandardFocusReviewData(): Promise<boolean>;
   recordPetVisualDiagnostic(diagnostic: PetVisualDiagnostic): void;
   reportPetVisualComplete(feedbackId: string): void;
   reportPetVisualFailure(feedbackId: string): void;
