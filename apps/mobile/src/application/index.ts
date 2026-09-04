@@ -44,6 +44,7 @@ export type {
   AppLifecyclePort,
   AppLifecycleState,
 } from './ports/app-lifecycle.port';
+export type { TickScheduler } from './ports/tick-scheduler.port';
 export type {
   PetVisualDiagnostic,
   PetVisualDiagnosticsPort,
@@ -148,6 +149,30 @@ export type {
   StoreReviewAttemptRepository,
   UpdateAnalyticsDeliveryInput,
 } from './persistence';
+export {
+  DEFAULT_STANDARD_FOCUS_CONFIGURATION,
+  StandardFocusSessionController,
+  StandardFocusCancelController,
+  StandardFocusResultController,
+  StandardFocusSetupController,
+  StandardFocusOutcomeController,
+  StandardFocusLifecycleController,
+  type StandardFocusSessionControllerDependencies,
+  type StandardFocusSessionErrorCode,
+  type StandardFocusSessionProjection,
+  type StandardFocusCancelControllerDependencies,
+  type StandardFocusCancelErrorCode,
+  type StandardFocusCancelProjection,
+  type StandardFocusCancelResult,
+  type StandardFocusResultProjection,
+  type StandardFocusSetupConfiguration,
+  type StandardFocusSetupControllerDependencies,
+  type StandardFocusSetupErrorCode,
+  type StandardFocusSetupProjection,
+  type StandardFocusSetupStartResult,
+  type StandardFocusOutcomeProjection,
+  type StandardFocusLifecycleControllerDependencies,
+} from './standard-focus';
 export {
   ANALYTICS_EVENT_TTL_MS,
   ANALYTICS_QUEUE_CAPACITY,

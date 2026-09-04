@@ -94,7 +94,10 @@ export const createFirstUseEntryReviewFixture = (
             : { ok: true, value: installation(false) };
         },
       },
-      sessions: { findLatestOnboardingTrial: async () => ({ ok: true, value: null }) },
+      sessions: {
+        findActive: async () => ({ ok: true, value: null }),
+        findLatestOnboardingTrial: async () => ({ ok: true, value: null }),
+      },
     };
   }
 
@@ -111,6 +114,7 @@ export const createFirstUseEntryReviewFixture = (
       find: async () => ({ ok: true, value: installation(completed) }),
     },
     sessions: {
+      findActive: async () => ({ ok: true, value: null }),
       findLatestOnboardingTrial: async () => ({ ok: true, value: session }),
     },
   };

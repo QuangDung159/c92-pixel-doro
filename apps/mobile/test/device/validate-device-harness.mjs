@@ -22,6 +22,19 @@ const onboardingTrialFlowPath = `${deviceDirectory}onboarding-trial-smoke.md`;
 const onboardingTrialCompletionFlowPath = `${deviceDirectory}onboarding-trial-completion-smoke.md`;
 const onboardingTrialHandoffFlowPath = `${deviceDirectory}onboarding-trial-handoff-smoke.md`;
 const epic05ExitFlowPath = `${deviceDirectory}epic-05-exit-smoke.md`;
+const standardFocusStartFlowPath = `${deviceDirectory}standard-focus-start-smoke.md`;
+const standardFocusRelaxFlowPath = `${deviceDirectory}standard-focus-relax-running-smoke.md`;
+const standardFocusCompletionFlow = await readFile(`${deviceDirectory}standard-focus-completion-smoke.md`, 'utf8');
+for (const evidence of [
+  'standard_completion_fast_clock', 'standard_completion_receipt_failure_once',
+  'standard_completion_profile_failure_once', 'standard_completion_result_read_failure_once',
+  'Đọc lại kết quả đã lưu', 'Reset dữ liệu test', 'DEFERRED_TO_LATER_PHASE',
+  '<implementation-sha>', 'unset EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE',
+]) {
+  if (!standardFocusCompletionFlow.includes(evidence)) {
+    throw new Error(`Standard Focus completion device flow is missing: ${evidence}`);
+  }
+}
 
 await access(flowPath);
 await access(sqliteFlowPath);
@@ -42,6 +55,8 @@ await access(onboardingTrialFlowPath);
 await access(onboardingTrialCompletionFlowPath);
 await access(onboardingTrialHandoffFlowPath);
 await access(epic05ExitFlowPath);
+await access(standardFocusStartFlowPath);
+await access(standardFocusRelaxFlowPath);
 const flow = await readFile(flowPath, 'utf8');
 const sqliteFlow = await readFile(sqliteFlowPath, 'utf8');
 const schemaFlow = await readFile(schemaFlowPath, 'utf8');
@@ -76,6 +91,44 @@ const onboardingTrialHandoffFlow = await readFile(
   'utf8',
 );
 const epic05ExitFlow = await readFile(epic05ExitFlowPath, 'utf8');
+const standardFocusStartFlow = await readFile(standardFocusStartFlowPath, 'utf8');
+const standardFocusRelaxFlow = await readFile(standardFocusRelaxFlowPath, 'utf8');
+
+const requiredStandardFocusRelaxEvidence = [
+  'EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE=standard_running_fast_clock',
+  'EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE=standard_deadline_pending',
+  'EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE=standard_cancel_write_failure_once',
+  'status=cancelled',
+  'Reset dữ liệu test',
+  'DEFERRED_TO_LATER_PHASE',
+  '<implementation-sha>',
+  'unset EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE',
+];
+
+for (const evidence of requiredStandardFocusRelaxEvidence) {
+  if (!standardFocusRelaxFlow.includes(evidence)) {
+    throw new Error(`Standard Focus Relax device flow is missing: ${evidence}`);
+  }
+}
+
+const requiredStandardFocusStartEvidence = [
+  'EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE=standard_start_success',
+  'EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE=standard_start_active_conflict',
+  'EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE=standard_start_write_failure_once',
+  'EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE=standard_start_committed_relaunch',
+  'EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE=standard_start_read_failure',
+  'endsAt-startedAt=3000000',
+  'Reset dữ liệu test',
+  'DEFERRED_TO_LATER_PHASE',
+  '<implementation-sha>',
+  'unset EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE',
+];
+
+for (const evidence of requiredStandardFocusStartEvidence) {
+  if (!standardFocusStartFlow.includes(evidence)) {
+    throw new Error(`Standard Focus Start device flow is missing: ${evidence}`);
+  }
+}
 
 const requiredOnboardingTrialEvidence = [
   'EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE=trial_start_failure',

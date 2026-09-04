@@ -5,10 +5,9 @@ import {
   type RunningSessionRecord,
   type SessionRepository,
 } from '@pixeldoro/application';
+import type { TickScheduler } from '../ports/tick-scheduler.port';
 
-export interface TrialTickScheduler {
-  schedule(callback: () => void, delayMs: number): () => void;
-}
+export type TrialTickScheduler = TickScheduler;
 
 export type OnboardingTrialRunningErrorCode = 'ONBOARDING_TRIAL_READ_FAILED';
 

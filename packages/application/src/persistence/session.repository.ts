@@ -1,4 +1,5 @@
 import type { TransactionScope } from '../ports/transaction.port';
+import type { FocusMode, WorkTag } from '@pixeldoro/domain';
 import type {
   ConditionalWriteOutcome,
   PersistenceResult,
@@ -6,9 +7,8 @@ import type {
 
 export type SessionType = 'focus' | 'short_break' | 'long_break';
 export type FocusVariant = 'standard' | 'onboarding_trial';
-export type FocusMode = 'relax' | 'strict';
 export type SessionStatus = 'running' | 'completed' | 'failed' | 'cancelled';
-export type WorkTag = 'coding' | 'study' | 'writing' | 'reading';
+export type { FocusMode, WorkTag };
 
 export interface SessionRecord {
   readonly id: string;
@@ -46,6 +46,12 @@ export interface RecordSessionBackgroundInput {
   readonly updatedAt: number;
 }
 
+export interface ClearSessionBackgroundInput {
+  readonly sessionId: string;
+  readonly expectedBackgroundedAt: number;
+  readonly updatedAt: number;
+}
+
 export interface TransitionSessionInput {
   readonly sessionId: string;
   readonly status: Exclude<SessionStatus, 'running'>;
@@ -74,6 +80,10 @@ export interface SessionRepository {
   recordBackgroundedAtInTransaction(
     scope: TransactionScope,
     input: RecordSessionBackgroundInput,
+  ): Promise<PersistenceResult<ConditionalWriteOutcome>>;
+  clearBackgroundedAtInTransaction(
+    scope: TransactionScope,
+    input: ClearSessionBackgroundInput,
   ): Promise<PersistenceResult<ConditionalWriteOutcome>>;
   transitionFromRunningInTransaction(
     scope: TransactionScope,

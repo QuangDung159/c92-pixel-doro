@@ -28,6 +28,7 @@ vi.mock('react-native', () => ({
 afterEach(() => {
   delete process.env.EXPO_PUBLIC_EPIC_02_EXIT_PROBE;
   delete process.env.EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE;
+  delete process.env.EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE;
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
 });
@@ -101,6 +102,7 @@ describe('mobile composition root', () => {
         }),
       },
       firstUseSessions: {
+        findActive: async () => ({ ok: true, value: null }),
         findLatestOnboardingTrial: async () => ({ ok: true, value: null }),
       },
       petCompanionSessions: {
@@ -225,6 +227,8 @@ describe('mobile composition root', () => {
       diagnosticsEnabled: false,
       sqliteDriver: new FakeSQLiteDriver(),
     });
+    expect(disabled.standardFocusReviewResetAvailable).toBe(false);
+    await expect(disabled.resetStandardFocusReviewData()).resolves.toBe(false);
     await disabled.refreshFirstUseEntry();
     expect(disabled.firstUseEntry.getSnapshot()).toEqual({
       status: 'error',

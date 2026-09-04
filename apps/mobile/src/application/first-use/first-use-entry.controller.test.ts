@@ -45,6 +45,7 @@ const trial = (status: SessionRecord['status']): SessionRecord => ({
 const createController = (
   installationRecord: InstallationRecord | null,
   sessionRecord: SessionRecord | null,
+  activeRecord: SessionRecord | null = null,
 ) => {
   const findInstallation = vi.fn(async () => ({
     ok: true as const,
@@ -54,11 +55,15 @@ const createController = (
     ok: true as const,
     value: sessionRecord,
   }));
+  const findActive = vi.fn(async () => ({
+    ok: true as const,
+    value: activeRecord,
+  }));
   const controller = new FirstUseEntryController({
     installation: { find: findInstallation },
-    sessions: { findLatestOnboardingTrial },
+    sessions: { findActive, findLatestOnboardingTrial },
   });
-  return { controller, findInstallation, findLatestOnboardingTrial };
+  return { controller, findActive, findInstallation, findLatestOnboardingTrial };
 };
 
 describe('FirstUseEntryController', () => {
@@ -82,8 +87,8 @@ describe('FirstUseEntryController', () => {
     },
   );
 
-  it('short-circuits completed onboarding to Home without reading sessions', async () => {
-    const { controller, findLatestOnboardingTrial } = createController(
+  it('routes completed onboarding Home after confirming there is no active session', async () => {
+    const { controller, findActive, findLatestOnboardingTrial } = createController(
       installation(timestamp + 1),
       trial('running'),
     );
@@ -94,7 +99,64 @@ describe('FirstUseEntryController', () => {
       status: 'ready',
       destination: 'home',
     });
+    expect(findActive).toHaveBeenCalledOnce();
     expect(findLatestOnboardingTrial).not.toHaveBeenCalled();
+  });
+
+  it('routes a fresh startup Strict failure to its exact Result before Home', async () => {
+    const controller = new FirstUseEntryController({
+      installation: {
+        find: async () => ({ ok: true, value: installation(timestamp + 1) }),
+      },
+      sessions: {
+        findActive: async () => ({ ok: true, value: null }),
+        findLatestOnboardingTrial: vi.fn(),
+      },
+      standardOutcome: {
+        getSnapshot: () => ({ status: 'failed', sessionId: 'strict-1' }),
+      },
+    });
+    await controller.refresh();
+    expect(controller.getSnapshot()).toEqual({
+      status: 'ready', destination: 'standard_focus_result', sessionId: 'strict-1',
+    });
+  });
+
+  it('prioritizes a new durable running session over an unconsumed older outcome', async () => {
+    const controller = new FirstUseEntryController({
+      installation: { find: async () => ({ ok: true, value: installation(timestamp + 1) }) },
+      sessions: {
+        findActive: async () => ({ ok: true, value: { ...trial('running'), id: 'new-focus',
+          focusVariant: 'standard', configuredDurationMinutes: 15, endsAt: timestamp + 900_000, workTag: 'study' } }),
+        findLatestOnboardingTrial: vi.fn(),
+      },
+      standardOutcome: { getSnapshot: () => ({ status: 'completed', sessionId: 'old-focus' }) },
+    });
+    await controller.refresh();
+    expect(controller.getSnapshot()).toEqual({ status: 'ready', destination: 'standard_focus_running' });
+  });
+
+  it('routes completed onboarding to the committed running Standard Focus', async () => {
+    const standard: SessionRecord = {
+      ...trial('running'),
+      id: 'focus-1',
+      focusVariant: 'standard',
+      workTag: 'coding',
+      configuredDurationMinutes: 25,
+      endsAt: timestamp + 1_500_000,
+    };
+    const { controller } = createController(
+      installation(timestamp + 1),
+      null,
+      standard,
+    );
+
+    await controller.refresh();
+
+    expect(controller.getSnapshot()).toEqual({
+      status: 'ready',
+      destination: 'standard_focus_running',
+    });
   });
 
   it('fails closed for missing installation and impossible trial state', async () => {
@@ -137,7 +199,7 @@ describe('FirstUseEntryController', () => {
           ),
         }),
       },
-      sessions: { findLatestOnboardingTrial: vi.fn() },
+      sessions: { findActive: vi.fn(), findLatestOnboardingTrial: vi.fn() },
     });
     await installationFailure.refresh();
     expect(installationFailure.getSnapshot()).toEqual({
@@ -148,6 +210,7 @@ describe('FirstUseEntryController', () => {
     const sessionFailure = new FirstUseEntryController({
       installation: { find: async () => ({ ok: true, value: installation() }) },
       sessions: {
+        findActive: vi.fn(),
         findLatestOnboardingTrial: async () => {
           throw new Error('sqlite raw provider detail');
         },
@@ -173,7 +236,10 @@ describe('FirstUseEntryController', () => {
     }));
     const controller = new FirstUseEntryController({
       installation: { find },
-      sessions: { findLatestOnboardingTrial: vi.fn() },
+      sessions: {
+        findActive: async () => ({ ok: true, value: null }),
+        findLatestOnboardingTrial: vi.fn(),
+      },
     });
     const listener = vi.fn();
     controller.subscribe(listener);
@@ -203,7 +269,10 @@ describe('FirstUseEntryController', () => {
       .mockResolvedValueOnce({ ok: true, value: installation(timestamp + 1) });
     const retryable = new FirstUseEntryController({
       installation: { find },
-      sessions: { findLatestOnboardingTrial: vi.fn() },
+      sessions: {
+        findActive: async () => ({ ok: true, value: null }),
+        findLatestOnboardingTrial: vi.fn(),
+      },
     });
     await retryable.refresh();
     await retryable.refresh();
@@ -221,7 +290,7 @@ describe('FirstUseEntryController', () => {
           resolveLate = resolve;
         }),
       },
-      sessions: { findLatestOnboardingTrial: vi.fn() },
+      sessions: { findActive: vi.fn(), findLatestOnboardingTrial: vi.fn() },
     });
     const listener = vi.fn();
     late.subscribe(listener);

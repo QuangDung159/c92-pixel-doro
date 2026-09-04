@@ -33,3 +33,29 @@ export {
   type PetVisualBaseInput,
   type PetVisualTerminalInput,
 } from './pet/pet-visual-arbitration';
+export {
+  STANDARD_FOCUS_DURATION_STEP_MINUTES,
+  STANDARD_FOCUS_MAX_DURATION_MINUTES,
+  STANDARD_FOCUS_MIN_DURATION_MINUTES,
+  STANDARD_FOCUS_MODES,
+  STANDARD_FOCUS_WORK_TAGS,
+  validateStandardFocusConfiguration,
+  type FocusMode,
+  type StandardFocusConfiguration,
+  type StandardFocusConfigurationDecision,
+  type StandardFocusConfigurationErrorCode,
+  type StandardFocusConfigurationInput,
+  type WorkTag,
+} from './focus/standard-focus-configuration';
+export {
+  projectRemainingTime,
+  type RemainingTimeProjection,
+} from './session/remaining-time.projection';
+export {
+  decideStrictReconciliation,
+  STRICT_BACKGROUND_GRACE_MS,
+  type StrictReconciliationDecision,
+  type StrictReconciliationInput,
+  type StrictReconciliationInvalidReason,
+} from './session/strict-reconciliation.decision';
+export { calculateStandardFocusReward, type StandardFocusRewardDecision } from './focus/standard-focus-reward';
