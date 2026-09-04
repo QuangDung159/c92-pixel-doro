@@ -50,6 +50,7 @@ describe('ActiveSessionStartupReconciliationAdapter', () => {
           },
         }),
         publishFreshFailure,
+        publishFreshCompletion: vi.fn(),
       },
     );
     expect(await adapter.reconcileAtStartup()).toEqual({

@@ -24,6 +24,17 @@ const onboardingTrialHandoffFlowPath = `${deviceDirectory}onboarding-trial-hando
 const epic05ExitFlowPath = `${deviceDirectory}epic-05-exit-smoke.md`;
 const standardFocusStartFlowPath = `${deviceDirectory}standard-focus-start-smoke.md`;
 const standardFocusRelaxFlowPath = `${deviceDirectory}standard-focus-relax-running-smoke.md`;
+const standardFocusCompletionFlow = await readFile(`${deviceDirectory}standard-focus-completion-smoke.md`, 'utf8');
+for (const evidence of [
+  'standard_completion_fast_clock', 'standard_completion_receipt_failure_once',
+  'standard_completion_profile_failure_once', 'standard_completion_result_read_failure_once',
+  'Đọc lại kết quả đã lưu', 'Reset dữ liệu test', 'DEFERRED_TO_LATER_PHASE',
+  '<implementation-sha>', 'unset EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE',
+]) {
+  if (!standardFocusCompletionFlow.includes(evidence)) {
+    throw new Error(`Standard Focus completion device flow is missing: ${evidence}`);
+  }
+}
 
 await access(flowPath);
 await access(sqliteFlowPath);

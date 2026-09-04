@@ -4,6 +4,7 @@ import {
   type ReconcileStandardFocusError,
   type ReconcileStandardFocusOutcome,
   type SessionRepository,
+  type StandardFocusCompletedResult,
 } from '@pixeldoro/application';
 import {
   startupReconciliationError,
@@ -19,6 +20,7 @@ export class ActiveSessionStartupReconciliationAdapter implements StartupReconci
         ApplicationResult<ReconcileStandardFocusOutcome, ReconcileStandardFocusError>
       >;
       publishFreshFailure(sessionId: string, resolvedAt: number): void;
+      publishFreshCompletion(result: StandardFocusCompletedResult): void;
     },
   ) {}
 
@@ -30,7 +32,10 @@ export class ActiveSessionStartupReconciliationAdapter implements StartupReconci
       if (this.standard !== undefined) {
         const standard = await this.standard.reconcile();
         if (!standard.ok) return { ok: false, error: startupReconciliationError() };
-        if (standard.value.outcome === 'failed') {
+        if (standard.value.outcome === 'completed') {
+          standardChanged = standard.value.freshness === 'fresh_commit';
+          if (standardChanged) this.standard.publishFreshCompletion(standard.value.result);
+        } else if (standard.value.outcome === 'failed') {
           standardChanged = standard.value.freshness === 'fresh_commit';
           if (standardChanged) {
             this.standard.publishFreshFailure(

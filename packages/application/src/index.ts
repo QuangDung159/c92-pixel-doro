@@ -96,14 +96,17 @@ export {
   type CancelStandardFocusOutcome,
 } from './standard-focus/cancel-standard-focus.use-case';
 export {
-  LoadStandardFocusCancelledResultUseCase,
-  type LoadStandardFocusCancelledResultDependencies,
-  type LoadStandardFocusCancelledResultError,
-  type LoadStandardFocusCancelledResultOutcome,
-  type StandardFocusCancelledResult,
-  type StandardFocusFailedResult,
-  type StandardFocusTerminalResult,
-} from './standard-focus/load-standard-focus-cancelled-result.use-case';
+  LoadStandardFocusResultUseCase,
+  type LoadStandardFocusResultDependencies,
+  type LoadStandardFocusResultError,
+  type LoadStandardFocusResultOutcome,
+} from './standard-focus/load-standard-focus-result.use-case';
+export type {
+  StandardFocusCompletedResult,
+  StandardFocusCancelledResult,
+  StandardFocusFailedResult,
+  StandardFocusTerminalResult,
+} from './standard-focus/standard-focus-terminal-result';
 export {
   StartStandardFocusUseCase,
   type StartStandardFocusDependencies,

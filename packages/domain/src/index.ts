@@ -58,3 +58,4 @@ export {
   type StrictReconciliationInput,
   type StrictReconciliationInvalidReason,
 } from './session/strict-reconciliation.decision';
+export { calculateStandardFocusReward, type StandardFocusRewardDecision } from './focus/standard-focus-reward';

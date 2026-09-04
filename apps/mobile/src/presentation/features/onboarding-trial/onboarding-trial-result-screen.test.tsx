@@ -9,10 +9,10 @@ vi.mock('react-native', () => ({
 }));
 
 vi.mock('@/presentation/components', () => ({
+  ProgressionSummary: 'ProgressionSummary', RewardSummary: 'RewardSummary', Panel: 'Panel', SecondaryButton: 'SecondaryButton',
   InlineNotice: 'InlineNotice',
   PetVisualStatus: 'PetVisualStatus',
   PrimaryButton: 'PrimaryButton',
-  RewardSummary: 'RewardSummary',
   ScreenHeader: 'ScreenHeader',
   ScreenShell: 'ScreenShell',
   StatDisplay: 'StatDisplay',

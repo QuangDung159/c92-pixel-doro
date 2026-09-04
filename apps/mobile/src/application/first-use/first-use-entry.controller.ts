@@ -47,7 +47,7 @@ export interface FirstUseEntryControllerDependencies {
   readonly standardOutcome?: {
     getSnapshot():
       | { readonly status: 'idle' }
-      | { readonly status: 'failed'; readonly sessionId: string };
+      | { readonly status: 'failed' | 'completed'; readonly sessionId: string };
   };
 }
 
@@ -147,19 +147,19 @@ export class FirstUseEntryController {
       }
 
       if (installation.value.onboardingCompletedAt !== null) {
+        const active = await this.dependencies.sessions.findActive();
+        if (!this.isCurrent(generation)) return;
+        if (!active.ok) {
+          this.publish(errorProjection('FIRST_USE_ENTRY_READ_FAILED'));
+          return;
+        }
         const outcome = this.dependencies.standardOutcome?.getSnapshot();
-        if (outcome?.status === 'failed') {
+        if (active.value === null && outcome !== undefined && outcome.status !== 'idle') {
           this.publish({
             status: 'ready',
             destination: 'standard_focus_result',
             sessionId: outcome.sessionId,
           });
-          return;
-        }
-        const active = await this.dependencies.sessions.findActive();
-        if (!this.isCurrent(generation)) return;
-        if (!active.ok) {
-          this.publish(errorProjection('FIRST_USE_ENTRY_READ_FAILED'));
           return;
         }
         this.publish(destinationForCompletedOnboarding(active.value));

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import type { SessionRecord } from '../persistence/session.repository';
-import { LoadStandardFocusCancelledResultUseCase } from './load-standard-focus-cancelled-result.use-case';
+import { LoadStandardFocusResultUseCase } from './load-standard-focus-result.use-case';
 
 const cancelled = (): SessionRecord => ({
   id: 'focus-1', profileId: 1, sessionType: 'focus', focusVariant: 'standard',
@@ -12,10 +12,13 @@ const cancelled = (): SessionRecord => ({
   createdAt: 1_000, updatedAt: 2_000,
 });
 
-describe('LoadStandardFocusCancelledResultUseCase', () => {
+describe('LoadStandardFocusResultUseCase', () => {
   it('reads exact committed cancelled facts', async () => {
-    const useCase = new LoadStandardFocusCancelledResultUseCase({
-      sessions: { findById: async (id) => ({ ok: true, value: id === 'focus-1' ? cancelled() : null }) },
+    const useCase = new LoadStandardFocusResultUseCase({
+      transaction: { execute: (work) => work({ transactionId: Symbol('read') }) },
+      profile: { findInTransaction: async () => ({ ok: true, value: { id: 1, totalXp: 0, coinBalance: 0, createdAt: 1, updatedAt: 1 } }) },
+      rewards: { findBySessionIdInTransaction: async () => ({ ok: true, value: null }) },
+      sessions: { findByIdInTransaction: async (_scope, id) => ({ ok: true, value: id === 'focus-1' ? cancelled() : null }) },
     });
     expect(await useCase.execute('focus-1')).toEqual({
       ok: true,
@@ -38,8 +41,11 @@ describe('LoadStandardFocusCancelledResultUseCase', () => {
     { xpEarned: 1 },
     { rewardClaimedAt: 2_000 },
   ])('fails closed for inconsistent exact facts', async (change) => {
-    const useCase = new LoadStandardFocusCancelledResultUseCase({
-      sessions: { findById: async () => ({ ok: true, value: { ...cancelled(), ...change } as SessionRecord }) },
+    const useCase = new LoadStandardFocusResultUseCase({
+      transaction: { execute: (work) => work({ transactionId: Symbol('read') }) },
+      profile: { findInTransaction: async () => ({ ok: true, value: { id: 1, totalXp: 0, coinBalance: 0, createdAt: 1, updatedAt: 1 } }) },
+      rewards: { findBySessionIdInTransaction: async () => ({ ok: true, value: null }) },
+      sessions: { findByIdInTransaction: async () => ({ ok: true, value: { ...cancelled(), ...change } as SessionRecord }) },
     });
     expect(await useCase.execute('focus-1')).toMatchObject({
       ok: false, error: { code: 'STANDARD_FOCUS_RESULT_INCONSISTENT' },
@@ -55,8 +61,11 @@ describe('LoadStandardFocusCancelledResultUseCase', () => {
       resolvedAt: 20_000,
       updatedAt: 20_000,
     };
-    const useCase = new LoadStandardFocusCancelledResultUseCase({
-      sessions: { findById: async () => ({ ok: true, value: failed }) },
+    const useCase = new LoadStandardFocusResultUseCase({
+      transaction: { execute: (work) => work({ transactionId: Symbol('read') }) },
+      profile: { findInTransaction: async () => ({ ok: true, value: { id: 1, totalXp: 0, coinBalance: 0, createdAt: 1, updatedAt: 1 } }) },
+      rewards: { findBySessionIdInTransaction: async () => ({ ok: true, value: null }) },
+      sessions: { findByIdInTransaction: async () => ({ ok: true, value: failed }) },
     });
     expect(await useCase.execute('focus-1')).toMatchObject({
       ok: true,

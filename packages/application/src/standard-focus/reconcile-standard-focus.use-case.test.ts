@@ -20,6 +20,9 @@ const create = (record: RunningSessionRecord, now: number) => {
   const clear = vi.fn(async () => ({ ok: true as const, value: 'updated' as const }));
   const transition = vi.fn(async () => ({ ok: true as const, value: 'updated' as const }));
   const useCase = new ReconcileStandardFocusUseCase({
+    id: { nextId: () => 'receipt-1' },
+    rewards: { findBySessionIdInTransaction: async () => ({ ok: true, value: null }), insertInTransaction: vi.fn() },
+    profile: { findInTransaction: vi.fn(), applyProgressionInTransaction: vi.fn() },
     clock: { nowMs: () => now },
     coordinator: new SessionCommandCoordinator(),
     sessions: {
@@ -50,27 +53,27 @@ describe('ReconcileStandardFocusUseCase', () => {
   });
 
   it('commits failed at the exact grace/deadline equality with zero reward', async () => {
-    const record = strict({ endsAt: 21_000, backgroundedAt: 11_000, updatedAt: 11_000 });
-    const { transition, useCase } = create(record, 21_000);
+    const record = strict({ backgroundedAt: 891_000, updatedAt: 891_000 });
+    const { transition, useCase } = create(record, 901_000);
     expect(await useCase.execute()).toEqual({
       ok: true,
       value: {
-        outcome: 'failed', sessionId: 'strict-1', freshness: 'fresh_commit', resolvedAt: 21_000,
+        outcome: 'failed', sessionId: 'strict-1', freshness: 'fresh_commit', resolvedAt: 901_000,
       },
     });
     expect(transition).toHaveBeenCalledWith(scope, {
-      sessionId: 'strict-1', status: 'failed', resolvedAt: 21_000,
-      xpEarned: 0, coinsEarned: 0, rewardClaimedAt: null, updatedAt: 21_000,
+      sessionId: 'strict-1', status: 'failed', resolvedAt: 901_000,
+      xpEarned: 0, coinsEarned: 0, rewardClaimedAt: null, updatedAt: 901_000,
     });
   });
 
   it.each([
     [strict({ endsAt: 20_000, backgroundedAt: 11_000 }), 20_000],
     [strict({ endsAt: 20_000, backgroundedAt: null }), 20_000],
-  ])('delegates completion without writing terminal truth', async (record, now) => {
+  ])('rejects corrupt shortened durations rather than granting reward', async (record, now) => {
     const { clear, transition, useCase } = create(record, now);
     expect(await useCase.execute()).toEqual({
-      ok: true, value: { outcome: 'completion_due', sessionId: 'strict-1' },
+      ok: false, error: { kind: 'reconcile_standard_focus_error', code: 'STANDARD_FOCUS_RECONCILE_STATE_INVALID' },
     });
     expect(clear).not.toHaveBeenCalled();
     expect(transition).not.toHaveBeenCalled();

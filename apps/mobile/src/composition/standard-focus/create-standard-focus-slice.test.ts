@@ -18,6 +18,7 @@ describe('createStandardFocusSlice', () => {
     readiness.open();
     const petRefresh = vi.fn(async () => undefined);
     const slice = createStandardFocusSlice({
+      profile: {} as never, rewards: {} as never,
       appInitiallyVisible: true,
       calendar: { snapshot: () => ({
         ok: true, value: { localDate: '2026-09-03', utcOffsetMinutes: 420 },
@@ -54,6 +55,7 @@ describe('createStandardFocusSlice', () => {
   it('does not write while core commands are not ready', async () => {
     const insert = vi.fn();
     const slice = createStandardFocusSlice({
+      profile: {} as never, rewards: {} as never,
       appInitiallyVisible: true,
       calendar: { snapshot: vi.fn() }, clock: { nowMs: vi.fn() },
       coordinator: new SessionCommandCoordinator(), id: { nextId: vi.fn() },

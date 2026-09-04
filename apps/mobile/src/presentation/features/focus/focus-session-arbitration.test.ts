@@ -3,9 +3,20 @@ import { describe, expect, it } from 'vitest';
 import {
   decideFocusSessionBranch,
   shouldOpenOnboardingTrialResult,
+  shouldOpenStandardFocusResult,
 } from './focus-session-arbitration';
 
 describe('Focus Session production arbitration', () => {
+  it('never redirects a loading/new/Trial session to an old Standard outcome', () => {
+    const outcome = { status: 'completed', sessionId: 'old', receiptId: 'receipt', mode: 'relax', resolvedAt: 901_000 } as const;
+    const standard = { status: 'ready', phase: 'running', sessionId: 'new', durationMinutes: 15,
+      mode: 'relax', workTag: 'study', startedAt: 1_000, endsAt: 901_000, remainingMs: 900_000, displaySeconds: 900 } as const;
+    expect(shouldOpenStandardFocusResult('loading', { status: 'loading' }, outcome)).toBe(false);
+    expect(shouldOpenStandardFocusResult('trial', { status: 'missing' }, outcome)).toBe(false);
+    expect(shouldOpenStandardFocusResult('standard', standard, outcome)).toBe(false);
+    expect(shouldOpenStandardFocusResult('standard', { ...standard, sessionId: 'old' }, outcome)).toBe(true);
+    expect(shouldOpenStandardFocusResult('prototype', { status: 'missing' }, outcome)).toBe(true);
+  });
   it('waits for both durable readers before allowing prototype fallback', () => {
     expect(decideFocusSessionBranch(
       { status: 'missing' },

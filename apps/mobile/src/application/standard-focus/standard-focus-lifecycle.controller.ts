@@ -13,6 +13,7 @@ import type { AppLifecycleState } from '../ports/app-lifecycle.port';
 import type { CriticalRecoveryPort } from '../recovery';
 import type { StandardFocusSessionController } from './standard-focus-session.controller';
 import type { StandardFocusOutcomeController } from './standard-focus-outcome.controller';
+import { requestStandardTerminalFeedback } from './request-standard-terminal-feedback';
 
 export interface StandardFocusLifecycleControllerDependencies {
   readonly clock: ClockPort;
@@ -21,6 +22,7 @@ export interface StandardFocusLifecycleControllerDependencies {
   readonly petCompanion: PetCompanionController;
   readonly petTerminalFeedback: PetTerminalFeedbackController;
   readonly session: StandardFocusSessionController;
+  refreshProfile(): Promise<boolean>;
   recordBackground(capturedAt: number): Promise<
     ApplicationResult<RecordStrictBackgroundOutcome, RecordStrictBackgroundError>
   >;
@@ -87,29 +89,29 @@ export class StandardFocusLifecycleController {
       );
       return;
     }
-    if (result.value.outcome === 'failed' && result.value.freshness === 'fresh_commit') {
-      this.dependencies.outcome.publishFreshFailure(
-        result.value.sessionId,
-        result.value.resolvedAt,
-      );
-      await this.dependencies.petCompanion.refresh();
-      const base = this.dependencies.petCompanion.getSnapshot();
-      this.dependencies.petTerminalFeedback.requestFreshTransition({
-        sessionId: result.value.sessionId,
-        committedAtMs: result.value.resolvedAt,
-        sessionType: 'focus',
-        focusVariant: 'standard',
-        mode: 'strict',
-        terminalStatus: 'failed',
-        rewardCommitted: false,
-      }, {
-        currentResultSessionId: result.value.sessionId,
-        activeSessionId: base.status === 'ready' ? base.activeSessionId : null,
-      });
+    if (this.disposed) return;
+    if ((result.value.outcome === 'completed' || result.value.outcome === 'failed') &&
+      result.value.freshness === 'fresh_commit') {
+      if (result.value.outcome === 'completed') {
+        if (!await this.dependencies.refreshProfile().catch(() => false)) {
+          // Keep the committed identity even when hydration must go through recovery.
+          this.dependencies.outcome.publishFreshCompletion(result.value.result);
+          this.enterRecovery('DATABASE_READ_FAILED');
+          return;
+        }
+      }
+      await this.dependencies.petCompanion.refresh().catch(() => undefined);
+      if (this.disposed) return;
+      // Publish only after hydration, then request feedback synchronously: Result must
+      // not consume the handoff while these post-commit reads are still in flight.
+      if (result.value.outcome === 'completed') this.dependencies.outcome.publishFreshCompletion(result.value.result);
+      else this.dependencies.outcome.publishFreshFailure(result.value.sessionId, result.value.resolvedAt);
+      requestStandardTerminalFeedback(this.dependencies.outcome.getSnapshot(),
+        this.dependencies.petCompanion, this.dependencies.petTerminalFeedback);
     }
     await Promise.all([
       this.dependencies.session.refresh(),
-      this.dependencies.petCompanion.refresh(),
+      this.dependencies.petCompanion.refresh().catch(() => undefined),
     ]);
     if (!this.disposed && this.lastState === 'active') {
       this.dependencies.session.setAppVisible(true);

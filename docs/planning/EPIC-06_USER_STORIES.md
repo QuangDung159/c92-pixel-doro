@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_EPIC_06_USER_STORIES
 title: PixelDoro EPIC-06 — Standard Focus User Stories
-version: 0.5.1
-status: US_06_03_DONE_US_06_04_PLANNING_OWNER_REVIEW
+version: 0.6.0
+status: US_06_04_IMPLEMENTED_PENDING_OWNER_QUICK_UI
 date: 2026-09-04
 owner: Dũng Lư
 reviewed_by: Dũng Lư
@@ -13,7 +13,7 @@ owner_review_sha: aa7f561c2eb8bca8302a1f6a072665819d653dbe
 upstream: origin/feats/epic-06
 epic: EPIC-06
 epic_state: IN_PROGRESS
-implementation_state: US_06_01_02_03_DONE_US_06_04_NOT_STARTED
+implementation_state: US_06_01_02_03_DONE_US_06_04_WORKING_TREE_CANDIDATE
 formal_tester_status: DEFERRED_TO_LATER_PHASE
 language: vi
 authority: PLANNING
@@ -71,9 +71,10 @@ không bị suy diễn là pass.
 Owner tiếp tục duyệt `US0603-CONFIRM-01`→`11` Option A. US-06-03 đã commit tại exact SHA
 `14ef3413742df4159aa3a7e537d2fd02667cb203`, bao gồm quick-UI fixes cho stale Trial Result và Cancel
 callback. Owner báo cáo quick UI done và cho phép mở
-[US-06-04 implementation planning](./US-06-04_IMPLEMENTATION_PLAN.md). US-06-04 production code
-chưa bắt đầu; confirmations riêng đang chờ owner review. Full structured manual/formal evidence
-không được suy diễn là pass.
+[US-06-04 implementation planning](./US-06-04_IMPLEMENTATION_PLAN.md). Owner đã duyệt Option A cho
+11 confirmations và yêu cầu triển khai. Candidate US-06-04 đã có completion/reward/Result cùng automated
+verification; xem [implementation report](./US-06-04_IMPLEMENTATION_REPORT.md). Chưa commit, chưa owner
+quick UI/acceptance; full structured manual/formal evidence không được suy diễn là pass.
 
 ## 1. Kết luận audit baseline
 
@@ -1071,14 +1072,15 @@ Retained limitations:
 3. `OPEN-006` contribution colors và `OPEN-009` Pet naming vẫn mở, không block EPIC-06.
 4. Wall-clock/device lifecycle limitation giữ đúng approved specifications.
 5. Prototype là UX evidence, không phải production timer/session/reward evidence.
-6. US-06-01/02/03 đã đóng progression gate qua owner quick UI. US-06-04 plan đã tạo nhưng production
-   implementation chưa bắt đầu; 11 confirmations, gồm post-commit cold-start Result restoration,
-   chờ owner duyệt. Full manual/formal evidence vẫn deferred.
+6. US-06-01/02/03 đã đóng progression gate qua owner quick UI. US-06-04 đã triển khai theo cả 11
+   Option A approvals; working-tree candidate chờ owner quick UI/commit/acceptance. US-06-05 chưa mở.
+   Post-commit cold startup không có route identity về Home đúng tổng; full manual/formal vẫn deferred.
 
 ## 15. Change log
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.6.0 | 2026-09-04 | Codex | Recorded US-06-04 Option A approvals and implemented uncommitted completion/reward/Result candidate; owner quick UI/acceptance remains pending. |
 | 0.5.1 | 2026-09-04 | Codex | Recorded final US-06-03 SHA and owner quick-UI acceptance; opened US-06-04 owner-gated completion/reward/Result planning, implementation not started. |
 | 0.5.0 | 2026-09-03 | Codex | Recorded owner-approved US-06-03 implementation candidate with automated/SQLite/quality/iOS bundle verification; exact SHA, manual UI and owner acceptance remain pending. |
 | 0.4.1 | 2026-09-03 | Codex | Recorded US-06-02 exact SHA and owner quick-UI acceptance; opened owner-gated US-06-03 planning while retaining detailed manual/formal evidence limitations. |
@@ -1091,5 +1093,5 @@ Retained limitations:
 **EPIC-06 is in progress. US-06-01 is owner-accepted at exact SHA
 `68f2c54d3630817385b320622476c55c67caea13`; US-06-02 is owner-accepted at exact SHA
 `9a8e3d87d44612b7bd9aa8bf9e592099300d9e2e`; US-06-03 is owner-accepted through quick UI at
-`14ef3413742df4159aa3a7e537d2fd02667cb203`. US-06-04 plan awaits owner confirmation; its production
-implementation has not started.**
+`14ef3413742df4159aa3a7e537d2fd02667cb203`. US-06-04 is implemented under all approved Option A
+confirmations; uncommitted candidate awaits owner quick UI and acceptance.**

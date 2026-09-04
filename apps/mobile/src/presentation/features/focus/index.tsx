@@ -13,6 +13,6 @@ export {
   type StandardFocusRunningScreenProps,
 } from './standard-focus-running-screen';
 export {
-  StandardFocusCancelledResultScreen,
-  type StandardFocusCancelledResultScreenProps,
-} from './standard-focus-cancelled-result-screen';
+  StandardFocusResultScreen,
+  type StandardFocusResultScreenProps,
+} from './standard-focus-result-screen';

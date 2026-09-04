@@ -6,6 +6,10 @@ import {
 } from '@pixeldoro/application';
 
 export type StandardFocusStartReviewScenario =
+  | 'standard_completion_fast_clock'
+  | 'standard_completion_receipt_failure_once'
+  | 'standard_completion_profile_failure_once'
+  | 'standard_completion_result_read_failure_once'
   | 'standard_start_success'
   | 'standard_start_active_conflict'
   | 'standard_start_write_failure_once'
@@ -26,6 +30,10 @@ export interface StandardFocusStartReviewFixture {
 }
 
 const scenarios = new Set<StandardFocusStartReviewScenario>([
+  'standard_completion_fast_clock',
+  'standard_completion_receipt_failure_once',
+  'standard_completion_profile_failure_once',
+  'standard_completion_result_read_failure_once',
   'standard_start_success',
   'standard_start_active_conflict',
   'standard_start_write_failure_once',
@@ -152,7 +160,7 @@ export const createStandardFocusStartReviewFixture = (
   if (!enabled || value === undefined || !isScenario(value)) return undefined;
   return {
     scenario: value,
-    clock: value === 'standard_running_fast_clock' || value === 'standard_strict_fast_grace'
+    clock: value.startsWith('standard_completion_') || value === 'standard_running_fast_clock' || value === 'standard_strict_fast_grace'
       ? new AcceleratedStandardReviewClock(baseClock, 30)
       : value === 'standard_deadline_pending'
         ? new AcceleratedStandardReviewClock(baseClock, 1_000)

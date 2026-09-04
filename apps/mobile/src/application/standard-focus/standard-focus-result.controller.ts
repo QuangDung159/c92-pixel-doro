@@ -1,5 +1,5 @@
 import type {
-  LoadStandardFocusCancelledResultUseCase,
+  LoadStandardFocusResultUseCase,
   StandardFocusTerminalResult,
 } from '@pixeldoro/application';
 
@@ -22,7 +22,7 @@ export class StandardFocusResultController {
   private generation = 0;
   private disposed = false;
 
-  constructor(private readonly loadResult: LoadStandardFocusCancelledResultUseCase) {}
+  constructor(private readonly loadResult: LoadStandardFocusResultUseCase) {}
 
   getSnapshot = (): StandardFocusResultProjection => this.projection;
 

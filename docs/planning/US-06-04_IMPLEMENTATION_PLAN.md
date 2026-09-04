@@ -1,9 +1,12 @@
 ---
 document_id: PIXELDORO_US_06_04_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-06-04 Exactly-once completion, reward và committed Result
-version: 0.1.0
-status: PROPOSED_OWNER_REVIEW
-implementation_status: NOT_STARTED
+version: 0.2.0
+status: OWNER_APPROVED
+implementation_status: IMPLEMENTED_PENDING_OWNER_QUICK_UI
+implementation_start_sha: 7d9f93eb496120988bc2f945ec9084de2c58b8a9
+approved_by: Dũng Lư
+approved_at: 2026-09-04
 date: 2026-09-04
 owner: Dũng Lư
 reviewer: Dũng Lư
@@ -31,9 +34,9 @@ source_of_truth: ../PIXELDORO_CORE_TRUTH.md
 durable timestamps, cấp đúng reward một lần và mở Result đọc committed facts. Failed/cancelled
 tiếp tục zero reward. Overtime, retry, app relaunch hoặc mở lại Result không làm tăng reward.
 
-Đây là plan chờ owner review, **không phải authorization triển khai**. US-06-04 production code,
-test implementation và manual execution đều `NOT_STARTED`. Không chạy prebuild/native build,
-không thêm dependency, không đổi schema/migration và không commit/push trong lượt planning.
+Owner đã duyệt Option A cho cả 11 confirmations ngày 2026-09-04 và yêu cầu triển khai code.
+Implementation bắt đầu trên clean HEAD `7d9f93eb496120988bc2f945ec9084de2c58b8a9`.
+Không chạy prebuild/native build, không thêm dependency, không đổi schema/migration hoặc commit/push.
 
 ### 0.1. Baseline/readiness đã xác minh
 
@@ -48,7 +51,7 @@ không thêm dependency, không đổi schema/migration và không commit/push t
 - [x] Baseline evidence đã ghi trong lượt fix: 106 test files / 515 tests, typecheck/lint và iOS
   bundle 1700 modules. Đây là evidence US-06-03, không phải test pass US-06-04.
 - [ ] Full structured manual matrix và formal tester của Story trước chưa hoàn tất.
-- [ ] Owner duyệt `US0604-CONFIRM-01` đến `US0604-CONFIRM-11` trước production edit.
+- [x] Owner duyệt Option A cho `US0604-CONFIRM-01` đến `US0604-CONFIRM-11` trước production edit.
 
 ### 0.2. Scope và điều kiện dừng
 
@@ -289,15 +292,14 @@ Hai trường hợp khác nhau:
 2. Session đã commit ở process trước rồi process bị kill trước Result: next startup không còn active
    session và không có runtime handoff. Existing schema không phân biệt Result đã xem/chưa xem.
 
-**Đề xuất Option A tại confirmation 07:** giữ no-schema; trường hợp 2 hydrate đúng profile và về
+**Option A đã duyệt tại confirmation 07:** giữ no-schema; trường hợp 2 hydrate đúng profile và về
 Home nếu không có exact route identity. Nếu exact Result ID được cung cấp lại (route/development
 reopen; future notification/history), đọc same committed reward, no replay. Không tự chọn latest
 terminal và không hứa auto-restore một màn hình mà không có durable presentation intent.
 
-Đây là **clarification chờ owner**, không tự giảm yêu cầu “hydrate committed truth” thành claim
-“auto-resume Result pass”. Nếu owner cần tự khôi phục Result chưa xem đúng một lần, phải chọn spike
-để chứng minh durable presentation acknowledgement/state-restoration contract; mọi schema change
-cần approval mới theo `US0600-CONFIRM-02`. Implementation không bắt đầu khi điểm này chưa khóa.
+Owner đã duyệt clarification này ngày 2026-09-04. Không claim guaranteed auto-restore unseen Result.
+Nếu sau này cần durable presentation acknowledgement, phải mở scope/approval riêng theo
+`US0600-CONFIRM-02`; implementation hiện tại không đổi schema.
 
 ## 7. UI reuse, ownership và line-count plan
 
@@ -352,26 +354,26 @@ app chỉ để giảm line count. Root vẫn là wiring, không tính reward ha
 - Presentation: `app/focus/result.tsx`, `session.tsx`, Standard result branch/screen, provider hooks;
   reuse common reward/Pet/status components, keep prototype separately labelled.
 - Tests: new `apps/mobile/test/integration/standard-focus-completion.integration.test.ts` and
-  `apps/mobile/test/device/standard-focus-completion-smoke.md` (planned, not yet created).
-- Evidence: `docs/planning/US-06-04_IMPLEMENTATION_REPORT.md` after implementation (planned).
+  `apps/mobile/test/device/standard-focus-completion-smoke.md` (đã tạo).
+- Evidence: [US-06-04 Implementation Report](./US-06-04_IMPLEMENTATION_REPORT.md).
 
-## 9. Acceptance checklist — chưa chạy
+## 9. Acceptance checklist — automated/source evidence; UI owner pending
 
-- [ ] Valid Standard Relax/Strict completion được decide từ persisted timestamps, không từ UI value.
-- [ ] Mọi valid duration nhận exact configured XP và floor Coin, không overtime/multiplier.
-- [ ] Session completed fields, unique receipt và profile increment commit atomically.
-- [ ] Before/after profile postcondition và safe integer validation pass.
-- [ ] Duplicate/retry/CAS miss/receipt conflict không grant hai lần; terminal winner immutable.
-- [ ] Strict equality failed; deadline-before-violation completed; missing evidence no false fail.
-- [ ] Cancel cutoff/race vẫn đúng và deadline pending đi tới reconciliation, không kẹt UI.
-- [ ] Result đọc exact committed session/receipt/profile; no mutation/Claim/latest fallback.
-- [ ] Failed/cancelled zero reward, receipt absent, no Break/celebration.
-- [ ] Completed Home-only, common RewardSummary, truthful current totals nếu hiển thị.
-- [ ] Fresh outcome survives post-commit read failure trong runtime; existing result không replay.
-- [ ] Startup behavior theo confirmation 07 được ghi và test đúng, không overclaim restore.
-- [ ] Home profile refresh sau completion; Result reopen không làm totals tăng.
-- [ ] Trial→Standard routing và detached outcome callback regressions pass.
-- [ ] No schema/dependency/native/notification/analytics/Break scope leak.
+- [x] Valid Standard Relax/Strict completion được decide từ persisted timestamps, không từ UI value.
+- [x] Mọi valid duration nhận exact configured XP và floor Coin, không overtime/multiplier.
+- [x] Session completed fields, unique receipt và profile increment commit atomically.
+- [x] Before/after profile postcondition và safe integer validation pass.
+- [x] Duplicate/retry/CAS miss/receipt conflict không grant hai lần; terminal winner immutable.
+- [x] Strict equality failed; deadline-before-violation completed; missing evidence no false fail.
+- [x] Cancel cutoff/race vẫn đúng và deadline pending đi tới reconciliation, không kẹt UI.
+- [x] Result đọc exact committed session/receipt/profile; no mutation/Claim/latest fallback.
+- [x] Failed/cancelled zero reward, receipt absent, no Break/celebration.
+- [x] Completed Home-only, common RewardSummary, truthful current totals nếu hiển thị.
+- [x] Fresh outcome survives post-commit read failure trong runtime; existing result không replay.
+- [x] Startup behavior theo confirmation 07 được ghi và test đúng, không overclaim restore.
+- [x] Home profile refresh sau completion; Result reopen không làm totals tăng.
+- [x] Trial→Standard routing và detached outcome callback regressions pass.
+- [x] No schema/dependency/native/notification/analytics/Break scope leak.
 
 ## 10. Automated và real SQLite matrix
 
@@ -405,9 +407,9 @@ and prebuild remain out of scope. A checklist validator is not a device test.
 - Finish/dừng current test session through normal UI. Full reset chỉ dùng approved Development
   Build confirmation trên disposable test data; không ad-hoc SQL hoặc xóa app data của owner.
 - Complete Trial → Vào Pet Room once; record initial profile XP/Coin (fresh trial baseline 5/1).
-- Proposed dev scenarios: fast completion; duplicate reconcile; receipt failure once; profile failure
-  once; post-commit Result read failure once; exact-ID completed reopen. Names/clock factors finalized
-  in implementation, không được ghi các fixture này là đang có sẵn.
+- Fixtures đã triển khai: `standard_completion_fast_clock`, `standard_completion_receipt_failure_once`,
+  `standard_completion_profile_failure_once`, `standard_completion_result_read_failure_once`; clock x30.
+  Dev exact-ID reload trên Result chỉ đọc, không grant/replay; duplicate reconcile được test tự động.
 - Clock acceleration phải nhất quán cho Start/tick/lifecycle/reconcile. Cold-start test dùng persisted
   valid record và controlled clock, không giả rằng in-memory acceleration anchor sống qua process kill.
 
@@ -459,9 +461,9 @@ database path, private data hoặc toàn bộ database không cần thiết.
 | Prototype completed/Break lọt production | Parameterized Standard Result fail closed; isolate prototype review. |
 | UI/composition tăng trách nhiệm | Reuse common primitives, focused branch/helper boundaries, line-count gate. |
 
-## 13. Owner confirmations — PENDING
+## 13. Owner confirmations — APPROVED 2026-09-04
 
-Không confirmation nào được tự approved. Option A là đề xuất; các product rules đã khóa không
+Owner đã duyệt Option A cho toàn bộ confirmations dưới đây; các product rules đã khóa không
 được mở lại bằng option vi phạm invariant. Option B dưới đây là alternative về scope/design cần
 review, không phải implementation mặc định.
 
@@ -471,7 +473,7 @@ review, không phải implementation mặc định.
 - **B:** trước hết trích generic Focus reward policy và migrate Trial cùng lúc, vẫn validate variant.
 - **Trade-off:** A ít regression và đúng vertical owner; B reuse rộng hơn nhưng tăng scope Trial.
 - **Chưa duyệt:** chưa khóa Domain API và regression surface.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-04.
 
 ### US0604-CONFIRM-02 — Một Standard reconciliation authority
 
@@ -480,7 +482,7 @@ review, không phải implementation mặc định.
 - **B:** facade dispatcher tới typed Relax/Strict internal strategies cùng coordinator/transaction.
 - **Trade-off:** A tận dụng seam hiện có; B thêm abstraction nếu branching thực tế lớn hơn dự kiến.
 - **Chưa duyệt:** không thêm completed writer hoặc thay lifecycle/startup wiring.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-04.
 
 ### US0604-CONFIRM-03 — Atomic grant và timestamp/postcondition
 
@@ -489,7 +491,7 @@ review, không phải implementation mặc định.
 - **B:** same invariant nhưng dùng một Infrastructure aggregate command chuyên completed grant.
 - **Trade-off:** A reuse existing ports và test từng failure boundary; B cần API mới và adapter lớn hơn.
 - **Chưa duyệt:** chưa triển khai completion transaction. Không option nào cho phép partial commit.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-04.
 
 ### US0604-CONFIRM-04 — Idempotency và race winner
 
@@ -498,7 +500,7 @@ review, không phải implementation mặc định.
 - **B:** thêm explicit operation-token abstraction nhưng vẫn dùng session ID làm reward key.
 - **Trade-off:** A đủ current local architecture, ít state; B thêm abstraction không thay durable key.
 - **Chưa duyệt:** chưa khóa retry/race outcome types; không làm retry theo receipt ID mới.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-04.
 
 ### US0604-CONFIRM-05 — Exact Result và profile consistency
 
@@ -507,7 +509,7 @@ review, không phải implementation mặc định.
 - **B:** Result chỉ hiển thị session reward, current totals chỉ ở Home; vẫn verify receipt/profile.
 - **Trade-off:** A cho thấy progression như Trial và cần current-totals label; B UI gọn hơn.
 - **Chưa duyệt:** chưa khóa Result view model/UX. Không latest-session fallback.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-04.
 
 ### US0604-CONFIRM-06 — Fresh completion handoff và Pet
 
@@ -516,7 +518,7 @@ review, không phải implementation mặc định.
 - **B:** focused Standard completion controller tách riêng, adapter hợp nhất navigation outcome.
 - **Trade-off:** A ít controller/state hơn; B hữu ích nếu lifecycle helper vượt một trách nhiệm.
 - **Chưa duyệt:** chưa wire completed navigation/Pet; không infer freshness từ receipt existence.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-04.
 
 ### US0604-CONFIRM-07 — Post-commit cold restart / Result restoration
 
@@ -528,7 +530,7 @@ review, không phải implementation mặc định.
 - **Trade-off:** A giữ approved no-schema và không lặp Result cũ mỗi lần mở app; B UX recovery mạnh
   hơn nhưng là capability chưa có, không thể giả lập bằng latest terminal hoặc rewardClaimedAt.
 - **Chưa duyệt:** implementation gate đóng. Không tự coi A là cách diễn giải specification đã được duyệt.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-04.
 
 ### US0604-CONFIRM-08 — Result actions / Break boundary
 
@@ -537,7 +539,7 @@ review, không phải implementation mặc định.
 - **B:** xin amend previous UX decision để thêm “Thiết lập phiên mới” cho failed/cancelled.
 - **Trade-off:** A giữ approved baseline; B giảm thao tác nhưng đổi action contract và cần regression thêm.
 - **Chưa duyệt:** chưa đổi Result actions; prototype Break không bao giờ là production option.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-04.
 
 ### US0604-CONFIRM-09 — UI reuse và prototype retirement
 
@@ -546,7 +548,7 @@ review, không phải implementation mặc định.
 - **B:** migrate prototype Result component hoàn toàn sang typed production props rồi tách review adapter.
 - **Trade-off:** A giữ tested failed/cancelled path; B giảm hai layouts nhưng đụng nhiều prototype controls.
 - **Chưa duyệt:** chưa đổi common API/prototype routes; hard max UI 300 lines giữ nguyên.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-04.
 
 ### US0604-CONFIRM-10 — Recovery và side-effect boundary
 
@@ -555,7 +557,7 @@ review, không phải implementation mặc định.
 - **B:** thêm feature-local completion recovery controller trước khi escalate critical recovery.
 - **Trade-off:** A reuse safe-readiness contract; B nhiều state hơn và cần chứng minh không mở mutation sớm.
 - **Chưa duyệt:** chưa khóa recovery UX; không thêm provider hoặc grant từ Retry Result.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-04.
 
 ### US0604-CONFIRM-11 — Fixtures, verification và no-schema scope
 
@@ -565,7 +567,7 @@ review, không phải implementation mặc định.
 - **B:** chỉ real-time manual sessions, vẫn giữ automated integrity matrix và same scope constraints.
 - **Trade-off:** A nhanh và reproduce boundary/race tốt; B ít fixture code nhưng chậm/khó lặp failure.
 - **Chưa duyệt:** không thêm dev fixture hoặc claim device pass.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-04.
 
 ## 14. Definition of Ready / Done
 
@@ -574,17 +576,17 @@ review, không phải implementation mặc định.
 - [x] US-06-02/03 progression acceptance và baseline đã xác minh.
 - [x] Current code/schema/UI audit và target ownership ghi trong plan.
 - [x] Authority, known limitations, manual guide và confirmations được lập.
-- [ ] Owner khóa toàn bộ 11 confirmations, đặc biệt 07.
-- [ ] Record exact implementation-start SHA và kiểm tra tree/overlap lại.
-- [ ] Nếu selected option cần scope mới, revise plan trước production edit.
+- [x] Owner khóa toàn bộ 11 confirmations Option A, gồm 07.
+- [x] Record exact implementation-start SHA `7d9f93eb496120988bc2f945ec9084de2c58b8a9`; clean tree.
+- [x] Option A không cần scope/schema/dependency mới.
 
 ### Done sau implementation
 
-- [ ] Acceptance và automated/SQLite matrix có factual evidence.
-- [ ] Common old/new consumers và two quick-UI regressions đều pass.
+- [x] Automated/SQLite evidence ghi tại report; device/manual tách riêng và chưa chạy.
+- [x] Common consumers và routing/detached-callback regression tests pass.
 - [ ] Exact committed implementation SHA, report và owner acceptance được ghi.
-- [ ] Manual checklist không tick thay cho owner quick smoke; formal status trung thực.
-- [ ] No unapproved schema/dependency/native/Break/provider change.
+- [x] Manual checklist không tick thay owner; formal vẫn deferred.
+- [x] No unapproved schema/dependency/native/Break/provider change.
 - [ ] US-06-04 accepted trước US-06-05 planning/implementation.
 
 ## 15. References
@@ -609,9 +611,10 @@ review, không phải implementation mặc định.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.2.0 | 2026-09-04 | Codex | Recorded all 11 Option A approvals, start SHA, implementation candidate, automated evidence and manual handoff; no commit/owner acceptance inferred. |
 | 0.1.0 | 2026-09-04 | Codex | Created owner-gated completion/reward/Result plan on accepted US-06-03 SHA; documented 11 pending confirmations, crash-restoration decision, reuse, transaction and evidence matrices. |
 
-## 17. Planning validation
+## 17. Historical planning-only validation (trước owner approval)
 
 - [x] HEAD/tree đã kiểm tra tại đầu lượt; chỉ bốn planning documents được thay đổi/tạo.
 - [x] Relative Markdown links trong bốn documents đều resolve tới file tồn tại.
@@ -621,4 +624,4 @@ review, không phải implementation mặc định.
 - [x] `git diff --check` pass; không sửa production/schema/dependency/native artifact.
 - [ ] Runtime/full quality/device US-06-04 chưa chạy vì đây là documentation-only planning.
 
-**US-06-04 implementation has not started. Dừng tại owner review.**
+**US-06-04 implemented as an uncommitted candidate under approved Option A; owner quick UI and acceptance pending.**

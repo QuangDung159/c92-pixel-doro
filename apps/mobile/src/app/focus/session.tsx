@@ -5,6 +5,7 @@ import { OnboardingTrialRunningScreen } from '@/presentation/features/onboarding
 import {
   decideFocusSessionBranch,
   shouldOpenOnboardingTrialResult,
+  shouldOpenStandardFocusResult,
 } from '@/presentation/features/focus/focus-session-arbitration';
 import { ErrorState, LoadingState, ScreenShell } from '@/presentation/components';
 import {
@@ -77,13 +78,13 @@ export default function FocusSessionRoute() {
   }, [branch, completion.status, router]);
 
   useEffect(() => {
-    if (standardOutcome.status === 'failed') {
+    if (standardOutcome.status !== 'idle' && shouldOpenStandardFocusResult(branch, standardFocus, standardOutcome)) {
       router.replace({
         pathname: '/focus/result',
         params: { sessionId: standardOutcome.sessionId },
       });
     }
-  }, [router, standardOutcome]);
+  }, [branch, router, standardOutcome, standardFocus]);
 
   const confirmTrialCancel = (sessionId: string): void => {
     if (cancelOperation.current !== null) return;

@@ -1,6 +1,6 @@
 import {
   CancelStandardFocusUseCase,
-  LoadStandardFocusCancelledResultUseCase,
+  LoadStandardFocusResultUseCase,
   StartStandardFocusUseCase,
   type ClockPort,
   type IdPort,
@@ -9,6 +9,8 @@ import {
   type SessionCommandCoordinatorPort,
   type SessionRepository,
   type TransactionPort,
+  type ProfileRepository,
+  type RewardReceiptRepository,
 } from '@pixeldoro/application';
 
 import {
@@ -31,6 +33,8 @@ export interface CreateStandardFocusSliceDependencies {
   readonly readiness: CommandReadinessPort;
   readonly sessions: SessionRepository;
   readonly transaction: TransactionPort;
+  readonly profile: ProfileRepository;
+  readonly rewards: RewardReceiptRepository;
   readonly scheduler: TickScheduler;
   readonly appInitiallyVisible: boolean;
   readonly onDeadlineReached?: (sessionId: string) => void;
@@ -78,7 +82,8 @@ export const createStandardFocusSlice = (
     transaction: dependencies.transaction,
   });
   const result = new StandardFocusResultController(
-    new LoadStandardFocusCancelledResultUseCase({ sessions: dependencies.sessions }),
+    new LoadStandardFocusResultUseCase({ sessions: dependencies.sessions,
+      profile: dependencies.profile, rewards: dependencies.rewards, transaction: dependencies.transaction }),
   );
   const cancel = new StandardFocusCancelController({
     cancel: async (sessionId) => {

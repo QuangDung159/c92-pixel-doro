@@ -1,5 +1,9 @@
+import type { StandardFocusCompletedResult } from '@pixeldoro/application';
+
 export type StandardFocusOutcomeProjection =
   | { readonly status: 'idle' }
+  | { readonly status: 'completed'; readonly sessionId: string; readonly resolvedAt: number;
+      readonly mode: 'relax' | 'strict'; readonly receiptId: string }
   | {
       readonly status: 'failed';
       readonly sessionId: string;
@@ -29,10 +33,16 @@ export class StandardFocusOutcomeController {
     this.publish(Object.freeze({ status: 'failed', sessionId, resolvedAt }));
   };
 
+  publishFreshCompletion = (result: StandardFocusCompletedResult): void => {
+    if (this.disposed) return;
+    this.publish(Object.freeze({ status: 'completed', sessionId: result.sessionId,
+      resolvedAt: result.resolvedAt, mode: result.mode, receiptId: result.receiptId }));
+  };
+
   consume = (sessionId: string): void => {
     if (
       !this.disposed &&
-      this.projection.status === 'failed' &&
+      this.projection.status !== 'idle' &&
       this.projection.sessionId === sessionId
     ) this.publish({ status: 'idle' });
   };

@@ -1,15 +1,10 @@
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import {
-  DatabaseSync,
-  type SQLInputValue,
-  type StatementSync,
-} from 'node:sqlite';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   CancelStandardFocusUseCase,
-  LoadStandardFocusCancelledResultUseCase,
+  LoadStandardFocusResultUseCase,
   RecordStrictBackgroundUseCase,
   ReconcileStandardFocusUseCase,
   SessionCommandCoordinator,
@@ -20,17 +15,7 @@ import {
   FirstUseEntryController,
   StandardFocusSessionController,
 } from '@/application';
-import { MigrationRunner } from '@/infrastructure/database/migration-runner';
-import { productionMigrationRegistry } from '@/infrastructure/database/migrations/migration-registry';
-import { createSQLitePersistenceGraph } from '@/infrastructure/database/persistence-graph';
-import { SQLiteDatabaseOwner } from '@/infrastructure/database/sqlite-database-owner';
-import type {
-  SQLiteConnection,
-  SQLiteDriver,
-  SQLiteParameters,
-  SQLiteWriteResult,
-} from '@/infrastructure/database/sqlite-driver';
-import { SQLiteTransaction } from '@/infrastructure/database/sqlite-transaction';
+import { HostDriver, openDatabase, now } from '../support/standard-focus-sqlite';
 import { createMobileApplication } from '@/composition/create-mobile-application';
 
 vi.mock('react-native', () => ({
@@ -41,73 +26,6 @@ vi.mock('react-native', () => ({
 }));
 
 const temporaryDirectories: string[] = [];
-const now = 1_788_336_000_000;
-
-const values = (parameters: SQLiteParameters): SQLInputValue[] => {
-  if (!Array.isArray(parameters)) throw new Error('positional parameters required');
-  return parameters.map((value) =>
-    typeof value === 'boolean' ? (value ? 1 : 0) : value) as SQLInputValue[];
-};
-
-const run = (statement: StatementSync, parameters: SQLiteParameters) =>
-  statement.run(...values(parameters));
-
-class HostConnection {
-  constructor(private readonly database: DatabaseSync) {}
-  closeAsync(): Promise<void> {
-    this.database.close();
-    return Promise.resolve();
-  }
-  execAsync(sql: string): Promise<void> {
-    this.database.exec(sql);
-    return Promise.resolve();
-  }
-  runAsync(sql: string, parameters: SQLiteParameters): Promise<SQLiteWriteResult> {
-    const result = run(this.database.prepare(sql), parameters);
-    return Promise.resolve({
-      lastInsertRowId: Number(result.lastInsertRowid),
-      changes: Number(result.changes),
-    } as SQLiteWriteResult);
-  }
-  getFirstAsync<TRow>(sql: string, parameters: SQLiteParameters): Promise<TRow | null> {
-    return Promise.resolve(
-      this.database.prepare(sql).get(...values(parameters)) as TRow | undefined ?? null,
-    );
-  }
-  getAllAsync<TRow>(sql: string, parameters: SQLiteParameters): Promise<TRow[]> {
-    return Promise.resolve(
-      this.database.prepare(sql).all(...values(parameters)) as TRow[],
-    );
-  }
-}
-
-class HostDriver implements SQLiteDriver {
-  constructor(private readonly directory: string) {}
-  openDatabase(databaseName: string): Promise<SQLiteConnection> {
-    return Promise.resolve(
-      new HostConnection(new DatabaseSync(join(this.directory, databaseName))) as unknown as SQLiteConnection,
-    );
-  }
-  async deleteDatabase(databaseName: string): Promise<void> {
-    await rm(join(this.directory, databaseName), { force: true });
-  }
-}
-
-const openDatabase = async (driver: SQLiteDriver, databaseName: string) => {
-  const owner = new SQLiteDatabaseOwner(databaseName, driver);
-  expect(await owner.open()).toEqual({ ok: true, value: undefined });
-  const transaction = new SQLiteTransaction(owner);
-  const graph = createSQLitePersistenceGraph(owner, transaction);
-  const migration = new MigrationRunner({
-    owner,
-    transaction,
-    registry: productionMigrationRegistry,
-    clock: { nowMs: () => now },
-    id: { nextId: () => 'installation-id' },
-  });
-  expect(await migration.migrate()).toMatchObject({ ok: true, value: { toVersion: 1 } });
-  return { graph, owner, transaction };
-};
 
 afterEach(async () => {
   vi.unstubAllGlobals();
@@ -151,8 +69,9 @@ describe('Standard Focus Start SQLite integration', () => {
     await first.owner.close();
 
     const reopened = await openDatabase(driver, databaseName);
-    const loadResult = new LoadStandardFocusCancelledResultUseCase({
+    const loadResult = new LoadStandardFocusResultUseCase({
       sessions: reopened.graph.sessions,
+      profile: reopened.graph.profile, rewards: reopened.graph.rewards, transaction: reopened.transaction,
     });
     expect(await loadResult.execute('relax-1')).toMatchObject({
       ok: true,
@@ -277,6 +196,7 @@ describe('Standard Focus Start SQLite integration', () => {
     let reconcileNow = now + 10_999;
     const reconcile = new ReconcileStandardFocusUseCase({
       clock: { nowMs: () => reconcileNow }, coordinator,
+      id: { nextId: () => 'receipt' }, profile: first.graph.profile, rewards: first.graph.rewards,
       sessions: first.graph.sessions, transaction: first.transaction,
     });
     expect(await reconcile.execute()).toMatchObject({
@@ -308,8 +228,9 @@ describe('Standard Focus Start SQLite integration', () => {
     await first.owner.close();
 
     const reopened = await openDatabase(driver, databaseName);
-    const result = new LoadStandardFocusCancelledResultUseCase({
+    const result = new LoadStandardFocusResultUseCase({
       sessions: reopened.graph.sessions,
+      profile: reopened.graph.profile, rewards: reopened.graph.rewards, transaction: reopened.transaction,
     });
     expect(await result.execute('strict-1')).toMatchObject({
       ok: true,

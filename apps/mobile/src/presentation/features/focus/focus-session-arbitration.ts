@@ -2,6 +2,7 @@ import type {
   OnboardingTrialCompletionProjection,
   OnboardingTrialRunningProjection,
   StandardFocusSessionProjection,
+  StandardFocusOutcomeProjection,
 } from '@/application';
 
 export type FocusSessionBranch =
@@ -16,6 +17,13 @@ export const shouldOpenOnboardingTrialResult = (
   branch: FocusSessionBranch,
   completionStatus: OnboardingTrialCompletionProjection['status'],
 ): boolean => branch === 'trial' && completionStatus === 'committed';
+
+export const shouldOpenStandardFocusResult = (
+  branch: FocusSessionBranch,
+  standard: StandardFocusSessionProjection,
+  outcome: StandardFocusOutcomeProjection,
+): boolean => outcome.status !== 'idle' && (branch === 'standard' || branch === 'prototype') &&
+  (standard.status === 'missing' || (standard.status === 'ready' && standard.sessionId === outcome.sessionId));
 
 export const decideFocusSessionBranch = (
   trial: OnboardingTrialRunningProjection,

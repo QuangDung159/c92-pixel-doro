@@ -109,7 +109,7 @@ describe('FirstUseEntryController', () => {
         find: async () => ({ ok: true, value: installation(timestamp + 1) }),
       },
       sessions: {
-        findActive: vi.fn(),
+        findActive: async () => ({ ok: true, value: null }),
         findLatestOnboardingTrial: vi.fn(),
       },
       standardOutcome: {
@@ -120,6 +120,20 @@ describe('FirstUseEntryController', () => {
     expect(controller.getSnapshot()).toEqual({
       status: 'ready', destination: 'standard_focus_result', sessionId: 'strict-1',
     });
+  });
+
+  it('prioritizes a new durable running session over an unconsumed older outcome', async () => {
+    const controller = new FirstUseEntryController({
+      installation: { find: async () => ({ ok: true, value: installation(timestamp + 1) }) },
+      sessions: {
+        findActive: async () => ({ ok: true, value: { ...trial('running'), id: 'new-focus',
+          focusVariant: 'standard', configuredDurationMinutes: 15, endsAt: timestamp + 900_000, workTag: 'study' } }),
+        findLatestOnboardingTrial: vi.fn(),
+      },
+      standardOutcome: { getSnapshot: () => ({ status: 'completed', sessionId: 'old-focus' }) },
+    });
+    await controller.refresh();
+    expect(controller.getSnapshot()).toEqual({ status: 'ready', destination: 'standard_focus_running' });
   });
 
   it('routes completed onboarding to the committed running Standard Focus', async () => {
