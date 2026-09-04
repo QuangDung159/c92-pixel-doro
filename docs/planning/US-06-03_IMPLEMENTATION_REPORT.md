@@ -1,16 +1,17 @@
 ---
 document_id: PIXELDORO_US_06_03_IMPLEMENTATION_REPORT
 title: PixelDoro US-06-03 — Strict Mode Lite Implementation Report
-version: 0.1.0
-status: IMPLEMENTED_AUTOMATED_VERIFIED_AWAITING_OWNER_ACCEPTANCE
+version: 0.1.1
+status: DONE_OWNER_ACCEPTED_QUICK_UI
 story: US-06-03
-date: 2026-09-03
+date: 2026-09-04
 owner: Dũng Lư
 branch: feats/epic-06
 implementation_start_sha: bf5b1dda9dafd82c7053abf18d5857ea6e554289
-implementation_candidate: UNCOMMITTED_WORKTREE_ON_bf5b1dda9dafd82c7053abf18d5857ea6e554289
-exact_implementation_sha: PENDING_COMMIT
-manual_device_status: NOT_RUN
+implementation_candidate: COMMITTED
+exact_implementation_sha: 14ef3413742df4159aa3a7e537d2fd02667cb203
+manual_device_status: OWNER_QUICK_UI_SMOKE_REPORTED
+owner_acceptance_status: ACCEPTED_TO_OPEN_US_06_04_PLANNING
 formal_tester_status: DEFERRED_TO_LATER_PHASE
 language: vi
 ---
@@ -19,7 +20,7 @@ language: vi
 
 ## 1. Outcome
 
-US-06-03 đã được triển khai trên working tree theo `US0603-CONFIRM-01`→`11` Option A:
+US-06-03 đã được triển khai và commit theo `US0603-CONFIRM-01`→`11` Option A:
 
 - Strict Running dùng chung timestamp countdown, hiển thị grace 10 giây và giữ Cancel confirmation.
 - Background timestamp được capture tại lifecycle boundary, serialize và persist đúng một episode.
@@ -33,8 +34,11 @@ US-06-03 đã được triển khai trên working tree theo `US0603-CONFIRM-01`�
 - Pet Bugged chỉ request từ fresh failed commit; reopen/existing terminal không replay.
 - Uncertain Strict lifecycle persistence vào critical recovery thay vì silently continue.
 
-Candidate chưa commit nên exact implementation SHA là `PENDING_COMMIT`. Manual/device UI chưa chạy
-trong implementation turn này; formal tester vẫn deferred. US-06-04 chưa được mở.
+Exact implementation SHA là `14ef3413742df4159aa3a7e537d2fd02667cb203`, bao gồm hai fix từ quick UI:
+stale Trial completion không được redirect Standard session sang Trial Result, và outcome callback
+`consume` giữ controller context khi Result được mở sau Cancel. Owner báo cáo quick UI done và yêu
+cầu mở US-06-04 planning. Full structured manual matrix không bị suy diễn là pass; formal tester
+vẫn deferred. US-06-04 chỉ được mở planning, chưa được duyệt production implementation.
 
 ## 2. Architecture delivered
 
@@ -89,10 +93,11 @@ Real host `node:sqlite` integration runs production migration/repositories/trans
 
 Final candidate gates using pinned Node `22.23.2` / pnpm `11.24.0`:
 
-- Root `pnpm run quality`: pass.
+- Root `pnpm run quality`: pass ở implementation candidate trước quick-UI fixes; post-fix evidence
+  được ghi riêng bên dưới, không coi package test chạy sai working directory là pass.
 - Typecheck: Domain, Application, Mobile pass.
 - ESLint: pass, no warning.
-- Vitest: `106` files / `513` tests pass after final focused additions.
+- Vitest sau quick-UI fixes: `106` files / `515` tests pass ở repository root.
 - Device harness: pass; includes `standard-focus-strict-running-smoke.md`.
 - Boundaries: `11` forbidden imports rejected; `3` valid imports accepted.
 - Repository hygiene: pass; one immutable migration, no dependency/signing/Skia drift.
@@ -110,6 +115,8 @@ Final candidate gates using pinned Node `22.23.2` / pnpm `11.24.0`:
 - Strict countdown, terminal Result union and zero-reward failed invariant.
 - Real SQLite safe clear→new episode→failed→reopen journey.
 - Accelerated grace and one-shot background/clear failure fixtures.
+- Stale committed Trial Result không redirect Standard/loading branch; detached outcome action
+  callback không crash khi đọc controller state. Post-fix typecheck/lint và iOS bundle pass.
 
 ## 7. Scope audit
 
@@ -120,13 +127,16 @@ Final candidate gates using pinned Node `22.23.2` / pnpm `11.24.0`:
 - Không implement Break, pause/resume, native app blocking, heartbeat hoặc penalty.
 - Relax/trial/Break and previous Epic regressions remain under full-suite coverage.
 
-## 8. Manual / Development Build evidence — not run
+## 8. Manual / Development Build evidence — owner quick UI reported
 
 Guide đầy đủ:
 
 `apps/mobile/test/device/standard-focus-strict-running-smoke.md`
 
-Chưa có device evidence trong implementation turn này:
+Owner cung cấp ảnh/log iPhone 14 Plus Simulator cho countdown sau relaunch và crash sau Cancel;
+hai issue điều hướng/callback đã được sửa. Owner sau đó báo cáo đã done quick UI và yêu cầu mở
+US-06-04. Không có đầy đủ structured per-step matrix/OS/build/durable facts, vì vậy các mục dưới
+đây không được tự đánh dấu pass:
 
 - [ ] Exact committed implementation SHA, device/simulator, OS và build version.
 - [ ] Strict countdown/grace notice/Pet Working.
@@ -138,17 +148,20 @@ Chưa có device evidence trong implementation turn này:
 - [ ] Offline, screen reader, large text và Reduce Motion.
 - [ ] Screenshot/video + sanitized durable before/after facts.
 
-Không manual checkbox nào được báo cáo pass. Formal tester giữ `DEFERRED_TO_LATER_PHASE`.
+Owner quick smoke là progression acceptance, không phải formal tester evidence. Checklist chi tiết
+vẫn chưa tick; formal tester giữ `DEFERRED_TO_LATER_PHASE`.
 
-## 9. Remaining gates
+## 9. Exit gate
 
-- Commit candidate để có exact implementation SHA.
-- Owner chạy quick UI guide và xác nhận acceptance hoặc issue.
-- Nếu accepted, đóng US-06-03 và mới mở US-06-04 planning/implementation.
-- Full formal tester có thể tiếp tục deferred nhưng phải giữ trạng thái trung thực.
+- [x] Candidate committed tại `14ef3413742df4159aa3a7e537d2fd02667cb203`.
+- [x] Owner báo cáo quick UI done; US-06-03 đóng progression gate.
+- [x] US-06-04 được phép tạo owner-gated implementation plan.
+- [ ] Full structured manual matrix và formal tester vẫn deferred.
+- [ ] US-06-04 production implementation chờ owner duyệt confirmations riêng.
 
 ## 10. Change log
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.1.1 | 2026-09-04 | Codex | Recorded final committed SHA, two quick-UI fixes, 515-test evidence and owner quick-UI acceptance to open US-06-04 planning; full manual/formal evidence remains deferred. |
 | 0.1.0 | 2026-09-03 | Codex | Recorded implemented Strict evidence/reconciliation/failed Result/Pet candidate, automated/SQLite/bundle evidence, scope audit and truthful pending exact-SHA/manual/owner gates. |

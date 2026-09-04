@@ -1,10 +1,10 @@
 ---
 document_id: PIXELDORO_US_06_03_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-06-03 Strict Mode Lite, grace evidence, reconciliation và failed outcome plan
-version: 0.3.0
-status: IMPLEMENTED_AUTOMATED_VERIFIED_AWAITING_OWNER_REVIEW
-implementation_status: AWAITING_OWNER_ACCEPTANCE
-date: 2026-09-03
+version: 0.3.1
+status: DONE_OWNER_ACCEPTED_QUICK_UI
+implementation_status: DONE_OWNER_ACCEPTED
+date: 2026-09-04
 owner: Dũng Lư
 reviewer: Dũng Lư
 reviewer_role: Tech Lead/Product Owner
@@ -14,9 +14,10 @@ planning_baseline_sha: 9a8e3d87d44612b7bd9aa8bf9e592099300d9e2e
 implementation_start_sha: bf5b1dda9dafd82c7053abf18d5857ea6e554289
 approved_by: Dũng Lư
 approved_at: 2026-09-03
-implementation_candidate: UNCOMMITTED_WORKTREE_ON_bf5b1dda9dafd82c7053abf18d5857ea6e554289
-exact_implementation_sha: PENDING_COMMIT
-manual_device_status: NOT_RUN
+implementation_candidate: COMMITTED
+exact_implementation_sha: 14ef3413742df4159aa3a7e537d2fd02667cb203
+manual_device_status: OWNER_QUICK_UI_SMOKE_REPORTED
+owner_acceptance_status: ACCEPTED_TO_OPEN_US_06_04_PLANNING
 us_06_02_implementation_sha: 9a8e3d87d44612b7bd9aa8bf9e592099300d9e2e
 us_06_02_acceptance: OWNER_QUICK_UI_ACCEPTED_TO_OPEN_PLANNING
 formal_tester_status: DEFERRED_TO_LATER_PHASE
@@ -67,11 +68,11 @@ Bugged chỉ phát một lần từ fresh failed commit.
 
 **Planning status:** `OWNER_APPROVED` ngày 2026-09-03.
 
-**Implementation status:** `IMPLEMENTED_AUTOMATED_VERIFIED_AWAITING_OWNER_REVIEW`. Owner đã duyệt
-Option A cho toàn bộ `US0603-CONFIRM-01`→`11`. Candidate là uncommitted working tree trên
-implementation-start SHA `bf5b1dda9dafd82c7053abf18d5857ea6e554289`; exact implementation
-SHA còn chờ commit. Automated/SQLite/quality/iOS bundle đã pass; manual/device chưa chạy trong lượt
-này và formal tester vẫn deferred.
+**Implementation status:** `DONE_OWNER_ACCEPTED`. Owner đã duyệt Option A cho toàn bộ
+`US0603-CONFIRM-01`→`11`. Exact implementation SHA là
+`14ef3413742df4159aa3a7e537d2fd02667cb203`, bao gồm hai quick-UI fixes cho stale Trial Result và
+unbound outcome callback. Owner báo cáo quick UI done và yêu cầu mở US-06-04 planning. Automated
+post-fix suite có 106 files / 515 tests pass; full structured manual matrix/formal tester vẫn deferred.
 
 ### 0.1. Gate được mở từ US-06-02
 
@@ -791,8 +792,8 @@ Quick owner smoke and formal tester evidence must be recorded separately. Unrun 
 - [ ] No completion/reward/notification/analytics scope leak.
 - [ ] No schema/dependency/native drift.
 - [ ] Manual status recorded honestly.
-- [ ] Implementation report references exact commit SHA.
-- [ ] Owner accepts US-06-03 before US-06-04 planning/implementation becomes active.
+- [x] Implementation report references exact commit SHA.
+- [x] Owner accepts US-06-03 quick UI to open US-06-04 planning; US-06-04 code needs separate approval.
 
 ## 16. References
 
@@ -816,10 +817,11 @@ Quick owner smoke and formal tester evidence must be recorded separately. Unrun 
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.3.1 | 2026-09-04 | Codex | Recorded final SHA and owner quick-UI progression acceptance after navigation/Cancel fixes; opened US-06-04 owner-gated planning while retaining full manual/formal limitations. |
 | 0.3.0 | 2026-09-03 | Codex | Recorded implemented working-tree candidate with Domain/application/lifecycle/Result/Pet/fixture delivery and automated/SQLite/quality/iOS bundle evidence; exact SHA, manual UI and owner acceptance remain pending. |
 | 0.2.0 | 2026-09-03 | Codex | Recorded owner approval of Option A for `US0603-CONFIRM-01`→`11` and implementation-start SHA; production implementation moved to `IN_PROGRESS`. |
 | 0.1.0 | 2026-09-03 | Codex | Created owner-gated implementation plan for Strict durable evidence, exact grace/deadline precedence, lifecycle/startup reconciliation, Strict-aware Cancel, failed Result, fresh Bugged, fixtures and evidence. Production implementation remains not started. |
 
-**US-06-03 is implemented and automated-verified on an uncommitted candidate based on
-`bf5b1dda9dafd82c7053abf18d5857ea6e554289`; exact implementation SHA, owner quick UI and owner
-acceptance remain pending.**
+**US-06-03 is owner-accepted through quick UI at exact SHA
+`14ef3413742df4159aa3a7e537d2fd02667cb203`. US-06-04 planning is open; its implementation requires
+separate owner approval. Full structured manual/formal evidence remains deferred.**
