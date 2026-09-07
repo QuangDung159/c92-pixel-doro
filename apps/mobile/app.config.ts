@@ -42,7 +42,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       [
         'expo-notifications',
         {
-          icon: './assets/images/pixeldoro-icon-512.png',
+          icon: './assets/images/pixeldoro-notification-icon.png',
           color: '#143D32',
         },
       ],
