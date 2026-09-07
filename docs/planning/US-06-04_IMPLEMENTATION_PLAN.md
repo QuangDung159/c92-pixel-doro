@@ -624,4 +624,5 @@ review, không phải implementation mặc định.
 - [x] `git diff --check` pass; không sửa production/schema/dependency/native artifact.
 - [ ] Runtime/full quality/device US-06-04 chưa chạy vì đây là documentation-only planning.
 
-**US-06-04 implemented as an uncommitted candidate under approved Option A; owner quick UI and acceptance pending.**
+**US-06-04 implemented and committed at `da501a74db93001cf4f5600622568ca5424b4fa1`
+under approved Option A; owner quick UI and acceptance pending.**

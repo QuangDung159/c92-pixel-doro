@@ -1,15 +1,15 @@
 ---
 document_id: PIXELDORO_US_06_04_IMPLEMENTATION_REPORT
 title: PixelDoro US-06-04 — Completion, Reward và Committed Result
-version: 0.1.0
+version: 0.1.1
 status: IMPLEMENTED_PENDING_OWNER_QUICK_UI
 story: US-06-04
 date: 2026-09-04
 owner: Dũng Lư
 branch: feats/epic-06
 implementation_start_sha: 7d9f93eb496120988bc2f945ec9084de2c58b8a9
-implementation_candidate: UNCOMMITTED_WORKING_TREE
-exact_implementation_sha: PENDING_COMMIT
+implementation_candidate: COMMITTED
+exact_implementation_sha: da501a74db93001cf4f5600622568ca5424b4fa1
 manual_device_status: NOT_RUN
 owner_acceptance_status: PENDING_QUICK_UI
 formal_tester_status: DEFERRED_TO_LATER_PHASE
@@ -20,8 +20,9 @@ language: vi
 
 ## 1. Outcome
 
-Đã triển khai working-tree candidate theo `US0604-CONFIRM-01`→`11` **Option A**, owner duyệt
-ngày 2026-09-04. Chưa commit/push và chưa coi Story owner-accepted.
+Đã triển khai và commit candidate theo `US0604-CONFIRM-01`→`11` **Option A**, owner duyệt
+ngày 2026-09-04. Exact implementation SHA là `da501a74db93001cf4f5600622568ca5424b4fa1`;
+chưa coi Story owner-accepted khi quick UI chưa được xác nhận.
 
 - Standard Relax/Strict hết giờ dùng một reconciliation service, timestamp từ durable session.
 - XP bằng configured minutes, Coin bằng floor(minutes/5), không cộng overtime hoặc Strict multiplier.
@@ -65,6 +66,8 @@ Consumer tests Trial + Standard đều pass.
 UI file line-count tại candidate: Result route 16, Standard branch 48, Trial branch 39,
 Standard Result screen 87, common progression 24, Session route 195; không vượt 300 dòng.
 Prototype later-Epic files vẫn giữ riêng, không được dùng làm fallback cho production Result.
+Placeholder `roomShelf` đã ẩn ở Pet stage; chỉ khôi phục khi tính năng room decoration
+kiểu pegboard có contract/asset thật, không hiển thị thanh trang trí rời gây nhầm là loading.
 
 ## 4. SQLite / correctness evidence
 
@@ -100,7 +103,7 @@ pnpm run quality
 ```
 
 - Full quality: **PASS**; Domain/Application/Mobile typecheck, lint không warning/error.
-- Root Vitest: **110 files / 613 tests PASS**.
+- Root Vitest sau commit `da501a7`: **110 files / 618 tests PASS**.
 - Device harness validator: PASS, có checklist completion mới; không phải device execution.
 - Boundaries: 11 forbidden imports rejected, 3 valid imports accepted.
 - Repository hygiene: PASS; 1 immutable migration, không signing/dependency drift.
@@ -125,7 +128,7 @@ qua cold restart để kết luận timestamp behavior. Test startup overdue b�
 - [ ] Strict completion/failure và Cancel popup không crash; đúng 0/0 hoặc configured reward.
 - [ ] Read-only reload không cấp/replay; Recovery Retry không double grant.
 - [ ] Offline, Reduce Motion, large text, screen reader, ảnh/video + device/OS/build evidence.
-- [ ] Owner chấp nhận candidate và ghi exact committed SHA sau khi được yêu cầu commit.
+- [ ] Owner chấp nhận candidate qua quick UI; exact committed SHA đã ghi.
 
 ## 7. Option A limitations / scope audit
 
@@ -137,5 +140,12 @@ Không thay schema/migration/trigger/index, package manifest/lockfile, dependenc
 notification/analytics/audio/haptic provider; không Break/pause/resume/native blocking. Không sửa normative
 Core/specification/architecture. Shop purchase chỉ là integration fixture để kiểm tra current balance.
 
-US-06-04 đã triển khai, nhưng exact commit, owner UI acceptance và formal device evidence còn mở.
+US-06-04 đã triển khai và có exact commit; owner UI acceptance và formal device evidence còn mở.
 US-06-05 chưa bắt đầu; formal tester giữ `DEFERRED_TO_LATER_PHASE`.
+
+## 8. Change log
+
+| Version | Date | Author | Change |
+|---|---|---|---|
+| 0.1.1 | 2026-09-07 | Codex | Recorded exact committed SHA, post-commit 618-test quality evidence and hidden room-shelf placeholder; owner quick UI remains pending. |
+| 0.1.0 | 2026-09-04 | Codex | Created the implemented working-tree candidate report with automated/SQLite/iOS export evidence. |

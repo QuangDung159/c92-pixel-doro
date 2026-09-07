@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_06_USER_STORIES
 title: PixelDoro EPIC-06 — Standard Focus User Stories
-version: 0.6.0
+version: 0.6.1
 status: US_06_04_IMPLEMENTED_PENDING_OWNER_QUICK_UI
 date: 2026-09-04
 owner: Dũng Lư
@@ -73,8 +73,9 @@ Owner tiếp tục duyệt `US0603-CONFIRM-01`→`11` Option A. US-06-03 đã co
 callback. Owner báo cáo quick UI done và cho phép mở
 [US-06-04 implementation planning](./US-06-04_IMPLEMENTATION_PLAN.md). Owner đã duyệt Option A cho
 11 confirmations và yêu cầu triển khai. Candidate US-06-04 đã có completion/reward/Result cùng automated
-verification; xem [implementation report](./US-06-04_IMPLEMENTATION_REPORT.md). Chưa commit, chưa owner
-quick UI/acceptance; full structured manual/formal evidence không được suy diễn là pass.
+verification; xem [implementation report](./US-06-04_IMPLEMENTATION_REPORT.md). Candidate đã commit tại
+`da501a74db93001cf4f5600622568ca5424b4fa1`; chưa owner quick UI/acceptance. Full structured
+manual/formal evidence không được suy diễn là pass.
 
 ## 1. Kết luận audit baseline
 
@@ -1080,6 +1081,7 @@ Retained limitations:
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.6.1 | 2026-09-07 | Codex | Recorded US-06-04 exact committed SHA and post-commit quality evidence; owner quick UI/acceptance remains pending. |
 | 0.6.0 | 2026-09-04 | Codex | Recorded US-06-04 Option A approvals and implemented uncommitted completion/reward/Result candidate; owner quick UI/acceptance remains pending. |
 | 0.5.1 | 2026-09-04 | Codex | Recorded final US-06-03 SHA and owner quick-UI acceptance; opened US-06-04 owner-gated completion/reward/Result planning, implementation not started. |
 | 0.5.0 | 2026-09-03 | Codex | Recorded owner-approved US-06-03 implementation candidate with automated/SQLite/quality/iOS bundle verification; exact SHA, manual UI and owner acceptance remain pending. |
@@ -1094,4 +1096,4 @@ Retained limitations:
 `68f2c54d3630817385b320622476c55c67caea13`; US-06-02 is owner-accepted at exact SHA
 `9a8e3d87d44612b7bd9aa8bf9e592099300d9e2e`; US-06-03 is owner-accepted through quick UI at
 `14ef3413742df4159aa3a7e537d2fd02667cb203`. US-06-04 is implemented under all approved Option A
-confirmations; uncommitted candidate awaits owner quick UI and acceptance.**
+confirmations at `da501a74db93001cf4f5600622568ca5424b4fa1`; candidate awaits owner quick UI and acceptance.**
