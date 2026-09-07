@@ -14,6 +14,7 @@ upstream: origin/feats/epic-06
 epic: EPIC-06
 epic_state: IN_PROGRESS
 implementation_state: US_06_01_02_03_04_DONE_US_06_05_IMPLEMENTED_CANDIDATE
+us_06_05_implementation_sha: c552e21
 formal_tester_status: DEFERRED_TO_LATER_PHASE
 language: vi
 authority: PLANNING
