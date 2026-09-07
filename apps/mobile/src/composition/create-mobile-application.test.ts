@@ -152,15 +152,20 @@ describe('mobile composition root', () => {
       terminalStatus: 'completed' as const,
       rewardCommitted: true,
     };
-    application.petTerminalFeedback.requestFreshTransition(completed, {
-      currentResultSessionId: completed.sessionId,
-      activeSessionId: null,
+    application.standardFocusOutcome.publishFreshCompletion({
+      status: 'completed', sessionId: completed.sessionId, receiptId: 'receipt-1',
+      mode: 'relax', workTag: 'study', durationMinutes: 15,
+      startedAt: 100, endsAt: 900_100, resolvedAt: completed.committedAtMs,
+      rewardClaimedAt: completed.committedAtMs, xpEarned: 15, coinsEarned: 3,
+      totalXp: 15, coinBalance: 3,
     });
+    application.requestStandardFocusOutcomeFeedback();
     expect(application.petVisual.getSnapshot()).toMatchObject({
       status: 'ready',
       source: 'terminal',
       state: 'celebrating',
     });
+    application.standardFocusOutcome.consume(completed.sessionId);
 
     petScenario = 'short_break';
     await application.refreshPetCompanion();

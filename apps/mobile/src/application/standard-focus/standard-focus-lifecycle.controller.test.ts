@@ -17,13 +17,12 @@ const dependencies = () => {
   const refreshSession = vi.fn(async () => undefined);
   const refreshPet = vi.fn(async () => undefined);
   const refreshProfile = vi.fn(async () => true);
-  const requestFreshTransition = vi.fn();
   const enterRecovery = vi.fn();
   const outcome = new StandardFocusOutcomeController();
   return {
     setNow: (value: number) => { now = value; },
     recordBackground, reconcile, setAppVisible, refreshSession, refreshPet,
-    requestFreshTransition, enterRecovery, outcome, refreshProfile,
+    enterRecovery, outcome, refreshProfile,
     value: {
       clock: { nowMs: () => now },
       criticalRecovery: { enterRecovery },
@@ -33,7 +32,6 @@ const dependencies = () => {
         refresh: refreshPet,
         getSnapshot: () => ({ status: 'ready', activeSessionId: null }),
       },
-      petTerminalFeedback: { requestFreshTransition },
       session: { setAppVisible, refresh: refreshSession },
       recordBackground,
       reconcile,
@@ -47,21 +45,16 @@ describe('StandardFocusLifecycleController', () => {
       result: { status: 'completed', sessionId: 'focus-1', receiptId: 'receipt-1',
         mode: 'relax', resolvedAt: 901_000 } },
   };
-  it('refreshes Home and requests fresh completion feedback only once', async () => {
+  it('refreshes Home and leaves fresh completion feedback for the Result screen', async () => {
     const deps = dependencies();
     deps.reconcile.mockResolvedValueOnce(completion as never);
     const controller = new StandardFocusLifecycleController(deps.value, 'active');
     await controller.reconcileNow('focus-1');
     expect(deps.refreshProfile).toHaveBeenCalledOnce();
     expect(deps.outcome.getSnapshot()).toMatchObject({ status: 'completed', sessionId: 'focus-1' });
-    expect(deps.requestFreshTransition).toHaveBeenCalledWith(
-      expect.objectContaining({ terminalStatus: 'completed', rewardCommitted: true }),
-      { currentResultSessionId: 'focus-1', activeSessionId: null },
-    );
     deps.reconcile.mockResolvedValueOnce({ ...completion,
       value: { ...completion.value, freshness: 'existing_terminal' } } as never);
     await controller.reconcileNow('focus-1');
-    expect(deps.requestFreshTransition).toHaveBeenCalledOnce();
   });
   it('retains exact committed handoff when profile hydration fails', async () => {
     const deps = dependencies();
@@ -70,7 +63,6 @@ describe('StandardFocusLifecycleController', () => {
     await new StandardFocusLifecycleController(deps.value, 'active').reconcileNow();
     expect(deps.outcome.getSnapshot()).toMatchObject({ status: 'completed', sessionId: 'focus-1' });
     expect(deps.enterRecovery).toHaveBeenCalledWith('DATABASE_READ_FAILED');
-    expect(deps.requestFreshTransition).not.toHaveBeenCalled();
   });
   it('waits for profile hydration before making the Result handoff visible', async () => {
     const deps = dependencies();
@@ -84,13 +76,11 @@ describe('StandardFocusLifecycleController', () => {
     finish(true);
     await operation;
     expect(deps.outcome.getSnapshot()).toMatchObject({ status: 'completed' });
-    expect(deps.requestFreshTransition).toHaveBeenCalledOnce();
   });
   it('does not turn a Pet failure into a reward recovery or grant retry', async () => {
     const deps = dependencies();
     deps.reconcile.mockResolvedValueOnce(completion as never);
     deps.refreshPet.mockRejectedValue(new Error('visual only'));
-    deps.requestFreshTransition.mockImplementation(() => { throw new Error('animation only'); });
     await new StandardFocusLifecycleController(deps.value, 'active').reconcileNow();
     expect(deps.enterRecovery).not.toHaveBeenCalled();
     expect(deps.refreshSession).toHaveBeenCalledOnce();
@@ -108,7 +98,7 @@ describe('StandardFocusLifecycleController', () => {
     expect(deps.recordBackground).toHaveBeenCalledOnce();
   });
 
-  it('publishes and animates only a freshly committed failed reconciliation', async () => {
+  it('publishes a freshly committed failed reconciliation for the Result screen', async () => {
     const deps = dependencies();
     deps.reconcile.mockResolvedValueOnce({
       ok: true,
@@ -123,7 +113,6 @@ describe('StandardFocusLifecycleController', () => {
     expect(deps.outcome.getSnapshot()).toEqual({
       status: 'failed', sessionId: 'strict-1', resolvedAt: 21_000,
     });
-    expect(deps.requestFreshTransition).toHaveBeenCalledOnce();
     expect(deps.setAppVisible).toHaveBeenLastCalledWith(true);
   });
 

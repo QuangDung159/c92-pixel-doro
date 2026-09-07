@@ -13,6 +13,7 @@ const CHANNEL_ID = 'focus-completion';
 export type ExpoPermissionSnapshot = {
   readonly granted: boolean;
   readonly status: 'granted' | 'denied' | 'undetermined';
+  readonly canAskAgain?: boolean;
   readonly iosAuthorizationStatus?: number;
   readonly iosAllowsSound?: boolean | null;
 };
@@ -98,7 +99,7 @@ export class ExpoNotificationGatewayAdapter implements ExpoNotificationGateway {
       name: 'Kết thúc phiên tập trung',
       importance: notifications.AndroidImportance.DEFAULT,
       showBadge: false,
-      sound: soundEnabled ? 'default' : null,
+      ...(soundEnabled ? {} : { sound: null }),
     });
   }
 
@@ -172,6 +173,7 @@ export class ExpoNotificationGatewayAdapter implements ExpoNotificationGateway {
     return {
       granted: status.granted,
       status: status.status,
+      canAskAgain: status.canAskAgain,
       ...(status.ios === undefined ? {} : {
         iosAuthorizationStatus: status.ios.status,
         iosAllowsSound: status.ios.allowsSound,

@@ -3,6 +3,8 @@ import type {
   StandardFocusTerminalResult,
 } from '@pixeldoro/application';
 
+type StandardFocusResultLoader = Pick<LoadStandardFocusResultUseCase, 'execute'>;
+
 export type StandardFocusResultProjection =
   | { readonly status: 'idle' | 'loading' }
   | { readonly status: 'ready'; readonly result: StandardFocusTerminalResult }
@@ -22,7 +24,7 @@ export class StandardFocusResultController {
   private generation = 0;
   private disposed = false;
 
-  constructor(private readonly loadResult: LoadStandardFocusResultUseCase) {}
+  constructor(private readonly loadResult: StandardFocusResultLoader) {}
 
   getSnapshot = (): StandardFocusResultProjection => this.projection;
 

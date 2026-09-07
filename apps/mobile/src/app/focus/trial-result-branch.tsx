@@ -33,7 +33,7 @@ export const TrialResultBranch = () => {
   }
   return <PetRouteVisibility><OnboardingTrialResultScreen result={result.result} pet={pet}
     continueBusy={handoff.status === 'submitting'} continueError={handoff.status === 'error'}
-    onContinue={() => { void complete(result.result).then((value) => { if (value.ok) router.replace('/(tabs)'); }); }}
+    onContinue={() => { void complete(result.result).then((value) => { if (value.ok) router.replace('/'); }); }}
     onDismissPetFeedbackError={dismiss} onRetryPet={() => void retryPet()}
   /></PetRouteVisibility>;
 };

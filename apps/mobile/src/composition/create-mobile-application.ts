@@ -197,6 +197,21 @@ export const createMobileApplication = (
     rewards: completionReview.resultRewards,
     transaction,
   });
+  // Result reads and local analytics also use the single SQLite transaction
+  // boundary. Keep them in the same queue as lifecycle commands so a
+  // notification tap cannot race the foreground reconciliation transaction.
+  const coordinatedStandardFocusResultLoader = {
+    execute: (sessionId: string) => sessionCommands.run(
+      () => standardFocusResultLoader.execute(sessionId),
+    ),
+  };
+  const sideEffectAnalyticsQueue =
+    standardFocusSideEffectReviewFixture?.analyticsQueue ?? persistence.analyticsQueue;
+  const coordinatedSideEffectAnalyticsQueue = {
+    enqueueBounded: (
+      ...args: Parameters<typeof sideEffectAnalyticsQueue.enqueueBounded>
+    ) => sessionCommands.run(() => sideEffectAnalyticsQueue.enqueueBounded(...args)),
+  };
   const startupStandardReconciliation = new ReconcileStandardFocusUseCase({
     clock: standardFocusClock,
     id, profile: completionReview.profile, rewards: completionReview.rewards,
@@ -371,18 +386,17 @@ export const createMobileApplication = (
   });
   const reconcileStandardFocus = startupStandardReconciliation;
   const standardFocusSideEffects = createStandardFocusSideEffects({
-    analyticsQueue: standardFocusSideEffectReviewFixture?.analyticsQueue ??
-      persistence.analyticsQueue,
+    analyticsQueue: coordinatedSideEffectAnalyticsQueue,
     notifications: focusNotifications,
     responses: focusNotifications,
     readBootstrap: bootstrap.getSnapshot,
-    loadResult: (sessionId) => standardFocusResultLoader.execute(sessionId),
+    loadResult: (sessionId) => coordinatedStandardFocusResultLoader.execute(sessionId),
     onNotificationSession: async (sessionId) => {
       await bootstrap.boot();
       if (bootstrap.getSnapshot().status !== 'ready') return;
       await standardFocusLifecycleRef.current?.reconcileNow(sessionId);
       if (bootstrap.getSnapshot().status !== 'ready') return;
-      const terminal = await standardFocusResultLoader.execute(sessionId);
+      const terminal = await coordinatedStandardFocusResultLoader.execute(sessionId);
       if (terminal.ok && terminal.value.outcome === 'ready') {
         notificationNavigationRef.current?.publish('result', sessionId);
         return;
@@ -410,13 +424,12 @@ export const createMobileApplication = (
     scheduler: sessionTickScheduler,
     sessions: standardFocusSessions,
     transaction,
-    loadResult: standardFocusResultLoader,
+    loadResult: coordinatedStandardFocusResultLoader,
     onDeadlineReached: (sessionId) => {
       void standardFocusLifecycleRef.current?.reconcileNow(sessionId);
     },
     onFreshFailure: (sessionId, resolvedAt) => {
       standardFocusOutcome.publishFreshFailure(sessionId, resolvedAt);
-      requestStandardOutcomeFeedback();
     },
     onStarted: (session) => standardFocusSideEffects.coordinator.afterStarted(session),
     onTerminal: (sessionId, freshness) =>
@@ -428,7 +441,6 @@ export const createMobileApplication = (
     refreshProfile: async () => (await bootstrap.refreshReadySnapshot()).ok,
     outcome: standardFocusOutcome,
     petCompanion,
-    petTerminalFeedback,
     session: standardFocus.session,
     recordBackground: (capturedAt) => recordStrictBackground.execute(capturedAt),
     reconcile: (sessionId) => reconcileStandardFocus.execute(sessionId),
@@ -571,10 +583,6 @@ export const createMobileApplication = (
     const operation = bootstrap.retry().then(async () => {
       if (bootstrap.getSnapshot().status !== 'ready') return;
       await refreshPetCompanion();
-      const recoveredOutcome = standardFocusOutcome.getSnapshot();
-      if (recoveredOutcome.status !== 'idle') {
-        requestStandardOutcomeFeedback();
-      }
       await firstUseEntry.refresh();
     });
     retryRecoveryPromise = operation;
@@ -749,6 +757,7 @@ export const createMobileApplication = (
     standardFocusCancel: standardFocus.cancel,
     standardFocusResult: standardFocus.result,
     standardFocusOutcome,
+    requestStandardFocusOutcomeFeedback: requestStandardOutcomeFeedback,
     standardFocusNotificationNavigation: standardFocusSideEffects.navigation,
     standardFocusReviewResetAvailable: reviewFixturesEnabled,
     onboardingTrialRunning,
@@ -798,7 +807,6 @@ export const createMobileApplication = (
             startupOutcome.sessionId,
             'fresh_commit',
           );
-          requestStandardOutcomeFeedback();
         }
         await firstUseEntry.refresh();
       }
@@ -824,6 +832,9 @@ export const createMobileApplication = (
       if (!allowed.ok) return allowed;
       const completed = await allowed.value;
       if (completed.ok) {
+        // Do not let the completed Trial projection win arbitration when the
+        // first Standard Focus route mounts immediately after onboarding.
+        await onboardingTrialRunning.refresh();
         recordOnboardingAnalyticsBestEffort(() =>
           onboardingAnalytics.recordCompleted(completed.value.completedAt),
         );

@@ -80,6 +80,7 @@ export interface MobileApplicationFacade {
   refreshFirstUseEntry(): Promise<void>;
   refreshOnboardingTrialRunning(): Promise<void>;
   refreshOnboardingTrialResult(): Promise<void>;
+  requestStandardFocusOutcomeFeedback(): void;
   reconcileOnboardingTrial(sessionId?: string): ReturnType<
     OnboardingTrialCompletionController['reconcile']
   >;

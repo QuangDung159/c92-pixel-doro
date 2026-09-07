@@ -39,7 +39,13 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     },
     plugins: [
       'expo-router',
-      'expo-notifications',
+      [
+        'expo-notifications',
+        {
+          icon: './assets/images/pixeldoro-icon-512.png',
+          color: '#143D32',
+        },
+      ],
       'expo-sqlite',
       'expo-updates',
       [

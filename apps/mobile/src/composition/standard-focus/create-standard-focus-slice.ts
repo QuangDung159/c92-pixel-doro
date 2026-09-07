@@ -38,7 +38,7 @@ export interface CreateStandardFocusSliceDependencies {
   readonly rewards: RewardReceiptRepository;
   readonly scheduler: TickScheduler;
   readonly appInitiallyVisible: boolean;
-  readonly loadResult?: LoadStandardFocusResultUseCase;
+  readonly loadResult?: Pick<LoadStandardFocusResultUseCase, 'execute'>;
   readonly onDeadlineReached?: (sessionId: string) => void;
   readonly onFreshFailure?: (sessionId: string, resolvedAt: number) => void;
   readonly onStarted?: (session: RunningSessionRecord) => void;

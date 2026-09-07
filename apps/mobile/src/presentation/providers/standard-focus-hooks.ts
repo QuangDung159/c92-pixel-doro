@@ -86,12 +86,17 @@ export const useStandardFocusOutcomeProjection = (): StandardFocusOutcomeProject
 };
 
 export const useStandardFocusOutcomeActions = () => {
-  const { standardFocusOutcome } = useMobileApplication();
+  const application = useMobileApplication();
+  const { standardFocusOutcome } = application;
   const consume = useCallback(
     (sessionId: string) => standardFocusOutcome.consume(sessionId),
     [standardFocusOutcome],
   );
-  return { consume };
+  const requestFeedback = useCallback(
+    () => application.requestStandardFocusOutcomeFeedback(),
+    [application],
+  );
+  return { consume, requestFeedback };
 };
 
 export const useStandardFocusReviewReset = () => {

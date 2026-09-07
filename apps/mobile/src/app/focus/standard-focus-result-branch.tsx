@@ -16,7 +16,7 @@ export const StandardFocusResultBranch = ({ sessionId }: { readonly sessionId: s
   const router = useRouter();
   const result = useStandardFocusResultProjection();
   const refresh = useStandardFocusResultRefresh();
-  const { consume } = useStandardFocusOutcomeActions();
+  const { consume, requestFeedback } = useStandardFocusOutcomeActions();
   const pet = usePetVisualProjection();
   const refreshPet = usePetCompanionRefresh();
   const discard = useDiscardPetTerminalFeedback();
@@ -28,8 +28,10 @@ export const StandardFocusResultBranch = ({ sessionId }: { readonly sessionId: s
     void refreshPet();
   }, [sessionId, refresh, refreshPet]));
   useEffect(() => {
-    if (result.status === 'ready' && result.result.sessionId === sessionId) consume(sessionId);
-  }, [result, sessionId, consume]);
+    if (result.status !== 'ready' || result.result.sessionId !== sessionId) return;
+    requestFeedback();
+    consume(sessionId);
+  }, [result, sessionId, consume, requestFeedback]);
   if (result.status === 'error' || result.status === 'missing') {
     return <ScreenShell><ErrorState title="Chưa thể đọc kết quả"
       body="Không thể xác nhận kết quả của phiên này. Thử đọc lại không cấp thêm phần thưởng."

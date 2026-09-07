@@ -1,7 +1,6 @@
 import type {
   ApplicationResult,
   PetCompanionController,
-  PetTerminalFeedbackController,
   ReconcileStandardFocusError,
   ReconcileStandardFocusOutcome,
   RecordStrictBackgroundError,
@@ -13,14 +12,12 @@ import type { AppLifecycleState } from '../ports/app-lifecycle.port';
 import type { CriticalRecoveryPort } from '../recovery';
 import type { StandardFocusSessionController } from './standard-focus-session.controller';
 import type { StandardFocusOutcomeController } from './standard-focus-outcome.controller';
-import { requestStandardTerminalFeedback } from './request-standard-terminal-feedback';
 
 export interface StandardFocusLifecycleControllerDependencies {
   readonly clock: ClockPort;
   readonly criticalRecovery: CriticalRecoveryPort;
   readonly outcome: StandardFocusOutcomeController;
   readonly petCompanion: PetCompanionController;
-  readonly petTerminalFeedback: PetTerminalFeedbackController;
   readonly session: StandardFocusSessionController;
   refreshProfile(): Promise<boolean>;
   recordBackground(capturedAt: number): Promise<
@@ -108,12 +105,11 @@ export class StandardFocusLifecycleController {
       }
       await this.dependencies.petCompanion.refresh().catch(() => undefined);
       if (this.disposed) return;
-      // Publish only after hydration, then request feedback synchronously: Result must
-      // not consume the handoff while these post-commit reads are still in flight.
+      // Publish only after hydration. Result starts the short-lived visual feedback
+      // when the matching screen is mounted, so notification navigation cannot use
+      // up the animation before the user sees it.
       if (result.value.outcome === 'completed') this.dependencies.outcome.publishFreshCompletion(result.value.result);
       else this.dependencies.outcome.publishFreshFailure(result.value.sessionId, result.value.resolvedAt);
-      requestStandardTerminalFeedback(this.dependencies.outcome.getSnapshot(),
-        this.dependencies.petCompanion, this.dependencies.petTerminalFeedback);
     }
     await Promise.all([
       this.dependencies.session.refresh(),

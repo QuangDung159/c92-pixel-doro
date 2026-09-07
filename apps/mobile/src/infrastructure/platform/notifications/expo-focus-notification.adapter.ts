@@ -33,8 +33,11 @@ const permissionFrom = (snapshot: ExpoPermissionSnapshot): FocusNotificationPerm
     snapshot.iosAuthorizationStatus === 3 ||
     snapshot.iosAuthorizationStatus === 4
   ) return 'allowed';
-  if (snapshot.status === 'denied' || snapshot.iosAuthorizationStatus === 1) {
+  if (snapshot.iosAuthorizationStatus === 1) {
     return 'denied';
+  }
+  if (snapshot.status === 'denied') {
+    return snapshot.canAskAgain === true ? 'undetermined' : 'denied';
   }
   return 'undetermined';
 };

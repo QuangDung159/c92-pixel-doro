@@ -38,6 +38,30 @@ describe('ExpoFocusNotificationAdapter', () => {
     expect(await subject.requestPermission()).toEqual({ ok: true, value: 'allowed' });
   });
 
+  it('distinguishes requestable Android permission from a final denial', async () => {
+    const requestable = gateway();
+    vi.mocked(requestable.readPermission).mockResolvedValue({
+      granted: false,
+      status: 'denied',
+      canAskAgain: true,
+    });
+    expect(await new ExpoFocusNotificationAdapter(
+      requestable,
+      'android',
+    ).readPermission()).toEqual({ ok: true, value: 'undetermined' });
+
+    const denied = gateway();
+    vi.mocked(denied.readPermission).mockResolvedValue({
+      granted: false,
+      status: 'denied',
+      canAskAgain: false,
+    });
+    expect(await new ExpoFocusNotificationAdapter(
+      denied,
+      'android',
+    ).readPermission()).toEqual({ ok: true, value: 'denied' });
+  });
+
   it('ensures one deterministic request and prepares the Android channel', async () => {
     const sdk = gateway();
     const subject = new ExpoFocusNotificationAdapter(sdk, 'android', () => 1_000);
