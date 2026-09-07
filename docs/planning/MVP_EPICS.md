@@ -1,16 +1,16 @@
 ---
 document_id: PIXELDORO_MVP_EPIC_BREAKDOWN
 title: PixelDoro Mobile MVP — Epic Breakdown
-version: 1.5.0
-status: EPIC_01_TO_05_DONE_EPIC_06_PLANNING_READY
-last_updated: 2026-09-03
+version: 1.6.0
+status: EPIC_01_TO_06_DONE_EPIC_07_PLANNING_READY
+last_updated: 2026-09-07
 owner: Dũng Lư
 reviewer: Dũng Lư
 reviewer_role: Tech Lead
 approved_by: Dũng Lư
 approver_role: Product Owner
 approved_at: 2026-08-27
-amended_at: 2026-09-03
+amended_at: 2026-09-07
 amendment_approved_by: Dũng Lư
 language: vi
 scope:
@@ -126,7 +126,7 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 - [x] `03 / EPIC-03 / W2` — MVP Experience Prototype & User-flow Validation.
 - [x] `04 / EPIC-04 / W3` — Pet Companion — `DONE_OWNER_ACCEPTED` 2026-08-31.
 - [x] `05 / EPIC-05 / W3` — Onboarding Trial — `DONE_OWNER_ACCEPTED` 2026-09-03.
-- [ ] `06 / EPIC-06 / W3` — Standard Focus.
+- [x] `06 / EPIC-06 / W3` — Standard Focus — `DONE_OWNER_ACCEPTED` 2026-09-07.
 - [ ] `07 / EPIC-07 / W3` — Break & Cadence.
 - [ ] `08 / EPIC-08 / W3` — Progression & Shop.
 - [ ] `09 / EPIC-09 / W3` — History & Contribution.
@@ -134,7 +134,7 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 - [ ] `11 / EPIC-11 / W3` — Analytics, Feedback & Store Review.
 - [ ] `12 / EPIC-12 / W4` — Beta Readiness.
 
-### 2.4. Trạng thái sau năm Epic đầu tiên
+### 2.4. Trạng thái sau sáu Epic đầu tiên
 
 | Phạm vi | Trạng thái | Evidence/gate |
 |---|---|---|
@@ -143,11 +143,12 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 | `EPIC-03` | `DONE_OWNER_ACCEPTED` / `UX_APPROVED` | Clickable primary flow và data-needs map đã được owner duyệt. |
 | `EPIC-04` | `DONE_OWNER_ACCEPTED` | Pet/Home production slice, Cat Dev asset và device/performance evidence hoàn tất. |
 | `EPIC-05` | `DONE_OWNER_ACCEPTED` | Exact implementation SHA `580f559`; root `82/391`, SQLite exclusions và owner quick UI smoke pass. Formal tester matrix deferred. |
-| `EPIC-06` | `PLANNING_READY` | Start gate mở; implementation vẫn `NOT_STARTED` và cần Story/confirmation plan riêng. |
+| `EPIC-06` | `DONE_OWNER_ACCEPTED` | Exact candidate `458a886`; Standard Relax/Strict end-to-end, notification/analytics/a11y hooks, owner iOS/Android quick smoke. Formal tester deferred. |
+| `EPIC-07` | `PLANNING_READY` | Start gate đã mở; implementation chưa bắt đầu. |
 
-Năm Epic đầu đã hoàn thành không đồng nghĩa Mobile MVP hoàn tất. `EPIC-06`–`12` vẫn là `MUST` và
-giữ nguyên execution order. Không được dùng closure này để nhận là Standard Focus, Break, Shop,
-History, Settings, provider analytics hoặc Beta Readiness đã production-ready.
+Sáu Epic đầu đã hoàn thành không đồng nghĩa Mobile MVP hoàn tất. `EPIC-07`–`12` vẫn là `MUST` và
+giữ nguyên execution order. Không được dùng closure này để nhận là Break, Shop, History, Settings,
+provider analytics hoặc Beta Readiness đã production-ready.
 
 ## 3. Critical path và delivery gates
 
@@ -494,17 +495,17 @@ matrix tiếp tục `DEFERRED_TO_LATER_PHASE` và được carry sang later vali
 
 **Epic completion checklist:**
 
-- [ ] Chỉ valid duration/tag/mode mới start được Standard Focus.
-- [ ] UI chỉ điều hướng như đã start sau durable commit.
-- [ ] Countdown tick không mutate database hoặc grant reward.
-- [ ] Relax background/lock/relaunch không làm session fail.
-- [ ] Strict grace và boundary cases render đúng committed outcome.
-- [ ] Cancelled/failed Focus không nhận reward.
-- [ ] Completed Focus nhận reward theo configured minutes, không overtime.
-- [ ] Result reopen không grant hoặc replay reward.
-- [ ] Failed/cancelled Result không có Break entry.
-- [ ] Notification denied/stale/tap lặp không thay session truth.
-- [ ] Accessibility không phụ thuộc sprite, motion, audio hoặc màu.
+- [x] Chỉ valid duration/tag/mode mới start được Standard Focus.
+- [x] UI chỉ điều hướng như đã start sau durable commit.
+- [x] Countdown tick không mutate database hoặc grant reward.
+- [x] Relax background/lock/relaunch không làm session fail.
+- [x] Strict grace và boundary cases render đúng committed outcome.
+- [x] Cancelled/failed Focus không nhận reward.
+- [x] Completed Focus nhận reward theo configured minutes, không overtime.
+- [x] Result reopen không grant hoặc replay reward.
+- [x] Failed/cancelled Result không có Break entry.
+- [x] Notification denied/stale/tap lặp không thay session truth.
+- [x] Accessibility không phụ thuộc sprite, motion, audio hoặc màu.
 
 **Out of scope:** Pause/resume, custom tags, native app blocking, task manager và Break implementation chi tiết của `EPIC-07`.
 
@@ -866,6 +867,14 @@ Story hoặc implementation tương lai.
 - [x] Không estimate deadline trước khi Story refinement hoàn tất.
 
 ## 10. Change log
+
+### 1.6.0 — 2026-09-07
+
+- Đóng `EPIC-06` ở `DONE_OWNER_ACCEPTED` tại exact behavior candidate `458a886` sau owner quick
+  smoke trên iOS/Android và full quality bằng Node `22.23.2`.
+- Loại production Standard Focus prototype fallback, đóng notification-icon parity issue và giữ
+  formal tester/device accessibility matrix deferred minh bạch.
+- Đồng bộ master checklist và chỉ mở `EPIC-07_PLANNING_READY`; không bắt đầu Break implementation.
 
 ### 1.5.0 — 2026-09-03
 

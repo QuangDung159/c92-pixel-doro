@@ -1,14 +1,15 @@
 ---
 document_id: PIXELDORO_US_06_05_IMPLEMENTATION_REPORT
 title: PixelDoro Mobile MVP — US-06-05 implementation report
-version: 0.3.0
-status: IMPLEMENTED_CANDIDATE_PENDING_NATIVE_OWNER_UI
+version: 1.0.0
+status: DONE_OWNER_ACCEPTED_QUICK_UI
 date: 2026-09-07
 owner: Dũng Lư
 branch: feats/epic-06
 implementation_start_sha: 87b5bee2976fa6c1990c3b583c669e60e6576018
-exact_implementation_sha: c552e21008260b1f4d90a5ec9ab56fbe71c9338d
-manual_device_status: US_06_05_NOT_RUN
+exact_implementation_sha: 458a8868ac0024e3b3d1eff64ccc26408a81b2e1
+manual_device_status: OWNER_QUICK_UI_SMOKE_REPORTED_IOS_ANDROID
+owner_acceptance_status: DONE_OWNER_ACCEPTED
 formal_tester_status: DEFERRED_TO_LATER_PHASE
 resolved_issues:
   - US0605-KNOWN-01_NOTIFICATION_ICON_CROSS_PLATFORM_PARITY
@@ -20,10 +21,12 @@ plan: ./US-06-05_IMPLEMENTATION_PLAN.md
 
 ## Kết luận
 
-Implementation candidate đã hoàn tất theo toàn bộ 12 confirmation Option A được owner duyệt.
+US-06-05 đã hoàn tất theo toàn bộ 12 confirmation Option A được owner duyệt.
 Session/reward truth vẫn nằm trong transaction hiện có; notification và analytics chạy sau commit,
-best-effort, không thể đưa app vào Recovery hay thay đổi Result. Candidate chưa được coi là Epic exit:
-chưa rebuild Development Build sau config plugin và chưa chạy owner quick UI/manual device smoke.
+best-effort, không thể đưa app vào Recovery hay thay đổi Result. Owner đã báo cáo quick UI smoke trên
+iOS và Android, xác nhận các lỗi notification/navigation/crash đã được sửa và đóng notification-icon
+issue. Production Standard route không còn prototype fallback. Formal tester vẫn deferred, không bị
+suy diễn từ owner smoke.
 
 ## Phạm vi đã triển khai
 
@@ -48,16 +51,16 @@ chưa rebuild Development Build sau config plugin và chưa chạy owner quick U
 |---|---|
 | Typecheck | PASS — domain, application, mobile |
 | ESLint | PASS |
-| Vitest | PASS — 116 files / 640 tests |
+| Vitest | PASS — 119 files / 651 tests |
 | Device harness validator | PASS |
 | Boundary validator | PASS — 12 forbidden rejected / 4 valid accepted |
 | Repository hygiene | PASS — one lockfile, no signing material, no Skia, immutable migration preserved |
-| iOS JS export | PASS — 1,775 modules; output `/private/tmp/pixeldoro-us0605-ios-final.Q4f3Bl` |
-| Android JS export | PASS — 1,870 modules; output `/private/tmp/pixeldoro-us0605-android-final.161ZTl` |
+| iOS JS export | PASS — 1,776 modules; output `/private/tmp/pixeldoro-epic06-ios.askhOc` |
+| Android JS export | PASS — 1,871 modules; output `/private/tmp/pixeldoro-epic06-android.em064b` |
 | Expo config introspection | PASS — `expo-notifications` plugin present |
 | Expo Doctor | 20/21 PASS; remaining failure is existing SDK57 patch drift in six Expo packages, not introduced by this story |
-| Native Development Build | NOT RUN — config plugin requires rebuild |
-| Device/manual owner smoke | NOT RUN |
+| Native Development Build | OWNER-REPORTED PASS — iOS Simulator và Android Emulator |
+| Device/manual owner smoke | OWNER-REPORTED PASS — notification delivery/tap/result/icon và no-crash fixes |
 | Formal tester | DEFERRED_TO_LATER_PHASE |
 
 Targeted US-06-05 suite also passed: 8 files / 47 tests, including adapter, coordinator, analytics,
@@ -77,10 +80,6 @@ passed the EPIC-02 reset/relaunch race after preserving dispose idempotency.
 
 Expo Doctor still reports the repository's pre-existing SDK patch drift (`expo ~57.0.17` versus the
 doctor baseline `~57.0.20`, plus related Expo packages). Upgrading that unrelated set would expand
-scope and was not performed. Native notification behavior remains unproven until a fresh iOS/Android
-Development Build is rebuilt from this candidate.
-
-Next owner action: rebuild the Development Build, run
-[standard-focus-side-effects-exit-smoke.md](../../apps/mobile/test/device/standard-focus-side-effects-exit-smoke.md),
-then report quick UI/device evidence. Only after that should exact SHA and EPIC-06 exit acceptance be
-closed.
+scope and was not performed. Formal physical-device/accessibility matrix remains
+`DEFERRED_TO_LATER_PHASE`; owner emulator/simulator smoke is recorded separately and is the approved
+progression/closure evidence for this Epic.

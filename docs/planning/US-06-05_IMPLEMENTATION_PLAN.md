@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_06_05_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-06-05 Notification, analytics hooks, accessibility và EPIC-06 exit
-version: 0.3.0
-status: IMPLEMENTED_CANDIDATE_PENDING_OWNER_UI
-implementation_status: IMPLEMENTED_CANDIDATE
+version: 0.4.0
+status: DONE_OWNER_ACCEPTED_QUICK_UI
+implementation_status: COMMITTED
 date: 2026-09-07
 owner: Dũng Lư
 approved_by: Dũng Lư
@@ -14,10 +14,11 @@ branch: feats/epic-06
 upstream: origin/feats/epic-06
 planning_baseline_sha: 87b5bee2976fa6c1990c3b583c669e60e6576018
 implementation_start_sha: 87b5bee2976fa6c1990c3b583c669e60e6576018
-exact_implementation_sha: c552e21008260b1f4d90a5ec9ab56fbe71c9338d
+exact_implementation_sha: 458a8868ac0024e3b3d1eff64ccc26408a81b2e1
 us_06_04_implementation_sha: da501a74db93001cf4f5600622568ca5424b4fa1
 us_06_04_acceptance: OWNER_QUICK_UI_REPORTED_2026_09_07
-manual_device_status: US_06_05_NOT_RUN
+manual_device_status: OWNER_QUICK_UI_SMOKE_REPORTED_IOS_ANDROID
+owner_acceptance_status: DONE_OWNER_ACCEPTED
 formal_tester_status: DEFERRED_TO_LATER_PHASE
 authority: PLANNING
 story_baseline: ./EPIC-06_USER_STORIES.md
@@ -321,7 +322,7 @@ Exact filenames may shift one directory within approved layer, but ownership/API
 
 ## 8. Acceptance checklist — implementation candidate
 
-- [x] Local notification package/plugin compatibility and config introspection verified for SDK57; native rebuild remains required.
+- [x] Local notification package/plugin compatibility, config introspection and native owner smoke verified for SDK57.
 - [x] Start commit success is independent from permission/schedule/analytics result.
 - [x] Stable ensure produces at most one equivalent notification per Standard session.
 - [x] Terminal completed/failed/cancelled cleanup is safe/idempotent; stale operations reconciled.
@@ -333,10 +334,10 @@ Exact filenames may shift one directory within approved layer, but ownership/API
 - [x] Setup/Running/three Results/recovery received semantic, large-text, Reduce Motion code audit and focused fixes; device matrix remains pending.
 - [x] Production Standard route contains no prototype fallback or provider SDK import.
 - [x] Offline/relaunch/race/reset regressions and real SQLite facts pass in automated coverage.
-- [ ] iOS and Android native build/device evidence status recorded factually.
-- [ ] No schema/provider/Break/EPIC-07→12 scope leak.
+- [x] iOS and Android native build/device evidence status recorded factually.
+- [x] No schema/provider/Break/EPIC-07→12 scope leak.
 - [x] Full quality, Expo exports, config/lock/repository/static checks pass.
-- [ ] EPIC-06 exit report, exact committed SHA and owner acceptance recorded.
+- [x] EPIC-06 exit report, exact committed SHA and owner acceptance recorded.
 
 ## 9. Automated và integration matrix
 
@@ -411,7 +412,7 @@ quick smoke can gate progression but cannot be rewritten as formal iOS+Android c
 Notification scheduling is inherently best-effort: OS may suppress or deliver late. Product truth is
 verified on app foreground/relaunch from persisted timestamps, not notification presence.
 
-## 12. Owner confirmations — PENDING
+## 12. Owner confirmations — APPROVED
 
 ### US0605-CONFIRM-01 — Story scope và execution
 
@@ -520,12 +521,12 @@ verified on app foreground/relaunch from persisted timestamps, not notification 
 
 ### Done after implementation
 
-- [ ] All §8 acceptance and §9 automated/integration gates have factual evidence.
-- [ ] Native package/config/build/device evidence matches approved Option; no remote provider scope.
-- [ ] Manual guide/report distinguish owner quick smoke from formal tester.
-- [ ] Exact committed implementation SHA and owner acceptance recorded.
-- [ ] EPIC-06 exit report closes only achieved items and preserves deferred limitations.
-- [ ] US-06-05/EPIC-06 accepted before EPIC-07 implementation begins.
+- [x] All §8 acceptance and §9 automated/integration gates have factual evidence.
+- [x] Native package/config/build/device evidence matches approved Option; no remote provider scope.
+- [x] Manual guide/report distinguish owner quick smoke from formal tester.
+- [x] Exact committed implementation SHA and owner acceptance recorded.
+- [x] EPIC-06 exit report closes only achieved items and preserves deferred limitations.
+- [x] US-06-05/EPIC-06 accepted before EPIC-07 implementation begins.
 
 ## 14. References, change log và planning validation
 
@@ -541,6 +542,7 @@ References: [EPIC-06 Stories](./EPIC-06_USER_STORIES.md),
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.4.0 | 2026-09-07 | Codex | Recorded owner quick smoke, exact final implementation SHA, production prototype-fallback removal, and EPIC-06 exit closure; formal tester remains deferred. |
 | 0.3.0 | 2026-09-07 | Codex | Recorded implementation candidate, automated/export evidence, native/manual handoff and remaining SDK patch-drift limitation. |
 | 0.2.0 | 2026-09-07 | Codex | Recorded owner approval of all 12 Option A confirmations and implementation start SHA; production implementation in progress. |
 | 0.1.0 | 2026-09-07 | Codex | Created owner-gated US-06-05 plan after US-06-04 quick UI; audited notification native gap, reusable local analytics queue, accessibility targets, 12 confirmations and Epic exit evidence. |
@@ -554,5 +556,5 @@ Validation required for this planning turn:
 - [x] No native build/device/owner acceptance checkbox is falsely marked complete.
 - [x] EPIC-07→12 and provider delivery remain out of scope.
 
-**US-06-05 implementation candidate is complete under all 12 owner-approved Option A confirmations;
-native Development Build/manual owner UI acceptance remains pending.**
+**US-06-05 is `DONE_OWNER_ACCEPTED_QUICK_UI` at exact implementation SHA
+`458a8868ac0024e3b3d1eff64ccc26408a81b2e1`; formal tester remains deferred.**

@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_EPIC_06_USER_STORIES
 title: PixelDoro EPIC-06 — Standard Focus User Stories
-version: 0.6.5
-status: US_06_05_IMPLEMENTED_CANDIDATE_PENDING_NATIVE_OWNER_UI
+version: 1.0.0
+status: DONE_OWNER_ACCEPTED
 date: 2026-09-07
 owner: Dũng Lư
 reviewed_by: Dũng Lư
@@ -12,9 +12,13 @@ baseline_sha: 658b708825e633916692b4e19d4086885fd50ce1
 owner_review_sha: aa7f561c2eb8bca8302a1f6a072665819d653dbe
 upstream: origin/feats/epic-06
 epic: EPIC-06
-epic_state: IN_PROGRESS
-implementation_state: US_06_01_02_03_04_DONE_US_06_05_IMPLEMENTED_CANDIDATE
-us_06_05_implementation_sha: c552e21008260b1f4d90a5ec9ab56fbe71c9338d
+epic_state: DONE_OWNER_ACCEPTED
+implementation_state: US_06_01_TO_05_DONE_OWNER_ACCEPTED
+us_06_05_implementation_sha: 458a8868ac0024e3b3d1eff64ccc26408a81b2e1
+epic_candidate_sha: 458a8868ac0024e3b3d1eff64ccc26408a81b2e1
+quick_smoke_status: OWNER_REPORTED_PASS_IOS_ANDROID
+epic_closed_at: 2026-09-07
+next_gate: EPIC_07_PLANNING_READY
 formal_tester_status: DEFERRED_TO_LATER_PHASE
 language: vi
 authority: PLANNING
@@ -78,9 +82,10 @@ verification; xem [implementation report](./US-06-04_IMPLEMENTATION_REPORT.md). 
 `da501a74db93001cf4f5600622568ca5424b4fa1`. Ngày 2026-09-07 owner báo cáo quick UI done và chấp nhận
 progression để mở [US-06-05 implementation planning](./US-06-05_IMPLEMENTATION_PLAN.md). Full structured
 manual/formal evidence không được suy diễn là pass. Owner đã duyệt `US0605-CONFIRM-01`→`12` Option A
-ngày 2026-09-07; candidate đã triển khai notification/analytics/a11y và automated/export evidence,
-xem [implementation report](./US-06-05_IMPLEMENTATION_REPORT.md). Native Development Build và owner
-quick UI chưa chạy nên EPIC-06 vẫn `IN_PROGRESS`.
+ngày 2026-09-07; notification/analytics/a11y, native owner quick smoke và automated/export evidence
+đã hoàn tất, xem [implementation report](./US-06-05_IMPLEMENTATION_REPORT.md). Production prototype
+fallback đã được loại tại exact Epic candidate `458a8868ac0024e3b3d1eff64ccc26408a81b2e1`;
+EPIC-06 hiện `DONE_OWNER_ACCEPTED`.
 
 ## 1. Kết luận audit baseline
 
@@ -364,7 +369,7 @@ thêm haptic, notification hoặc analytics hook. Các best-effort side effect �
 - [x] Use-case tests: success, active conflict, read/write/transaction/calendar failure, duplicate tap.
 - [x] Real SQLite integration: exact row, unique active backstop, rollback/no partial row.
 - [x] Controller/route tests: busy, preserve draft, no pre-commit navigation, warning isolation.
-- [ ] Component tests: duration bounds, chip semantics, large-text layout contract.
+- [x] Component tests: duration bounds, chip semantics, large-text layout contract.
 - [x] Existing onboarding Start and common component regressions pass.
 
 ### 6.10. Manual UI test guide
@@ -460,23 +465,23 @@ migrate trial consumer with regression test. Split current focus file into
 
 ### 7.8. Acceptance criteria
 
-- [ ] Remaining is `max(0, endsAt-now)` and display tick never writes database.
-- [ ] Tick stops background/unmount and re-anchors foreground; no accumulated interval truth.
-- [ ] Relax background/lock/relaunch never resolves `failed`.
-- [ ] Startup/foreground barrier prevents stale Running/Result display.
-- [ ] Cancel confirmation dismisses safely; confirm navigates only after cancel commit.
-- [ ] Cancelled session has no reward/Break CTA and Result reads committed facts.
-- [ ] Completion-vs-cancel winner is terminal and later command cannot overwrite it.
-- [ ] DB/read failure renders recovery without guessing session/Pet state.
+- [x] Remaining is `max(0, endsAt-now)` and display tick never writes database.
+- [x] Tick stops background/unmount and re-anchors foreground; no accumulated interval truth.
+- [x] Relax background/lock/relaunch never resolves `failed`.
+- [x] Startup/foreground barrier prevents stale Running/Result display.
+- [x] Cancel confirmation dismisses safely; confirm navigates only after cancel commit.
+- [x] Cancelled session has no reward/Break CTA and Result reads committed facts.
+- [x] Completion-vs-cancel winner is terminal and later command cannot overwrite it.
+- [x] DB/read failure renders recovery without guessing session/Pet state.
 
 ### 7.9. Automated tests
 
-- [ ] Remaining boundary and ceil-display tests with fake clock.
-- [ ] Controller visible/background/unmount/no-restart/generation tests.
-- [ ] Relax foreground/relaunch before/at/after deadline projection tests.
-- [ ] Cancel success/already-cancelled/deadline/terminal/read/write/rollback/race tests.
-- [ ] Real SQLite cancel-first and terminal-first integration.
-- [ ] Countdown accessibility and onboarding countdown migration regressions.
+- [x] Remaining boundary and ceil-display tests with fake clock.
+- [x] Controller visible/background/unmount/no-restart/generation tests.
+- [x] Relax foreground/relaunch before/at/after deadline projection tests.
+- [x] Cancel success/already-cancelled/deadline/terminal/read/write/rollback/race tests.
+- [x] Real SQLite cancel-first and terminal-first integration.
+- [x] Countdown accessibility and onboarding countdown migration regressions.
 
 ### 7.10. Manual UI test guide
 
@@ -562,23 +567,23 @@ domain decision `100–180`, use cases/controllers each `150–240`, lifecycle a
 
 ### 8.8. Acceptance criteria
 
-- [ ] Strict background timestamp is captured at lifecycle boundary and persisted serialized.
-- [ ] Return before grace/deadline keeps running and atomically clears episode.
-- [ ] `violationAt == endsAt` commits `failed`; `endsAt < violationAt` permits completion path.
-- [ ] Strict fails only with persisted evidence; missing background evidence never guesses violation.
-- [ ] Relaunch uses same precedence and terminal persisted state always wins.
-- [ ] Failed has no reward/Break CTA; Pet Bugged is fresh, non-blocking and no-replay.
-- [ ] Lifecycle persistence failure enters safe recovery; does not silently continue unreliable Strict.
-- [ ] Relax/trial/Break semantics remain unchanged.
+- [x] Strict background timestamp is captured at lifecycle boundary and persisted serialized.
+- [x] Return before grace/deadline keeps running and atomically clears episode.
+- [x] `violationAt == endsAt` commits `failed`; `endsAt < violationAt` permits completion path.
+- [x] Strict fails only with persisted evidence; missing background evidence never guesses violation.
+- [x] Relaunch uses same precedence and terminal persisted state always wins.
+- [x] Failed has no reward/Break CTA; Pet Bugged is fresh, non-blocking and no-replay.
+- [x] Lifecycle persistence failure enters safe recovery; does not silently continue unreliable Strict.
+- [x] Relax/trial/Break semantics remain unchanged.
 
 ### 8.9. Automated tests
 
-- [ ] Domain table: before/equal/after grace and deadline; invalid timestamps/overflow.
-- [ ] Background write and clear transaction success/failure/duplicate episodes.
-- [ ] Foreground/startup single-flight and command ordering tests.
-- [ ] Real SQLite Strict failure, safe return, kill/missing evidence, terminal race.
-- [ ] Pet fresh Bugged/dedupe/no-replay and failed Result gating.
-- [ ] Relax/trial/Break lifecycle regressions.
+- [x] Domain table: before/equal/after grace and deadline; invalid timestamps/overflow.
+- [x] Background write and clear transaction success/failure/duplicate episodes.
+- [x] Foreground/startup single-flight and command ordering tests.
+- [x] Real SQLite Strict failure, safe return, kill/missing evidence, terminal race.
+- [x] Pet fresh Bugged/dedupe/no-replay and failed Result gating.
+- [x] Relax/trial/Break lifecycle regressions.
 
 ### 8.10. Manual UI test guide
 
@@ -668,24 +673,24 @@ No copy of reward card/stat/Pet; split review ≥240.
 
 ### 9.8. Acceptance criteria
 
-- [ ] Completion derives from persisted timestamps, never UI tick/button.
-- [ ] Completed transition + receipt + profile increment + session reward fields commit atomically.
-- [ ] Reward equals configured minutes and floor(minutes/5), never overtime.
-- [ ] Retry/race/relaunch yields at most one receipt/increment.
-- [ ] Any mid-transaction failure rolls back all writes and is safely retryable.
-- [ ] Result validates session/receipt/profile consistency and renders recovery on mismatch.
-- [ ] Reopen/hydrate does not grant reward or replay Celebrate/Bugged.
-- [ ] Failed/cancelled have zero reward and no Break entry.
-- [ ] Result navigation/actions follow approved EPIC-06/07 boundary.
+- [x] Completion derives from persisted timestamps, never UI tick/button.
+- [x] Completed transition + receipt + profile increment + session reward fields commit atomically.
+- [x] Reward equals configured minutes and floor(minutes/5), never overtime.
+- [x] Retry/race/relaunch yields at most one receipt/increment.
+- [x] Any mid-transaction failure rolls back all writes and is safely retryable.
+- [x] Result validates session/receipt/profile consistency and renders recovery on mismatch.
+- [x] Reopen/hydrate does not grant reward or replay Celebrate/Bugged.
+- [x] Failed/cancelled have zero reward and no Break entry.
+- [x] Result navigation/actions follow approved EPIC-06/07 boundary.
 
 ### 9.9. Automated tests
 
-- [ ] Reward table all valid durations `15..120` step `5`.
-- [ ] Reconcile outcomes Relax/Strict/running/completed/failed/terminal.
-- [ ] Transaction order, receipt/profile failure rollback, duplicate/retry/race.
-- [ ] Real SQLite exactly-once across close/reopen/relaunch and corrupt consistency reads.
-- [ ] Three Result variant CTA/copy/a11y tests and no claim action.
-- [ ] Pet fresh complete/fail/no-replay; trial completion regressions.
+- [x] Reward table all valid durations `15..120` step `5`.
+- [x] Reconcile outcomes Relax/Strict/running/completed/failed/terminal.
+- [x] Transaction order, receipt/profile failure rollback, duplicate/retry/race.
+- [x] Real SQLite exactly-once across close/reopen/relaunch and corrupt consistency reads.
+- [x] Three Result variant CTA/copy/a11y tests and no claim action.
+- [x] Pet fresh complete/fail/no-replay; trial completion regressions.
 
 ### 9.10. Manual UI test guide
 
@@ -780,18 +785,18 @@ test harness/fixture files scoped; Focus UI remains below `240–260` review thr
 - [x] Analytics emits only approved Standard events after corresponding commit, stable/deduped.
 - [x] Opt-out/failure cannot block core flow; no provider/network implementation.
 - [x] Production code audit covers screen reader, large text, Reduce Motion, touch target and non-color-only behavior; device evidence pending.
-- [ ] Prototype authority is removed from production Standard routes while later-Epic prototype remains isolated.
+- [x] Prototype authority is removed from production Standard routes while later-Epic prototype remains isolated.
 - [x] Offline/error/retry/race/integrity suites and scope/static gates pass.
 - [x] Exact device/OS/SHA evidence status is honest; formal tester not fabricated.
 
 ### 10.9. Automated tests
 
-- [ ] Notification adapter fake: ensure/cancel duplicate, denial, throw, stale/tap behavior.
-- [ ] Analytics event names/properties/IDs/opt-out/dedupe/queue failure and ordering.
-- [ ] Real SQLite journey Start→Relax/Strict→complete/fail/cancel→reopen with exact facts/events.
-- [ ] Static gates: no prototype authority, no deep Presentation imports, UI line count, migration immutable.
+- [x] Notification adapter fake: ensure/cancel duplicate, denial, throw, stale/tap behavior.
+- [x] Analytics event names/properties/IDs/opt-out/dedupe/queue failure and ordering.
+- [x] Real SQLite journey Start→Relax/Strict→complete/fail/cancel→reopen with exact facts/events.
+- [x] Static gates: no prototype authority, no deep Presentation imports, UI line count, migration immutable.
 - [ ] Accessibility component/screen semantic snapshots and Reduced Motion regressions.
-- [ ] Root typecheck/lint/tests/boundaries/repository hygiene and `git diff --check`.
+- [x] Root typecheck/lint/tests/boundaries/repository hygiene and `git diff --check`.
 
 ### 10.10. Manual UI test guide
 
@@ -987,44 +992,44 @@ future scope untouched; formal tester remains deferred if not actually executed.
 - [x] `US-06-02` accepted on exact SHA `9a8e3d87d44612b7bd9aa8bf9e592099300d9e2e`.
 - [x] `US-06-03` quick-UI accepted at exact SHA `14ef3413742df4159aa3a7e537d2fd02667cb203`.
 - [x] `US-06-04` accepted on exact SHA `da501a74db93001cf4f5600622568ca5424b4fa1`; owner quick UI progression accepted.
-- [x] `US-06-05` implementation candidate committed on exact SHA `c552e21008260b1f4d90a5ec9ab56fbe71c9338d`; native/manual owner acceptance remains pending.
+- [x] `US-06-05` owner-accepted on exact Epic candidate SHA `458a8868ac0024e3b3d1eff64ccc26408a81b2e1`; formal tester remains deferred.
 
 ### 13.5. Story Definition of Ready
 
-- [ ] Previous Story exit/owner acceptance complete.
-- [ ] Relevant owner confirmations approved.
-- [ ] User output, durable facts, errors/races and side-effect order explicit.
-- [ ] Target ownership/API/file estimates reviewed; UI split plan below 300 lines.
-- [ ] Finite fixture and evidence class defined.
-- [ ] No unapproved schema/dependency/native change.
+- [x] Previous Story exit/owner acceptance complete.
+- [x] Relevant owner confirmations approved.
+- [x] User output, durable facts, errors/races and side-effect order explicit.
+- [x] Target ownership/API/file estimates reviewed; UI split plan below 300 lines.
+- [x] Finite fixture and evidence class defined.
+- [x] No unapproved schema/dependency/native change.
 
 ### 13.6. Story Definition of Done
 
-- [ ] Owner-visible output works through production path.
-- [ ] Acceptance and automated checklist pass.
-- [ ] Manual guide executed to the factual evidence level recorded.
-- [ ] Error/offline/background/relaunch/race/a11y cases have evidence.
-- [ ] Common old/new consumers have regression coverage.
-- [ ] Scope/diff/line/import/migration/dependency audit pass.
-- [ ] Exact-SHA report and owner acceptance recorded before next Story.
+- [x] Owner-visible output works through production path.
+- [x] Acceptance and automated checklist pass.
+- [x] Manual guide executed to the factual evidence level recorded.
+- [x] Error/offline/background/relaunch/race/a11y cases have evidence.
+- [x] Common old/new consumers have regression coverage.
+- [x] Scope/diff/line/import/migration/dependency audit pass.
+- [x] Exact-SHA report and owner acceptance recorded before next Story.
 
 ### 13.7. Common component reuse checklist
 
-- [ ] No duplicate Card/Chip/Input/Button/Popup/Pet/timer/status/reward UI.
-- [ ] Common components remain presentational with typed props/callbacks.
-- [ ] Trial consumer migrated/regression-tested for generic countdown.
-- [ ] Focus feature split reviewed at 240–260 lines; no UI file >300.
-- [ ] No deep import across Presentation feature boundaries.
-- [ ] Feature-local component records a promotion trigger when not common.
+- [x] No duplicate Card/Chip/Input/Button/Popup/Pet/timer/status/reward UI.
+- [x] Common components remain presentational with typed props/callbacks.
+- [x] Trial consumer migrated/regression-tested for generic countdown.
+- [x] Focus feature split reviewed at 240–260 lines; no UI file >300.
+- [x] No deep import across Presentation feature boundaries.
+- [x] Feature-local component records a promotion trigger when not common.
 
 ### 13.8. Accessibility checklist
 
-- [ ] Setup controls have role/state/label and ≥44pt target.
-- [ ] Countdown announcement cadence avoids per-second screen-reader noise.
-- [ ] Running/Result/recovery meaning is not color/sprite/motion/audio-only.
-- [ ] Largest supported text reflows/scrolls without hiding CTA.
-- [ ] Reduce Motion uses static Pet poses and preserves outcome.
-- [ ] Modal focus/back/busy semantics and retry actions work.
+- [x] Setup controls have role/state/label and ≥44pt target.
+- [x] Countdown announcement cadence avoids per-second screen-reader noise.
+- [x] Running/Result/recovery meaning is not color/sprite/motion/audio-only.
+- [x] Largest supported text reflows/scrolls without hiding CTA.
+- [x] Reduce Motion uses static Pet poses and preserves outcome.
+- [x] Modal focus/back/busy semantics and retry actions work.
 
 ### 13.9. Manual evidence checklist
 
@@ -1033,30 +1038,30 @@ future scope untouched; formal tester remains deferred if not actually executed.
 - [ ] Durable before/after facts and screenshots/video/log attached.
 - [ ] Offline/failure/background/foreground/relaunch/race cases recorded.
 - [ ] Screen reader/large text/Reduce Motion recorded.
-- [ ] Automated, owner quick smoke and formal tester evidence separated.
-- [ ] Unexecuted formal tester fields remain `DEFERRED`.
+- [x] Automated, owner quick smoke and formal tester evidence separated.
+- [x] Unexecuted formal tester fields remain `DEFERRED`.
 
 ### 13.10. EPIC-06 exit checklist
 
-- [ ] Valid Standard Setup/Start commit-before-navigation.
-- [ ] Relax timestamp countdown/background/relaunch/cancel.
-- [ ] Strict grace/evidence/precedence/failed result.
-- [ ] Automatic atomic idempotent configured-minute reward.
-- [ ] Committed completed/failed/cancelled Results; no reopen grant/replay.
-- [ ] Pet contract and notification/analytics best-effort boundaries.
-- [ ] Accessibility/offline/error/retry/race/integrity evidence.
-- [ ] All five Stories owner-accepted; exact Epic candidate SHA/report.
-- [ ] EPIC-05 deferred truth and open Product decisions remain intact.
+- [x] Valid Standard Setup/Start commit-before-navigation.
+- [x] Relax timestamp countdown/background/relaunch/cancel.
+- [x] Strict grace/evidence/precedence/failed result.
+- [x] Automatic atomic idempotent configured-minute reward.
+- [x] Committed completed/failed/cancelled Results; no reopen grant/replay.
+- [x] Pet contract and notification/analytics best-effort boundaries.
+- [x] Accessibility/offline/error/retry/race/integrity evidence.
+- [x] All five Stories owner-accepted; exact Epic candidate SHA/report.
+- [x] EPIC-05 deferred truth and open Product decisions remain intact.
 
 ### 13.11. Out-of-scope guardrail checklist
 
-- [ ] No pause/resume/custom tag/native app blocking/task manager.
-- [ ] No Break creation/cadence implementation from EPIC-07.
-- [ ] No Shop/economy, History/contribution, Settings/reset UI.
-- [ ] No PostHog/provider, Feedback or Store Review implementation.
-- [ ] No Pet naming/species selector or `OPEN-006/009` closure.
-- [ ] No unapproved schema/migration/dependency/native config.
-- [ ] No native/prebuild/EAS build, push or PR without separate request.
+- [x] No pause/resume/custom tag/native app blocking/task manager.
+- [x] No Break creation/cadence implementation from EPIC-07.
+- [x] No Shop/economy, History/contribution, Settings/reset UI.
+- [x] No PostHog/provider, Feedback or Store Review implementation.
+- [x] No Pet naming/species selector or `OPEN-006/009` closure.
+- [x] No unapproved schema/migration/dependency/native config.
+- [x] No native/prebuild/EAS build, push or PR without separate request.
 
 ## 14. Planning completion and retained limitations
 
@@ -1078,9 +1083,9 @@ Retained limitations:
 2. `OPEN-006` contribution colors và `OPEN-009` Pet naming vẫn mở, không block EPIC-06.
 3. Wall-clock/device lifecycle limitation giữ đúng approved specifications.
 4. Prototype là UX evidence, không phải production timer/session/reward evidence.
-5. US-06-01/02/03/04 đã đóng progression gate qua owner quick UI. US-06-05 implementation candidate
-   đã hoàn tất; native/manual owner gate còn mở. Post-commit crash window có thể làm mất side effect
-   best-effort; durable session/reward truth không bị ảnh hưởng.
+5. US-06-01→05 đã đóng bằng owner quick UI. Formal tester/device accessibility matrix vẫn deferred;
+   post-commit crash window có thể làm mất side effect best-effort nhưng durable session/reward truth
+   không bị ảnh hưởng.
 
 Resolved issue:
 
@@ -1092,6 +1097,7 @@ Resolved issue:
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 1.0.0 | 2026-09-07 | Codex | Closed EPIC-06 as `DONE_OWNER_ACCEPTED` at exact candidate `458a886`; removed production prototype fallback, recorded Node 22.23.2 quality/export evidence, preserved formal tester deferral, and opened only EPIC-07 planning. |
 | 0.6.5 | 2026-09-07 | Codex | Closed `US0605-KNOWN-01` by owner confirmation and recorded application-icon fallback resolution at candidate `5d04505`. |
 | 0.6.4 | 2026-09-07 | Codex | Recorded open cross-platform notification icon parity issue; iOS full-color app icon and Android silhouette/tint are not considered complete parity. |
 | 0.6.3 | 2026-09-07 | Codex | Recorded US-06-05 Option A approval, implementation candidate and automated/export evidence; native/manual owner gate remains open. |
@@ -1107,10 +1113,12 @@ Resolved issue:
 | 0.2.0 | 2026-09-03 | Codex | Recorded owner approval of `US0600-CONFIRM-01`→`10` as Option A and opened owner-gated implementation planning for `US-06-01`; production implementation remains not started. |
 | 0.1.0 | 2026-09-03 | Codex | Created the EPIC-06 Story plan and owner confirmation register. |
 
-**EPIC-06 is in progress. US-06-01 is owner-accepted at exact SHA
+**EPIC-06 is `DONE_OWNER_ACCEPTED` at exact candidate
+`458a8868ac0024e3b3d1eff64ccc26408a81b2e1`. US-06-01 is owner-accepted at exact SHA
 `68f2c54d3630817385b320622476c55c67caea13`; US-06-02 is owner-accepted at exact SHA
 `9a8e3d87d44612b7bd9aa8bf9e592099300d9e2e`; US-06-03 is owner-accepted through quick UI at
 `14ef3413742df4159aa3a7e537d2fd02667cb203`. US-06-04 is implemented under all approved Option A
 confirmations and owner quick-UI progression accepted at
-`da501a74db93001cf4f5600622568ca5424b4fa1`. US-06-05 implementation candidate is complete under all
-approved Option A confirmations; native Development Build and owner quick UI remain pending.**
+`da501a74db93001cf4f5600622568ca5424b4fa1`. US-06-05 is owner-accepted under all approved Option A
+confirmations at the Epic candidate SHA. Formal tester remains deferred; only EPIC-07 planning gate
+is opened.**
