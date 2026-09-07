@@ -14,7 +14,7 @@ upstream: origin/feats/epic-06
 epic: EPIC-06
 epic_state: IN_PROGRESS
 implementation_state: US_06_01_02_03_04_DONE_US_06_05_IMPLEMENTED_CANDIDATE
-us_06_05_implementation_sha: c552e21
+us_06_05_implementation_sha: c552e21008260b1f4d90a5ec9ab56fbe71c9338d
 formal_tester_status: DEFERRED_TO_LATER_PHASE
 language: vi
 authority: PLANNING
@@ -986,8 +986,8 @@ future scope untouched; formal tester remains deferred if not actually executed.
 - [x] `US-06-01` accepted on exact SHA `68f2c54d3630817385b320622476c55c67caea13`.
 - [x] `US-06-02` accepted on exact SHA `9a8e3d87d44612b7bd9aa8bf9e592099300d9e2e`.
 - [x] `US-06-03` quick-UI accepted at exact SHA `14ef3413742df4159aa3a7e537d2fd02667cb203`.
-- [ ] `US-06-04` accepted on exact SHA.
-- [ ] `US-06-05` accepted on exact SHA.
+- [x] `US-06-04` accepted on exact SHA `da501a74db93001cf4f5600622568ca5424b4fa1`; owner quick UI progression accepted.
+- [x] `US-06-05` implementation candidate committed on exact SHA `c552e21008260b1f4d90a5ec9ab56fbe71c9338d`; native/manual owner acceptance remains pending.
 
 ### 13.5. Story Definition of Ready
 
@@ -1074,14 +1074,14 @@ future scope untouched; formal tester remains deferred if not actually executed.
 
 Retained limitations:
 
-1. Không có production local-notification adapter/dependency/config tại baseline; owner gate bắt buộc.
+1. Notification adapter/dependency/config đã có trong candidate; native Development Build và owner gate vẫn bắt buộc.
 2. EPIC-05 formal tester vẫn `DEFERRED_TO_LATER_PHASE`; planning này không nâng cấp trạng thái đó.
 3. `OPEN-006` contribution colors và `OPEN-009` Pet naming vẫn mở, không block EPIC-06.
 4. Wall-clock/device lifecycle limitation giữ đúng approved specifications.
 5. Prototype là UX evidence, không phải production timer/session/reward evidence.
 6. US-06-01/02/03/04 đã đóng progression gate qua owner quick UI. US-06-05 implementation candidate
-   đã hoàn tất; native/manual owner gate còn mở. Post-commit cold startup
-   không có route identity về Home đúng tổng; full manual/formal vẫn deferred.
+   đã hoàn tất; native/manual owner gate còn mở. Post-commit crash window có thể làm mất side effect
+   best-effort; durable session/reward truth không bị ảnh hưởng.
 
 ## 15. Change log
 
