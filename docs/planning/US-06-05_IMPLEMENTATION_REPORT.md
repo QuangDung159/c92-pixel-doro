@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_US_06_05_IMPLEMENTATION_REPORT
 title: PixelDoro Mobile MVP — US-06-05 implementation report
-version: 0.1.0
+version: 0.2.0
 status: IMPLEMENTED_CANDIDATE_PENDING_NATIVE_OWNER_UI
 date: 2026-09-07
 owner: Dũng Lư
@@ -10,6 +10,8 @@ implementation_start_sha: 87b5bee2976fa6c1990c3b583c669e60e6576018
 exact_implementation_sha: c552e21008260b1f4d90a5ec9ab56fbe71c9338d
 manual_device_status: US_06_05_NOT_RUN
 formal_tester_status: DEFERRED_TO_LATER_PHASE
+known_issues:
+  - US0605-KNOWN-01_NOTIFICATION_ICON_CROSS_PLATFORM_PARITY
 authority: EVIDENCE
 plan: ./US-06-05_IMPLEMENTATION_PLAN.md
 ---
@@ -62,7 +64,20 @@ Targeted US-06-05 suite also passed: 8 files / 47 tests, including adapter, coor
 startup, fixture, side-effect SQLite and Standard completion integration. The full suite additionally
 passed the EPIC-02 reset/relaunch race after preserving dispose idempotency.
 
-## Known limitation and handoff
+## Known issues and handoff
+
+### `US0605-KNOWN-01` — Notification icon chưa đồng bộ iOS/Android
+
+**Trạng thái:** `OPEN` — không được coi là resolved hoặc platform limitation đã chấp nhận.
+
+- iOS hiện hiển thị app icon PixelDoro đầy màu do hệ điều hành lấy trực tiếp từ app bundle.
+- Android hiện hiển thị small icon silhouette/tint theo notification configuration và quy tắc render
+  của hệ điều hành; kết quả nhận diện chưa tương đương iOS.
+- Product yêu cầu xử lý triệt để để notification có nhận diện PixelDoro nhất quán trên cả hai nền
+  tảng. Cần nghiên cứu và triển khai giải pháp Android phù hợp (bao gồm native/custom notification
+  nếu Expo configuration hiện tại không đáp ứng), sau đó xác nhận bằng ảnh chụp trên iOS và Android.
+- Issue chỉ được đóng khi owner duyệt kết quả của cả hai nền tảng; việc notification vẫn schedule,
+  deliver và navigate đúng không tự động đóng issue về icon.
 
 Expo Doctor still reports the repository's pre-existing SDK patch drift (`expo ~57.0.17` versus the
 doctor baseline `~57.0.20`, plus related Expo packages). Upgrading that unrelated set would expand

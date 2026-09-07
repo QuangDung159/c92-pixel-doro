@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_06_USER_STORIES
 title: PixelDoro EPIC-06 — Standard Focus User Stories
-version: 0.6.3
+version: 0.6.4
 status: US_06_05_IMPLEMENTED_CANDIDATE_PENDING_NATIVE_OWNER_UI
 date: 2026-09-07
 owner: Dũng Lư
@@ -1074,7 +1074,10 @@ future scope untouched; formal tester remains deferred if not actually executed.
 
 Retained limitations:
 
-1. Notification adapter/dependency/config đã có trong candidate; native Development Build và owner gate vẫn bắt buộc.
+1. `US0605-KNOWN-01_NOTIFICATION_ICON_CROSS_PLATFORM_PARITY` đang `OPEN`: iOS dùng app icon đầy màu,
+   Android dùng small icon silhouette/tint nên nhận diện notification chưa đồng bộ. Phải có giải pháp
+   triệt để và owner evidence trên cả hai nền tảng trước khi đóng issue; không hạ cấp thành platform
+   limitation đã chấp nhận.
 2. EPIC-05 formal tester vẫn `DEFERRED_TO_LATER_PHASE`; planning này không nâng cấp trạng thái đó.
 3. `OPEN-006` contribution colors và `OPEN-009` Pet naming vẫn mở, không block EPIC-06.
 4. Wall-clock/device lifecycle limitation giữ đúng approved specifications.
@@ -1087,6 +1090,7 @@ Retained limitations:
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.6.4 | 2026-09-07 | Codex | Recorded open cross-platform notification icon parity issue; iOS full-color app icon and Android silhouette/tint are not considered complete parity. |
 | 0.6.3 | 2026-09-07 | Codex | Recorded US-06-05 Option A approval, implementation candidate and automated/export evidence; native/manual owner gate remains open. |
 | 0.6.2 | 2026-09-07 | Codex | Recorded US-06-04 owner quick-UI progression acceptance and opened owner-gated US-06-05 planning; detailed manual/formal evidence remains deferred. |
 | 0.6.1 | 2026-09-07 | Codex | Recorded US-06-04 exact committed SHA and post-commit quality evidence; owner quick UI/acceptance remains pending. |

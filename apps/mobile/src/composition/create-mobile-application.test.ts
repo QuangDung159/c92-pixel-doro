@@ -23,6 +23,7 @@ vi.mock('react-native', () => ({
     currentState: 'active',
     addEventListener: () => ({ remove: vi.fn() }),
   },
+  Platform: { OS: 'ios' },
 }));
 
 afterEach(() => {

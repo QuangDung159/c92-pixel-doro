@@ -10,6 +10,7 @@ import {
   type FocusNotificationResponseSource,
   type ResetNotificationCleanupPort,
 } from '@/application';
+import { Platform } from 'react-native';
 import type {
   ExpoNotificationGateway,
   ExpoPermissionSnapshot,
@@ -193,14 +194,13 @@ export class ExpoFocusNotificationAdapter
     await this.gateway.clearInitialResponse().catch(() => undefined);
   }
 
-  private async resolvePlatform(): Promise<'ios' | 'android' | 'other'> {
+  private resolvePlatform(): 'ios' | 'android' | 'other' {
     if (this.platform !== 'auto') return this.platform;
-    try {
-      const { Platform } = await import('react-native');
-      return Platform.OS === 'ios' ? 'ios' : Platform.OS === 'android' ? 'android' : 'other';
-    } catch {
-      return 'other';
-    }
+    return Platform?.OS === 'ios'
+      ? 'ios'
+      : Platform?.OS === 'android'
+        ? 'android'
+        : 'other';
   }
 
   async cancelKnownSession(

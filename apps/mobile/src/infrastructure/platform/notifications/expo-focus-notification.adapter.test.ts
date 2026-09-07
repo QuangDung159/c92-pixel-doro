@@ -5,6 +5,10 @@ import {
   type ExpoNotificationGateway,
 } from './expo-focus-notification.adapter';
 
+vi.mock('react-native', () => ({
+  Platform: { OS: 'ios' },
+}));
+
 const gateway = (): ExpoNotificationGateway => ({
   prepareForegroundPresentation: vi.fn(async () => undefined),
   readPermission: vi.fn(async () => ({
@@ -30,6 +34,14 @@ const input = {
 } as const;
 
 describe('ExpoFocusNotificationAdapter', () => {
+  it('resolves the native platform without loading deprecated React Native exports', async () => {
+    const sdk = gateway();
+    const subject = new ExpoFocusNotificationAdapter(sdk, 'auto', () => 1_000);
+
+    expect(await subject.ensure(input)).toEqual({ ok: true, value: 'scheduled' });
+    expect(sdk.prepareAndroidChannel).not.toHaveBeenCalled();
+  });
+
   it('treats iOS provisional permission as allowed', async () => {
     const subject = new ExpoFocusNotificationAdapter(gateway(), 'ios', () => 1_000);
     expect(await subject.readPermission()).toEqual({
