@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_06_04_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-06-04 Exactly-once completion, reward và committed Result
-version: 0.2.0
-status: OWNER_APPROVED
-implementation_status: IMPLEMENTED_PENDING_OWNER_QUICK_UI
+version: 0.2.1
+status: DONE_OWNER_ACCEPTED_QUICK_UI
+implementation_status: DONE_OWNER_ACCEPTED_QUICK_UI
 implementation_start_sha: 7d9f93eb496120988bc2f945ec9084de2c58b8a9
 approved_by: Dũng Lư
 approved_at: 2026-09-04
@@ -17,7 +17,8 @@ upstream: origin/feats/epic-06
 planning_baseline_sha: 14ef3413742df4159aa3a7e537d2fd02667cb203
 us_06_03_implementation_sha: 14ef3413742df4159aa3a7e537d2fd02667cb203
 us_06_03_acceptance: OWNER_QUICK_UI_ACCEPTED_TO_OPEN_PLANNING
-manual_device_status: NOT_RUN_FOR_US_06_04
+manual_device_status: OWNER_QUICK_UI_SMOKE_REPORTED
+owner_accepted_at: 2026-09-07
 formal_tester_status: DEFERRED_TO_LATER_PHASE
 authority: PLANNING
 story_baseline: ./EPIC-06_USER_STORIES.md
@@ -584,10 +585,10 @@ review, không phải implementation mặc định.
 
 - [x] Automated/SQLite evidence ghi tại report; device/manual tách riêng và chưa chạy.
 - [x] Common consumers và routing/detached-callback regression tests pass.
-- [ ] Exact committed implementation SHA, report và owner acceptance được ghi.
+- [x] Exact committed implementation SHA, report và owner acceptance được ghi.
 - [x] Manual checklist không tick thay owner; formal vẫn deferred.
 - [x] No unapproved schema/dependency/native/Break/provider change.
-- [ ] US-06-04 accepted trước US-06-05 planning/implementation.
+- [x] US-06-04 accepted trước US-06-05 planning; US-06-05 implementation vẫn chưa bắt đầu.
 
 ## 15. References
 
@@ -611,6 +612,7 @@ review, không phải implementation mặc định.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.2.1 | 2026-09-07 | Codex | Recorded owner-reported quick UI completion and progression acceptance; opened owner-gated US-06-05 planning while retaining structured device/formal evidence limitations. |
 | 0.2.0 | 2026-09-04 | Codex | Recorded all 11 Option A approvals, start SHA, implementation candidate, automated evidence and manual handoff; no commit/owner acceptance inferred. |
 | 0.1.0 | 2026-09-04 | Codex | Created owner-gated completion/reward/Result plan on accepted US-06-03 SHA; documented 11 pending confirmations, crash-restoration decision, reuse, transaction and evidence matrices. |
 
@@ -625,4 +627,5 @@ review, không phải implementation mặc định.
 - [ ] Runtime/full quality/device US-06-04 chưa chạy vì đây là documentation-only planning.
 
 **US-06-04 implemented and committed at `da501a74db93001cf4f5600622568ca5424b4fa1`
-under approved Option A; owner quick UI and acceptance pending.**
+under approved Option A; owner quick UI progression acceptance recorded 2026-09-07. Full structured
+device matrix and formal tester remain deferred.**

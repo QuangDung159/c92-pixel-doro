@@ -1,8 +1,10 @@
 # US-06-04 — Test nhanh completion / reward / Result
 
-Status: NOT_RUN — chờ owner test UI trên candidate. Formal tester: `DEFERRED_TO_LATER_PHASE`.
+Status: OWNER_QUICK_UI_SMOKE_REPORTED — owner xác nhận done ngày 2026-09-07 và chấp nhận progression.
+Formal tester: `DEFERRED_TO_LATER_PHASE`.
 Ghi `<implementation-sha>` (hoặc HEAD + uncommitted diff), iPhone/OS, development build, fixture,
 ảnh/video và PASS/FAIL/BLOCKED/NOT_RUN cho từng bước. Checklist validator không phải device test.
+Owner chưa cung cấp kết quả theo từng case/device metadata, nên checklist chi tiết bên dưới vẫn mở.
 
 ## 1. Chạy phiên nhanh
 
@@ -84,4 +86,5 @@ unset EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE
 pnpm start --clear
 ```
 
-US-06-04 chưa được coi owner-accepted và chưa mở US-06-05 cho tới khi owner xác nhận quick UI.
+US-06-04 đã được owner chấp nhận progression qua quick UI và US-06-05 planning đã mở. Full structured
+device matrix và formal tester vẫn chưa hoàn tất; xác nhận progression không thay thế các evidence này.

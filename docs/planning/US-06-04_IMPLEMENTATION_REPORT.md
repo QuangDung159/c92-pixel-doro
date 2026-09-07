@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_US_06_04_IMPLEMENTATION_REPORT
 title: PixelDoro US-06-04 — Completion, Reward và Committed Result
-version: 0.1.1
-status: IMPLEMENTED_PENDING_OWNER_QUICK_UI
+version: 0.1.2
+status: DONE_OWNER_ACCEPTED_QUICK_UI
 story: US-06-04
 date: 2026-09-04
 owner: Dũng Lư
@@ -10,8 +10,9 @@ branch: feats/epic-06
 implementation_start_sha: 7d9f93eb496120988bc2f945ec9084de2c58b8a9
 implementation_candidate: COMMITTED
 exact_implementation_sha: da501a74db93001cf4f5600622568ca5424b4fa1
-manual_device_status: NOT_RUN
-owner_acceptance_status: PENDING_QUICK_UI
+manual_device_status: OWNER_QUICK_UI_SMOKE_REPORTED
+owner_acceptance_status: ACCEPTED_TO_OPEN_US_06_05_PLANNING
+owner_accepted_at: 2026-09-07
 formal_tester_status: DEFERRED_TO_LATER_PHASE
 language: vi
 ---
@@ -21,8 +22,9 @@ language: vi
 ## 1. Outcome
 
 Đã triển khai và commit candidate theo `US0604-CONFIRM-01`→`11` **Option A**, owner duyệt
-ngày 2026-09-04. Exact implementation SHA là `da501a74db93001cf4f5600622568ca5424b4fa1`;
-chưa coi Story owner-accepted khi quick UI chưa được xác nhận.
+ngày 2026-09-04. Exact implementation SHA là `da501a74db93001cf4f5600622568ca5424b4fa1`.
+Ngày 2026-09-07, owner báo cáo quick UI done và cho phép mở planning US-06-05. Báo cáo này ghi nhận
+progression acceptance; không suy diễn full structured device matrix hoặc formal tester đã pass.
 
 - Standard Relax/Strict hết giờ dùng một reconciliation service, timestamp từ durable session.
 - XP bằng configured minutes, Coin bằng floor(minutes/5), không cộng overtime hoặc Strict multiplier.
@@ -128,7 +130,10 @@ qua cold restart để kết luận timestamp behavior. Test startup overdue b�
 - [ ] Strict completion/failure và Cancel popup không crash; đúng 0/0 hoặc configured reward.
 - [ ] Read-only reload không cấp/replay; Recovery Retry không double grant.
 - [ ] Offline, Reduce Motion, large text, screen reader, ảnh/video + device/OS/build evidence.
-- [ ] Owner chấp nhận candidate qua quick UI; exact committed SHA đã ghi.
+- [x] Owner chấp nhận candidate qua quick UI; exact committed SHA đã ghi.
+
+Owner không cung cấp kết quả từng case/device metadata trong lần xác nhận progression này, vì vậy các
+checkbox chi tiết phía trên vẫn để mở và formal tester vẫn `DEFERRED_TO_LATER_PHASE`.
 
 ## 7. Option A limitations / scope audit
 
@@ -140,12 +145,14 @@ Không thay schema/migration/trigger/index, package manifest/lockfile, dependenc
 notification/analytics/audio/haptic provider; không Break/pause/resume/native blocking. Không sửa normative
 Core/specification/architecture. Shop purchase chỉ là integration fixture để kiểm tra current balance.
 
-US-06-04 đã triển khai và có exact commit; owner UI acceptance và formal device evidence còn mở.
-US-06-05 chưa bắt đầu; formal tester giữ `DEFERRED_TO_LATER_PHASE`.
+US-06-04 đã triển khai, có exact commit và được owner chấp nhận qua quick UI để mở
+[US-06-05 planning](./US-06-05_IMPLEMENTATION_PLAN.md). Full structured device evidence và formal
+tester vẫn mở; US-06-05 production implementation chưa bắt đầu.
 
 ## 8. Change log
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.1.2 | 2026-09-07 | Codex | Recorded owner-reported quick UI completion and progression acceptance to open US-06-05 planning; retained detailed device/formal evidence as deferred. |
 | 0.1.1 | 2026-09-07 | Codex | Recorded exact committed SHA, post-commit 618-test quality evidence and hidden room-shelf placeholder; owner quick UI remains pending. |
 | 0.1.0 | 2026-09-04 | Codex | Created the implemented working-tree candidate report with automated/SQLite/iOS export evidence. |
