@@ -11,7 +11,7 @@ export type FocusSessionBranch =
   | 'trial'
   | 'standard_error'
   | 'standard'
-  | 'prototype';
+  | 'missing';
 
 export const shouldOpenOnboardingTrialResult = (
   branch: FocusSessionBranch,
@@ -22,8 +22,10 @@ export const shouldOpenStandardFocusResult = (
   branch: FocusSessionBranch,
   standard: StandardFocusSessionProjection,
   outcome: StandardFocusOutcomeProjection,
-): boolean => outcome.status !== 'idle' && (branch === 'standard' || branch === 'prototype') &&
-  (standard.status === 'missing' || (standard.status === 'ready' && standard.sessionId === outcome.sessionId));
+): boolean => outcome.status !== 'idle' && (
+  (branch === 'missing' && standard.status === 'missing') ||
+  (branch === 'standard' && standard.status === 'ready' && standard.sessionId === outcome.sessionId)
+);
 
 export const decideFocusSessionBranch = (
   trial: OnboardingTrialRunningProjection,
@@ -39,5 +41,5 @@ export const decideFocusSessionBranch = (
   if (trial.status === 'ready') return 'trial';
   if (standard.status === 'error') return 'standard_error';
   if (standard.status === 'ready') return 'standard';
-  return 'prototype';
+  return 'missing';
 };
