@@ -18,6 +18,7 @@ const createSessions = (): SessionRepository => ({
   findActiveInTransaction: vi.fn(),
   insertRunningInTransaction: vi.fn(async () => ({ ok: true as const, value: undefined })),
   recordBackgroundedAtInTransaction: vi.fn(),
+  clearBackgroundedAtInTransaction: vi.fn(),
   transitionFromRunningInTransaction: vi.fn(async () => ({
     ok: true as const,
     value: 'updated' as const,

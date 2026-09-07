@@ -39,7 +39,7 @@ export const MobileApplicationProvider = ({
   </MobileApplicationContext.Provider>
 );
 
-const useMobileApplication = (): MobileApplicationFacade => {
+export const useMobileApplication = (): MobileApplicationFacade => {
   const application = useContext(MobileApplicationContext);
 
   if (application === undefined) {

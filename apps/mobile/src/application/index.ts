@@ -19,6 +19,7 @@ export {
   recoveryReasonForPersistenceError,
   recoveryReasonForTransactionError,
 } from './recovery';
+export * from './notifications';
 export {
   ConfirmedLocalDataReset,
   type ConfirmedLocalDataResetDependencies,
@@ -44,6 +45,7 @@ export type {
   AppLifecyclePort,
   AppLifecycleState,
 } from './ports/app-lifecycle.port';
+export type { TickScheduler } from './ports/tick-scheduler.port';
 export type {
   PetVisualDiagnostic,
   PetVisualDiagnosticsPort,
@@ -148,6 +150,38 @@ export type {
   StoreReviewAttemptRepository,
   UpdateAnalyticsDeliveryInput,
 } from './persistence';
+export {
+  DEFAULT_STANDARD_FOCUS_CONFIGURATION,
+  StandardFocusSessionController,
+  StandardFocusCancelController,
+  StandardFocusResultController,
+  StandardFocusSetupController,
+  StandardFocusOutcomeController,
+  StandardFocusLifecycleController,
+  StandardFocusAnalyticsRecorder,
+  StandardFocusSideEffectCoordinator,
+  type StandardFocusSessionControllerDependencies,
+  type StandardFocusSessionErrorCode,
+  type StandardFocusSessionProjection,
+  type StandardFocusCancelControllerDependencies,
+  type StandardFocusCancelErrorCode,
+  type StandardFocusCancelProjection,
+  type StandardFocusCancelResult,
+  type StandardFocusResultProjection,
+  type StandardFocusSetupConfiguration,
+  type StandardFocusSetupControllerDependencies,
+  type StandardFocusSetupErrorCode,
+  type StandardFocusSetupProjection,
+  type StandardFocusSetupStartResult,
+  type StandardFocusOutcomeProjection,
+  type StandardFocusLifecycleControllerDependencies,
+  type StandardFocusAnalyticsError,
+  type StandardFocusAnalyticsOutcome,
+  type StandardFocusAnalyticsRecorderDependencies,
+  type StandardFocusAnalyticsRecorderPort,
+  type StandardFocusSideEffectCoordinatorDependencies,
+  type StandardFocusSideEffectSettings,
+} from './standard-focus';
 export {
   ANALYTICS_EVENT_TTL_MS,
   ANALYTICS_QUEUE_CAPACITY,

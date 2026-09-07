@@ -82,6 +82,51 @@ export {
   type StartOnboardingTrialErrorCode,
   type StartOnboardingTrialOutcome,
 } from './onboarding-trial/start-onboarding-trial.use-case';
+export {
+  createStandardFocusRecord,
+  isRunningStandardFocus,
+  type StandardFocusRecordError,
+  type StandardFocusRecordInput,
+} from './standard-focus/standard-focus-record';
+export {
+  CancelStandardFocusUseCase,
+  type CancelStandardFocusDependencies,
+  type CancelStandardFocusError,
+  type CancelStandardFocusErrorCode,
+  type CancelStandardFocusOutcome,
+} from './standard-focus/cancel-standard-focus.use-case';
+export {
+  LoadStandardFocusResultUseCase,
+  type LoadStandardFocusResultDependencies,
+  type LoadStandardFocusResultError,
+  type LoadStandardFocusResultOutcome,
+} from './standard-focus/load-standard-focus-result.use-case';
+export type {
+  StandardFocusCompletedResult,
+  StandardFocusCancelledResult,
+  StandardFocusFailedResult,
+  StandardFocusTerminalResult,
+} from './standard-focus/standard-focus-terminal-result';
+export {
+  StartStandardFocusUseCase,
+  type StartStandardFocusDependencies,
+  type StartStandardFocusError,
+  type StartStandardFocusErrorCode,
+  type StartStandardFocusInput,
+  type StartStandardFocusOutcome,
+} from './standard-focus/start-standard-focus.use-case';
+export {
+  RecordStrictBackgroundUseCase,
+  type RecordStrictBackgroundDependencies,
+  type RecordStrictBackgroundError,
+  type RecordStrictBackgroundOutcome,
+} from './standard-focus/record-strict-background.use-case';
+export {
+  ReconcileStandardFocusUseCase,
+  type ReconcileStandardFocusDependencies,
+  type ReconcileStandardFocusError,
+  type ReconcileStandardFocusOutcome,
+} from './standard-focus/reconcile-standard-focus.use-case';
 export type {
   CatalogItemRecord,
   CatalogRepository,
@@ -131,6 +176,7 @@ export type {
 export type {
   FocusMode,
   FocusVariant,
+  ClearSessionBackgroundInput,
   RecordSessionBackgroundInput,
   RunningSessionRecord,
   SessionRecord,
@@ -153,3 +199,10 @@ export type {
   ApplicationResult,
   ApplicationWarning,
 } from './result/application-result';
+export {
+  STANDARD_FOCUS_DURATION_STEP_MINUTES,
+  STANDARD_FOCUS_MAX_DURATION_MINUTES,
+  STANDARD_FOCUS_MIN_DURATION_MINUTES,
+  projectRemainingTime,
+  type RemainingTimeProjection,
+} from '@pixeldoro/domain';

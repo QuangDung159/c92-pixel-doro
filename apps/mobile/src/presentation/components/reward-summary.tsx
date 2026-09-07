@@ -35,6 +35,6 @@ const styles = StyleSheet.create({
     letterSpacing: 1.2,
     marginBottom: 10,
   },
-  stats: { flexDirection: 'row', gap: 10 },
+  stats: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   copy: { color: palette.textPrimary, fontSize: 13, fontWeight: '700', lineHeight: 19, marginTop: 10 },
 });

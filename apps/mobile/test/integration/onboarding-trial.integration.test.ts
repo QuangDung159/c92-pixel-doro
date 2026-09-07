@@ -161,6 +161,24 @@ describe('onboarding trial SQLite integration', () => {
       value: { outcome: 'completed_fresh', completedAt: now },
     });
     expect(recordCompleted).toHaveBeenCalledWith(now);
+    expect(application.onboardingTrialRunning.getSnapshot()).toEqual({ status: 'missing' });
+
+    application.standardFocusSetup.setDuration(15);
+    application.standardFocusSetup.setMode('relax');
+    application.standardFocusSetup.setWorkTag('study');
+    expect(await application.standardFocusSetup.start()).toMatchObject({
+      ok: true,
+      session: {
+        focusVariant: 'standard',
+        configuredDurationMinutes: 15,
+      },
+    });
+    expect(application.onboardingTrialRunning.getSnapshot()).toEqual({ status: 'missing' });
+    expect(application.standardFocusSession.getSnapshot()).toMatchObject({
+      status: 'ready',
+      phase: 'running',
+      durationMinutes: 15,
+    });
     expect(await application.persistence.profile.find()).toMatchObject({
       ok: true,
       value: { totalXp: 5, coinBalance: 1 },

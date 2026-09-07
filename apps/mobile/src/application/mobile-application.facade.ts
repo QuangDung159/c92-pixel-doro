@@ -17,6 +17,14 @@ import type {
   CommandReadinessPort,
 } from './readiness/readiness-gate';
 import type { AppVisibilityController } from './visibility/app-visibility.controller';
+import type {
+  StandardFocusCancelController,
+  StandardFocusResultController,
+  StandardFocusSessionController,
+  StandardFocusSetupController,
+  StandardFocusOutcomeController,
+} from './standard-focus';
+import type { StandardFocusNotificationNavigationController } from './notifications';
 import type { PetVisualDiagnostic } from './ports/pet-visual-diagnostics.port';
 import type {
   CompleteFirstUseHandoffOutcome,
@@ -31,6 +39,13 @@ import type {
 export interface MobileApplicationFacade {
   readonly bootstrap: MobileBootstrap;
   readonly firstUseEntry: FirstUseEntryController;
+  readonly standardFocusSetup: StandardFocusSetupController;
+  readonly standardFocusSession: StandardFocusSessionController;
+  readonly standardFocusCancel: StandardFocusCancelController;
+  readonly standardFocusResult: StandardFocusResultController;
+  readonly standardFocusOutcome: StandardFocusOutcomeController;
+  readonly standardFocusNotificationNavigation: StandardFocusNotificationNavigationController;
+  readonly standardFocusReviewResetAvailable: boolean;
   readonly onboardingTrialRunning: OnboardingTrialRunningController;
   readonly onboardingTrialCompletion: OnboardingTrialCompletionController;
   readonly onboardingTrialHandoff: OnboardingTrialHandoffController;
@@ -65,6 +80,7 @@ export interface MobileApplicationFacade {
   refreshFirstUseEntry(): Promise<void>;
   refreshOnboardingTrialRunning(): Promise<void>;
   refreshOnboardingTrialResult(): Promise<void>;
+  requestStandardFocusOutcomeFeedback(): void;
   reconcileOnboardingTrial(sessionId?: string): ReturnType<
     OnboardingTrialCompletionController['reconcile']
   >;
@@ -72,6 +88,7 @@ export interface MobileApplicationFacade {
     OnboardingTrialCompletionController['retry']
   >;
   retryOnboardingTrialPetFeedback(): Promise<void>;
+  resetStandardFocusReviewData(): Promise<boolean>;
   recordPetVisualDiagnostic(diagnostic: PetVisualDiagnostic): void;
   reportPetVisualComplete(feedbackId: string): void;
   reportPetVisualFailure(feedbackId: string): void;

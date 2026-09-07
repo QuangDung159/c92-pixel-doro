@@ -90,11 +90,12 @@ describe('EPIC-05 production integrity', () => {
     expect(allProduction.match(/export const RewardSummary\b/g)).toHaveLength(1);
     expect(allProduction.match(/export const PetVisualStatus\b/g)).toHaveLength(1);
     expect(allProduction.match(/export const Button\b/g)).toHaveLength(1);
-    const countdown = read(
-      'apps/mobile/src/presentation/features/onboarding-trial/trial-countdown.tsx',
-    );
+    const countdown = read('apps/mobile/src/presentation/components/countdown-display.tsx');
     expect(countdown).toContain('accessibilityLabel');
     expect(countdown).toContain('accessibilityLiveRegion');
+    expect(read(
+      'apps/mobile/src/presentation/features/onboarding-trial/trial-countdown.tsx',
+    )).toContain('CountdownDisplay');
     const result = read(
       'apps/mobile/src/presentation/features/onboarding-trial/onboarding-trial-result-screen.tsx',
     );

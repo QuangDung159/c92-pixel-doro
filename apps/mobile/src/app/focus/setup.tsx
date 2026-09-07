@@ -1,28 +1,31 @@
-import { useRouter } from 'expo-router';
+import { useCallback } from 'react';
+import { useFocusEffect, useRouter } from 'expo-router';
 
 import { FocusSetupScreen } from '@/presentation/features/focus';
-import { usePrototype } from '@/presentation/prototype/prototype-context';
+import {
+  useStandardFocusSetupActions,
+  useStandardFocusSetupProjection,
+} from '@/presentation/providers/standard-focus-hooks';
 
 export default function FocusSetupRoute() {
   const router = useRouter();
-  const {
-    configuration,
-    setDuration,
-    setMode,
-    setWorkTag,
-    startFocus,
-  } = usePrototype();
+  const projection = useStandardFocusSetupProjection();
+  const { reset, setDuration, setMode, setWorkTag, start } = useStandardFocusSetupActions();
+  useFocusEffect(useCallback(() => {
+    reset();
+  }, [reset]));
 
   return (
     <FocusSetupScreen
-      configuration={configuration}
+      projection={projection}
       onBack={() => router.replace('/(tabs)')}
       onSetDuration={setDuration}
       onSetMode={setMode}
       onSetWorkTag={setWorkTag}
       onStart={() => {
-        startFocus();
-        router.push('/focus/session');
+        void start().then((result) => {
+          if (result.ok) router.push('/focus/session');
+        });
       }}
     />
   );

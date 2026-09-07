@@ -1,15 +1,17 @@
 import type {
-  PersistenceResult,
   SessionRecord,
   SessionRepository,
 } from '@pixeldoro/application';
+import { isRunningStandardFocus } from '@pixeldoro/application';
 
-import type { InstallationRecord, InstallationRepository } from '../persistence';
+import type { InstallationRepository } from '../persistence';
 
 export type FirstUseEntryDestination =
   | 'onboarding_intro'
   | 'trial_running'
   | 'trial_result'
+  | 'standard_focus_running'
+  | 'standard_focus_result'
   | 'home';
 
 export type FirstUseEntryErrorCode =
@@ -21,7 +23,12 @@ export type FirstUseEntryProjection =
   | { readonly status: 'loading' }
   | {
       readonly status: 'ready';
-      readonly destination: FirstUseEntryDestination;
+      readonly destination: Exclude<FirstUseEntryDestination, 'standard_focus_result'>;
+    }
+  | {
+      readonly status: 'ready';
+      readonly destination: 'standard_focus_result';
+      readonly sessionId: string;
     }
   | {
       readonly status: 'error';
@@ -31,12 +38,17 @@ export type FirstUseEntryProjection =
 export type FirstUseInstallationReader = Pick<InstallationRepository, 'find'>;
 export type FirstUseSessionReader = Pick<
   SessionRepository,
-  'findLatestOnboardingTrial'
+  'findActive' | 'findLatestOnboardingTrial'
 >;
 
 export interface FirstUseEntryControllerDependencies {
   readonly installation: FirstUseInstallationReader;
   readonly sessions: FirstUseSessionReader;
+  readonly standardOutcome?: {
+    getSnapshot():
+      | { readonly status: 'idle' }
+      | { readonly status: 'failed' | 'completed'; readonly sessionId: string };
+  };
 }
 
 const errorProjection = (
@@ -70,6 +82,16 @@ const destinationForTrial = (
     case 'failed':
       return errorProjection('FIRST_USE_ENTRY_STATE_INVALID');
   }
+};
+
+const destinationForCompletedOnboarding = (
+  active: SessionRecord | null,
+): FirstUseEntryProjection => {
+  if (active === null) return { status: 'ready', destination: 'home' };
+  if (isRunningStandardFocus(active)) {
+    return { status: 'ready', destination: 'standard_focus_running' };
+  }
+  return errorProjection('FIRST_USE_ENTRY_STATE_INVALID');
 };
 
 export class FirstUseEntryController {
@@ -119,11 +141,28 @@ export class FirstUseEntryController {
         return;
       }
 
-      const installationProjection = this.destinationForInstallation(
-        installation,
-      );
-      if (installationProjection !== undefined) {
-        this.publish(installationProjection);
+      if (installation.value === null || installation.value.id !== 1) {
+        this.publish(errorProjection('FIRST_USE_ENTRY_STATE_INVALID'));
+        return;
+      }
+
+      if (installation.value.onboardingCompletedAt !== null) {
+        const active = await this.dependencies.sessions.findActive();
+        if (!this.isCurrent(generation)) return;
+        if (!active.ok) {
+          this.publish(errorProjection('FIRST_USE_ENTRY_READ_FAILED'));
+          return;
+        }
+        const outcome = this.dependencies.standardOutcome?.getSnapshot();
+        if (active.value === null && outcome !== undefined && outcome.status !== 'idle') {
+          this.publish({
+            status: 'ready',
+            destination: 'standard_focus_result',
+            sessionId: outcome.sessionId,
+          });
+          return;
+        }
+        this.publish(destinationForCompletedOnboarding(active.value));
         return;
       }
 
@@ -139,21 +178,6 @@ export class FirstUseEntryController {
         this.publish(errorProjection('FIRST_USE_ENTRY_READ_FAILED'));
       }
     }
-  }
-
-  private destinationForInstallation(
-    result: Extract<
-      PersistenceResult<InstallationRecord | null>,
-      { readonly ok: true }
-    >,
-  ): FirstUseEntryProjection | undefined {
-    if (result.value === null || result.value.id !== 1) {
-      return errorProjection('FIRST_USE_ENTRY_STATE_INVALID');
-    }
-    if (result.value.onboardingCompletedAt !== null) {
-      return { status: 'ready', destination: 'home' };
-    }
-    return undefined;
   }
 
   private isCurrent(generation: number): boolean {

@@ -23,11 +23,13 @@ vi.mock('react-native', () => ({
     currentState: 'active',
     addEventListener: () => ({ remove: vi.fn() }),
   },
+  Platform: { OS: 'ios' },
 }));
 
 afterEach(() => {
   delete process.env.EXPO_PUBLIC_EPIC_02_EXIT_PROBE;
   delete process.env.EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE;
+  delete process.env.EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE;
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
 });
@@ -101,6 +103,7 @@ describe('mobile composition root', () => {
         }),
       },
       firstUseSessions: {
+        findActive: async () => ({ ok: true, value: null }),
         findLatestOnboardingTrial: async () => ({ ok: true, value: null }),
       },
       petCompanionSessions: {
@@ -150,15 +153,20 @@ describe('mobile composition root', () => {
       terminalStatus: 'completed' as const,
       rewardCommitted: true,
     };
-    application.petTerminalFeedback.requestFreshTransition(completed, {
-      currentResultSessionId: completed.sessionId,
-      activeSessionId: null,
+    application.standardFocusOutcome.publishFreshCompletion({
+      status: 'completed', sessionId: completed.sessionId, receiptId: 'receipt-1',
+      mode: 'relax', workTag: 'study', durationMinutes: 15,
+      startedAt: 100, endsAt: 900_100, resolvedAt: completed.committedAtMs,
+      rewardClaimedAt: completed.committedAtMs, xpEarned: 15, coinsEarned: 3,
+      totalXp: 15, coinBalance: 3,
     });
+    application.requestStandardFocusOutcomeFeedback();
     expect(application.petVisual.getSnapshot()).toMatchObject({
       status: 'ready',
       source: 'terminal',
       state: 'celebrating',
     });
+    application.standardFocusOutcome.consume(completed.sessionId);
 
     petScenario = 'short_break';
     await application.refreshPetCompanion();
@@ -225,6 +233,8 @@ describe('mobile composition root', () => {
       diagnosticsEnabled: false,
       sqliteDriver: new FakeSQLiteDriver(),
     });
+    expect(disabled.standardFocusReviewResetAvailable).toBe(false);
+    await expect(disabled.resetStandardFocusReviewData()).resolves.toBe(false);
     await disabled.refreshFirstUseEntry();
     expect(disabled.firstUseEntry.getSnapshot()).toEqual({
       status: 'error',

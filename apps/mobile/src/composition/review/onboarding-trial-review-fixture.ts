@@ -134,6 +134,11 @@ class ReviewSessionRepository implements SessionRepository {
     scope,
     input,
   ) => this.delegate.recordBackgroundedAtInTransaction(scope, input);
+
+  clearBackgroundedAtInTransaction: SessionRepository['clearBackgroundedAtInTransaction'] = (
+    scope,
+    input,
+  ) => this.delegate.clearBackgroundedAtInTransaction(scope, input);
   transitionFromRunningInTransaction: SessionRepository['transitionFromRunningInTransaction'] = (
     scope,
     input,

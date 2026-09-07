@@ -1,5 +1,7 @@
 export { Button, PrimaryButton, SecondaryButton, type ButtonProps } from './button';
 export { ChoiceChip, type ChoiceChipProps } from './choice-chip';
+export { CountdownDisplay, type CountdownDisplayProps } from './countdown-display';
+export { DurationControl, type DurationControlProps } from './duration-control';
 export {
   ConfirmationDialog,
   ConfirmationModal,
@@ -15,6 +17,7 @@ export { PetVisualStatus, type PetVisualStatusProps } from './pet-visual-status'
 export { ScreenHeader, type ScreenHeaderProps } from './screen-header';
 export { ScreenShell, ScreenShell as PrototypeScreen } from './screen-shell';
 export { RewardSummary, type RewardSummaryProps } from './reward-summary';
+export { ProgressionSummary, type ProgressionSummaryProps } from './progression-summary';
 export { SectionLabel } from './section-label';
 export { Stat, StatDisplay, type StatDisplayProps } from './stat-display';
 export { EmptyState, ErrorState, LoadingState } from './status-surface';

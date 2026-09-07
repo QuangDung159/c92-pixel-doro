@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 
 import { MobileApplicationRoot } from '@/composition';
 import { PrototypeProvider } from '@/presentation/prototype/prototype-context';
+import { StandardFocusNotificationNavigationBridge } from './standard-focus-notification-navigation-bridge';
 
 export const unstable_settings = {
   initialRouteName: 'index',
@@ -11,6 +12,7 @@ export const unstable_settings = {
 export default function RootLayout() {
   return (
     <MobileApplicationRoot>
+      <StandardFocusNotificationNavigationBridge />
       <PrototypeProvider>
         <StatusBar style="dark" />
         <Stack screenOptions={{ animation: 'fade', headerShown: false }}>

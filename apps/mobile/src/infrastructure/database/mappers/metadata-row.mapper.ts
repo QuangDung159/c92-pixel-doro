@@ -75,6 +75,8 @@ const isApprovedProperty = (key: string, value: unknown): boolean => {
       return value === null || isOneOf(value, ['coding', 'study', 'writing', 'reading']);
     case 'status':
       return isOneOf(value, ['running', 'completed', 'failed', 'cancelled']);
+    case 'terminalStatus':
+      return isOneOf(value, ['completed', 'failed', 'cancelled']);
     case 'breakType':
       return isOneOf(value, ['short_break', 'long_break']);
     case 'rewardReason':
@@ -87,6 +89,12 @@ const isApprovedProperty = (key: string, value: unknown): boolean => {
     case 'durationMinutes':
       return typeof value === 'number' && Number.isSafeInteger(value) &&
         value >= 5 && value <= 120;
+    case 'xpEarned':
+      return typeof value === 'number' && Number.isSafeInteger(value) &&
+        value >= 0 && value <= 120;
+    case 'coinsEarned':
+      return typeof value === 'number' && Number.isSafeInteger(value) &&
+        value >= 0 && value <= 24;
     case 'attemptCount':
       return isNonNegativeSafeInteger(value);
     case 'isFirstSession':

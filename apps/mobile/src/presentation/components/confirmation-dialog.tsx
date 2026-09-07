@@ -12,6 +12,7 @@ export interface ConfirmationDialogProps {
   readonly onConfirm: () => void;
   readonly onDismiss: () => void;
   readonly busy?: boolean;
+  readonly busyLabel?: string;
 }
 
 export const ConfirmationDialog = ({
@@ -22,16 +23,22 @@ export const ConfirmationDialog = ({
   onConfirm,
   onDismiss,
   busy = false,
+  busyLabel = 'Đang dừng phiên…',
 }: ConfirmationDialogProps) => (
-  <Modal animationType="fade" onRequestClose={onDismiss} transparent visible={visible}>
+  <Modal
+    animationType="fade"
+    onRequestClose={() => { if (!busy) onDismiss(); }}
+    transparent
+    visible={visible}
+  >
     <View style={styles.scrim}>
-      <View accessibilityViewIsModal style={styles.card}>
+      <View accessibilityLabel={title} accessibilityViewIsModal style={styles.card}>
         <Text accessibilityRole="header" style={styles.title}>
           {title}
         </Text>
         <Text style={styles.body}>{body}</Text>
         <PrimaryButton busy={busy} label="Tiếp tục" onPress={onDismiss} />
-        <SecondaryButton busy={busy} label={busy ? 'Đang dừng phiên…' : confirmLabel} onPress={onConfirm} />
+        <SecondaryButton busy={busy} label={busy ? busyLabel : confirmLabel} onPress={onConfirm} />
       </View>
     </View>
   </Modal>

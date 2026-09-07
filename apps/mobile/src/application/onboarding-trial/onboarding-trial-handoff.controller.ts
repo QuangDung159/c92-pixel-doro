@@ -123,11 +123,17 @@ export class OnboardingTrialHandoffController {
     ]);
     const destination = this.dependencies.firstUseEntry.getSnapshot();
     const pet = this.dependencies.petCompanion.getSnapshot();
+    const validFreshDestination =
+      destination.status === 'ready' && destination.destination === 'home' &&
+      pet.status === 'ready' && pet.activeSessionId === null;
+    const validCompletedDestination = completed.value.outcome === 'already_completed' &&
+      destination.status === 'ready' &&
+      (destination.destination === 'home' ||
+        destination.destination === 'standard_focus_running' ||
+        destination.destination === 'standard_focus_result') &&
+      pet.status === 'ready';
     if (
-      destination.status !== 'ready' ||
-      destination.destination !== 'home' ||
-      pet.status !== 'ready' ||
-      pet.activeSessionId !== null
+      !validFreshDestination && !validCompletedDestination
     ) {
       return this.fail('ONBOARDING_HANDOFF_STATE_INCONSISTENT');
     }

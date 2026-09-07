@@ -37,9 +37,10 @@ export const PetStage = ({
 }: PetStageProps) => {
   const label = statusLabel ?? defaultStatusLabels[state];
 
+  // TODO(room-decor): Restore room decoration with the future pegboard-style
+  // feature. Keep the standalone placeholder shelf hidden until it is ready.
   return (
     <View style={styles.scene}>
-      <View accessibilityElementsHidden style={styles.roomShelf} />
       <PetAnimationRenderer
         {...(onPlaybackComplete === undefined ? {} : { onPlaybackComplete })}
         {...(onPlaybackFailure === undefined ? {} : { onPlaybackFailure })}
@@ -67,14 +68,5 @@ const styles = StyleSheet.create({
     minHeight: 230,
     overflow: 'hidden',
     paddingTop: 30,
-  },
-  roomShelf: {
-    backgroundColor: palette.accentDark,
-    height: 8,
-    opacity: 0.35,
-    position: 'absolute',
-    right: 20,
-    top: 40,
-    width: 75,
   },
 });

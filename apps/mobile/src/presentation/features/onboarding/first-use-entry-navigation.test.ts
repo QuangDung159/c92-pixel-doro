@@ -10,6 +10,8 @@ describe('first-use entry navigation', () => {
     ['onboarding_intro', '/(onboarding)'],
     ['trial_running', '/focus/session'],
     ['trial_result', '/focus/result'],
+    ['standard_focus_running', '/focus/session'],
+    ['standard_focus_result', '/focus/result'],
     ['home', '/(tabs)'],
   ] as const)('maps %s to %s', (destination, path) => {
     expect(pathForFirstUseDestination(destination)).toBe(path);
@@ -41,5 +43,15 @@ describe('first-use entry navigation', () => {
     );
     expect(duplicate).toBe('home');
     expect(replace).toHaveBeenCalledOnce();
+  });
+
+  it('carries the exact startup Strict result identity', () => {
+    const replace = vi.fn();
+    expect(synchronizeFirstUseEntryNavigation({
+      status: 'ready', destination: 'standard_focus_result', sessionId: 'strict-1',
+    }, null, replace)).toBe('standard_focus_result');
+    expect(replace).toHaveBeenCalledWith({
+      pathname: '/focus/result', params: { sessionId: 'strict-1' },
+    });
   });
 });

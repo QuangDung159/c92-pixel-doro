@@ -16,13 +16,21 @@ const result: OnboardingTrialCommittedResult = {
   coinBalance: 1,
 };
 
-const harness = () => {
+const harness = ({
+  outcome = 'completed_fresh',
+  destination = 'home',
+  activeSessionId = null,
+}: {
+  readonly outcome?: 'completed_fresh' | 'already_completed';
+  readonly destination?: 'home' | 'standard_focus_running' | 'standard_focus_result';
+  readonly activeSessionId?: string | null;
+} = {}) => {
   const trace: string[] = [];
   const execute = vi.fn(async () => {
     trace.push('persist');
     return {
       ok: true as const,
-      value: { outcome: 'completed_fresh' as const, completedAt: 30 },
+      value: { outcome, completedAt: 30 },
     };
   });
   const refreshSnapshot = vi.fn(async () => {
@@ -48,11 +56,11 @@ const harness = () => {
     completeHandoff: { execute } as unknown as CompleteFirstUseHandoffUseCase,
     firstUseEntry: {
       refresh: refreshEntry,
-      getSnapshot: () => ({ status: 'ready', destination: 'home' }),
+      getSnapshot: () => ({ status: 'ready', destination }),
     } as unknown as FirstUseEntryController,
     petCompanion: {
       refresh: refreshPet,
-      getSnapshot: () => ({ status: 'ready', baseState: 'idle', activeSessionId: null }),
+      getSnapshot: () => ({ status: 'ready', baseState: 'idle', activeSessionId }),
     } as never,
   });
   return { controller, execute, refreshSnapshot, trace };
@@ -78,6 +86,20 @@ describe('OnboardingTrialHandoffController', () => {
     expect(second).toBe(first);
     await first;
     expect(execute).toHaveBeenCalledOnce();
+  });
+
+  it('recovers an idempotent Trial CTA when a Standard Focus is already running', async () => {
+    const { controller } = harness({
+      outcome: 'already_completed',
+      destination: 'standard_focus_running',
+      activeSessionId: 'focus-15',
+    });
+
+    await expect(controller.complete(result)).resolves.toMatchObject({
+      ok: true,
+      value: { outcome: 'already_completed' },
+    });
+    expect(controller.getSnapshot()).toMatchObject({ status: 'success' });
   });
 
   it('stays recoverable when snapshot refresh fails or totals are stale', async () => {
