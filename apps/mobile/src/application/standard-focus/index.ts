@@ -32,3 +32,15 @@ export {
   StandardFocusLifecycleController,
   type StandardFocusLifecycleControllerDependencies,
 } from './standard-focus-lifecycle.controller';
+export {
+  StandardFocusAnalyticsRecorder,
+  type StandardFocusAnalyticsError,
+  type StandardFocusAnalyticsOutcome,
+  type StandardFocusAnalyticsRecorderDependencies,
+  type StandardFocusAnalyticsRecorderPort,
+} from './standard-focus-analytics.recorder';
+export {
+  StandardFocusSideEffectCoordinator,
+  type StandardFocusSideEffectCoordinatorDependencies,
+  type StandardFocusSideEffectSettings,
+} from './standard-focus-side-effect.coordinator';

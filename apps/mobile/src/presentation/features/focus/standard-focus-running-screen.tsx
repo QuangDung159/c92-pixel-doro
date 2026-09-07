@@ -127,7 +127,7 @@ export const StandardFocusRunningScreen = ({
 };
 
 const styles = StyleSheet.create({
-  sessionRow: { flexDirection: 'row', justifyContent: 'space-between' },
+  sessionRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'space-between' },
   mode: { color: palette.textPrimary, fontSize: 13, fontWeight: '900', letterSpacing: 1.5 },
   tag: { color: palette.accentDark, fontSize: 13, fontWeight: '900' },
   reviewTitle: { color: palette.textPrimary, fontSize: 14, fontWeight: '900' },

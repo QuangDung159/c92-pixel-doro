@@ -1,16 +1,19 @@
 ---
 document_id: PIXELDORO_US_06_05_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-06-05 Notification, analytics hooks, accessibility và EPIC-06 exit
-version: 0.1.0
-status: PROPOSED_OWNER_REVIEW
-implementation_status: NOT_STARTED
+version: 0.3.0
+status: IMPLEMENTED_CANDIDATE_PENDING_OWNER_UI
+implementation_status: IMPLEMENTED_CANDIDATE
 date: 2026-09-07
 owner: Dũng Lư
+approved_by: Dũng Lư
+approved_at: 2026-09-07
 reviewer_role: Tech Lead/Product Owner
 language: vi
 branch: feats/epic-06
 upstream: origin/feats/epic-06
 planning_baseline_sha: 87b5bee2976fa6c1990c3b583c669e60e6576018
+implementation_start_sha: 87b5bee2976fa6c1990c3b583c669e60e6576018
 us_06_04_implementation_sha: da501a74db93001cf4f5600622568ca5424b4fa1
 us_06_04_acceptance: OWNER_QUICK_UI_REPORTED_2026_09_07
 manual_device_status: US_06_05_NOT_RUN
@@ -19,6 +22,7 @@ authority: PLANNING
 story_baseline: ./EPIC-06_USER_STORIES.md
 previous_story_plan: ./US-06-04_IMPLEMENTATION_PLAN.md
 previous_story_report: ./US-06-04_IMPLEMENTATION_REPORT.md
+implementation_report: ./US-06-05_IMPLEMENTATION_REPORT.md
 source_of_truth: ../PIXELDORO_CORE_TRUTH.md
 ---
 
@@ -34,8 +38,10 @@ Owner báo cáo quick UI US-06-04 done ngày 2026-09-07. Plan được tạo tr�
 `87b5bee2976fa6c1990c3b583c669e60e6576018`; SHA này chứa documentation closure của US-06-04,
 trong khi exact code candidate là `da501a74db93001cf4f5600622568ca5424b4fa1`.
 
-**Planning-only:** chưa cài package, chưa sửa config/native, chưa prebuild/build, chưa implement code.
-Production implementation chỉ bắt đầu sau khi owner duyệt toàn bộ `US0605-CONFIRM-01`→`12`.
+Owner duyệt toàn bộ Option A cho `US0605-CONFIRM-01`→`12` ngày 2026-09-07 và yêu cầu triển khai.
+Implementation candidate đã hoàn tất trên working tree bắt đầu tại SHA
+`87b5bee2976fa6c1990c3b583c669e60e6576018`, giữ nguyên các
+documentation edits của planning/US-06-04 acceptance trong working tree.
 
 ## 1. Authority và phạm vi
 
@@ -312,23 +318,23 @@ Expected target ownership:
 
 Exact filenames may shift one directory within approved layer, but ownership/API boundaries above stay.
 
-## 8. Acceptance checklist — chưa chạy
+## 8. Acceptance checklist — implementation candidate
 
-- [ ] Local notification package/plugin/build compatibility approved and verified for SDK57.
-- [ ] Start commit success is independent from permission/schedule/analytics result.
-- [ ] Stable ensure produces at most one equivalent notification per Standard session.
-- [ ] Terminal completed/failed/cancelled cleanup is safe/idempotent; stale operations reconciled.
-- [ ] Preference off/permission denied/undetermined/provisional/adapter failure follow approved policy.
-- [ ] Tap/cold response validates exact identity and only enters reconcile/read; no direct grant/status.
-- [ ] Standard analytics exact events/IDs/properties enqueue only after corresponding fresh commit.
-- [ ] Trial emits no `focus_session_*` or `reward_granted`; opt-out has no backfill.
-- [ ] Side-effect failure/partial analytics/crash window never changes committed session/reward/profile.
-- [ ] Setup/Running/three Results/recovery pass semantic, large text, screen reader, Reduce Motion audits.
-- [ ] Production Standard route contains no prototype fallback or provider SDK import.
-- [ ] Offline/relaunch/race/reset regressions and real SQLite facts pass.
+- [x] Local notification package/plugin compatibility and config introspection verified for SDK57; native rebuild remains required.
+- [x] Start commit success is independent from permission/schedule/analytics result.
+- [x] Stable ensure produces at most one equivalent notification per Standard session.
+- [x] Terminal completed/failed/cancelled cleanup is safe/idempotent; stale operations reconciled.
+- [x] Preference off/permission denied/undetermined/provisional/adapter failure follow approved policy.
+- [x] Tap/cold response validates exact identity and only enters reconcile/read; no direct grant/status.
+- [x] Standard analytics exact events/IDs/properties enqueue only after corresponding fresh commit.
+- [x] Trial emits no `focus_session_*` or `reward_granted`; opt-out has no backfill.
+- [x] Side-effect failure/partial analytics/crash window never changes committed session/reward/profile.
+- [x] Setup/Running/three Results/recovery received semantic, large-text, Reduce Motion code audit and focused fixes; device matrix remains pending.
+- [x] Production Standard route contains no prototype fallback or provider SDK import.
+- [x] Offline/relaunch/race/reset regressions and real SQLite facts pass in automated coverage.
 - [ ] iOS and Android native build/device evidence status recorded factually.
 - [ ] No schema/provider/Break/EPIC-07→12 scope leak.
-- [ ] Full quality, Expo exports, config/lock/repository/static checks pass.
+- [x] Full quality, Expo exports, config/lock/repository/static checks pass.
 - [ ] EPIC-06 exit report, exact committed SHA and owner acceptance recorded.
 
 ## 9. Automated và integration matrix
@@ -412,7 +418,7 @@ verified on app foreground/relaunch from persisted timestamps, not notification 
   in one final Story, tasks T01→T13; no future-Epic UI.
 - **B:** split US-06-05 into multiple Stories; clearer commits but changes approved Epic order/docs.
 - **Ảnh hưởng:** without approval, implementation scope/exit gate is not stable.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-07.
 
 ### US0605-CONFIRM-02 — Native dependency/config authorization
 
@@ -421,7 +427,7 @@ verified on app foreground/relaunch from persisted timestamps, not notification 
 - **B:** do not add native dependency; revise EPIC-06 exit to defer notification (authority change).
 - **Trade-off:** A satisfies locked local notification but creates native rebuild/testing work; B keeps
   repo stable but cannot claim current EPIC-06 notification acceptance.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-07.
 
 ### US0605-CONFIRM-03 — Permission UX
 
@@ -429,14 +435,14 @@ verified on app foreground/relaunch from persisted timestamps, not notification 
   once without blocking navigation; denial silently skips and waits future Settings guidance.
 - **B:** custom explainer modal before OS prompt; clearer context but adds new UX/copy/screen state.
 - **C:** request on first launch; simplest wiring but violates contextual permission intent.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-07.
 
 ### US0605-CONFIRM-04 — Notification identity/no-schema
 
 - **A (đề xuất):** deterministic `standard-focus-complete:<sessionId>`, OS list/compare/replace,
   idempotent exact cancel; no durable notification receipt/migration.
 - **B:** add local notification-operation table; stronger audit but unproven schema/user-value need.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-07.
 
 ### US0605-CONFIRM-05 — Notification content/sound
 
@@ -444,14 +450,14 @@ verified on app foreground/relaunch from persisted timestamps, not notification 
   default sound only when sound setting permits.
 - **B:** include mode/tag/reward; richer but privacy/stale-result risk and unnecessary payload.
 - **C:** always silent; low interruption but weakens completion reminder experience.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-07.
 
 ### US0605-CONFIRM-06 — Notification tap authority
 
 - **A (đề xuất):** exact identity → startup/readiness barrier → reconcile/read → Running/Result/Home;
   repeated/malformed response ignored/recovered, never latest or direct complete/grant.
 - **B:** deep-link directly to Result by route data; shorter but can render stale/uncommitted truth.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-07.
 
 ### US0605-CONFIRM-07 — Standard analytics taxonomy/properties
 
@@ -459,7 +465,7 @@ verified on app foreground/relaunch from persisted timestamps, not notification 
   never properties; Trial exclusion retained.
 - **B:** events with empty `{}` like onboarding; safer privacy but loses mode/duration/tag metrics.
 - **C:** add broad device/UI properties; violates minimization and schema-review boundary.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-07.
 
 ### US0605-CONFIRM-08 — Analytics delivery boundary
 
@@ -467,14 +473,14 @@ verified on app foreground/relaunch from persisted timestamps, not notification 
   post-commit crash-window loss and do not backfill/reconstruct events.
 - **B:** integrate PostHog now; violates EPIC-11/provider delivery scope and expands cost/privacy work.
 - **C:** reconstruct missing events on startup; improves counts but risks historical replay semantics.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-07.
 
 ### US0605-CONFIRM-09 — Side-effect orchestration
 
 - **A (đề xuất):** extract dedicated Standard side-effect composition/coordinator; invoke typed hooks
   after commit, run independently, never enter core Recovery for notification/analytics failure.
 - **B:** place SDK/queue calls in controllers/routes; less file work but violates layering/testability.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-07.
 
 ### US0605-CONFIRM-10 — Accessibility fix boundary
 
@@ -482,7 +488,7 @@ verified on app foreground/relaunch from persisted timestamps, not notification 
   wrapping/stacking, semantic tests + manual VoiceOver/TalkBack/large text/Reduce Motion.
 - **B:** global design-system rewrite; broader consistency but speculative and high regression risk.
 - **C:** report issues only; cannot satisfy Epic exit accessibility requirements.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-07.
 
 ### US0605-CONFIRM-11 — Fixtures/device evidence
 
@@ -490,7 +496,7 @@ verified on app foreground/relaunch from persisted timestamps, not notification 
   orchestration; owner quick smoke, formal tester deferred unless actually run; iOS+Android build status explicit.
 - **B:** mocks/validator count as device pass; faster but factually invalid.
 - **C:** require full formal tester before candidate; strongest evidence but blocks current iteration.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-07.
 
 ### US0605-CONFIRM-12 — Epic exit/next-step gate
 
@@ -498,7 +504,7 @@ verified on app foreground/relaunch from persisted timestamps, not notification 
   owner quick UI acceptance; formal matrix may remain deferred and is recorded as limitation.
 - **B:** close at automated pass before owner UI; faster but breaks established progression gate.
 - **C:** start EPIC-07 implementation in parallel; increases active-session/notification overlap risk.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-07.
 
 ## 13. Definition of Ready / Done
 
@@ -508,8 +514,8 @@ verified on app foreground/relaunch from persisted timestamps, not notification 
 - [x] Notification/analytics/a11y current code, schema, dependencies and native config audited.
 - [x] Official SDK57 compatibility evidence and exact proposed dependency recorded.
 - [x] No schema gap found; task sequence/test/manual plan prepared.
-- [ ] Owner approves `US0605-CONFIRM-01`→`12`.
-- [ ] Implementation start SHA/tree overlap recorded after approval.
+- [x] Owner approves `US0605-CONFIRM-01`→`12` as Option A.
+- [x] Implementation start SHA/tree overlap recorded after approval.
 
 ### Done after implementation
 
@@ -524,6 +530,7 @@ verified on app foreground/relaunch from persisted timestamps, not notification 
 
 References: [EPIC-06 Stories](./EPIC-06_USER_STORIES.md),
 [US-06-04 Report](./US-06-04_IMPLEMENTATION_REPORT.md),
+[US-06-05 Report](./US-06-05_IMPLEMENTATION_REPORT.md),
 [Technical Overview](../architecture/technical-overview.md),
 [System Architecture](../architecture/system-architecture.md),
 [Project Structure](../architecture/project-structure.md),
@@ -533,15 +540,18 @@ References: [EPIC-06 Stories](./EPIC-06_USER_STORIES.md),
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.3.0 | 2026-09-07 | Codex | Recorded implementation candidate, automated/export evidence, native/manual handoff and remaining SDK patch-drift limitation. |
+| 0.2.0 | 2026-09-07 | Codex | Recorded owner approval of all 12 Option A confirmations and implementation start SHA; production implementation in progress. |
 | 0.1.0 | 2026-09-07 | Codex | Created owner-gated US-06-05 plan after US-06-04 quick UI; audited notification native gap, reusable local analytics queue, accessibility targets, 12 confirmations and Epic exit evidence. |
 
 Validation required for this planning turn:
 
 - [x] `git diff --check`.
 - [x] All local Markdown links resolve across the five touched documents.
-- [x] Confirmation IDs continuous 01–12 and all 12 remain PENDING.
-- [x] Only planning/device-guide Markdown changed; no production/package/config/schema/native/generated code.
-- [x] No US-06-05 implementation/acceptance/device checkbox falsely marked complete.
+- [x] Confirmation IDs continuous 01–12; all 12 now record owner-approved Option A.
+- [x] Production/package/config/application/infrastructure/UI implementation changes are within approved US-06-05 scope; no schema/migration/provider/generated artifact was added.
+- [x] No native build/device/owner acceptance checkbox is falsely marked complete.
 - [x] EPIC-07→12 and provider delivery remain out of scope.
 
-**US-06-05 implementation has not started. Await owner approval of all 12 confirmations.**
+**US-06-05 implementation candidate is complete under all 12 owner-approved Option A confirmations;
+native Development Build/manual owner UI acceptance remains pending.**

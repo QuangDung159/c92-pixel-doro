@@ -29,6 +29,11 @@ const invalidCases = [
     code: "import 'expo-sqlite';",
   },
   {
+    name: 'Mobile Application cannot import Expo Notifications',
+    filePath: 'apps/mobile/src/application/__notification-boundary-check__.ts',
+    code: "import 'expo-notifications';",
+  },
+  {
     name: 'Mobile Presentation cannot import Domain directly',
     filePath: 'apps/mobile/src/presentation/__boundary-check__.ts',
     code: "import '@pixeldoro/domain';",
@@ -88,6 +93,11 @@ const validCases = [
     name: 'Database Infrastructure can import SQLite',
     filePath: 'apps/mobile/src/infrastructure/database/__valid-sqlite-boundary-check__.ts',
     code: "import type { SQLiteDatabase } from 'expo-sqlite';\nexport type Database = SQLiteDatabase;",
+  },
+  {
+    name: 'Platform Infrastructure can import Expo Notifications',
+    filePath: 'apps/mobile/src/infrastructure/platform/__valid-notification-boundary-check__.ts',
+    code: "import type { NotificationResponse } from 'expo-notifications';\nexport type Response = NotificationResponse;",
   },
 ];
 

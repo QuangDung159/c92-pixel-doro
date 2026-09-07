@@ -25,6 +25,18 @@ const epic05ExitFlowPath = `${deviceDirectory}epic-05-exit-smoke.md`;
 const standardFocusStartFlowPath = `${deviceDirectory}standard-focus-start-smoke.md`;
 const standardFocusRelaxFlowPath = `${deviceDirectory}standard-focus-relax-running-smoke.md`;
 const standardFocusCompletionFlow = await readFile(`${deviceDirectory}standard-focus-completion-smoke.md`, 'utf8');
+const standardFocusSideEffectsFlow = await readFile(`${deviceDirectory}standard-focus-side-effects-exit-smoke.md`, 'utf8');
+for (const evidence of [
+  'standard_side_effect_fast_notification', 'standard_side_effect_permission_denied',
+  'standard_side_effect_schedule_failure_once', 'standard_side_effect_cancel_failure_once',
+  'standard_side_effect_queue_failure_once', 'expo-notifications',
+  'VoiceOver', 'TalkBack', 'Reduce Motion', 'offline', '<implementation-sha>',
+  'DEFERRED_TO_LATER_PHASE', 'unset EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE',
+]) {
+  if (!standardFocusSideEffectsFlow.includes(evidence)) {
+    throw new Error(`Standard Focus side-effect exit flow is missing: ${evidence}`);
+  }
+}
 for (const evidence of [
   'standard_completion_fast_clock', 'standard_completion_receipt_failure_once',
   'standard_completion_profile_failure_once', 'standard_completion_result_read_failure_once',

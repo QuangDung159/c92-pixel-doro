@@ -29,6 +29,7 @@ export interface StandardFocusLifecycleControllerDependencies {
   reconcile(sessionId?: string): Promise<
     ApplicationResult<ReconcileStandardFocusOutcome, ReconcileStandardFocusError>
   >;
+  onReconciled?(outcome: ReconcileStandardFocusOutcome): void;
 }
 
 export class StandardFocusLifecycleController {
@@ -90,6 +91,11 @@ export class StandardFocusLifecycleController {
       return;
     }
     if (this.disposed) return;
+    try {
+      this.dependencies.onReconciled?.(result.value);
+    } catch {
+      // Post-commit side effects cannot alter durable reconciliation.
+    }
     if ((result.value.outcome === 'completed' || result.value.outcome === 'failed') &&
       result.value.freshness === 'fresh_commit') {
       if (result.value.outcome === 'completed') {

@@ -10,6 +10,7 @@ const domainForbidden = [
   'react-native',
   'expo',
   'expo-router',
+  'expo-notifications',
   'zustand',
   'expo-sqlite',
   'posthog-react-native',
@@ -21,6 +22,7 @@ const sharedApplicationForbidden = [
   'react-native',
   'expo',
   'expo-router',
+  'expo-notifications',
   'zustand',
   'expo-sqlite',
   'posthog-react-native',
@@ -97,6 +99,7 @@ export default defineConfig([
         'react-native',
         'expo',
         'expo-router',
+        'expo-notifications',
         'zustand',
         'expo-sqlite',
         'posthog-react-native',
@@ -115,6 +118,7 @@ export default defineConfig([
         '@pixeldoro/domain',
         'expo',
         'expo-router',
+        'expo-notifications',
         'expo-sqlite',
         'posthog-react-native',
       ], [
@@ -148,7 +152,10 @@ export default defineConfig([
   {
     files: ['apps/mobile/src/composition/**/*.{ts,tsx}'],
     rules: {
-      'no-restricted-imports': noRestrictedImports(['expo-sqlite'], [
+      'no-restricted-imports': noRestrictedImports([
+        'expo-notifications',
+        'expo-sqlite',
+      ], [
         '@pixeldoro/domain/src/**',
         '@pixeldoro/application/src/**',
         'expo-sqlite/**',
@@ -161,6 +168,7 @@ export default defineConfig([
     rules: {
       'no-restricted-imports': noRestrictedImports([
         '@pixeldoro/domain',
+        'expo-notifications',
         'expo-sqlite',
         'posthog-react-native',
       ], [

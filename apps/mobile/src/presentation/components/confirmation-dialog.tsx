@@ -25,9 +25,14 @@ export const ConfirmationDialog = ({
   busy = false,
   busyLabel = 'Đang dừng phiên…',
 }: ConfirmationDialogProps) => (
-  <Modal animationType="fade" onRequestClose={onDismiss} transparent visible={visible}>
+  <Modal
+    animationType="fade"
+    onRequestClose={() => { if (!busy) onDismiss(); }}
+    transparent
+    visible={visible}
+  >
     <View style={styles.scrim}>
-      <View accessibilityViewIsModal style={styles.card}>
+      <View accessibilityLabel={title} accessibilityViewIsModal style={styles.card}>
         <Text accessibilityRole="header" style={styles.title}>
           {title}
         </Text>

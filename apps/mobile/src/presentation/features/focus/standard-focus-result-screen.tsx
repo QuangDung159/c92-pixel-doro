@@ -83,5 +83,5 @@ const styles = StyleSheet.create({
     borderWidth: 3, gap: 12, padding: 18,
   },
   title: { color: palette.textPrimary, fontSize: 16, fontWeight: '900' },
-  row: { flexDirection: 'row', gap: 10 },
+  row: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
 });

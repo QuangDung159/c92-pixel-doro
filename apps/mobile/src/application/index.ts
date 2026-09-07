@@ -19,6 +19,7 @@ export {
   recoveryReasonForPersistenceError,
   recoveryReasonForTransactionError,
 } from './recovery';
+export * from './notifications';
 export {
   ConfirmedLocalDataReset,
   type ConfirmedLocalDataResetDependencies,
@@ -157,6 +158,8 @@ export {
   StandardFocusSetupController,
   StandardFocusOutcomeController,
   StandardFocusLifecycleController,
+  StandardFocusAnalyticsRecorder,
+  StandardFocusSideEffectCoordinator,
   type StandardFocusSessionControllerDependencies,
   type StandardFocusSessionErrorCode,
   type StandardFocusSessionProjection,
@@ -172,6 +175,12 @@ export {
   type StandardFocusSetupStartResult,
   type StandardFocusOutcomeProjection,
   type StandardFocusLifecycleControllerDependencies,
+  type StandardFocusAnalyticsError,
+  type StandardFocusAnalyticsOutcome,
+  type StandardFocusAnalyticsRecorderDependencies,
+  type StandardFocusAnalyticsRecorderPort,
+  type StandardFocusSideEffectCoordinatorDependencies,
+  type StandardFocusSideEffectSettings,
 } from './standard-focus';
 export {
   ANALYTICS_EVENT_TTL_MS,

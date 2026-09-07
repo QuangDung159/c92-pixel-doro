@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_EPIC_06_USER_STORIES
 title: PixelDoro EPIC-06 — Standard Focus User Stories
-version: 0.6.2
-status: US_06_04_DONE_US_06_05_PLANNING_OWNER_REVIEW
+version: 0.6.3
+status: US_06_05_IMPLEMENTED_CANDIDATE_PENDING_NATIVE_OWNER_UI
 date: 2026-09-07
 owner: Dũng Lư
 reviewed_by: Dũng Lư
@@ -13,7 +13,7 @@ owner_review_sha: aa7f561c2eb8bca8302a1f6a072665819d653dbe
 upstream: origin/feats/epic-06
 epic: EPIC-06
 epic_state: IN_PROGRESS
-implementation_state: US_06_01_02_03_04_DONE_US_06_05_NOT_STARTED
+implementation_state: US_06_01_02_03_04_DONE_US_06_05_IMPLEMENTED_CANDIDATE
 formal_tester_status: DEFERRED_TO_LATER_PHASE
 language: vi
 authority: PLANNING
@@ -76,7 +76,10 @@ callback. Owner báo cáo quick UI done và cho phép mở
 verification; xem [implementation report](./US-06-04_IMPLEMENTATION_REPORT.md). Candidate đã commit tại
 `da501a74db93001cf4f5600622568ca5424b4fa1`. Ngày 2026-09-07 owner báo cáo quick UI done và chấp nhận
 progression để mở [US-06-05 implementation planning](./US-06-05_IMPLEMENTATION_PLAN.md). Full structured
-manual/formal evidence không được suy diễn là pass; US-06-05 production implementation chưa bắt đầu.
+manual/formal evidence không được suy diễn là pass. Owner đã duyệt `US0605-CONFIRM-01`→`12` Option A
+ngày 2026-09-07; candidate đã triển khai notification/analytics/a11y và automated/export evidence,
+xem [implementation report](./US-06-05_IMPLEMENTATION_REPORT.md). Native Development Build và owner
+quick UI chưa chạy nên EPIC-06 vẫn `IN_PROGRESS`.
 
 ## 1. Kết luận audit baseline
 
@@ -770,15 +773,15 @@ test harness/fixture files scoped; Focus UI remains below `240–260` review thr
 
 ### 10.8. Acceptance criteria
 
-- [ ] Notification ensure/cancel is idempotent per session/operation.
-- [ ] Permission denial/schedule/cancel failure never changes Start/terminal/reward truth.
-- [ ] Notification tap/repeat routes through reconciliation/read, not mutation shortcut.
-- [ ] Analytics emits only approved Standard events after corresponding commit, stable/deduped.
-- [ ] Opt-out/failure cannot block core flow; no provider/network implementation.
-- [ ] Screens pass screen reader, large text, Reduce Motion, touch target and non-color-only audit.
+- [x] Notification ensure/cancel is idempotent per session/operation.
+- [x] Permission denial/schedule/cancel failure never changes Start/terminal/reward truth.
+- [x] Notification tap/repeat routes through reconciliation/read, not mutation shortcut.
+- [x] Analytics emits only approved Standard events after corresponding commit, stable/deduped.
+- [x] Opt-out/failure cannot block core flow; no provider/network implementation.
+- [x] Production code audit covers screen reader, large text, Reduce Motion, touch target and non-color-only behavior; device evidence pending.
 - [ ] Prototype authority is removed from production Standard routes while later-Epic prototype remains isolated.
-- [ ] Offline/error/retry/race/integrity suites and scope/static gates pass.
-- [ ] Exact device/OS/SHA evidence status is honest; formal tester not fabricated.
+- [x] Offline/error/retry/race/integrity suites and scope/static gates pass.
+- [x] Exact device/OS/SHA evidence status is honest; formal tester not fabricated.
 
 ### 10.9. Automated tests
 
@@ -1075,14 +1078,15 @@ Retained limitations:
 3. `OPEN-006` contribution colors và `OPEN-009` Pet naming vẫn mở, không block EPIC-06.
 4. Wall-clock/device lifecycle limitation giữ đúng approved specifications.
 5. Prototype là UX evidence, không phải production timer/session/reward evidence.
-6. US-06-01/02/03/04 đã đóng progression gate qua owner quick UI. US-06-05 planning đã mở và chờ
-   owner duyệt 12 confirmations; production implementation chưa bắt đầu. Post-commit cold startup
+6. US-06-01/02/03/04 đã đóng progression gate qua owner quick UI. US-06-05 implementation candidate
+   đã hoàn tất; native/manual owner gate còn mở. Post-commit cold startup
    không có route identity về Home đúng tổng; full manual/formal vẫn deferred.
 
 ## 15. Change log
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.6.3 | 2026-09-07 | Codex | Recorded US-06-05 Option A approval, implementation candidate and automated/export evidence; native/manual owner gate remains open. |
 | 0.6.2 | 2026-09-07 | Codex | Recorded US-06-04 owner quick-UI progression acceptance and opened owner-gated US-06-05 planning; detailed manual/formal evidence remains deferred. |
 | 0.6.1 | 2026-09-07 | Codex | Recorded US-06-04 exact committed SHA and post-commit quality evidence; owner quick UI/acceptance remains pending. |
 | 0.6.0 | 2026-09-04 | Codex | Recorded US-06-04 Option A approvals and implemented uncommitted completion/reward/Result candidate; owner quick UI/acceptance remains pending. |
@@ -1100,5 +1104,5 @@ Retained limitations:
 `9a8e3d87d44612b7bd9aa8bf9e592099300d9e2e`; US-06-03 is owner-accepted through quick UI at
 `14ef3413742df4159aa3a7e537d2fd02667cb203`. US-06-04 is implemented under all approved Option A
 confirmations and owner quick-UI progression accepted at
-`da501a74db93001cf4f5600622568ca5424b4fa1`. US-06-05 planning is open for owner review;
-implementation has not started.**
+`da501a74db93001cf4f5600622568ca5424b4fa1`. US-06-05 implementation candidate is complete under all
+approved Option A confirmations; native Development Build and owner quick UI remain pending.**

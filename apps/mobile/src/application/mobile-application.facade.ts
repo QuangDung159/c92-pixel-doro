@@ -24,6 +24,7 @@ import type {
   StandardFocusSetupController,
   StandardFocusOutcomeController,
 } from './standard-focus';
+import type { StandardFocusNotificationNavigationController } from './notifications';
 import type { PetVisualDiagnostic } from './ports/pet-visual-diagnostics.port';
 import type {
   CompleteFirstUseHandoffOutcome,
@@ -43,6 +44,7 @@ export interface MobileApplicationFacade {
   readonly standardFocusCancel: StandardFocusCancelController;
   readonly standardFocusResult: StandardFocusResultController;
   readonly standardFocusOutcome: StandardFocusOutcomeController;
+  readonly standardFocusNotificationNavigation: StandardFocusNotificationNavigationController;
   readonly standardFocusReviewResetAvailable: boolean;
   readonly onboardingTrialRunning: OnboardingTrialRunningController;
   readonly onboardingTrialCompletion: OnboardingTrialCompletionController;

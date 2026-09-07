@@ -27,6 +27,9 @@ import {
   type PetVisualDiagnosticsPort,
   type RecoveryDiagnosticsPort,
   type ResetNotificationCleanupPort,
+  type FocusCompletionNotificationPort,
+  type FocusNotificationResponseSource,
+  type StandardFocusNotificationNavigationController,
   type StartupReconciliationPort,
 } from '@/application';
 import {
@@ -36,9 +39,11 @@ import {
   CancelOnboardingTrialUseCase,
   CompleteOnboardingTrialUseCase,
   LoadOnboardingTrialResultUseCase,
+  LoadStandardFocusResultUseCase,
   SessionCommandCoordinator,
   RecordStrictBackgroundUseCase,
   ReconcileStandardFocusUseCase,
+  isRunningStandardFocus,
   StartOnboardingTrialUseCase,
   type ClockPort,
   type IdPort,
@@ -64,7 +69,10 @@ import { DeviceIdAdapter } from '@/infrastructure/platform/id/device-id.adapter'
 import { SafeConsoleRecoveryDiagnosticsAdapter } from '@/infrastructure/platform/diagnostics/safe-console-recovery-diagnostics.adapter';
 import { SafeConsoleConfirmedResetDiagnosticsAdapter } from '@/infrastructure/platform/diagnostics/safe-console-confirmed-reset-diagnostics.adapter';
 import { SafeConsolePetVisualDiagnosticsAdapter } from '@/infrastructure/platform/diagnostics/safe-console-pet-visual-diagnostics.adapter';
-import { NoopResetNotificationCleanupAdapter } from '@/infrastructure/platform/notifications/noop-reset-notification-cleanup.adapter';
+import {
+  ExpoFocusNotificationAdapter,
+  ExpoNotificationGatewayAdapter,
+} from '@/infrastructure/platform/notifications/expo-focus-notification.adapter';
 import { DeviceTimeoutScheduler } from '@/infrastructure/platform/timing/device-timeout.scheduler';
 
 import type { MobileApplication } from './mobile-application';
@@ -75,9 +83,11 @@ import { createPetTerminalReviewFixture } from './review/pet-terminal-review-fix
 import { createFirstUseEntryReviewFixture } from './review/first-use-entry-review-fixture';
 import { createOnboardingTrialReviewFixture } from './review/onboarding-trial-review-fixture';
 import { createStandardFocusStartReviewFixture } from './review/standard-focus-start-review-fixture';
+import { createStandardFocusSideEffectReviewFixture } from './review/standard-focus-side-effect-review-fixture';
 import { OnboardingTrialStartupReconciliationAdapter } from './startup/onboarding-trial-startup-reconciliation.adapter';
 import { ActiveSessionStartupReconciliationAdapter } from './startup/active-session-startup-reconciliation.adapter';
 import { createStandardFocusSlice } from './standard-focus/create-standard-focus-slice';
+import { createStandardFocusSideEffects } from './standard-focus/create-standard-focus-side-effects';
 
 const PIXELDORO_DATABASE_NAME = 'pixeldoro.db';
 
@@ -96,6 +106,8 @@ export interface CreateMobileApplicationOptions {
   readonly localCalendar?: LocalCalendarPort;
   readonly firstUseInstallation?: FirstUseInstallationReader;
   readonly firstUseSessions?: FirstUseSessionReader;
+  readonly focusNotifications?: FocusCompletionNotificationPort &
+    FocusNotificationResponseSource & ResetNotificationCleanupPort;
   readonly petCompanionSessions?: PetCompanionSessionReader;
   readonly petVisualDiagnostics?: PetVisualDiagnosticsPort;
   readonly recoveryDiagnostics?: RecoveryDiagnosticsPort;
@@ -113,6 +125,11 @@ export const createMobileApplication = (
   const localCalendar = options.localCalendar ?? new DeviceLocalCalendarAdapter();
   const appLifecycle =
     options.appLifecycle ?? new ReactNativeAppLifecycleAdapter();
+  const baseFocusNotifications = options.focusNotifications ??
+    new ExpoFocusNotificationAdapter(
+      new ExpoNotificationGatewayAdapter(),
+      'auto',
+    );
   const appVisibility = new AppVisibilityController(
     appLifecycle.getCurrentState(),
   );
@@ -126,6 +143,15 @@ export const createMobileApplication = (
     options.diagnosticsEnabled !== false &&
     typeof __DEV__ !== 'undefined' &&
     __DEV__;
+  const standardFocusSideEffectReviewFixture =
+    createStandardFocusSideEffectReviewFixture(
+      process.env.EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE,
+      reviewFixturesEnabled,
+      baseFocusNotifications,
+      persistence.analyticsQueue,
+    );
+  const focusNotifications = standardFocusSideEffectReviewFixture?.notifications ??
+    baseFocusNotifications;
   const onboardingTrialReviewFixture = createOnboardingTrialReviewFixture(
     process.env.EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE,
     reviewFixturesEnabled,
@@ -143,6 +169,15 @@ export const createMobileApplication = (
     onboardingTrialReviewFixture?.installation ?? persistence.installation;
   const sessionCommands = new SessionCommandCoordinator();
   const standardFocusOutcome = new StandardFocusOutcomeController();
+  const standardFocusLifecycleRef: {
+    current?: StandardFocusLifecycleController;
+  } = {};
+  const standardFocusSideEffectsRef: {
+    current?: ReturnType<typeof createStandardFocusSideEffects>['coordinator'];
+  } = {};
+  const notificationNavigationRef: {
+    current?: StandardFocusNotificationNavigationController;
+  } = {};
   const standardFocusReviewFixture = createStandardFocusStartReviewFixture(
     process.env.EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE,
     reviewFixturesEnabled,
@@ -156,6 +191,12 @@ export const createMobileApplication = (
     process.env.EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE, reviewFixturesEnabled,
     persistence.profile, persistence.rewards,
   );
+  const standardFocusResultLoader = new LoadStandardFocusResultUseCase({
+    sessions: standardFocusSessions,
+    profile: completionReview.profile,
+    rewards: completionReview.resultRewards,
+    transaction,
+  });
   const startupStandardReconciliation = new ReconcileStandardFocusUseCase({
     clock: standardFocusClock,
     id, profile: completionReview.profile, rewards: completionReview.rewards,
@@ -266,6 +307,13 @@ export const createMobileApplication = (
           publishFreshCompletion: (result) => standardFocusOutcome.publishFreshCompletion(result),
           publishFreshFailure: (sessionId, resolvedAt) =>
             standardFocusOutcome.publishFreshFailure(sessionId, resolvedAt),
+          ensureRunning: (session) =>
+            standardFocusSideEffectsRef.current?.ensureRunning(session),
+          afterTerminal: (sessionId) =>
+            standardFocusSideEffectsRef.current?.afterTerminal(
+              sessionId,
+              'existing_terminal',
+            ),
         },
       ),
   });
@@ -288,8 +336,7 @@ export const createMobileApplication = (
       new SafeConsoleConfirmedResetDiagnosticsAdapter(),
     id,
     notificationCleanup:
-      options.resetNotificationCleanup ??
-      new NoopResetNotificationCleanupAdapter(),
+      options.resetNotificationCleanup ?? focusNotifications,
     persistence:
       options.confirmedResetPersistence ??
       new SQLiteConfirmedResetAdapter(transaction),
@@ -323,9 +370,33 @@ export const createMobileApplication = (
     transaction,
   });
   const reconcileStandardFocus = startupStandardReconciliation;
-  const standardFocusLifecycleRef: {
-    current?: StandardFocusLifecycleController;
-  } = {};
+  const standardFocusSideEffects = createStandardFocusSideEffects({
+    analyticsQueue: standardFocusSideEffectReviewFixture?.analyticsQueue ??
+      persistence.analyticsQueue,
+    notifications: focusNotifications,
+    responses: focusNotifications,
+    readBootstrap: bootstrap.getSnapshot,
+    loadResult: (sessionId) => standardFocusResultLoader.execute(sessionId),
+    onNotificationSession: async (sessionId) => {
+      await bootstrap.boot();
+      if (bootstrap.getSnapshot().status !== 'ready') return;
+      await standardFocusLifecycleRef.current?.reconcileNow(sessionId);
+      if (bootstrap.getSnapshot().status !== 'ready') return;
+      const terminal = await standardFocusResultLoader.execute(sessionId);
+      if (terminal.ok && terminal.value.outcome === 'ready') {
+        notificationNavigationRef.current?.publish('result', sessionId);
+        return;
+      }
+      const found = await standardFocusSessions.findById(sessionId);
+      if (found.ok && found.value !== null && isRunningStandardFocus(found.value)) {
+        notificationNavigationRef.current?.publish('running', sessionId);
+      } else {
+        notificationNavigationRef.current?.publish('home', sessionId);
+      }
+    },
+  });
+  standardFocusSideEffectsRef.current = standardFocusSideEffects.coordinator;
+  notificationNavigationRef.current = standardFocusSideEffects.navigation;
   const standardFocus = createStandardFocusSlice({
     appInitiallyVisible: appLifecycle.getCurrentState() === 'active',
     calendar: localCalendar,
@@ -339,6 +410,7 @@ export const createMobileApplication = (
     scheduler: sessionTickScheduler,
     sessions: standardFocusSessions,
     transaction,
+    loadResult: standardFocusResultLoader,
     onDeadlineReached: (sessionId) => {
       void standardFocusLifecycleRef.current?.reconcileNow(sessionId);
     },
@@ -346,6 +418,9 @@ export const createMobileApplication = (
       standardFocusOutcome.publishFreshFailure(sessionId, resolvedAt);
       requestStandardOutcomeFeedback();
     },
+    onStarted: (session) => standardFocusSideEffects.coordinator.afterStarted(session),
+    onTerminal: (sessionId, freshness) =>
+      standardFocusSideEffects.coordinator.afterTerminal(sessionId, freshness),
   });
   const standardFocusLifecycle = new StandardFocusLifecycleController({
     clock: standardFocusClock,
@@ -357,6 +432,20 @@ export const createMobileApplication = (
     session: standardFocus.session,
     recordBackground: (capturedAt) => recordStrictBackground.execute(capturedAt),
     reconcile: (sessionId) => reconcileStandardFocus.execute(sessionId),
+    onReconciled: (outcome) => {
+      if (outcome.outcome === 'running') return;
+      if (outcome.outcome === 'completed' || outcome.outcome === 'failed') {
+        standardFocusSideEffects.coordinator.afterTerminal(
+          outcome.sessionId,
+          outcome.freshness,
+        );
+      } else if (outcome.outcome === 'terminal_winner') {
+        standardFocusSideEffects.coordinator.afterTerminal(
+          outcome.sessionId,
+          'existing_terminal',
+        );
+      }
+    },
   }, appLifecycle.getCurrentState());
   standardFocusLifecycleRef.current = standardFocusLifecycle;
   const completeFirstUseHandoffUseCase = new CompleteFirstUseHandoffUseCase({
@@ -647,6 +736,8 @@ export const createMobileApplication = (
     return probePromise;
   };
 
+  let disposePromise: Promise<void> | undefined;
+
   return {
     appVisibility,
     bootstrap,
@@ -658,6 +749,7 @@ export const createMobileApplication = (
     standardFocusCancel: standardFocus.cancel,
     standardFocusResult: standardFocus.result,
     standardFocusOutcome,
+    standardFocusNotificationNavigation: standardFocusSideEffects.navigation,
     standardFocusReviewResetAvailable: reviewFixturesEnabled,
     onboardingTrialRunning,
     onboardingTrialCompletion,
@@ -676,6 +768,7 @@ export const createMobileApplication = (
     boot: async () => {
       await runProbeIfEnabled();
       await bootstrap.boot();
+      standardFocusSideEffects.coordinator.start();
       if (epic02ExitCompletion !== undefined) {
         const candidate = epic02ExitCompletion;
         epic02ExitCompletion = undefined;
@@ -701,6 +794,10 @@ export const createMobileApplication = (
         await petCompanion.refresh();
         const startupOutcome = standardFocusOutcome.getSnapshot();
         if (startupOutcome.status !== 'idle') {
+          standardFocusSideEffects.coordinator.afterTerminal(
+            startupOutcome.sessionId,
+            'fresh_commit',
+          );
           requestStandardOutcomeFeedback();
         }
         await firstUseEntry.refresh();
@@ -798,24 +895,29 @@ export const createMobileApplication = (
     },
     triggerPetTerminalReviewFixture,
     dispose: () => {
-      unsubscribePetLifecycle?.();
-      unsubscribePetLifecycle = undefined;
-      cancelReviewWait?.();
-      cancelReviewWait = undefined;
-      appVisibility.dispose();
-      firstUseEntry.dispose();
-      standardFocus.dispose();
-      standardFocusLifecycle?.dispose();
-      standardFocusOutcome.dispose();
-      onboardingTrialRunning.dispose();
-      onboardingTrialHandoff.dispose();
-      onboardingTrialPetFeedback.dispose();
-      onboardingTrialCompletion.dispose();
-      onboardingTrialResult.dispose();
-      petVisual.dispose();
-      petCompanion.dispose();
-      petTerminalFeedback.dispose();
-      return bootstrap.dispose();
+      disposePromise ??= (async () => {
+        unsubscribePetLifecycle?.();
+        unsubscribePetLifecycle = undefined;
+        cancelReviewWait?.();
+        cancelReviewWait = undefined;
+        appVisibility.dispose();
+        firstUseEntry.dispose();
+        standardFocus.dispose();
+        standardFocusLifecycle?.dispose();
+        standardFocusOutcome.dispose();
+        standardFocusSideEffects.coordinator.dispose();
+        standardFocusSideEffects.navigation.dispose();
+        onboardingTrialRunning.dispose();
+        onboardingTrialHandoff.dispose();
+        onboardingTrialPetFeedback.dispose();
+        onboardingTrialCompletion.dispose();
+        onboardingTrialResult.dispose();
+        petVisual.dispose();
+        petCompanion.dispose();
+        petTerminalFeedback.dispose();
+        await bootstrap.dispose();
+      })();
+      return disposePromise;
     },
   };
 };

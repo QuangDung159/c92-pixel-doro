@@ -32,6 +32,12 @@ export const CountdownDisplay = ({
       accessibilityLabel={pending
         ? 'Phiên đã tới thời điểm kết thúc, đang chờ xác nhận kết quả'
         : `Còn ${minutes} phút ${seconds} giây`}
+      accessibilityRole="timer"
+      accessibilityValue={{
+        text: pending
+          ? 'Đang xác nhận kết quả'
+          : `${minutes} phút ${seconds} giây còn lại`,
+      }}
       style={styles.block}
     >
       <Text style={styles.value}>{formatCountdown(displaySeconds)}</Text>
@@ -49,7 +55,7 @@ const styles = StyleSheet.create({
   },
   value: {
     color: palette.accentGold, fontSize: 62, fontVariant: ['tabular-nums'],
-    fontWeight: '900', letterSpacing: 2,
+    fontWeight: '900', letterSpacing: 2, textAlign: 'center', width: '100%',
   },
   caption: {
     color: palette.white, fontSize: 10, fontWeight: '900', letterSpacing: 1.5,

@@ -3,6 +3,7 @@ import {
   type ApplicationResult,
   type ReconcileStandardFocusError,
   type ReconcileStandardFocusOutcome,
+  type RunningSessionRecord,
   type SessionRepository,
   type StandardFocusCompletedResult,
 } from '@pixeldoro/application';
@@ -10,6 +11,14 @@ import {
   startupReconciliationError,
   type StartupReconciliationPort,
 } from '@/application';
+
+const bestEffort = (action: (() => void) | undefined): void => {
+  try {
+    action?.();
+  } catch {
+    // Startup durable truth cannot depend on notification/analytics dispatch.
+  }
+};
 
 export class ActiveSessionStartupReconciliationAdapter implements StartupReconciliationPort {
   constructor(
@@ -21,6 +30,11 @@ export class ActiveSessionStartupReconciliationAdapter implements StartupReconci
       >;
       publishFreshFailure(sessionId: string, resolvedAt: number): void;
       publishFreshCompletion(result: StandardFocusCompletedResult): void;
+      ensureRunning?(session: RunningSessionRecord): void;
+      afterTerminal?(
+        sessionId: string,
+        freshness: 'fresh_commit' | 'existing_terminal',
+      ): void;
     },
   ) {}
 
@@ -35,6 +49,11 @@ export class ActiveSessionStartupReconciliationAdapter implements StartupReconci
         if (standard.value.outcome === 'completed') {
           standardChanged = standard.value.freshness === 'fresh_commit';
           if (standardChanged) this.standard.publishFreshCompletion(standard.value.result);
+          const { sessionId, freshness } = standard.value;
+          bestEffort(() => this.standard?.afterTerminal?.(
+            sessionId,
+            freshness,
+          ));
         } else if (standard.value.outcome === 'failed') {
           standardChanged = standard.value.freshness === 'fresh_commit';
           if (standardChanged) {
@@ -43,6 +62,17 @@ export class ActiveSessionStartupReconciliationAdapter implements StartupReconci
               standard.value.resolvedAt,
             );
           }
+          const { sessionId, freshness } = standard.value;
+          bestEffort(() => this.standard?.afterTerminal?.(
+            sessionId,
+            freshness,
+          ));
+        } else if (standard.value.outcome === 'terminal_winner') {
+          const { sessionId } = standard.value;
+          bestEffort(() => this.standard?.afterTerminal?.(
+            sessionId,
+            'existing_terminal',
+          ));
         } else if (standard.value.outcome === 'safe_episode_cleared') {
           standardChanged = true;
         }
@@ -55,6 +85,10 @@ export class ActiveSessionStartupReconciliationAdapter implements StartupReconci
         !isRunningStandardFocus(active.value)
       ) {
         return { ok: false, error: startupReconciliationError() };
+      }
+      if (active.value !== null && isRunningStandardFocus(active.value)) {
+        const running = active.value;
+        bestEffort(() => this.standard?.ensureRunning?.(running));
       }
       return {
         ok: true,

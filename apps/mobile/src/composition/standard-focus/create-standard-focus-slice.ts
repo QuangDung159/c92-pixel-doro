@@ -11,6 +11,7 @@ import {
   type TransactionPort,
   type ProfileRepository,
   type RewardReceiptRepository,
+  type RunningSessionRecord,
 } from '@pixeldoro/application';
 
 import {
@@ -37,8 +38,14 @@ export interface CreateStandardFocusSliceDependencies {
   readonly rewards: RewardReceiptRepository;
   readonly scheduler: TickScheduler;
   readonly appInitiallyVisible: boolean;
+  readonly loadResult?: LoadStandardFocusResultUseCase;
   readonly onDeadlineReached?: (sessionId: string) => void;
   readonly onFreshFailure?: (sessionId: string, resolvedAt: number) => void;
+  readonly onStarted?: (session: RunningSessionRecord) => void;
+  readonly onTerminal?: (
+    sessionId: string,
+    freshness: 'fresh_commit' | 'existing_terminal',
+  ) => void;
 }
 
 export interface StandardFocusSlice {
@@ -81,14 +88,27 @@ export const createStandardFocusSlice = (
     sessions: dependencies.sessions,
     transaction: dependencies.transaction,
   });
-  const result = new StandardFocusResultController(
-    new LoadStandardFocusResultUseCase({ sessions: dependencies.sessions,
-      profile: dependencies.profile, rewards: dependencies.rewards, transaction: dependencies.transaction }),
-  );
+  const loadResult = dependencies.loadResult ?? new LoadStandardFocusResultUseCase({
+    sessions: dependencies.sessions,
+    profile: dependencies.profile,
+    rewards: dependencies.rewards,
+    transaction: dependencies.transaction,
+  });
+  const result = new StandardFocusResultController(loadResult);
   const cancel = new StandardFocusCancelController({
     cancel: async (sessionId) => {
       const allowed = dependencies.readiness.run(() => cancelUseCase.execute(sessionId));
-      return allowed.ok ? allowed.value : allowed;
+      if (!allowed.ok) return allowed;
+      const cancelled = await allowed.value;
+      if (cancelled.ok) {
+        const freshness = cancelled.value.outcome === 'cancelled'
+          ? 'fresh_commit'
+          : cancelled.value.outcome === 'failed'
+            ? cancelled.value.freshness
+            : 'existing_terminal';
+        dependencies.onTerminal?.(cancelled.value.sessionId, freshness);
+      }
+      return cancelled;
     },
     refreshPet: () => dependencies.petCompanion.refresh(),
     ...(dependencies.onFreshFailure === undefined
@@ -102,10 +122,12 @@ export const createStandardFocusSlice = (
     if (!allowed.ok) {
       return { ok: false, error: { code: 'START_UNAVAILABLE' } };
     }
-    const result = await allowed.value;
-    if (!result.ok) {
-      return { ok: false, error: { code: mapStartError(result.error.code) } };
+    const startResult = await allowed.value;
+    if (!startResult.ok) {
+      return { ok: false, error: { code: mapStartError(startResult.error.code) } };
     }
+
+    dependencies.onStarted?.(startResult.value.session);
 
     try {
       await Promise.all([session.refresh(), dependencies.petCompanion.refresh()]);
@@ -116,13 +138,13 @@ export const createStandardFocusSlice = (
       };
     }
     const handoff = session.getSnapshot();
-    if (handoff.status !== 'ready' || handoff.sessionId !== result.value.session.id) {
+    if (handoff.status !== 'ready' || handoff.sessionId !== startResult.value.session.id) {
       return {
         ok: false,
         error: { code: 'COMMITTED_HANDOFF_UNAVAILABLE' },
       };
     }
-    return { ok: true, session: result.value.session };
+    return { ok: true, session: startResult.value.session };
   };
   const setup = new StandardFocusSetupController({ start });
 
