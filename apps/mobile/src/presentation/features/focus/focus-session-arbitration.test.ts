@@ -15,9 +15,9 @@ describe('Focus Session production arbitration', () => {
     expect(shouldOpenStandardFocusResult('trial', { status: 'missing' }, outcome)).toBe(false);
     expect(shouldOpenStandardFocusResult('standard', standard, outcome)).toBe(false);
     expect(shouldOpenStandardFocusResult('standard', { ...standard, sessionId: 'old' }, outcome)).toBe(true);
-    expect(shouldOpenStandardFocusResult('prototype', { status: 'missing' }, outcome)).toBe(true);
+    expect(shouldOpenStandardFocusResult('missing', { status: 'missing' }, outcome)).toBe(true);
   });
-  it('waits for both durable readers before allowing prototype fallback', () => {
+  it('waits for both durable readers before reporting that no production session exists', () => {
     expect(decideFocusSessionBranch(
       { status: 'missing' },
       { status: 'loading' },
@@ -25,7 +25,7 @@ describe('Focus Session production arbitration', () => {
     expect(decideFocusSessionBranch(
       { status: 'missing' },
       { status: 'missing' },
-    )).toBe('prototype');
+    )).toBe('missing');
   });
 
   it('prioritizes trial then committed Standard Focus and fails closed on read errors', () => {

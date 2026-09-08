@@ -25,7 +25,6 @@ import {
 } from '@/presentation/providers/standard-focus-hooks';
 import { useSessionCancelBack } from '../use-session-cancel-back';
 import { PetRouteVisibility } from '../pet-route-visibility';
-import { PrototypeSessionBranch } from './prototype-session-branch';
 import { StandardFocusStartedBranch } from './standard-focus-started-branch';
 
 export default function FocusSessionRoute() {
@@ -85,6 +84,12 @@ export default function FocusSessionRoute() {
       });
     }
   }, [branch, router, standardOutcome, standardFocus]);
+
+  useEffect(() => {
+    if (branch === 'missing' && standardOutcome.status === 'idle') {
+      router.replace('/(tabs)');
+    }
+  }, [branch, router, standardOutcome.status]);
 
   const confirmTrialCancel = (sessionId: string): void => {
     if (cancelOperation.current !== null) return;
@@ -185,11 +190,8 @@ export default function FocusSessionRoute() {
   }
 
   return (
-    <PrototypeSessionBranch
-      cancelRequestToken={cancelRequestToken}
-      onDismissPetFeedbackError={dismissPetFeedbackError}
-      onRetryPet={() => void refreshPet()}
-      pet={pet}
-    />
+    <ScreenShell>
+      <LoadingState label="Đang trở về trang chủ…" />
+    </ScreenShell>
   );
 }
