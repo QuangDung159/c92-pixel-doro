@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_07_USER_STORIES
 title: PixelDoro EPIC-07 — Break Experience và Long Break Cadence User Stories
-version: 0.3.0
+version: 0.4.0
 status: IN_PROGRESS
 date: 2026-09-08
 last_updated: 2026-09-09
@@ -15,13 +15,13 @@ authority: PLANNING
 product_truth: ../PIXELDORO_CORE_TRUTH.md
 epic_baseline: ./MVP_EPICS.md
 branch_audited: feats/epic-07
-baseline_head: a3b92fd8a6908f4efecea7fc7c8d49ac20683aa3
+baseline_head: fc322028281cbca1ca0ec48772c195548201217a
 epic_06_behavior_candidate: 458a8868ac0024e3b3d1eff64ccc26408a81b2e1
 epic_06_status: DONE_OWNER_ACCEPTED
-implementation_status: US_07_01_DONE_US_07_02_IMPLEMENTED_OWNER_REVIEW_PENDING
+implementation_status: US_07_01_DONE_US_07_02_DONE_US_07_03_PLANNING_OWNER_REVIEW
 formal_tester_status: NOT_RUN
-schema_change: NONE_APPROVED_FOR_US_07_02
-next_gate: US_07_02_OWNER_QUICK_UI_REVIEW
+schema_change: NONE_APPROVED_FOR_US_07_02_NONE_PROPOSED_FOR_US_07_03
+next_gate: US_07_03_PLAN_OWNER_CONFIRMATION
 ---
 
 # EPIC-07 — Break Experience và Long Break Cadence
@@ -437,14 +437,18 @@ preempts prior Celebrate without session mutation.
 - [ ] **Platforms/cleanup/evidence:** iOS + Android quick smoke, unset fixture, finish/cancel test Break
   via fixture or confirmed reset; record automated/owner/formal separately as `NOT_RUN` until run.
 
+Owner evidence recorded 2026-09-09: quick UI smoke `PASS` — no crash, works as expected. Platform,
+device/OS, accessibility and formal tester metadata were not supplied, so the detailed matrix above
+remains unchecked/`NOT_RUN` rather than being inferred from the owner smoke.
+
 ### 8.6. DoR, DoD, evidence và next gate
 
 - [x] **DoR:** US-07-01 accepted; confirmations 01/02 approved; no-schema Option A recorded.
-- [ ] **DoD:** atomic Start/handoff/Pet and race tests pass; no prototype production path; report, SHA
+- [x] **DoD:** atomic Start/handoff/Pet and race tests pass; no prototype production path; report, SHA
   and guide exist; owner accepts.
 - [x] **Evidence files:** `US-07-02_IMPLEMENTATION_PLAN.md`, `US-07-02_IMPLEMENTATION_REPORT.md`,
   `apps/mobile/test/device/break-start-smoke.md`.
-- [ ] **Gate sang US-07-03:** one running Break survives cold reopen and all existing Start regressions
+- [x] **Gate sang US-07-03:** one running Break survives cold reopen and all existing Start regressions
   pass.
 
 ## 9. US-07-03 — Break timestamp countdown, background/relaunch và completion
@@ -525,7 +529,8 @@ has no receipt/profile delta and cannot emit Celebrate/Bugged.
 
 ### 9.6. DoR, DoD, evidence và next gate
 
-- [ ] **DoR:** US-07-02 accepted; startup ownership and recovery route documented.
+- [x] **DoR:** US-07-02 accepted; startup ownership and recovery route documented in the owner-gated
+  US-07-03 implementation plan.
 - [ ] **DoD:** timestamp/background/relaunch/completion/no-reward evidence pass; exact SHA/report/guide
   exist; owner accepts quick output.
 - [ ] **Evidence files:** `US-07-03_IMPLEMENTATION_PLAN.md`, `US-07-03_IMPLEMENTATION_REPORT.md`,
@@ -978,6 +983,7 @@ one-active invariant được enforce nhưng không claim durable one-Break-per-
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.4.0 | 2026-09-09 | Codex | Recorded US-07-02 exact committed SHA and owner quick UI PASS; closed Story 02, opened owner-gated US-07-03 planning, and preserved structured accessibility/formal evidence as NOT_RUN. |
 | 0.3.0 | 2026-09-09 | Codex | Recorded owner approval of US0700-CONFIRM-01 Option A through the approved US-07-02 plan; finalized no-schema verdict for Story 02 and opened implementation. Confirmations 03–06 remain gated to their later Stories. |
 | 0.2.0 | 2026-09-09 | Codex | Recorded US-07-01 committed SHA and owner quick UI acceptance; opened owner-gated US-07-02 planning while preserving formal/structured manual evidence as NOT_RUN. |
 | 0.1.0 | 2026-09-08 | Codex | Audited current documentation/code/test baseline; created five risk-ordered vertical Stories, no-schema default verdict, component/durable/navigation/race/a11y/test matrices, executable per-Story device guides and six pending owner confirmations. No production code was changed. |

@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_07_02_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-07-02 Explicit Durable Start Break và Pet Breaking Plan
-version: 0.3.0
-status: IMPLEMENTED_AUTOMATED_PASS_OWNER_REVIEW_PENDING
-implementation_status: IMPLEMENTED_AUTOMATED_PASS
+version: 0.4.0
+status: DONE_OWNER_ACCEPTED_QUICK_UI
+implementation_status: DONE_OWNER_ACCEPTED
 date: 2026-09-09
 last_updated: 2026-09-09
 owner: Dũng Lư
@@ -15,10 +15,11 @@ language: vi
 branch: feats/epic-07
 planning_baseline_sha: a3b92fd8a6908f4efecea7fc7c8d49ac20683aa3
 implementation_start_sha: a9684180105f99bcf3bf9bf425feb04122e7c8ea
-exact_implementation_sha: WORKTREE_CANDIDATE_NOT_COMMITTED
+exact_implementation_sha: fc322028281cbca1ca0ec48772c195548201217a
 previous_story_sha: a3b92fd8a6908f4efecea7fc7c8d49ac20683aa3
 previous_story_acceptance: DONE_OWNER_ACCEPTED_QUICK_UI
-manual_device_status: NOT_RUN
+manual_device_status: OWNER_QUICK_UI_SMOKE_REPORTED
+owner_acceptance_status: ACCEPTED_TO_OPEN_US_07_03_PLANNING
 formal_tester_status: NOT_RUN
 schema_change: NONE_APPROVED
 dependency_change: NONE_PROPOSED
@@ -65,12 +66,13 @@ relaunch trước tap không tạo Break.
 
 **Priority:** `P0`; execution order `02` trong EPIC-07.
 
-**Planning status:** `IMPLEMENTED_AUTOMATED_PASS_OWNER_REVIEW_PENDING`.
+**Planning status:** `DONE_OWNER_ACCEPTED_QUICK_UI`.
 
-**Implementation status:** `IMPLEMENTED_AUTOMATED_PASS`. Owner đã duyệt Option A cho toàn bộ
+**Implementation status:** `DONE_OWNER_ACCEPTED`. Owner đã duyệt Option A cho toàn bộ
 `US0702-CONFIRM-01→10`; implementation bắt đầu từ exact SHA
-`a9684180105f99bcf3bf9bf425feb04122e7c8ea`. Current candidate chưa commit; owner quick UI và
-formal tester vẫn `NOT_RUN`.
+`a9684180105f99bcf3bf9bf425feb04122e7c8ea`, đã commit/push tại
+`fc322028281cbca1ca0ec48772c195548201217a`. Owner xác nhận quick UI smoke không crash và hoạt động
+đúng kỳ vọng ngày 2026-09-09; structured device/accessibility matrix và formal tester vẫn `NOT_RUN`.
 
 ### 0.1. Gate từ US-07-01
 
@@ -584,7 +586,7 @@ owner quick smoke and formal tester.
 - [x] Production Start/route contains no prototype authority or auto-start path.
 - [x] Report and device guide exist with worktree candidate identity.
 - [x] Owner quick UI output is recorded separately from structured/formal evidence.
-- [ ] Owner explicitly accepts US-07-02 and authorizes US-07-03 planning.
+- [x] Owner explicitly accepts US-07-02 and authorizes US-07-03 planning.
 
 ## 15. Owner confirmation gate — APPROVED
 
@@ -707,6 +709,7 @@ owner quick smoke and formal tester.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.4.0 | 2026-09-09 | Codex | Recorded exact committed/pushed implementation SHA and owner quick UI PASS; closed US-07-02 and authorized US-07-03 planning while preserving structured/formal evidence as NOT_RUN. |
 | 0.3.0 | 2026-09-09 | Codex | Recorded completed worktree implementation: transactional StartBreak, durable exact-ID handoff, Pet Breaking, 735-test full-quality pass, iOS/Android exports and unchanged Expo Doctor baseline warnings; owner/manual/formal review and exact committed SHA remain pending. |
 | 0.2.0 | 2026-09-09 | Codex | Recorded owner approval of Option A for confirmations 01–10, resolved Epic confirmation 01, finalized no-schema/transactional-cadence/exact-route/Story-boundary decisions, and marked the plan ready for implementation. No production code changed. |
 | 0.1.0 | 2026-09-09 | Codex | Created owner-gated plan from committed US-07-01 baseline; defined transactional current-cadence Start, exact durable handoff, Pet Breaking, no-schema default, tests/fixtures/rollback and ten pending confirmations. No production code changed. |
@@ -719,5 +722,5 @@ Validation for this planning turn:
 - [x] Only planning/evidence documents changed.
 - [x] No unrun automated/manual/formal evidence is marked PASS.
 
-**US-07-02 is implemented as an uncommitted worktree candidate with automated/platform evidence
-passing. Owner quick UI, formal evidence and exact committed implementation SHA remain pending.**
+**US-07-02 is committed/pushed and owner accepted by quick UI smoke. Structured device/accessibility
+and formal tester evidence remain `NOT_RUN`; US-07-03 planning is open.**

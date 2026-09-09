@@ -1,18 +1,18 @@
 ---
 document_id: PIXELDORO_US_07_02_IMPLEMENTATION_REPORT
 title: PixelDoro Mobile MVP — US-07-02 Implementation Report
-version: 0.1.0
-status: IMPLEMENTED_AUTOMATED_PASS_OWNER_REVIEW_PENDING
-implementation_status: IMPLEMENTED_AUTOMATED_PASS
+version: 0.2.0
+status: DONE_OWNER_ACCEPTED_QUICK_UI
+implementation_status: DONE_OWNER_ACCEPTED
 date: 2026-09-09
 owner: Dũng Lư
 language: vi
 branch: feats/epic-07
 planning_baseline_sha: a3b92fd8a6908f4efecea7fc7c8d49ac20683aa3
 implementation_start_sha: a9684180105f99bcf3bf9bf425feb04122e7c8ea
-exact_implementation_sha: WORKTREE_CANDIDATE_NOT_COMMITTED
-manual_device_status: NOT_RUN
-owner_quick_ui_status: NOT_RUN
+exact_implementation_sha: fc322028281cbca1ca0ec48772c195548201217a
+manual_device_status: OWNER_QUICK_UI_SMOKE_REPORTED
+owner_quick_ui_status: PASS_NO_CRASH_WORKS_AS_EXPECTED
 formal_tester_status: NOT_RUN
 schema_change: NONE
 dependency_change: NONE
@@ -25,7 +25,7 @@ story_baseline: ./EPIC-07_USER_STORIES.md
 
 ## 0. Executive result
 
-US-07-02 đã được triển khai thành worktree candidate theo toàn bộ Option A owner duyệt ngày
+US-07-02 đã được triển khai thành committed candidate theo toàn bộ Option A owner duyệt ngày
 2026-09-09:
 
 - explicit Start chỉ xuất hiện trên exact completed Standard Focus Result có recommendation ready;
@@ -40,8 +40,10 @@ US-07-02 đã được triển khai thành worktree candidate theo toàn bộ Op
 - countdown/lifecycle/completion vẫn thuộc US-07-03;
 - không thêm schema, migration, dependency, native, notification hoặc analytics.
 
-Automated/full quality và hai platform JS export đã pass. Owner quick UI/manual/formal evidence chưa
-chạy, candidate chưa commit nên Story chưa owner accepted và chưa mở US-07-03.
+Automated/full quality và hai platform JS export đã pass. Candidate đã commit/push tại exact SHA
+`fc322028281cbca1ca0ec48772c195548201217a`. Ngày 2026-09-09, owner xác nhận quick UI smoke không
+crash và hoạt động đúng kỳ vọng; Story được accepted để mở planning US-07-03. Xác nhận này không thay
+cho structured device/accessibility matrix hoặc formal tester evidence.
 
 ## 1. Baseline và approval
 
@@ -53,7 +55,7 @@ chạy, candidate chưa commit nên Story chưa owner accepted và chưa mở US
 | Previous Story | US-07-01 committed/owner accepted quick UI |
 | Owner decisions | `US0702-CONFIRM-01→10` Option A, 2026-09-09 |
 | Epic decision | `US0700-CONFIRM-01` Option A, no source relation |
-| Candidate identity | Uncommitted worktree; exact implementation SHA unavailable |
+| Candidate identity | Committed/pushed exact SHA `fc322028281cbca1ca0ec48772c195548201217a` |
 | Schema/dependency/native | No change |
 
 ## 2. Delivered architecture
@@ -197,7 +199,7 @@ Guide: `apps/mobile/test/device/break-start-smoke.md`.
 | Evidence class | Status |
 |---|---|
 | Automated | PASS |
-| Owner quick UI | `NOT_RUN` |
+| Owner quick UI | `PASS` — owner reported no crash, works as expected, 2026-09-09 |
 | iOS device/simulator | `NOT_RUN` |
 | Android device/emulator | `NOT_RUN` |
 | VoiceOver/TalkBack/largest text/Reduce Motion | `NOT_RUN` |
@@ -219,9 +221,9 @@ Exports/component tests are not substituted for manual/device accessibility evid
 - [x] Result CTA busy/error/hierarchy and failed/cancelled regressions pass.
 - [x] No notification/analytics/terminal/cancel behavior added.
 - [x] No schema/dependency/native change.
-- [ ] Owner quick UI walkthrough completed and accepted.
-- [ ] Exact committed implementation SHA recorded.
-- [ ] Owner explicitly authorizes US-07-02 closure and US-07-03 planning.
+- [x] Owner quick UI walkthrough completed and accepted: no crash, works as expected.
+- [x] Exact committed implementation SHA recorded.
+- [x] Owner explicitly authorizes US-07-02 closure and US-07-03 planning.
 
 ## 7. Known limitations/deferred work
 
@@ -231,17 +233,17 @@ Exports/component tests are not substituted for manual/device accessibility evid
 - Cancel/terminal Result belong to US-07-04.
 - Notification and analytics belong to US-07-05.
 - Structured manual/accessibility and formal tester evidence remain `NOT_RUN`.
-- Candidate is currently uncommitted, so exact implementation SHA is unavailable.
+- Exact implementation is committed/pushed; later planning edits are intentionally separate.
 
 ## 8. Next gate
 
-1. Run owner quick smoke from `break-start-smoke.md` for Short, Long, failure and conflict scenarios.
-2. Record platform/device and observed output without upgrading unrun formal cases.
-3. Commit accepted candidate and record exact SHA.
-4. Explicitly accept US-07-02 before opening US-07-03 planning.
+US-07-02 closure gate đã đạt ở mức owner quick UI acceptance. US-07-03 implementation planning được
+mở; production coding vẫn phải chờ owner duyệt các confirmation của plan US-07-03. Structured
+iOS/Android accessibility matrix và formal tester evidence tiếp tục được theo dõi riêng.
 
 ## 9. Change log
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.2.0 | 2026-09-09 | Codex | Recorded committed/pushed exact SHA, owner quick UI PASS (no crash, works as expected), Story acceptance and authorization to open US-07-03 planning; formal/structured manual evidence remain NOT_RUN. |
 | 0.1.0 | 2026-09-09 | Codex | Recorded US-07-02 worktree implementation, 735-test full-quality pass, iOS/Android exports, 19/21 Doctor baseline warnings, exact durable Start/handoff/Pet behavior and manual/formal evidence as NOT_RUN. |
