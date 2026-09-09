@@ -11,6 +11,9 @@ vi.mock('@/presentation/components', () => ({
   InlineNotice: 'InlineNotice', PetVisualStatus: 'PetVisualStatus', PrimaryButton: 'PrimaryButton',
   ScreenHeader: 'ScreenHeader', ScreenShell: 'ScreenShell', StatDisplay: 'StatDisplay',
 }));
+vi.mock('@/presentation/features/break/break-recommendation-panel', () => ({
+  BreakRecommendationPanel: 'BreakRecommendationPanel',
+}));
 
 describe('StandardFocusResultScreen', () => {
   it('renders committed completed reward/current totals with Home-only production exit', () => {
@@ -20,10 +23,16 @@ describe('StandardFocusResultScreen', () => {
         startedAt: 1_000, endsAt: 901_000, resolvedAt: 901_000,
         xpEarned: 15, coinsEarned: 3, totalXp: 20, coinBalance: 4 },
       pet: { status: 'loading' }, onDismissPetFeedbackError: vi.fn(), onRetryPet: vi.fn(), onHome: vi.fn(),
+      breakRecommendation: {
+        status: 'ready', sourceSessionId: 'focus-1',
+        recommendation: { kind: 'short', sessionType: 'short_break', durationMinutes: 5 },
+      },
+      onRetryBreakRecommendation: vi.fn(),
     });
     const serialized = JSON.stringify(tree);
     expect(serialized).toContain('RewardSummary');
     expect(serialized).toContain('ProgressionSummary');
+    expect(serialized).toContain('BreakRecommendationPanel');
     expect(serialized).toContain('Về Home');
     expect(serialized).not.toMatch(/Claim|Start Break|Focus Again|SecondaryButton/);
   });
@@ -36,11 +45,15 @@ describe('StandardFocusResultScreen', () => {
       },
       pet: { status: 'loading' }, onDismissPetFeedbackError: vi.fn(),
       onRetryPet: vi.fn(), onHome: vi.fn(),
+      breakRecommendation: { status: 'idle' },
+      onRetryBreakRecommendation: vi.fn(),
     });
     const children = Children.toArray(tree.props.children) as ReactElement<Record<string, unknown>>[];
     const buttons = children.filter((item) => item.type === 'PrimaryButton');
     expect(buttons).toHaveLength(1);
     expect(buttons[0]?.props.label).toBe('Về Home');
-    expect(JSON.stringify(tree)).not.toMatch(/RewardSummary|Claim|Start Break|Celebrate/);
+    expect(JSON.stringify(tree)).not.toMatch(
+      /RewardSummary|BreakRecommendationPanel|Claim|Start Break|Celebrate/,
+    );
   });
 });

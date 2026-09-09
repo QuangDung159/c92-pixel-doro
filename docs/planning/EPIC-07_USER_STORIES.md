@@ -898,7 +898,8 @@ Result sau explicit action, nhưng chưa nói một Result cũ có được mở
 - **Option C:** chỉ đọc cadence trên Result, Start tin input từ UI. Impact: screen trở thành business-rule
   authority/race-prone; không đề xuất.
 
-**Status:** `PENDING_OWNER`; blocks US-07-01/02 plan.
+**Status:** `APPROVED_OPTION_A` — owner confirmed 2026-09-08. Result previews current cadence;
+`StartBreak` must read it again inside the serialized transaction and the committed type wins.
 
 ### US0700-CONFIRM-03 — Terminal Break đi đâu?
 
@@ -949,7 +950,7 @@ Result sau explicit action, nhưng chưa nói một Result cũ có được mở
 ### 19.1. Confirmation approval checklist
 
 - [ ] Owner selects one option for `US0700-CONFIRM-01`.
-- [ ] Owner selects one option for `US0700-CONFIRM-02`.
+- [x] Owner selected Option A for `US0700-CONFIRM-02` on 2026-09-08.
 - [ ] Owner selects one option for `US0700-CONFIRM-03`.
 - [ ] Owner selects one option for `US0700-CONFIRM-04`.
 - [ ] Owner selects one option for `US0700-CONFIRM-05`.

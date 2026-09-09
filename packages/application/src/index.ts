@@ -108,6 +108,14 @@ export type {
   StandardFocusTerminalResult,
 } from './standard-focus/standard-focus-terminal-result';
 export {
+  LoadNextBreakRecommendationUseCase,
+  type LoadNextBreakRecommendationDependencies,
+  type LoadNextBreakRecommendationError,
+  type LoadNextBreakRecommendationErrorCode,
+  type LoadNextBreakRecommendationOutcome,
+} from './break/load-next-break-recommendation.use-case';
+export type { BreakRecommendation } from '@pixeldoro/domain';
+export {
   StartStandardFocusUseCase,
   type StartStandardFocusDependencies,
   type StartStandardFocusError,

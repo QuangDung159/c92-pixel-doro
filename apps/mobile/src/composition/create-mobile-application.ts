@@ -84,9 +84,15 @@ import { createFirstUseEntryReviewFixture } from './review/first-use-entry-revie
 import { createOnboardingTrialReviewFixture } from './review/onboarding-trial-review-fixture';
 import { createStandardFocusStartReviewFixture } from './review/standard-focus-start-review-fixture';
 import { createStandardFocusSideEffectReviewFixture } from './review/standard-focus-side-effect-review-fixture';
+import {
+  breakCadenceReviewDatabaseName,
+  createBreakCadenceReviewFixture,
+  resolveBreakCadenceReviewScenario,
+} from './review/break-cadence-review-fixture';
 import { OnboardingTrialStartupReconciliationAdapter } from './startup/onboarding-trial-startup-reconciliation.adapter';
 import { ActiveSessionStartupReconciliationAdapter } from './startup/active-session-startup-reconciliation.adapter';
 import { createStandardFocusSlice } from './standard-focus/create-standard-focus-slice';
+import { createBreakRecommendationSlice } from './break/create-break-recommendation-slice';
 import { createStandardFocusSideEffects } from './standard-focus/create-standard-focus-side-effects';
 
 const PIXELDORO_DATABASE_NAME = 'pixeldoro.db';
@@ -133,16 +139,31 @@ export const createMobileApplication = (
   const appVisibility = new AppVisibilityController(
     appLifecycle.getCurrentState(),
   );
-  const databaseOwner = new SQLiteDatabaseOwner(
-    options.databaseName ?? PIXELDORO_DATABASE_NAME,
-    driver,
-  );
-  const transaction = new SQLiteTransaction(databaseOwner);
-  const persistence = createSQLitePersistenceGraph(databaseOwner, transaction);
   const reviewFixturesEnabled =
     options.diagnosticsEnabled !== false &&
     typeof __DEV__ !== 'undefined' &&
     __DEV__;
+  const breakCadenceReviewScenario = resolveBreakCadenceReviewScenario(
+    process.env.EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE,
+    reviewFixturesEnabled,
+  );
+  const databaseOwner = new SQLiteDatabaseOwner(
+    options.databaseName ?? (breakCadenceReviewScenario === undefined
+      ? PIXELDORO_DATABASE_NAME
+      : breakCadenceReviewDatabaseName(breakCadenceReviewScenario)),
+    driver,
+  );
+  const transaction = new SQLiteTransaction(databaseOwner);
+  const persistence = createSQLitePersistenceGraph(databaseOwner, transaction);
+  const breakCadenceReviewFixture = createBreakCadenceReviewFixture(
+    breakCadenceReviewScenario,
+    persistence.longBreakCadence,
+  );
+  const breakRecommendation = createBreakRecommendationSlice({
+    sessions: persistence.sessions,
+    longBreakCadence: breakCadenceReviewFixture?.longBreakCadence ??
+      persistence.longBreakCadence,
+  });
   const standardFocusSideEffectReviewFixture =
     createStandardFocusSideEffectReviewFixture(
       process.env.EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE,
@@ -748,6 +769,9 @@ export const createMobileApplication = (
 
   return {
     appVisibility,
+    breakRecommendation: breakRecommendation.recommendation,
+    breakRecommendationReviewStartAvailable:
+      breakCadenceReviewFixture !== undefined,
     bootstrap,
     confirmedReset,
     criticalRecovery: bootstrap,
@@ -777,6 +801,18 @@ export const createMobileApplication = (
     boot: async () => {
       await runProbeIfEnabled();
       await bootstrap.boot();
+      if (
+        bootstrap.getSnapshot().status === 'ready' &&
+        breakCadenceReviewFixture !== undefined
+      ) {
+        await breakCadenceReviewFixture.prepare({
+          installation: persistence.installation,
+          profile: persistence.profile,
+          rewards: persistence.rewards,
+          sessions: persistence.sessions,
+          transaction,
+        });
+      }
       standardFocusSideEffects.coordinator.start();
       if (epic02ExitCompletion !== undefined) {
         const candidate = epic02ExitCompletion;
@@ -912,6 +948,7 @@ export const createMobileApplication = (
         cancelReviewWait?.();
         cancelReviewWait = undefined;
         appVisibility.dispose();
+        breakRecommendation.dispose();
         firstUseEntry.dispose();
         standardFocus.dispose();
         standardFocusLifecycle?.dispose();
