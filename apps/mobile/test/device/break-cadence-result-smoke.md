@@ -1,8 +1,12 @@
 # US-07-01 — Break cadence Result quick smoke
 
-Status: `NOT_RUN`.
-Owner quick UI: `NOT_RUN`.
+Status: `OWNER_QUICK_UI_SMOKE_REPORTED`.
+Owner quick UI: `PASS` — owner confirmed 2026-09-09: no crash, works as expected.
 Formal tester: `NOT_RUN`; không suy diễn từ automated evidence.
+
+Phạm vi xác nhận hiện có là quick smoke tổng quát; platform/device/OS, từng fixture case và
+accessibility/offline/relaunch matrix chưa được cung cấp nên các checkbox/evidence row chi tiết bên
+dưới vẫn giữ `NOT_RUN`.
 
 Ghi `<implementation-sha>`, app/build profile, fixture, database name, platform, device/simulator,
 OS, ngày/giờ/timezone, online/offline, text size, Reduce Motion, VoiceOver/TalkBack và
@@ -131,11 +135,12 @@ pnpm start --clear
 
 | Platform/device/OS | Fixture | Scenario | Result | Artifact/notes |
 |---|---|---|---|---|
+| `Owner report; metadata not recorded` | `Quick UI smoke` | App stability + expected US-07-01 behavior | `PASS` | 2026-09-09: no crash, works as expected. Không thay formal/structured matrix. |
 | `<fill>` | `<fill>` | Short count 0/3 | `NOT_RUN` | `<fill>` |
 | `<fill>` | `<fill>` | Long count 4/sticky | `NOT_RUN` | `<fill>` |
 | `<fill>` | `<fill>` | Completed/cancelled Long | `NOT_RUN` | `<fill>` |
 | `<fill>` | `<fill>` | Failure/Retry/no-write | `NOT_RUN` | `<fill>` |
 | `<fill>` | `<fill>` | Accessibility/offline/relaunch | `NOT_RUN` | `<fill>` |
 
-Không mở US-07-02 chỉ từ việc guide tồn tại. Cần automated candidate, exact SHA, owner review output và
-implementation report; formal status vẫn được ghi trung thực nếu deferred.
+US-07-02 planning được mở từ automated PASS, exact committed SHA và owner quick UI acceptance. Coding
+US-07-02 vẫn chờ owner duyệt plan/confirmations; formal status tiếp tục được ghi trung thực.

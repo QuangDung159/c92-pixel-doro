@@ -1,10 +1,10 @@
 ---
 document_id: PIXELDORO_EPIC_07_USER_STORIES
 title: PixelDoro EPIC-07 — Break Experience và Long Break Cadence User Stories
-version: 0.1.0
-status: DRAFT_OWNER_CONFIRMATION_REQUIRED
+version: 0.2.0
+status: IN_PROGRESS_OWNER_CONFIRMATION_REQUIRED
 date: 2026-09-08
-last_updated: 2026-09-08
+last_updated: 2026-09-09
 owner: Dũng Lư
 language: vi
 scope:
@@ -14,14 +14,14 @@ scope:
 authority: PLANNING
 product_truth: ../PIXELDORO_CORE_TRUTH.md
 epic_baseline: ./MVP_EPICS.md
-branch_audited: feats/epic-06
-baseline_head: 303c74813cff6ad752b8ac0e4239b9cf2e14a009
+branch_audited: feats/epic-07
+baseline_head: a3b92fd8a6908f4efecea7fc7c8d49ac20683aa3
 epic_06_behavior_candidate: 458a8868ac0024e3b3d1eff64ccc26408a81b2e1
 epic_06_status: DONE_OWNER_ACCEPTED
-implementation_status: NOT_STARTED
+implementation_status: US_07_01_DONE_OWNER_ACCEPTED_US_07_02_PLANNING
 formal_tester_status: NOT_RUN
 schema_change: NONE_PROPOSED_PENDING_CONFIRMATION
-next_gate: OWNER_CONFIRMATIONS_THEN_US_07_01_IMPLEMENTATION_PLAN
+next_gate: OWNER_CONFIRM_US_07_02_PLAN
 ---
 
 # EPIC-07 — Break Experience và Long Break Cadence
@@ -299,24 +299,24 @@ duration, due meaning và actions phải được đọc bằng text, không ch�
 
 ### 7.3. Acceptance criteria
 
-- [ ] Count `0–3` chọn Short 5 phút; count `4+` chọn Long 15 phút.
-- [ ] Trial, running, failed/cancelled Focus và cancelled/Short Break không ảnh hưởng count.
-- [ ] Chỉ latest completed Long Break là reset marker.
-- [ ] Long due giữ qua Home, relaunch và completed Standard Focus bổ sung.
-- [ ] Completed Long Break làm lần đọc tiếp theo trở về Short nếu chưa có đủ bốn Focus mới.
-- [ ] Result render/retry/reopen không tạo Break hoặc mutate cadence.
-- [ ] Failed/cancelled Standard và Trial Result không có Start Break.
-- [ ] Cadence read/corrupt failure không fallback thành Short; có Retry/Home an toàn.
-- [ ] CTA/copy thể hiện type + duration bằng text và không phụ thuộc màu/motion.
+- [x] Count `0–3` chọn Short 5 phút; count `4+` chọn Long 15 phút.
+- [x] Trial, running, failed/cancelled Focus và cancelled/Short Break không ảnh hưởng count.
+- [x] Chỉ latest completed Long Break là reset marker.
+- [x] Long due giữ qua Home, relaunch và completed Standard Focus bổ sung.
+- [x] Completed Long Break làm lần đọc tiếp theo trở về Short nếu chưa có đủ bốn Focus mới.
+- [x] Result render/retry/reopen không tạo Break hoặc mutate cadence.
+- [x] Failed/cancelled Standard và Trial Result không có Start Break.
+- [x] Cadence read/corrupt failure không fallback thành Short; có Retry/Home an toàn.
+- [x] CTA/copy thể hiện type + duration bằng text và không phụ thuộc màu/motion.
 
 ### 7.4. Automated test checklist
 
-- [ ] Domain table test `0,1,2,3,4,5+`, invalid count và marker facts.
-- [ ] Application test exact completed Standard source; reject running/failed/cancelled/trial/Break.
-- [ ] SQLite mixed-history test no marker, completed marker, cancelled marker, additional Focus và reopen.
-- [ ] Controller single-flight/stale response/dispose/retry test.
-- [ ] Presentation test completed recommendation and unchanged failed/cancelled variants.
-- [ ] Regression: existing derived-query, Trial Result và Standard Result tests pass.
+- [x] Domain table test `0,1,2,3,4,5+`, invalid count và marker facts.
+- [x] Application test exact completed Standard source; reject running/failed/cancelled/trial/Break.
+- [x] SQLite mixed-history test no marker, completed marker, cancelled marker, additional Focus và reopen.
+- [x] Controller single-flight/stale response/dispose/retry test.
+- [x] Presentation test completed recommendation and unchanged failed/cancelled variants.
+- [x] Regression: existing derived-query, Trial Result và Standard Result tests pass.
 
 ### 7.5. Manual UI/device test guide
 
@@ -343,17 +343,17 @@ duration, due meaning và actions phải được đọc bằng text, không ch�
   meaning không đổi khi motion giảm.
 - [ ] **Platforms:** chạy owner quick smoke iOS + Android; formal tester ghi độc lập.
 - [ ] **Cleanup:** unset fixture, đóng isolated DB, chạy normal app và xác nhận không active Break.
-- [ ] **Evidence:** automated `NOT_RUN` tới khi chạy; owner quick smoke `NOT_RUN`; formal tester
-  `NOT_RUN`/`DEFERRED`, không suy diễn.
+- [ ] **Evidence:** automated `PASS`; owner quick smoke `PASS` (no crash, works as expected,
+  2026-09-09); structured case/platform metadata và formal tester vẫn `NOT_RUN`, không suy diễn.
 
 ### 7.6. DoR, DoD, evidence và next gate
 
-- [ ] **DoR:** `US0700-CONFIRM-02` approved; source identity/error copy trong plan; no schema change.
-- [ ] **DoD:** acceptance + automated checks pass; implementation report/exact SHA/device guide tạo;
+- [x] **DoR:** `US0700-CONFIRM-02` approved; source identity/error copy trong plan; no schema change.
+- [x] **DoD:** acceptance + automated checks pass; implementation report/exact SHA/device guide tạo;
   owner chấp nhận output quan sát được; formal status ghi trung thực.
-- [ ] **Evidence files:** `US-07-01_IMPLEMENTATION_PLAN.md`, `US-07-01_IMPLEMENTATION_REPORT.md`,
+- [x] **Evidence files:** `US-07-01_IMPLEMENTATION_PLAN.md`, `US-07-01_IMPLEMENTATION_REPORT.md`,
   `apps/mobile/test/device/break-cadence-result-smoke.md`.
-- [ ] **Gate sang US-07-02:** cadence Domain/Application ownership và completed-only Result được owner
+- [x] **Gate sang US-07-02:** cadence Domain/Application ownership và completed-only Result được owner
   accepted; no auto-start/prototype authority regression.
 
 ## 8. US-07-02 — Explicit durable Start Break và Pet chuyển sang Breaking
@@ -977,4 +977,5 @@ Result sau explicit action, nhưng chưa nói một Result cũ có được mở
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.2.0 | 2026-09-09 | Codex | Recorded US-07-01 committed SHA and owner quick UI acceptance; opened owner-gated US-07-02 planning while preserving formal/structured manual evidence as NOT_RUN. |
 | 0.1.0 | 2026-09-08 | Codex | Audited current documentation/code/test baseline; created five risk-ordered vertical Stories, no-schema default verdict, component/durable/navigation/race/a11y/test matrices, executable per-Story device guides and six pending owner confirmations. No production code was changed. |

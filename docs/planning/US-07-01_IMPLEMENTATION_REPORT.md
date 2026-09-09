@@ -1,18 +1,18 @@
 ---
 document_id: PIXELDORO_US_07_01_IMPLEMENTATION_REPORT
 title: PixelDoro Mobile MVP — US-07-01 Implementation Report
-version: 0.1.0
-status: IMPLEMENTED_AUTOMATED_PASS_OWNER_REVIEW_PENDING
-implementation_status: IMPLEMENTED_AUTOMATED_PASS
+version: 0.2.0
+status: DONE_OWNER_ACCEPTED_QUICK_UI
+implementation_status: DONE_OWNER_ACCEPTED
 date: 2026-09-08
 owner: Dũng Lư
 language: vi
 branch: feats/epic-07
 planning_baseline_sha: 0e6493ffe3520780e61c739df38f3de6e4da04df
 implementation_start_sha: 0e6493ffe3520780e61c739df38f3de6e4da04df
-exact_implementation_sha: WORKTREE_CANDIDATE_NOT_COMMITTED
-manual_device_status: NOT_RUN
-owner_quick_ui_status: NOT_RUN
+exact_implementation_sha: a3b92fd8a6908f4efecea7fc7c8d49ac20683aa3
+manual_device_status: OWNER_QUICK_UI_SMOKE_REPORTED
+owner_quick_ui_status: PASS_NO_CRASH_WORKS_AS_EXPECTED
 formal_tester_status: NOT_RUN
 schema_change: NONE
 dependency_change: NONE
@@ -25,7 +25,7 @@ story_baseline: ./EPIC-07_USER_STORIES.md
 
 ## 0. Executive result
 
-US-07-01 đã được triển khai thành worktree candidate theo toàn bộ Option A được owner duyệt ngày
+US-07-01 đã được triển khai thành committed candidate theo toàn bộ Option A được owner duyệt ngày
 2026-09-08:
 
 - Domain quyết định Short `5` / Long `15` từ durable completed-Standard count.
@@ -38,8 +38,10 @@ US-07-01 đã được triển khai thành worktree candidate theo toàn bộ Op
 - Review fixtures dùng database disposable riêng, seed qua production use cases/repositories và query thật.
 - Không có schema, migration, dependency, native config, notification, analytics hoặc Break session write.
 
-Automated candidate đã pass; manual owner/device và formal tester chưa chạy, nên Story chưa được đánh
-dấu owner accepted và chưa mở implementation US-07-02.
+Automated candidate đã pass và được commit/push tại exact SHA
+`a3b92fd8a6908f4efecea7fc7c8d49ac20683aa3`. Ngày 2026-09-09, owner xác nhận đã smoke test UI:
+không crash và hoạt động đúng kỳ vọng; Story được accepted để mở planning US-07-02. Xác nhận này là
+owner quick smoke, không thay cho structured device/accessibility matrix hoặc formal tester evidence.
 
 ## 1. Baseline và approval
 
@@ -50,7 +52,7 @@ dấu owner accepted và chưa mở implementation US-07-02.
 | EPIC-06 accepted behavior | `458a8868ac0024e3b3d1eff64ccc26408a81b2e1` |
 | Owner decisions | `US0701-CONFIRM-01→09` Option A, 2026-09-08 |
 | EPIC decision resolved | `US0700-CONFIRM-02` Option A |
-| Candidate identity | Uncommitted worktree; exact implementation SHA chưa có |
+| Candidate identity | Committed/pushed exact SHA `a3b92fd8a6908f4efecea7fc7c8d49ac20683aa3` |
 | Schema/dependency/native | No change |
 
 ## 2. Delivered architecture
@@ -202,7 +204,7 @@ Guide created: `apps/mobile/test/device/break-cadence-result-smoke.md`.
 | Evidence class | Status |
 |---|---|
 | Automated | PASS as recorded in §4 |
-| Owner quick UI | `NOT_RUN` |
+| Owner quick UI | `PASS` — owner reported no crash, works as expected, 2026-09-09 |
 | iOS device/simulator walkthrough | `NOT_RUN` |
 | Android device/emulator walkthrough | `NOT_RUN` |
 | VoiceOver/TalkBack/largest text/Reduce Motion | `NOT_RUN` |
@@ -222,9 +224,9 @@ JS exports and component tests are not substituted for manual/device accessibili
 - [x] Completed-only typed panel and failed/cancelled regression pass.
 - [x] Production path has no prototype cadence authority or fake Start.
 - [x] Full automated/exports/static checks passed with documented Doctor warnings.
-- [ ] Owner quick UI walkthrough completed and accepted.
-- [ ] Exact committed implementation SHA recorded.
-- [ ] Owner explicitly authorizes US-07-01 closure and US-07-02 implementation planning.
+- [x] Owner quick UI walkthrough completed and accepted: no crash, works as expected.
+- [x] Exact committed implementation SHA recorded.
+- [x] Owner explicitly authorizes US-07-01 closure and US-07-02 implementation planning.
 
 ## 7. Known limitations and deferred work
 
@@ -240,15 +242,13 @@ JS exports and component tests are not substituted for manual/device accessibili
 
 ## 8. Next gate
 
-Before closing US-07-01:
-
-1. Run the owner quick smoke in `break-cadence-result-smoke.md` on the desired iOS/Android targets.
-2. Record observed evidence and any copy/layout issue.
-3. Commit the candidate and record exact implementation SHA if accepted.
-4. Explicitly approve Story closure; only then open US-07-02 implementation planning.
+US-07-01 closure gate đã đạt ở mức owner quick UI acceptance. US-07-02 implementation planning được
+mở; production coding vẫn phải chờ owner duyệt các confirmation của plan US-07-02. Structured
+iOS/Android accessibility matrix và formal tester evidence tiếp tục được theo dõi riêng.
 
 ## 9. Change log
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.2.0 | 2026-09-09 | Codex | Recorded committed/pushed exact SHA, owner quick UI PASS (no crash, works as expected), Story acceptance and authorization to open US-07-02 planning; formal/structured manual evidence remain NOT_RUN. |
 | 0.1.0 | 2026-09-08 | Codex | Recorded US-07-01 worktree implementation, 701-test full-quality pass, iOS/Android export pass, 19/21 Expo Doctor with pre-existing warnings, no-schema/no-write scope audit, and manual/owner/formal evidence as NOT_RUN. |
