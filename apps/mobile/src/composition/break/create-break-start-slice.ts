@@ -1,5 +1,5 @@
 import {
-  LoadRunningBreakUseCase,
+  LoadBreakSessionUseCase,
   StartBreakUseCase,
   type ClockPort,
   type IdPort,
@@ -17,6 +17,7 @@ import {
   BreakStartController,
   type CommandReadinessPort,
   type BreakStartUiErrorCode,
+  type TickScheduler,
 } from '@/application';
 
 export interface CreateBreakStartSliceDependencies {
@@ -32,6 +33,10 @@ export interface CreateBreakStartSliceDependencies {
     'findById' | 'findByIdInTransaction' | 'findActiveInTransaction' |
     'insertRunningInTransaction'>;
   readonly transaction: TransactionPort;
+  readonly scheduler: TickScheduler;
+  readonly appInitiallyVisible: boolean;
+  readonly onDeadlineReached?: (sessionId: string) => void;
+  readonly onStarted?: () => void;
 }
 
 const mapError = (code: string): BreakStartUiErrorCode => {
@@ -61,13 +66,19 @@ export const createBreakStartSlice = (dependencies: CreateBreakStartSliceDepende
         : { ok: false, error: { code: mapError(result.error.code) } };
     },
     afterCommitted: async () => {
+      dependencies.onStarted?.();
       dependencies.petTerminalFeedback.discardActive();
       await dependencies.petCompanion.refresh();
     },
   });
-  const session = new BreakSessionController(
-    new LoadRunningBreakUseCase(dependencies.sessions),
-  );
+  const session = new BreakSessionController({
+    appInitiallyVisible: dependencies.appInitiallyVisible,
+    clock: dependencies.clock,
+    loader: new LoadBreakSessionUseCase(dependencies.sessions),
+    scheduler: dependencies.scheduler,
+    ...(dependencies.onDeadlineReached === undefined
+      ? {} : { onDeadlineReached: dependencies.onDeadlineReached }),
+  });
   return {
     start,
     session,

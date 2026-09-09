@@ -12,6 +12,8 @@ describe('first-use entry navigation', () => {
     ['trial_result', '/focus/result'],
     ['standard_focus_running', '/focus/session'],
     ['standard_focus_result', '/focus/result'],
+    ['break_running', '/break/session'],
+    ['break_completed', '/break/session'],
     ['home', '/(tabs)'],
   ] as const)('maps %s to %s', (destination, path) => {
     expect(pathForFirstUseDestination(destination)).toBe(path);
@@ -52,6 +54,16 @@ describe('first-use entry navigation', () => {
     }, null, replace)).toBe('standard_focus_result');
     expect(replace).toHaveBeenCalledWith({
       pathname: '/focus/result', params: { sessionId: 'strict-1' },
+    });
+  });
+
+  it('carries the exact startup Break identity', () => {
+    const replace = vi.fn();
+    expect(synchronizeFirstUseEntryNavigation({
+      status: 'ready', destination: 'break_completed', sessionId: 'break-1',
+    }, null, replace)).toBe('break_completed');
+    expect(replace).toHaveBeenCalledWith({
+      pathname: '/break/session', params: { sessionId: 'break-1' },
     });
   });
 });

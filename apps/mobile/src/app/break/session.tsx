@@ -19,7 +19,7 @@ export default function BreakSessionRoute() {
   const router = useRouter();
   const { sessionId } = useLocalSearchParams<{ readonly sessionId?: string | string[] }>();
   const projection = useBreakSessionProjection();
-  const { refresh, reset } = useBreakSessionActions();
+  const { activate, deactivate, refresh, reset } = useBreakSessionActions();
   const pet = usePetVisualProjection();
   const refreshPet = usePetCompanionRefresh();
   const dismissPetFeedbackError = useDismissPetTerminalFeedbackError();
@@ -27,10 +27,14 @@ export default function BreakSessionRoute() {
 
   useFocusEffect(useCallback(() => {
     if (validSessionId !== null) {
-      void Promise.all([refresh(validSessionId), refreshPet()]);
+      activate(validSessionId);
+      void refreshPet();
     }
-    return reset;
-  }, [refresh, refreshPet, reset, validSessionId]));
+    return () => {
+      deactivate();
+      reset();
+    };
+  }, [activate, deactivate, refreshPet, reset, validSessionId]));
 
   if (validSessionId === null) {
     return <ScreenShell><ErrorState
@@ -51,9 +55,10 @@ export default function BreakSessionRoute() {
   }
   return <PetRouteVisibility>
     <BreakStartedScreen
-      session={projection.session}
+      projection={projection}
       pet={pet}
       onDismissPetFeedbackError={dismissPetFeedbackError}
+      onHome={() => router.replace('/(tabs)')}
       onRetryPet={() => void refreshPet()}
     />
   </PetRouteVisibility>;

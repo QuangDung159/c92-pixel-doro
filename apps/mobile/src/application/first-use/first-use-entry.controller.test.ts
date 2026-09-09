@@ -159,6 +159,31 @@ describe('FirstUseEntryController', () => {
     });
   });
 
+  it('routes running and startup-completed Breaks with exact identity', async () => {
+    const activeBreak = { ...trial('running'), id: 'break-1', sessionType: 'short_break' as const,
+      focusVariant: null, mode: null, workTag: null, endsAt: timestamp + 300_000 };
+    const runningController = new FirstUseEntryController({
+      installation: { find: async () => ({ ok: true, value: installation(timestamp + 1) }) },
+      sessions: { findActive: async () => ({ ok: true, value: activeBreak }),
+        findLatestOnboardingTrial: vi.fn() },
+    });
+    await runningController.refresh();
+    expect(runningController.getSnapshot()).toEqual({
+      status: 'ready', destination: 'break_running', sessionId: 'break-1',
+    });
+
+    const completedController = new FirstUseEntryController({
+      installation: { find: async () => ({ ok: true, value: installation(timestamp + 1) }) },
+      sessions: { findActive: async () => ({ ok: true, value: null }),
+        findLatestOnboardingTrial: vi.fn() },
+      breakOutcome: { getSnapshot: () => ({ status: 'completed', sessionId: 'break-1' }) },
+    });
+    await completedController.refresh();
+    expect(completedController.getSnapshot()).toEqual({
+      status: 'ready', destination: 'break_completed', sessionId: 'break-1',
+    });
+  });
+
   it('fails closed for missing installation and impossible trial state', async () => {
     const missing = createController(null, null).controller;
     await missing.refresh();

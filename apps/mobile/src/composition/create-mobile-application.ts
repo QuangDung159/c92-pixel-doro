@@ -4,6 +4,8 @@ import {
   ConfirmedLocalDataReset,
   CompleteFirstUseHandoffUseCase,
   AppVisibilityController,
+  BreakLifecycleController,
+  BreakOutcomeController,
   FirstUseEntryController,
   MobileBootstrap,
   OnboardingAnalyticsRecorder,
@@ -43,6 +45,7 @@ import {
   SessionCommandCoordinator,
   RecordStrictBackgroundUseCase,
   ReconcileStandardFocusUseCase,
+  ReconcileBreakUseCase,
   isRunningStandardFocus,
   StartOnboardingTrialUseCase,
   type ClockPort,
@@ -94,6 +97,11 @@ import {
   createBreakStartReviewFixture,
   resolveBreakStartReviewScenario,
 } from './review/break-start-review-fixture';
+import {
+  breakRunningReviewDatabaseName,
+  createBreakRunningReviewFixture,
+  resolveBreakRunningReviewScenario,
+} from './review/break-running-review-fixture';
 import { OnboardingTrialStartupReconciliationAdapter } from './startup/onboarding-trial-startup-reconciliation.adapter';
 import { ActiveSessionStartupReconciliationAdapter } from './startup/active-session-startup-reconciliation.adapter';
 import { createStandardFocusSlice } from './standard-focus/create-standard-focus-slice';
@@ -157,12 +165,18 @@ export const createMobileApplication = (
     process.env.EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE,
     reviewFixturesEnabled,
   );
+  const breakRunningReviewScenario = resolveBreakRunningReviewScenario(
+    process.env.EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE,
+    reviewFixturesEnabled,
+  );
   const databaseOwner = new SQLiteDatabaseOwner(
     options.databaseName ?? (breakCadenceReviewScenario !== undefined
       ? breakCadenceReviewDatabaseName(breakCadenceReviewScenario)
       : breakStartReviewScenario !== undefined
         ? breakStartReviewDatabaseName(breakStartReviewScenario)
-        : PIXELDORO_DATABASE_NAME),
+        : breakRunningReviewScenario !== undefined
+          ? breakRunningReviewDatabaseName(breakRunningReviewScenario)
+          : PIXELDORO_DATABASE_NAME),
     driver,
   );
   const transaction = new SQLiteTransaction(databaseOwner);
@@ -173,6 +187,11 @@ export const createMobileApplication = (
   );
   const breakStartReviewFixture = createBreakStartReviewFixture(
     breakStartReviewScenario,
+    persistence.sessions,
+  );
+  const breakRunningReviewFixture = createBreakRunningReviewFixture(
+    breakRunningReviewScenario,
+    baseClock,
     persistence.sessions,
   );
   const breakRecommendation = createBreakRecommendationSlice({
@@ -197,7 +216,8 @@ export const createMobileApplication = (
     persistence.rewards,
     persistence.installation,
   );
-  const clock = onboardingTrialReviewFixture?.clock ?? baseClock;
+  const clock = onboardingTrialReviewFixture?.clock ??
+    breakRunningReviewFixture?.clock ?? baseClock;
   const onboardingTrialSessions =
     onboardingTrialReviewFixture?.sessions ?? persistence.sessions;
   const onboardingTrialRewards =
@@ -206,9 +226,11 @@ export const createMobileApplication = (
     onboardingTrialReviewFixture?.installation ?? persistence.installation;
   const sessionCommands = new SessionCommandCoordinator();
   const standardFocusOutcome = new StandardFocusOutcomeController();
+  const breakOutcome = new BreakOutcomeController();
   const standardFocusLifecycleRef: {
     current?: StandardFocusLifecycleController;
   } = {};
+  const breakLifecycleRef: { current?: BreakLifecycleController } = {};
   const standardFocusSideEffectsRef: {
     current?: ReturnType<typeof createStandardFocusSideEffects>['coordinator'];
   } = {};
@@ -256,6 +278,12 @@ export const createMobileApplication = (
     sessions: standardFocusSessions,
     transaction,
   });
+  const startupBreakReconciliation = new ReconcileBreakUseCase({
+    clock,
+    coordinator: sessionCommands,
+    sessions: breakRunningReviewFixture?.sessions ?? persistence.sessions,
+    transaction,
+  });
   const startOnboardingTrialUseCase = new StartOnboardingTrialUseCase({
     calendar: localCalendar,
     clock,
@@ -291,7 +319,8 @@ export const createMobileApplication = (
     completeOnboardingTrialUseCase,
     onboardingTrialResult,
   );
-  const sessionTickScheduler = new DeviceTimeoutScheduler();
+  const sessionTickScheduler = breakRunningReviewFixture?.scheduler ??
+    new DeviceTimeoutScheduler();
   const onboardingTrialRunning = new OnboardingTrialRunningController({
     appInitiallyVisible: appLifecycle.getCurrentState() === 'active',
     clock,
@@ -318,6 +347,7 @@ export const createMobileApplication = (
       firstUseEntryReviewFixture?.sessions ??
       onboardingTrialSessions,
     standardOutcome: standardFocusOutcome,
+    breakOutcome,
   });
   const readiness = new ReadinessGate();
   const migration =
@@ -367,6 +397,11 @@ export const createMobileApplication = (
               'existing_terminal',
             ),
         },
+        {
+          reconcile: () => startupBreakReconciliation.execute(),
+          publishCompleted: (sessionId, resolvedAt) =>
+            breakOutcome.publishCompleted(sessionId, resolvedAt),
+        },
       ),
   });
   const onboardingAnalytics =
@@ -405,6 +440,7 @@ export const createMobileApplication = (
         process.env.EXPO_PUBLIC_EPIC_04_PET_BASE_FIXTURE,
         reviewFixturesEnabled,
       ) ??
+      breakRunningReviewFixture?.sessions ??
       onboardingTrialSessions,
   );
   const petFeedbackScheduler = new DeviceTimeoutScheduler();
@@ -414,6 +450,7 @@ export const createMobileApplication = (
   });
   const petVisual = new PetVisualController(petCompanion, petTerminalFeedback);
   const breakStart = createBreakStartSlice({
+    appInitiallyVisible: appLifecycle.getCurrentState() === 'active',
     calendar: localCalendar,
     clock,
     coordinator: sessionCommands,
@@ -422,9 +459,23 @@ export const createMobileApplication = (
     petCompanion,
     petTerminalFeedback,
     readiness,
-    sessions: breakStartReviewFixture?.sessions ?? persistence.sessions,
+    scheduler: sessionTickScheduler,
+    sessions: breakRunningReviewFixture?.sessions ??
+      breakStartReviewFixture?.sessions ?? persistence.sessions,
     transaction,
+    onDeadlineReached: (sessionId) => {
+      void breakLifecycleRef.current?.reconcileNow(sessionId);
+    },
+    onStarted: () => breakOutcome.reset(),
   });
+  const breakLifecycle = new BreakLifecycleController({
+    criticalRecovery: bootstrap,
+    outcome: breakOutcome,
+    petCompanion,
+    session: breakStart.session,
+    reconcile: (sessionId) => startupBreakReconciliation.execute(sessionId),
+  }, appLifecycle.getCurrentState());
+  breakLifecycleRef.current = breakLifecycle;
   const requestStandardOutcomeFeedback = (): void => {
     requestStandardTerminalFeedback(standardFocusOutcome.getSnapshot(), petCompanion, petTerminalFeedback);
   };
@@ -604,13 +655,16 @@ export const createMobileApplication = (
         appVisibility.publish(state);
         onboardingTrialRunning.setAppVisible(false);
         standardFocusLifecycle.handleState(state);
+        breakLifecycle.handleState(state);
         petTerminalFeedback.discardActive();
         return;
       }
       standardFocusLifecycle.handleState(state);
+      breakLifecycle.handleState(state);
       const standardBarrier = standardFocusLifecycle.whenIdle();
+      const breakBarrier = breakLifecycle.whenIdle();
       void onboardingTrialCompletion.reconcile().then(async (result) => {
-        await standardBarrier;
+        await Promise.all([standardBarrier, breakBarrier]);
         if (bootstrap.getSnapshot().status !== 'ready') return;
         appVisibility.publish('active');
         onboardingTrialRunning.setAppVisible(true);
@@ -853,6 +907,19 @@ export const createMobileApplication = (
           transaction,
         });
       }
+      if (
+        bootstrap.getSnapshot().status === 'ready' &&
+        breakRunningReviewFixture !== undefined
+      ) {
+        await breakRunningReviewFixture.prepare({
+          installation: persistence.installation,
+          profile: persistence.profile,
+          rewards: persistence.rewards,
+          sessions: persistence.sessions,
+          transaction,
+          longBreakCadence: persistence.longBreakCadence,
+        });
+      }
       standardFocusSideEffects.coordinator.start();
       if (epic02ExitCompletion !== undefined) {
         const candidate = epic02ExitCompletion;
@@ -990,6 +1057,8 @@ export const createMobileApplication = (
         appVisibility.dispose();
         breakRecommendation.dispose();
         breakStart.dispose();
+        breakLifecycle.dispose();
+        breakOutcome.dispose();
         firstUseEntry.dispose();
         standardFocus.dispose();
         standardFocusLifecycle?.dispose();

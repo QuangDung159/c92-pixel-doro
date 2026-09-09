@@ -7,25 +7,36 @@ vi.mock('react-native', () => ({
   Text: 'Text', View: 'View',
 }));
 vi.mock('@/presentation/components', () => ({
-  InlineNotice: 'InlineNotice', Panel: 'Panel', PetVisualStatus: 'PetVisualStatus',
+  CountdownDisplay: 'CountdownDisplay', InlineNotice: 'InlineNotice', Panel: 'Panel',
+  PetVisualStatus: 'PetVisualStatus', PrimaryButton: 'PrimaryButton',
   ScreenHeader: 'ScreenHeader', ScreenShell: 'ScreenShell',
 }));
 
+const session = { status: 'running' as const, sessionId: 'break-1', kind: 'short' as const,
+  durationMinutes: 5 as const, startedAt: 10, endsAt: 300_010 };
+const base = { pet: { status: 'loading' as const }, onDismissPetFeedbackError: vi.fn(),
+  onHome: vi.fn(), onRetryPet: vi.fn() };
+
 describe('BreakStartedScreen', () => {
-  it.each([
-    ['short', 5, 'Nghỉ ngắn · 5 phút'],
-    ['long', 15, 'Nghỉ dài · 15 phút'],
-  ] as const)('renders committed %s meaning without a fake countdown', (kind, minutes, copy) => {
-    const tree = BreakStartedScreen({
-      session: { sessionId: 'break-1', kind, durationMinutes: minutes,
-        startedAt: 10, endsAt: 10 + minutes * 60_000 },
-      pet: { status: 'loading' },
-      onDismissPetFeedbackError: vi.fn(),
-      onRetryPet: vi.fn(),
-    });
+  it('renders timestamp countdown and no Pause, Strict or reward action', () => {
+    const tree = BreakStartedScreen({ ...base, projection: {
+      status: 'ready', phase: 'running', session, remainingMs: 300_000, displaySeconds: 300,
+    } });
     const serialized = JSON.stringify(tree);
-    expect(serialized).toContain(copy);
-    expect(serialized).toContain('PetVisualStatus');
-    expect(serialized).not.toMatch(/05:00|15:00|MOCK|Prototype/);
+    expect(serialized).toContain('Nghỉ ngắn · 5 phút');
+    expect(serialized).toContain('CountdownDisplay');
+    expect(serialized).not.toContain('PrimaryButton');
+  });
+
+  it('renders committed completion with Home and zero-reward copy', () => {
+    const tree = BreakStartedScreen({ ...base, projection: {
+      status: 'ready', phase: 'completed',
+      session: { ...session, status: 'completed', resolvedAt: 301_000 },
+    } });
+    const serialized = JSON.stringify(tree);
+    expect(serialized).toContain('Phiên nghỉ đã hoàn thành');
+    expect(serialized).toContain('Về Home');
+    expect(serialized).toContain('không tạo XP hoặc Coin');
+    expect(serialized).not.toContain('CountdownDisplay');
   });
 });

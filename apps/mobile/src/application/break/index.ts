@@ -11,5 +11,14 @@ export {
 } from './break-start.controller';
 export {
   BreakSessionController,
+  type BreakSessionControllerDependencies,
   type BreakSessionProjection,
 } from './break-session.controller';
+export {
+  BreakLifecycleController,
+  type BreakLifecycleControllerDependencies,
+} from './break-lifecycle.controller';
+export {
+  BreakOutcomeController,
+  type BreakOutcomeProjection,
+} from './break-outcome.controller';

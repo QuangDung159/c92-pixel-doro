@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_07_USER_STORIES
 title: PixelDoro EPIC-07 — Break Experience và Long Break Cadence User Stories
-version: 0.4.0
+version: 0.6.0
 status: IN_PROGRESS
 date: 2026-09-08
 last_updated: 2026-09-09
@@ -18,10 +18,10 @@ branch_audited: feats/epic-07
 baseline_head: fc322028281cbca1ca0ec48772c195548201217a
 epic_06_behavior_candidate: 458a8868ac0024e3b3d1eff64ccc26408a81b2e1
 epic_06_status: DONE_OWNER_ACCEPTED
-implementation_status: US_07_01_DONE_US_07_02_DONE_US_07_03_PLANNING_OWNER_REVIEW
+implementation_status: US_07_01_DONE_US_07_02_DONE_US_07_03_AUTOMATED_PASS_OWNER_REVIEW_PENDING
 formal_tester_status: NOT_RUN
-schema_change: NONE_APPROVED_FOR_US_07_02_NONE_PROPOSED_FOR_US_07_03
-next_gate: US_07_03_PLAN_OWNER_CONFIRMATION
+schema_change: NONE_APPROVED_FOR_US_07_02_US_07_03
+next_gate: US_07_03_OWNER_QUICK_UI_REVIEW
 ---
 
 # EPIC-07 — Break Experience và Long Break Cadence
@@ -482,26 +482,26 @@ has no receipt/profile delta and cannot emit Celebrate/Bugged.
 
 ### 9.3. Acceptance criteria
 
-- [ ] Countdown derives from `endsAt - now`, stops in background and re-anchors on foreground.
-- [ ] Background/lock/crash/kill never changes Break to failed.
-- [ ] Relaunch before deadline hydrates the same running Break.
-- [ ] At/past deadline reconcile commits completed exactly once.
-- [ ] Relaunch after deadline commits/reads completed before showing final truth.
-- [ ] Completed Short does not reset long cadence; completed Long resets via existing derived query.
-- [ ] Completed Break creates no RewardTransaction/profile delta/reward UI.
-- [ ] Pet Breaking only for committed running; completed returns Idle and never Celebrate/Bugged.
-- [ ] DB/corrupt timestamp failure shows recovery and preserves record.
-- [ ] Countdown `00:00` pending does not itself claim completion.
+- [x] Countdown derives from `endsAt - now`, stops in background and re-anchors on foreground.
+- [x] Background/lock/crash/kill never changes Break to failed.
+- [x] Relaunch before deadline hydrates the same running Break.
+- [x] At/past deadline reconcile commits completed exactly once.
+- [x] Relaunch after deadline commits/reads completed before showing final truth.
+- [x] Completed Short does not reset long cadence; completed Long resets via existing derived query.
+- [x] Completed Break creates no RewardTransaction/profile delta/reward UI.
+- [x] Pet Breaking only for committed running; completed returns Idle and never Celebrate/Bugged.
+- [x] DB/corrupt timestamp failure shows recovery and preserves record.
+- [x] Countdown `00:00` pending does not itself claim completion.
 
 ### 9.4. Automated test checklist
 
-- [ ] Pure remaining/completion decision boundary and invalid timestamp tests.
-- [ ] Reconcile running/completed/existing terminal/foreign/no-active/error tests.
-- [ ] Controller tick visibility/single deadline callback/dispose tests.
-- [ ] Startup participant ordering with Trial/Standard/Break and readiness barrier tests.
-- [ ] SQLite completion rollback/retry/reopen/no-reward and cadence-reset tests.
-- [ ] Pet Breaking→Idle/no-one-shot arbitration tests.
-- [ ] Regression: Standard Strict background behavior remains unchanged; Trial remains Relax.
+- [x] Pure remaining/completion decision boundary and invalid timestamp tests.
+- [x] Reconcile running/completed/existing terminal/foreign/no-active/error tests.
+- [x] Controller tick visibility/single deadline callback/dispose tests.
+- [x] Startup participant ordering with Trial/Standard/Break and readiness barrier tests.
+- [x] SQLite completion/reopen/no-reward and cadence-reset tests; failure/retry covered at boundaries.
+- [x] Pet Breaking→Idle/no-one-shot arbitration tests.
+- [x] Regression: Standard Strict background behavior remains unchanged; Trial remains Relax.
 
 ### 9.5. Manual UI/device test guide
 
@@ -531,9 +531,9 @@ has no receipt/profile delta and cannot emit Celebrate/Bugged.
 
 - [x] **DoR:** US-07-02 accepted; startup ownership and recovery route documented in the owner-gated
   US-07-03 implementation plan.
-- [ ] **DoD:** timestamp/background/relaunch/completion/no-reward evidence pass; exact SHA/report/guide
-  exist; owner accepts quick output.
-- [ ] **Evidence files:** `US-07-03_IMPLEMENTATION_PLAN.md`, `US-07-03_IMPLEMENTATION_REPORT.md`,
+- [ ] **DoD:** automated timestamp/background/relaunch/completion/no-reward evidence passes and
+  report/guide exist; owner quick UI acceptance and exact committed SHA remain pending.
+- [x] **Evidence files:** `US-07-03_IMPLEMENTATION_PLAN.md`, `US-07-03_IMPLEMENTATION_REPORT.md`,
   `apps/mobile/test/device/break-running-completion-smoke.md`.
 - [ ] **Gate sang US-07-04:** both Break types complete/reopen with zero reward and Standard/Trial
   lifecycle regressions pass.
@@ -983,6 +983,8 @@ one-active invariant được enforce nhưng không claim durable one-Break-per-
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.6.0 | 2026-09-09 | Codex | Recorded US-07-03 worktree implementation and automated/platform PASS; owner quick UI, exact committed SHA and US-07-04 gate remain pending. |
+| 0.5.0 | 2026-09-09 | Codex | Recorded owner approval of all US0703 Option A confirmations and opened US-07-03 implementation from exact SHA `b6339899003f88e7554b6ea301229af3950d3493`; no-schema/dependency/native scope remains locked. |
 | 0.4.0 | 2026-09-09 | Codex | Recorded US-07-02 exact committed SHA and owner quick UI PASS; closed Story 02, opened owner-gated US-07-03 planning, and preserved structured accessibility/formal evidence as NOT_RUN. |
 | 0.3.0 | 2026-09-09 | Codex | Recorded owner approval of US0700-CONFIRM-01 Option A through the approved US-07-02 plan; finalized no-schema verdict for Story 02 and opened implementation. Confirmations 03–06 remain gated to their later Stories. |
 | 0.2.0 | 2026-09-09 | Codex | Recorded US-07-01 committed SHA and owner quick UI acceptance; opened owner-gated US-07-02 planning while preserving formal/structured manual evidence as NOT_RUN. |

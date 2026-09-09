@@ -7,11 +7,13 @@ export type FirstUseEntryPath =
   | '/(onboarding)'
   | '/focus/session'
   | '/focus/result'
+  | '/break/session'
   | '/(tabs)';
 
 export type FirstUseEntryNavigationTarget =
   | FirstUseEntryPath
-  | { readonly pathname: '/focus/result'; readonly params: { readonly sessionId: string } };
+  | { readonly pathname: '/focus/result' | '/break/session';
+      readonly params: { readonly sessionId: string } };
 
 const paths: Record<FirstUseEntryDestination, FirstUseEntryPath> = {
   onboarding_intro: '/(onboarding)',
@@ -19,6 +21,8 @@ const paths: Record<FirstUseEntryDestination, FirstUseEntryPath> = {
   trial_result: '/focus/result',
   standard_focus_running: '/focus/session',
   standard_focus_result: '/focus/result',
+  break_running: '/break/session',
+  break_completed: '/break/session',
   home: '/(tabs)',
 };
 
@@ -40,6 +44,8 @@ export const synchronizeFirstUseEntryNavigation = (
 
   replace(projection.destination === 'standard_focus_result'
     ? { pathname: '/focus/result', params: { sessionId: projection.sessionId } }
+    : projection.destination === 'break_running' || projection.destination === 'break_completed'
+      ? { pathname: '/break/session', params: { sessionId: projection.sessionId } }
     : pathForFirstUseDestination(projection.destination));
   return projection.destination;
 };

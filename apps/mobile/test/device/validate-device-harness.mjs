@@ -28,6 +28,23 @@ const standardFocusCompletionFlow = await readFile(`${deviceDirectory}standard-f
 const standardFocusSideEffectsFlow = await readFile(`${deviceDirectory}standard-focus-side-effects-exit-smoke.md`, 'utf8');
 const breakCadenceResultFlow = await readFile(`${deviceDirectory}break-cadence-result-smoke.md`, 'utf8');
 const breakStartFlow = await readFile(`${deviceDirectory}break-start-smoke.md`, 'utf8');
+const breakRunningCompletionFlow = await readFile(
+  `${deviceDirectory}break-running-completion-smoke.md`, 'utf8',
+);
+for (const evidence of [
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_running_short_fast_clock',
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_running_long_fast_clock',
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_running_relaunch_before_deadline',
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_completion_write_failure_once',
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_completion_read_failure_once',
+  'pixeldoro-us-07-03-', 'Nghỉ ngắn · 5 phút', 'Nghỉ dài · 15 phút',
+  'VoiceOver', 'TalkBack', 'Reduce Motion', 'Airplane mode',
+  '<implementation-sha>', 'NOT_RUN', 'unset EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE',
+]) {
+  if (!breakRunningCompletionFlow.includes(evidence)) {
+    throw new Error(`Break running/completion flow is missing: ${evidence}`);
+  }
+}
 for (const evidence of [
   'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_start_short',
   'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_start_long_due',

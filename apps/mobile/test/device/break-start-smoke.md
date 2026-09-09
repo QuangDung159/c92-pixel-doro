@@ -1,8 +1,12 @@
 # US-07-02 — Durable Start Break quick smoke
 
-Status: `NOT_RUN`.
-Owner quick UI: `NOT_RUN`.
+Status: `OWNER_QUICK_UI_SMOKE_REPORTED`.
+Owner quick UI: `PASS` — owner confirmed 2026-09-09: no crash, works as expected.
 Formal tester: `NOT_RUN`; không suy diễn từ automated evidence.
+
+Phạm vi xác nhận hiện có là quick smoke tổng quát; platform/device/OS, từng fixture case và
+accessibility/offline/relaunch matrix chưa được cung cấp nên các checkbox/evidence row chi tiết bên
+dưới vẫn giữ `NOT_RUN`.
 
 Ghi `<implementation-sha>`, app/build profile, fixture/database, platform, device/simulator, OS,
 ngày/giờ/timezone, online/offline, text size, Reduce Motion, VoiceOver/TalkBack và
@@ -98,8 +102,12 @@ pnpm start --clear
 
 | Platform/device/OS | Fixture | Scenario | Result | Artifact/notes |
 |---|---|---|---|---|
+| `Owner report; metadata not recorded` | `Quick UI smoke` | App stability + expected US-07-02 behavior | `PASS` | 2026-09-09: no crash, works as expected. Không thay formal/structured matrix. |
 | `<fill>` | `break_start_short` | Short/explicit/double tap | `NOT_RUN` | `<fill>` |
 | `<fill>` | `break_start_long_due` | Long/committed handoff | `NOT_RUN` | `<fill>` |
 | `<fill>` | `break_start_write_failure_once` | Rollback/Retry | `NOT_RUN` | `<fill>` |
 | `<fill>` | `break_start_active_conflict` | Preserve active | `NOT_RUN` | `<fill>` |
 | `<fill>` | `<fill>` | Offline/accessibility/exact ID | `NOT_RUN` | `<fill>` |
+
+US-07-03 đã được triển khai thành worktree candidate sau khi owner duyệt toàn bộ Option A; automated
+gates PASS còn owner quick UI/formal status của Story 03 tiếp tục được ghi riêng và trung thực.

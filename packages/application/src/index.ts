@@ -116,6 +116,8 @@ export {
 } from './break/load-next-break-recommendation.use-case';
 export {
   createBreakSessionRecord,
+  isCancelledBreak,
+  isCompletedBreak,
   isRunningBreak,
   type BreakSessionRecordError,
   type BreakSessionRecordInput,
@@ -133,6 +135,23 @@ export {
   type LoadRunningBreakError,
   type RunningBreakProjection,
 } from './break/load-running-break.use-case';
+export {
+  LoadBreakSessionUseCase,
+  type BreakSessionProjection,
+  type LoadBreakSessionError,
+} from './break/load-break-session.use-case';
+export {
+  completeBreakInTransaction,
+  type BreakCompletionDependencies,
+  type BreakCompletionError,
+  type BreakCompletionOutcome,
+} from './break/complete-break-transaction';
+export {
+  ReconcileBreakUseCase,
+  type ReconcileBreakDependencies,
+  type ReconcileBreakError,
+  type ReconcileBreakOutcome,
+} from './break/reconcile-break.use-case';
 export type { BreakRecommendation } from '@pixeldoro/domain';
 export {
   StartStandardFocusUseCase,

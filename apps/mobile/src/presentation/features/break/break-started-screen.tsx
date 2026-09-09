@@ -1,35 +1,48 @@
-import type { PetVisualProjection, RunningBreakProjection } from '@pixeldoro/application';
+import type { PetVisualProjection } from '@pixeldoro/application';
 import { StyleSheet, Text } from 'react-native';
 
+import type { BreakSessionProjection } from '@/application';
 import {
+  CountdownDisplay,
   InlineNotice,
   Panel,
   PetVisualStatus,
+  PrimaryButton,
   ScreenHeader,
   ScreenShell,
 } from '@/presentation/components';
 import { palette } from '@/presentation/theme/palette';
 
+type ReadyBreakProjection = Extract<BreakSessionProjection, { status: 'ready' }>;
+
 export interface BreakStartedScreenProps {
-  readonly session: RunningBreakProjection;
+  readonly projection: ReadyBreakProjection;
   readonly pet: PetVisualProjection;
   readonly onDismissPetFeedbackError: () => void;
+  readonly onHome: () => void;
   readonly onRetryPet: () => void;
 }
 
 export const BreakStartedScreen = ({
-  session,
+  projection,
   pet,
   onDismissPetFeedbackError,
+  onHome,
   onRetryPet,
 }: BreakStartedScreenProps) => {
+  const { session } = projection;
   const kindLabel = session.kind === 'long' ? 'Nghỉ dài' : 'Nghỉ ngắn';
   const displayLabel = `${kindLabel} · ${session.durationMinutes} phút`;
+  const completed = projection.phase === 'completed';
   return <ScreenShell>
     <ScreenHeader
-      description={`${kindLabel} ${session.durationMinutes} phút đã được lưu an toàn trên thiết bị.`}
-      eyebrow={session.kind === 'long' ? 'LONG BREAK · RUNNING' : 'SHORT BREAK · RUNNING'}
-      title="Phiên nghỉ đã bắt đầu."
+      description={completed
+        ? `${kindLabel} đã hoàn thành và được lưu an toàn trên thiết bị.`
+        : `${kindLabel} đang tiếp tục theo thời điểm kết thúc đã lưu.`}
+      eyebrow={completed
+        ? `${session.kind === 'long' ? 'LONG' : 'SHORT'} BREAK · COMPLETED`
+        : `${session.kind === 'long' ? 'LONG' : 'SHORT'} BREAK · RUNNING`}
+      title={completed ? 'Phiên nghỉ đã hoàn thành.' : 'Đang nghỉ cùng Mèo Dev.'}
     />
     <PetVisualStatus
       onDismissTerminalError={onDismissPetFeedbackError}
@@ -37,16 +50,23 @@ export const BreakStartedScreen = ({
       projection={pet}
     />
     <Panel tone={session.kind === 'long' ? 'gold' : 'strong'}>
-      <Text accessibilityRole="header" style={styles.title}>
-        {displayLabel}
-      </Text>
+      <Text accessibilityRole="header" style={styles.title}>{displayLabel}</Text>
+      {!completed && <CountdownDisplay
+        displaySeconds={projection.displaySeconds}
+        pending={projection.phase === 'deadline_pending'}
+        runningCaption="ĐANG NGHỈ…"
+      />}
       <Text style={styles.body}>
-        Mèo Dev đang nghỉ cùng bạn. Không có XP hoặc Coin được tạo từ phiên nghỉ này.
+        {completed
+          ? 'Mèo Dev đã trở về trạng thái sẵn sàng. Phiên nghỉ không tạo XP hoặc Coin.'
+          : 'Bạn có thể khóa màn hình hoặc rời app. Thời gian vẫn được tính từ timestamp đã lưu.'}
       </Text>
     </Panel>
-    <InlineNotice>
-      Countdown theo timestamp, background/relaunch và tự hoàn tất sẽ được nối ở US-07-03.
-    </InlineNotice>
+    {completed
+      ? <PrimaryButton label="Về Home" onPress={onHome} />
+      : <InlineNotice>
+          Phiên nghỉ không có Pause, Strict Mode hoặc phần thưởng.
+        </InlineNotice>}
   </ScreenShell>;
 };
 

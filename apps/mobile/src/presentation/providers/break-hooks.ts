@@ -50,5 +50,10 @@ export const useBreakSessionProjection = (): BreakSessionProjection => {
 
 export const useBreakSessionActions = () => {
   const { breakSession } = useMobileApplication();
-  return { refresh: breakSession.refresh, reset: breakSession.reset };
+  return {
+    activate: breakSession.activate,
+    deactivate: breakSession.deactivate,
+    refresh: breakSession.refresh,
+    reset: breakSession.reset,
+  };
 };

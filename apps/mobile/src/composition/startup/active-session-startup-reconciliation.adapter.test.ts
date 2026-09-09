@@ -11,6 +11,10 @@ const running = (): RunningSessionRecord => ({
   scheduledEndLocalDate: '2026-09-03', scheduledEndUtcOffsetMinutes: 420,
   createdAt: 1_000, updatedAt: 1_000,
 });
+const runningBreak = (): RunningSessionRecord => ({
+  ...running(), id: 'break-1', sessionType: 'short_break', focusVariant: null,
+  mode: null, workTag: null, configuredDurationMinutes: 5, endsAt: 301_000,
+});
 
 describe('ActiveSessionStartupReconciliationAdapter', () => {
   it('runs the existing reconciliation then validates Standard active truth without writing', async () => {
@@ -57,5 +61,27 @@ describe('ActiveSessionStartupReconciliationAdapter', () => {
       ok: true, value: { durableDataChanged: true },
     });
     expect(publishFreshFailure).toHaveBeenCalledWith('strict-1', 21_000);
+  });
+
+  it('accepts a running Break and publishes a fresh completed Break identity', async () => {
+    const publishCompleted = vi.fn();
+    let active: RunningSessionRecord | null = runningBreak();
+    const adapter = new ActiveSessionStartupReconciliationAdapter(
+      { reconcileAtStartup: async () => ({ ok: true, value: { durableDataChanged: false } }) },
+      { findActive: async () => ({ ok: true, value: active }) },
+      undefined,
+      {
+        reconcile: async () => {
+          active = null;
+          return { ok: true, value: { outcome: 'completed' as const, sessionId: 'break-1',
+            resolvedAt: 301_000, freshness: 'fresh_commit' as const } };
+        },
+        publishCompleted,
+      },
+    );
+    expect(await adapter.reconcileAtStartup()).toEqual({
+      ok: true, value: { durableDataChanged: true },
+    });
+    expect(publishCompleted).toHaveBeenCalledWith('break-1', 301_000);
   });
 });
