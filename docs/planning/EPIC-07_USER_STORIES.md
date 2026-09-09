@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_EPIC_07_USER_STORIES
 title: PixelDoro EPIC-07 — Break Experience và Long Break Cadence User Stories
-version: 0.2.0
-status: IN_PROGRESS_OWNER_CONFIRMATION_REQUIRED
+version: 0.3.0
+status: IN_PROGRESS
 date: 2026-09-08
 last_updated: 2026-09-09
 owner: Dũng Lư
@@ -18,10 +18,10 @@ branch_audited: feats/epic-07
 baseline_head: a3b92fd8a6908f4efecea7fc7c8d49ac20683aa3
 epic_06_behavior_candidate: 458a8868ac0024e3b3d1eff64ccc26408a81b2e1
 epic_06_status: DONE_OWNER_ACCEPTED
-implementation_status: US_07_01_DONE_OWNER_ACCEPTED_US_07_02_PLANNING
+implementation_status: US_07_01_DONE_US_07_02_READY_FOR_IMPLEMENTATION
 formal_tester_status: NOT_RUN
-schema_change: NONE_PROPOSED_PENDING_CONFIRMATION
-next_gate: OWNER_CONFIRM_US_07_02_PLAN
+schema_change: NONE_APPROVED_FOR_US_07_02
+next_gate: US_07_02_IMPLEMENTATION
 ---
 
 # EPIC-07 — Break Experience và Long Break Cadence
@@ -886,7 +886,8 @@ Result sau explicit action, nhưng chưa nói một Result cũ có được mở
 - **Option C:** Break không bind Focus source, cho Start từ một resting surface khi không active.
   Impact: mở navigation/scope ngoài EPIC-07 baseline và làm yếu completed-only Result rule; không đề xuất.
 
-**Status:** `PENDING_OWNER`; blocks US-07-02 implementation plan and schema verdict if B/C.
+**Status:** `APPROVED_OPTION_A` — owner confirmed 2026-09-09. Không thêm source relation/schema;
+one-active invariant được enforce nhưng không claim durable one-Break-per-Focus cho Result cũ mở lại.
 
 ### US0700-CONFIRM-02 — Thời điểm chốt loại Break
 
@@ -949,13 +950,13 @@ Result sau explicit action, nhưng chưa nói một Result cũ có được mở
 
 ### 19.1. Confirmation approval checklist
 
-- [ ] Owner selects one option for `US0700-CONFIRM-01`.
+- [x] Owner selected Option A for `US0700-CONFIRM-01` on 2026-09-09.
 - [x] Owner selected Option A for `US0700-CONFIRM-02` on 2026-09-08.
 - [ ] Owner selects one option for `US0700-CONFIRM-03`.
 - [ ] Owner selects one option for `US0700-CONFIRM-04`.
 - [ ] Owner selects one option for `US0700-CONFIRM-05`.
 - [ ] Owner selects one option for `US0700-CONFIRM-06`.
-- [ ] Document version/status/schema verdict updated from explicit decisions before affected plan.
+- [x] Document version/status/schema verdict updated for confirmations affecting US-07-02.
 
 ## 20. Known limitations và deferred evidence
 
@@ -977,5 +978,6 @@ Result sau explicit action, nhưng chưa nói một Result cũ có được mở
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.3.0 | 2026-09-09 | Codex | Recorded owner approval of US0700-CONFIRM-01 Option A through the approved US-07-02 plan; finalized no-schema verdict for Story 02 and opened implementation. Confirmations 03–06 remain gated to their later Stories. |
 | 0.2.0 | 2026-09-09 | Codex | Recorded US-07-01 committed SHA and owner quick UI acceptance; opened owner-gated US-07-02 planning while preserving formal/structured manual evidence as NOT_RUN. |
 | 0.1.0 | 2026-09-08 | Codex | Audited current documentation/code/test baseline; created five risk-ordered vertical Stories, no-schema default verdict, component/durable/navigation/race/a11y/test matrices, executable per-Story device guides and six pending owner confirmations. No production code was changed. |

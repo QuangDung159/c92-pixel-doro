@@ -1,14 +1,16 @@
 ---
 document_id: PIXELDORO_US_07_02_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-07-02 Explicit Durable Start Break và Pet Breaking Plan
-version: 0.1.0
-status: DRAFT_OWNER_CONFIRMATION_REQUIRED
+version: 0.2.0
+status: OWNER_APPROVED_READY_FOR_IMPLEMENTATION
 implementation_status: NOT_STARTED
 date: 2026-09-09
 last_updated: 2026-09-09
 owner: Dũng Lư
 reviewer: Dũng Lư
 reviewer_role: Tech Lead/Product Owner
+approved_by: Dũng Lư
+approved_at: 2026-09-09
 language: vi
 branch: feats/epic-07
 planning_baseline_sha: a3b92fd8a6908f4efecea7fc7c8d49ac20683aa3
@@ -18,7 +20,7 @@ previous_story_sha: a3b92fd8a6908f4efecea7fc7c8d49ac20683aa3
 previous_story_acceptance: DONE_OWNER_ACCEPTED_QUICK_UI
 manual_device_status: NOT_RUN
 formal_tester_status: NOT_RUN
-schema_change: NONE_PROPOSED_PENDING_CONFIRMATION
+schema_change: NONE_APPROVED
 dependency_change: NONE_PROPOSED
 native_change: NONE_PROPOSED
 scope:
@@ -63,10 +65,11 @@ relaunch trước tap không tạo Break.
 
 **Priority:** `P0`; execution order `02` trong EPIC-07.
 
-**Planning status:** `DRAFT_OWNER_CONFIRMATION_REQUIRED`.
+**Planning status:** `OWNER_APPROVED_READY_FOR_IMPLEMENTATION` ngày 2026-09-09.
 
-**Implementation status:** `NOT_STARTED`. Coding chỉ bắt đầu sau khi owner duyệt
-`US0702-CONFIRM-01→10` và plan được cập nhật bằng quyết định thực tế.
+**Implementation status:** `NOT_STARTED`. Owner đã duyệt Option A cho toàn bộ
+`US0702-CONFIRM-01→10`; plan sẵn sàng làm baseline cho production implementation ở lượt coding kế
+tiếp.
 
 ### 0.1. Gate từ US-07-01
 
@@ -76,7 +79,7 @@ relaunch trước tap không tạo Break.
 - [x] Owner báo cáo quick UI smoke không crash và hoạt động đúng kỳ vọng ngày 2026-09-09.
 - [x] Cadence preview là read-only và exact-source; production Start CTA vẫn chưa bật.
 - [x] Owner đã duyệt cadence được đọc lại tại Start; actual committed type thắng preview stale.
-- [ ] Epic-level `US0700-CONFIRM-01` về one-Break-per-Focus chưa được duyệt.
+- [x] Epic-level `US0700-CONFIRM-01` được duyệt Option A ngày 2026-09-09; không thêm source relation.
 - [ ] Structured physical-device/accessibility matrix và formal tester vẫn `NOT_RUN`; không suy diễn
   từ quick smoke.
 
@@ -569,8 +572,8 @@ owner quick smoke and formal tester.
 - [x] US-07-01 exact SHA, automated evidence and owner quick acceptance recorded.
 - [x] Current ports/repository/coordinator/Pet/route/prototype gaps audited.
 - [x] Target transaction, layer ownership, tests, fixtures and rollback planned.
-- [ ] Owner approves `US0702-CONFIRM-01→10`.
-- [ ] Plan status/version/schema verdict updated from explicit decisions.
+- [x] Owner approved Option A for `US0702-CONFIRM-01→10` on 2026-09-09.
+- [x] Plan status/version/schema verdict updated from explicit decisions.
 - [ ] Implementation start SHA and worktree overlap state recorded immediately before coding.
 
 ### 14.2. Definition of Done
@@ -582,7 +585,7 @@ owner quick smoke and formal tester.
 - [ ] Owner quick UI output recorded separately from structured/formal evidence.
 - [ ] Owner explicitly accepts US-07-02 and authorizes US-07-03 planning.
 
-## 15. Owner confirmation gate — PENDING
+## 15. Owner confirmation gate — APPROVED
 
 ### US0702-CONFIRM-01 — One Break per completed Focus / schema
 
@@ -592,7 +595,7 @@ owner quick smoke and formal tester.
 - **Option B:** thêm `source_focus_session_id` + unique/backstop và forward migration.
 - **Option C:** cho Start từ resting surface không bind completed Result.
 - **Impact:** mirror `US0700-CONFIRM-01`; B/C block và buộc re-plan schema/navigation.
-- [ ] Owner selected option: `<pending>`.
+- [x] Owner selected option: A — 2026-09-09.
 
 ### US0702-CONFIRM-02 — Commit-time cadence consistency
 
@@ -601,7 +604,7 @@ owner quick smoke and formal tester.
 - **Option B:** đọc cadence trước transaction rồi chỉ insert trong transaction; có race stale.
 - **Option C:** tin type từ Result; trái confirmation đã duyệt.
 - **Impact:** blocks port/use-case/SQLite design.
-- [ ] Owner selected option: `<pending>`.
+- [x] Owner selected option: A — 2026-09-09.
 
 ### US0702-CONFIRM-03 — Ranh giới running UI với US-07-03
 
@@ -611,7 +614,7 @@ owner quick smoke and formal tester.
   nguy cơ `00:00` treo và mở rộng scope.
 - **Option C:** gộp toàn bộ US-07-03 vào Story 02; tăng mạnh scope/risk.
 - **Impact:** blocks screen/controller boundary và acceptance copy.
-- [ ] Owner selected option: `<pending>`.
+- [x] Owner selected option: A — 2026-09-09.
 
 ### US0702-CONFIRM-04 — Exact Break route identity
 
@@ -619,7 +622,7 @@ owner quick smoke and formal tester.
   no active/latest/prototype fallback.
 - **Option B:** route không ID và đọc active Break; đơn giản nhưng identity mơ hồ/race-prone.
 - **Impact:** blocks route/loader/controller contract.
-- [ ] Owner selected option: `<pending>`.
+- [x] Owner selected option: A — 2026-09-09.
 
 ### US0702-CONFIRM-05 — Post-commit handoff/Pet failure
 
@@ -627,7 +630,7 @@ owner quick smoke and formal tester.
   tuyệt đối không retry Start.
 - **Option B:** ở lại Result và báo Start failed; dễ khiến user insert lần hai sau active state đổi.
 - **Impact:** blocks controller outcome/error model.
-- [ ] Owner selected option: `<pending>`.
+- [x] Owner selected option: A — 2026-09-09.
 
 ### US0702-CONFIRM-06 — Controller ownership
 
@@ -636,7 +639,7 @@ owner quick smoke and formal tester.
 - **Option B:** nhét command vào recommendation controller.
 - **Option C:** giữ pending/error trực tiếp trong React route.
 - **Impact:** blocks file graph/facade/hooks/disposal.
-- [ ] Owner selected option: `<pending>`.
+- [x] Owner selected option: A — 2026-09-09.
 
 ### US0702-CONFIRM-07 — Result action hierarchy
 
@@ -645,7 +648,7 @@ owner quick smoke and formal tester.
 - **Option B:** cả Start và Home cùng primary hierarchy.
 - **Option C:** Home primary, Start secondary.
 - **Impact:** blocks exact component props/copy/snapshots/accessibility.
-- [ ] Owner selected option: `<pending>`.
+- [x] Owner selected option: A — 2026-09-09.
 
 ### US0702-CONFIRM-08 — Duplicate semantics dưới no-source-relation
 
@@ -654,7 +657,7 @@ owner quick smoke and formal tester.
 - **Option B:** in-memory remember source forever; mất qua relaunch và tạo second truth.
 - **Option C:** thêm durable source relation; tương đương confirmation 01 Option B.
 - **Impact:** blocks tests/error wording và limitation statement.
-- [ ] Owner selected option: `<pending>`.
+- [x] Owner selected option: A — 2026-09-09.
 
 ### US0702-CONFIRM-09 — Review fixture isolation
 
@@ -663,7 +666,7 @@ owner quick smoke and formal tester.
 - **Option B:** mock Start result/route; không chứng minh commit.
 - **Option C:** seed normal database; không an toàn.
 - **Impact:** blocks manual/integration evidence only.
-- [ ] Owner selected option: `<pending>`.
+- [x] Owner selected option: A — 2026-09-09.
 
 ### US0702-CONFIRM-10 — Side-effect boundary
 
@@ -672,15 +675,16 @@ owner quick smoke and formal tester.
 - **Option B:** enqueue `break_started` ngay Story 02; kéo scope/error/dedupe của US-07-05 sớm.
 - **Option C:** schedule completion notification ngay Start; phụ thuộc lifecycle contract chưa giao.
 - **Impact:** blocks dependency/scope assertions.
-- [ ] Owner selected option: `<pending>`.
+- [x] Owner selected option: A — 2026-09-09.
 
 ### 15.1. Approval checklist
 
-- [ ] Owner selects one option for confirmations 01→10.
-- [ ] Any non-A selection is reconciled against Product/Architecture/Data Model.
-- [ ] Epic-level `US0700-CONFIRM-01` and schema verdict are updated from explicit selection.
-- [ ] Plan version/status and implementation start SHA are updated before production edits.
-- [ ] No coding starts while a material confirmation remains pending.
+- [x] Owner selected Option A for confirmations 01→10 on 2026-09-09.
+- [x] No non-A selection requires Product/Architecture/Data Model reconciliation.
+- [x] Epic-level `US0700-CONFIRM-01` and schema verdict are updated from explicit selection.
+- [x] Plan version/status is updated before production edits.
+- [x] No material confirmation remains pending for US-07-02 implementation.
+- [ ] Implementation start SHA and known worktree overlap must be recorded immediately before coding.
 
 ## 16. References
 
@@ -702,6 +706,7 @@ owner quick smoke and formal tester.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.2.0 | 2026-09-09 | Codex | Recorded owner approval of Option A for confirmations 01–10, resolved Epic confirmation 01, finalized no-schema/transactional-cadence/exact-route/Story-boundary decisions, and marked the plan ready for implementation. No production code changed. |
 | 0.1.0 | 2026-09-09 | Codex | Created owner-gated plan from committed US-07-01 baseline; defined transactional current-cadence Start, exact durable handoff, Pet Breaking, no-schema default, tests/fixtures/rollback and ten pending confirmations. No production code changed. |
 
 Validation for this planning turn:
@@ -712,5 +717,6 @@ Validation for this planning turn:
 - [x] Only planning/evidence documents changed.
 - [x] No unrun automated/manual/formal evidence is marked PASS.
 
-**US-07-02 remains owner-gated. No production implementation is authorized until confirmations
-`01→10` are explicitly approved and recorded.**
+**US-07-02 plan is owner-approved with Option A for confirmations `01→10` and is ready for production
+implementation. Implementation remains `NOT_STARTED`; exact start SHA will be captured before the
+first code edit.**
