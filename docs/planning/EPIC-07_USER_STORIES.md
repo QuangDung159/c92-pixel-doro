@@ -18,10 +18,10 @@ branch_audited: feats/epic-07
 baseline_head: a3b92fd8a6908f4efecea7fc7c8d49ac20683aa3
 epic_06_behavior_candidate: 458a8868ac0024e3b3d1eff64ccc26408a81b2e1
 epic_06_status: DONE_OWNER_ACCEPTED
-implementation_status: US_07_01_DONE_US_07_02_READY_FOR_IMPLEMENTATION
+implementation_status: US_07_01_DONE_US_07_02_IMPLEMENTED_OWNER_REVIEW_PENDING
 formal_tester_status: NOT_RUN
 schema_change: NONE_APPROVED_FOR_US_07_02
-next_gate: US_07_02_IMPLEMENTATION
+next_gate: US_07_02_OWNER_QUICK_UI_REVIEW
 ---
 
 # EPIC-07 — Break Experience và Long Break Cadence
@@ -389,27 +389,27 @@ preempts prior Celebrate without session mutation.
 
 ### 8.3. Acceptance criteria
 
-- [ ] Result/Home/render/relaunch before tap creates zero Break rows.
-- [ ] Explicit tap from eligible completed Standard Result creates exactly one current-cadence Break.
-- [ ] Short row is 5 minutes; Long row is 15; all Break-only null/zero invariants hold.
-- [ ] Trial/failed/cancelled/running/foreign IDs cannot Start Break.
-- [ ] Navigation and Pet Breaking happen only after durable commit.
-- [ ] Double tap/concurrent Start creates at most one running session.
-- [ ] Active Focus/Trial/Break conflict does not replace/cancel existing session.
-- [ ] Home action does not consume/reset cadence.
-- [ ] Write/read/commit failure leaves UI recoverable and does not schedule side effects.
-- [ ] No production import/use of prototype state for Start or handoff.
+- [x] Result/Home/render/relaunch before tap creates zero Break rows.
+- [x] Explicit tap from eligible completed Standard Result creates exactly one current-cadence Break.
+- [x] Short row is 5 minutes; Long row is 15; all Break-only null/zero invariants hold.
+- [x] Trial/failed/cancelled/running/foreign IDs cannot Start Break.
+- [x] Navigation and Pet Breaking happen only after durable commit.
+- [x] Double tap/concurrent Start creates at most one running session.
+- [x] Active Focus/Trial/Break conflict does not replace/cancel existing session.
+- [x] Home action does not consume/reset cadence.
+- [x] Write/read/commit failure leaves UI recoverable and does not schedule side effects.
+- [x] No production import/use of prototype state for Start or handoff.
 
 ### 8.4. Automated test checklist
 
-- [ ] Break record factory exact Short/Long shape and invalid timestamp/calendar tests.
-- [ ] Start use case eligible/foreign/current-cadence/change-between-preview-and-tap tests.
-- [ ] Coordinator double call and concurrent Standard/Trial/Break Start tests.
-- [ ] Real SQLite insert/rollback/unique-running/reopen tests with migration `001`.
-- [ ] Controller committed-handoff/error/dispose tests.
-- [ ] Route/Pet test navigation-after-commit and Breaking projection.
-- [ ] Static production-route test rejects prototype imports/fallback.
-- [ ] Regression: Trial/Standard Start, Pet arbitration, reset and derived cadence suites.
+- [x] Break record factory exact Short/Long shape and invalid timestamp/calendar tests.
+- [x] Start use case eligible/foreign/current-cadence/change-between-preview-and-tap tests.
+- [x] Coordinator double call and concurrent Standard/Trial/Break Start tests.
+- [x] Real SQLite insert/rollback/unique-running/reopen tests with migration `001`.
+- [x] Controller committed-handoff/error/dispose tests.
+- [x] Route/Pet test navigation-after-commit and Breaking projection.
+- [x] Static production-route test rejects prototype imports/fallback.
+- [x] Regression: Trial/Standard Start, Pet arbitration, reset and derived cadence suites.
 
 ### 8.5. Manual UI/device test guide
 
@@ -439,10 +439,10 @@ preempts prior Celebrate without session mutation.
 
 ### 8.6. DoR, DoD, evidence và next gate
 
-- [ ] **DoR:** US-07-01 accepted; confirmations 01/02 approved; schema verdict updated if Option B.
+- [x] **DoR:** US-07-01 accepted; confirmations 01/02 approved; no-schema Option A recorded.
 - [ ] **DoD:** atomic Start/handoff/Pet and race tests pass; no prototype production path; report, SHA
   and guide exist; owner accepts.
-- [ ] **Evidence files:** `US-07-02_IMPLEMENTATION_PLAN.md`, `US-07-02_IMPLEMENTATION_REPORT.md`,
+- [x] **Evidence files:** `US-07-02_IMPLEMENTATION_PLAN.md`, `US-07-02_IMPLEMENTATION_REPORT.md`,
   `apps/mobile/test/device/break-start-smoke.md`.
 - [ ] **Gate sang US-07-03:** one running Break survives cold reopen and all existing Start regressions
   pass.

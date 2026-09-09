@@ -89,10 +89,16 @@ import {
   createBreakCadenceReviewFixture,
   resolveBreakCadenceReviewScenario,
 } from './review/break-cadence-review-fixture';
+import {
+  breakStartReviewDatabaseName,
+  createBreakStartReviewFixture,
+  resolveBreakStartReviewScenario,
+} from './review/break-start-review-fixture';
 import { OnboardingTrialStartupReconciliationAdapter } from './startup/onboarding-trial-startup-reconciliation.adapter';
 import { ActiveSessionStartupReconciliationAdapter } from './startup/active-session-startup-reconciliation.adapter';
 import { createStandardFocusSlice } from './standard-focus/create-standard-focus-slice';
 import { createBreakRecommendationSlice } from './break/create-break-recommendation-slice';
+import { createBreakStartSlice } from './break/create-break-start-slice';
 import { createStandardFocusSideEffects } from './standard-focus/create-standard-focus-side-effects';
 
 const PIXELDORO_DATABASE_NAME = 'pixeldoro.db';
@@ -147,10 +153,16 @@ export const createMobileApplication = (
     process.env.EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE,
     reviewFixturesEnabled,
   );
+  const breakStartReviewScenario = resolveBreakStartReviewScenario(
+    process.env.EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE,
+    reviewFixturesEnabled,
+  );
   const databaseOwner = new SQLiteDatabaseOwner(
-    options.databaseName ?? (breakCadenceReviewScenario === undefined
-      ? PIXELDORO_DATABASE_NAME
-      : breakCadenceReviewDatabaseName(breakCadenceReviewScenario)),
+    options.databaseName ?? (breakCadenceReviewScenario !== undefined
+      ? breakCadenceReviewDatabaseName(breakCadenceReviewScenario)
+      : breakStartReviewScenario !== undefined
+        ? breakStartReviewDatabaseName(breakStartReviewScenario)
+        : PIXELDORO_DATABASE_NAME),
     driver,
   );
   const transaction = new SQLiteTransaction(databaseOwner);
@@ -158,6 +170,10 @@ export const createMobileApplication = (
   const breakCadenceReviewFixture = createBreakCadenceReviewFixture(
     breakCadenceReviewScenario,
     persistence.longBreakCadence,
+  );
+  const breakStartReviewFixture = createBreakStartReviewFixture(
+    breakStartReviewScenario,
+    persistence.sessions,
   );
   const breakRecommendation = createBreakRecommendationSlice({
     sessions: persistence.sessions,
@@ -397,6 +413,18 @@ export const createMobileApplication = (
     scheduler: petFeedbackScheduler,
   });
   const petVisual = new PetVisualController(petCompanion, petTerminalFeedback);
+  const breakStart = createBreakStartSlice({
+    calendar: localCalendar,
+    clock,
+    coordinator: sessionCommands,
+    id,
+    longBreakCadence: persistence.longBreakCadence,
+    petCompanion,
+    petTerminalFeedback,
+    readiness,
+    sessions: breakStartReviewFixture?.sessions ?? persistence.sessions,
+    transaction,
+  });
   const requestStandardOutcomeFeedback = (): void => {
     requestStandardTerminalFeedback(standardFocusOutcome.getSnapshot(), petCompanion, petTerminalFeedback);
   };
@@ -770,8 +798,8 @@ export const createMobileApplication = (
   return {
     appVisibility,
     breakRecommendation: breakRecommendation.recommendation,
-    breakRecommendationReviewStartAvailable:
-      breakCadenceReviewFixture !== undefined,
+    breakStart: breakStart.start,
+    breakSession: breakStart.session,
     bootstrap,
     confirmedReset,
     criticalRecovery: bootstrap,
@@ -806,6 +834,18 @@ export const createMobileApplication = (
         breakCadenceReviewFixture !== undefined
       ) {
         await breakCadenceReviewFixture.prepare({
+          installation: persistence.installation,
+          profile: persistence.profile,
+          rewards: persistence.rewards,
+          sessions: persistence.sessions,
+          transaction,
+        });
+      }
+      if (
+        bootstrap.getSnapshot().status === 'ready' &&
+        breakStartReviewFixture !== undefined
+      ) {
+        await breakStartReviewFixture.prepare({
           installation: persistence.installation,
           profile: persistence.profile,
           rewards: persistence.rewards,
@@ -949,6 +989,7 @@ export const createMobileApplication = (
         cancelReviewWait = undefined;
         appVisibility.dispose();
         breakRecommendation.dispose();
+        breakStart.dispose();
         firstUseEntry.dispose();
         standardFocus.dispose();
         standardFocusLifecycle?.dispose();

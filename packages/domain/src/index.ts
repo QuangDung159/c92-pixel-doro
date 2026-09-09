@@ -62,6 +62,11 @@ export {
   type BreakSessionType,
 } from './break/next-break-recommendation';
 export {
+  validateBreakConfiguration,
+  type BreakConfigurationDecision,
+  type BreakConfigurationInput,
+} from './break/break-configuration';
+export {
   decideStrictReconciliation,
   STRICT_BACKGROUND_GRACE_MS,
   type StrictReconciliationDecision,

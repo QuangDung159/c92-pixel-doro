@@ -114,6 +114,25 @@ export {
   type LoadNextBreakRecommendationErrorCode,
   type LoadNextBreakRecommendationOutcome,
 } from './break/load-next-break-recommendation.use-case';
+export {
+  createBreakSessionRecord,
+  isRunningBreak,
+  type BreakSessionRecordError,
+  type BreakSessionRecordInput,
+} from './break/break-session-record';
+export {
+  StartBreakUseCase,
+  type StartBreakDependencies,
+  type StartBreakError,
+  type StartBreakErrorCode,
+  type StartBreakInput,
+  type StartBreakOutcome,
+} from './break/start-break.use-case';
+export {
+  LoadRunningBreakUseCase,
+  type LoadRunningBreakError,
+  type RunningBreakProjection,
+} from './break/load-running-break.use-case';
 export type { BreakRecommendation } from '@pixeldoro/domain';
 export {
   StartStandardFocusUseCase,
@@ -148,6 +167,7 @@ export type {
   EconomyConsistencySnapshot,
   LongBreakCadenceFacts,
   LongBreakCadenceQuery,
+  TransactionalLongBreakCadenceQuery,
   StandardFocusHistoryCursor,
   StandardFocusHistoryEntry,
   StandardFocusHistoryInput,

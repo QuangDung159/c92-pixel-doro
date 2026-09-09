@@ -1,6 +1,5 @@
 import { useCallback, useEffect } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { Alert } from 'react-native';
 import { StandardFocusResultScreen } from '@/presentation/features/focus';
 import { ErrorState, LoadingState, ScreenShell } from '@/presentation/components';
 import {
@@ -14,7 +13,8 @@ import {
 import {
   useBreakRecommendationActions,
   useBreakRecommendationProjection,
-  useBreakRecommendationReviewStartAvailable,
+  useBreakStartActions,
+  useBreakStartProjection,
 } from '@/presentation/providers/break-hooks';
 import { PetRouteVisibility } from '../pet-route-visibility';
 
@@ -22,11 +22,12 @@ export const StandardFocusResultBranch = ({ sessionId }: { readonly sessionId: s
   const router = useRouter();
   const result = useStandardFocusResultProjection();
   const breakRecommendation = useBreakRecommendationProjection();
-  const reviewStartAvailable = useBreakRecommendationReviewStartAvailable();
+  const breakStart = useBreakStartProjection();
   const {
     refresh: refreshBreakRecommendation,
     reset: resetBreakRecommendation,
   } = useBreakRecommendationActions();
+  const { start: startBreak, reset: resetBreakStart } = useBreakStartActions();
   const refresh = useStandardFocusResultRefresh();
   const { consume, requestFeedback } = useStandardFocusOutcomeActions();
   const pet = usePetVisualProjection();
@@ -56,6 +57,7 @@ export const StandardFocusResultBranch = ({ sessionId }: { readonly sessionId: s
     resetBreakRecommendation();
     return undefined;
   }, [result, sessionId, refreshBreakRecommendation, resetBreakRecommendation]);
+  useEffect(() => () => resetBreakStart(), [resetBreakStart]);
   if (result.status === 'error' || result.status === 'missing') {
     return <ScreenShell><ErrorState title="Chưa thể đọc kết quả"
       body="Không thể xác nhận kết quả của phiên này. Thử đọc lại không cấp thêm phần thưởng."
@@ -69,18 +71,25 @@ export const StandardFocusResultBranch = ({ sessionId }: { readonly sessionId: s
     breakRecommendation.sourceSessionId === sessionId
       ? breakRecommendation
       : { status: 'loading' as const, sourceSessionId: sessionId };
+  const currentBreakStart = breakStart.sourceSessionId === sessionId
+    ? breakStart
+    : { status: 'idle' as const, sourceSessionId: sessionId };
+  const handleStartBreak = async (): Promise<void> => {
+    const started = await startBreak(sessionId);
+    if (!started.ok) return;
+    router.replace({
+      pathname: '/break/session',
+      params: { sessionId: started.session.id },
+    });
+  };
   return <PetRouteVisibility>
     <StandardFocusResultScreen result={result.result} pet={pet}
       breakRecommendation={currentBreakRecommendation}
+      breakStart={currentBreakStart}
       onDismissPetFeedbackError={dismiss} onRetryPet={() => void refreshPet()}
       onRetryBreakRecommendation={() => void refreshBreakRecommendation(sessionId)}
+      onStartBreak={() => void handleStartBreak()}
       onHome={() => router.replace('/(tabs)')}
-      {...(reviewStartAvailable ? {
-        onReviewStartBreak: () => Alert.alert(
-          'Review CTA',
-          'CTA đã nhận thao tác và không tạo Break trong US-07-01.',
-        ),
-      } : {})}
       {...(review.available ? { onReviewReload: () => { discard(); void refresh(sessionId); } } : {})}
     />
   </PetRouteVisibility>;

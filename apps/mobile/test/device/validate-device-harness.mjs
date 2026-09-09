@@ -27,6 +27,20 @@ const standardFocusRelaxFlowPath = `${deviceDirectory}standard-focus-relax-runni
 const standardFocusCompletionFlow = await readFile(`${deviceDirectory}standard-focus-completion-smoke.md`, 'utf8');
 const standardFocusSideEffectsFlow = await readFile(`${deviceDirectory}standard-focus-side-effects-exit-smoke.md`, 'utf8');
 const breakCadenceResultFlow = await readFile(`${deviceDirectory}break-cadence-result-smoke.md`, 'utf8');
+const breakStartFlow = await readFile(`${deviceDirectory}break-start-smoke.md`, 'utf8');
+for (const evidence of [
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_start_short',
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_start_long_due',
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_start_write_failure_once',
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_start_active_conflict',
+  'pixeldoro-us-07-02-', 'Nghỉ ngắn · 5 phút', 'Nghỉ dài · 15 phút',
+  'VoiceOver', 'TalkBack', 'Reduce Motion', 'Airplane mode',
+  '<implementation-sha>', 'NOT_RUN', 'unset EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE',
+]) {
+  if (!breakStartFlow.includes(evidence)) {
+    throw new Error(`Break Start flow is missing: ${evidence}`);
+  }
+}
 for (const evidence of [
   'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_cadence_count_0',
   'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_cadence_count_3',

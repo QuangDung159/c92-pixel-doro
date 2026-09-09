@@ -43,11 +43,14 @@ describe('BreakRecommendationPanel', () => {
         status: 'ready', sourceSessionId: 'focus-1',
         recommendation: { kind, sessionType, durationMinutes } as never,
       },
+      startProjection: { status: 'idle', sourceSessionId: 'focus-1' },
       onRetry: vi.fn(),
+      onStartBreak: vi.fn(),
     });
     const serialized = JSON.stringify(tree);
     expect(serialized).toContain(label);
-    expect(serialized).not.toMatch(/\/4|Bắt đầu nghỉ|PrimaryButton/);
+    expect(serialized).not.toMatch(/\/4/);
+    expect(serialized).toContain(`Bắt đầu nghỉ ${durationMinutes} phút`);
   });
 
   it('keeps retry finite and does not guess Short on error', () => {
@@ -57,7 +60,9 @@ describe('BreakRecommendationPanel', () => {
         status: 'error', sourceSessionId: 'focus-1',
         error: { code: 'BREAK_RECOMMENDATION_READ_FAILED' },
       },
+      startProjection: { status: 'idle', sourceSessionId: 'focus-1' },
       onRetry: retry,
+      onStartBreak: vi.fn(),
     }) as ReactElement<Record<string, unknown>>;
     const children = Children.toArray(
       tree.props.children as ReactNode,
@@ -69,15 +74,16 @@ describe('BreakRecommendationPanel', () => {
     expect(JSON.stringify(tree)).not.toContain('Nghỉ ngắn · 5 phút');
   });
 
-  it('exposes the Start callback only in explicit review mode', () => {
+  it('exposes the production Start callback for a ready recommendation', () => {
     const start = vi.fn();
     const tree = BreakRecommendationPanel({
       projection: {
         status: 'ready', sourceSessionId: 'focus-1',
         recommendation: { kind: 'short', sessionType: 'short_break', durationMinutes: 5 },
       },
+      startProjection: { status: 'idle', sourceSessionId: 'focus-1' },
       onRetry: vi.fn(),
-      onReviewStartBreak: start,
+      onStartBreak: start,
     }) as ReactElement<Record<string, unknown>>;
     const button = findByType(tree, 'PrimaryButton');
     expect(button?.props.label).toBe('Bắt đầu nghỉ 5 phút');

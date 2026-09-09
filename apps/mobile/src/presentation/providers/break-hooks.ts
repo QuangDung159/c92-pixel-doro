@@ -1,6 +1,10 @@
 import { useSyncExternalStore } from 'react';
 
-import type { BreakRecommendationProjection } from '@/application';
+import type {
+  BreakRecommendationProjection,
+  BreakSessionProjection,
+  BreakStartProjection,
+} from '@/application';
 import { useMobileApplication } from './mobile-application-context';
 
 export const useBreakRecommendationProjection = ():
@@ -21,5 +25,30 @@ export const useBreakRecommendationActions = () => {
   };
 };
 
-export const useBreakRecommendationReviewStartAvailable = (): boolean =>
-  useMobileApplication().breakRecommendationReviewStartAvailable;
+export const useBreakStartProjection = (): BreakStartProjection => {
+  const { breakStart } = useMobileApplication();
+  return useSyncExternalStore(
+    breakStart.subscribe,
+    breakStart.getSnapshot,
+    breakStart.getSnapshot,
+  );
+};
+
+export const useBreakStartActions = () => {
+  const { breakStart } = useMobileApplication();
+  return { start: breakStart.start, reset: breakStart.reset };
+};
+
+export const useBreakSessionProjection = (): BreakSessionProjection => {
+  const { breakSession } = useMobileApplication();
+  return useSyncExternalStore(
+    breakSession.subscribe,
+    breakSession.getSnapshot,
+    breakSession.getSnapshot,
+  );
+};
+
+export const useBreakSessionActions = () => {
+  const { breakSession } = useMobileApplication();
+  return { refresh: breakSession.refresh, reset: breakSession.reset };
+};

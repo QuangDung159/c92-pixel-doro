@@ -3,6 +3,7 @@ import type {
   ContributionQuery,
   EconomyConsistencyQuery,
   LongBreakCadenceQuery,
+  TransactionalLongBreakCadenceQuery,
   OwnedItemRepository,
   ProfileRepository,
   PurchaseReceiptRepository,
@@ -55,7 +56,7 @@ export interface MobilePersistenceGraph {
   readonly analyticsEvents: Pick<AnalyticsEventRepository, 'findById'>;
   readonly standardFocusHistory: StandardFocusHistoryQuery;
   readonly contribution: ContributionQuery;
-  readonly longBreakCadence: LongBreakCadenceQuery;
+  readonly longBreakCadence: LongBreakCadenceQuery & TransactionalLongBreakCadenceQuery;
   readonly economyConsistency: EconomyConsistencyQuery;
   readonly storeReviewFacts: StoreReviewFactsQuery;
   readonly analyticsQueue: AnalyticsQueue;
@@ -82,7 +83,7 @@ export const createSQLitePersistenceGraph = (
     analyticsEvents: analyticsEventReader,
     standardFocusHistory: new SQLiteStandardFocusHistoryQuery(owner),
     contribution: new SQLiteContributionQuery(owner),
-    longBreakCadence: new SQLiteLongBreakCadenceQuery(owner),
+    longBreakCadence: new SQLiteLongBreakCadenceQuery(owner, transaction),
     economyConsistency: new SQLiteEconomyConsistencyQuery(transaction),
     storeReviewFacts: new SQLiteStoreReviewFactsQuery(owner),
     analyticsQueue: new BoundedAnalyticsQueue(transaction, analyticsEvents),

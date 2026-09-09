@@ -1,18 +1,15 @@
-import {
-  decideNextBreakRecommendation,
-  validateStandardFocusConfiguration,
-  type BreakRecommendation,
-} from '@pixeldoro/domain';
+import { decideNextBreakRecommendation, type BreakRecommendation } from '@pixeldoro/domain';
 
 import type {
   LongBreakCadenceFacts,
   LongBreakCadenceQuery,
 } from '../persistence/derived-query';
-import type {
-  SessionRecord,
-  SessionRepository,
-} from '../persistence/session.repository';
+import type { SessionRepository } from '../persistence/session.repository';
 import type { ApplicationResult } from '../result/application-result';
+import {
+  isEligibleCompletedStandardFocusSource,
+  isSafeSessionTimestamp,
+} from './break-source';
 
 export interface LoadNextBreakRecommendationOutcome {
   readonly outcome: 'ready';
@@ -37,41 +34,12 @@ export interface LoadNextBreakRecommendationDependencies {
   readonly longBreakCadence: LongBreakCadenceQuery;
 }
 
-const MAX_TIMESTAMP = 8_640_000_000_000_000;
-
 const failure = (
   code: LoadNextBreakRecommendationErrorCode,
 ): ApplicationResult<never, LoadNextBreakRecommendationError> => ({
   ok: false,
   error: { kind: 'load_next_break_recommendation_error', code },
 });
-
-const isTimestamp = (value: number): boolean =>
-  Number.isSafeInteger(value) && value >= 0 && value <= MAX_TIMESTAMP;
-
-const isEligibleSource = (row: SessionRecord, sessionId: string): boolean => {
-  const configuration = validateStandardFocusConfiguration({
-    durationMinutes: row.configuredDurationMinutes,
-    mode: row.mode,
-    workTag: row.workTag,
-  });
-  return (
-    row.id === sessionId &&
-    row.profileId === 1 &&
-    row.sessionType === 'focus' &&
-    row.focusVariant === 'standard' &&
-    row.status === 'completed' &&
-    configuration.ok &&
-    isTimestamp(row.startedAt) &&
-    isTimestamp(row.endsAt) &&
-    row.endsAt === row.startedAt + row.configuredDurationMinutes * 60_000 &&
-    row.resolvedAt !== null &&
-    isTimestamp(row.resolvedAt) &&
-    row.resolvedAt >= row.endsAt &&
-    row.updatedAt === row.resolvedAt &&
-    row.rewardClaimedAt === row.resolvedAt
-  );
-};
 
 const validFacts = (
   facts: LongBreakCadenceFacts,
@@ -84,7 +52,7 @@ const validFacts = (
   facts.completedStandardFocusCountSinceLastCompletedLongBreak >= 0 &&
   (facts.latestCompletedLongBreak === null ||
     (facts.latestCompletedLongBreak.sessionId.trim().length > 0 &&
-      isTimestamp(facts.latestCompletedLongBreak.resolvedAt)));
+      isSafeSessionTimestamp(facts.latestCompletedLongBreak.resolvedAt)));
 
 export class LoadNextBreakRecommendationUseCase {
   constructor(
@@ -108,7 +76,7 @@ export class LoadNextBreakRecommendationUseCase {
       if (!source.ok) return failure('BREAK_RECOMMENDATION_READ_FAILED');
       if (
         source.value === null ||
-        !isEligibleSource(source.value, sourceSessionId)
+        !isEligibleCompletedStandardFocusSource(source.value, sourceSessionId)
       ) {
         return failure('BREAK_RECOMMENDATION_SOURCE_INELIGIBLE');
       }

@@ -16,7 +16,7 @@ vi.mock('@/presentation/features/break/break-recommendation-panel', () => ({
 }));
 
 describe('StandardFocusResultScreen', () => {
-  it('renders committed completed reward/current totals with Home-only production exit', () => {
+  it('renders committed reward with Start primary and Home secondary', () => {
     const tree = StandardFocusResultScreen({
       result: { status: 'completed', receiptId: 'receipt-1', rewardClaimedAt: 901_000,
         sessionId: 'focus-1', durationMinutes: 15, mode: 'relax', workTag: 'study',
@@ -27,14 +27,17 @@ describe('StandardFocusResultScreen', () => {
         status: 'ready', sourceSessionId: 'focus-1',
         recommendation: { kind: 'short', sessionType: 'short_break', durationMinutes: 5 },
       },
+      breakStart: { status: 'idle', sourceSessionId: 'focus-1' },
       onRetryBreakRecommendation: vi.fn(),
+      onStartBreak: vi.fn(),
     });
     const serialized = JSON.stringify(tree);
     expect(serialized).toContain('RewardSummary');
     expect(serialized).toContain('ProgressionSummary');
     expect(serialized).toContain('BreakRecommendationPanel');
     expect(serialized).toContain('Về Home');
-    expect(serialized).not.toMatch(/Claim|Start Break|Focus Again|SecondaryButton/);
+    expect(serialized).toContain('SecondaryButton');
+    expect(serialized).not.toMatch(/Claim|Focus Again/);
   });
   it('renders neutral zero-reward Result with Home as the only action', () => {
     const tree = StandardFocusResultScreen({
@@ -46,7 +49,9 @@ describe('StandardFocusResultScreen', () => {
       pet: { status: 'loading' }, onDismissPetFeedbackError: vi.fn(),
       onRetryPet: vi.fn(), onHome: vi.fn(),
       breakRecommendation: { status: 'idle' },
+      breakStart: { status: 'idle', sourceSessionId: null },
       onRetryBreakRecommendation: vi.fn(),
+      onStartBreak: vi.fn(),
     });
     const children = Children.toArray(tree.props.children) as ReactElement<Record<string, unknown>>[];
     const buttons = children.filter((item) => item.type === 'PrimaryButton');

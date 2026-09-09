@@ -1,4 +1,4 @@
-import type { BreakRecommendationProjection } from '@/application';
+import type { BreakRecommendationProjection, BreakStartProjection } from '@/application';
 import { ActivityIndicator, StyleSheet, Text } from 'react-native';
 
 import {
@@ -11,14 +11,16 @@ import { palette } from '@/presentation/theme/palette';
 
 export interface BreakRecommendationPanelProps {
   readonly projection: BreakRecommendationProjection;
+  readonly startProjection: BreakStartProjection;
   readonly onRetry: () => void;
-  readonly onReviewStartBreak?: () => void;
+  readonly onStartBreak: () => void;
 }
 
 export const BreakRecommendationPanel = ({
   projection,
+  startProjection,
   onRetry,
-  onReviewStartBreak,
+  onStartBreak,
 }: BreakRecommendationPanelProps) => {
   if (projection.status === 'idle') return null;
 
@@ -57,16 +59,24 @@ export const BreakRecommendationPanel = ({
         ? 'Đã đến lúc hai bạn dành một khoảng nghỉ dài để lấy lại nhịp.'
         : 'Một khoảng nghỉ ngắn sẽ giúp hai bạn sẵn sàng cho phiên tiếp theo.'}
     </Text>
-    {onReviewStartBreak === undefined ? null : <>
-      <PrimaryButton
-        accessibilityLabel={`Bắt đầu ${title.toLocaleLowerCase('vi-VN')}`}
-        label={`Bắt đầu nghỉ ${projection.recommendation.durationMinutes} phút`}
-        onPress={onReviewStartBreak}
-      />
-      <InlineNotice>
-        Bản review chỉ kiểm tra CTA; phiên nghỉ chưa được tạo ở Story này.
-      </InlineNotice>
-    </>}
+    <PrimaryButton
+      accessibilityLabel={`Bắt đầu ${title.toLocaleLowerCase('vi-VN')}`}
+      busy={startProjection.status === 'submitting'}
+      disabled={startProjection.status === 'committed'}
+      label={startProjection.status === 'submitting'
+        ? 'Đang bắt đầu phiên nghỉ…'
+        : startProjection.status === 'committed'
+          ? 'Đang mở phiên nghỉ…'
+        : `Bắt đầu nghỉ ${projection.recommendation.durationMinutes} phút`}
+      onPress={onStartBreak}
+    />
+    {startProjection.status === 'error' ? <InlineNotice>
+      {startProjection.error.code === 'ACTIVE_SESSION'
+        ? 'Một phiên khác đang chạy. PixelDoro không thay thế hoặc dừng phiên đó.'
+        : startProjection.error.code === 'SOURCE_UNAVAILABLE'
+          ? 'Kết quả Focus này không còn đủ điều kiện để bắt đầu nghỉ.'
+          : 'Chưa thể bắt đầu phiên nghỉ. Dữ liệu Focus của bạn vẫn an toàn; hãy thử lại.'}
+    </InlineNotice> : null}
   </Panel>;
 };
 

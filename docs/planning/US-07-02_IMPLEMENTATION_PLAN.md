@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_07_02_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-07-02 Explicit Durable Start Break và Pet Breaking Plan
-version: 0.2.0
-status: OWNER_APPROVED_READY_FOR_IMPLEMENTATION
-implementation_status: NOT_STARTED
+version: 0.3.0
+status: IMPLEMENTED_AUTOMATED_PASS_OWNER_REVIEW_PENDING
+implementation_status: IMPLEMENTED_AUTOMATED_PASS
 date: 2026-09-09
 last_updated: 2026-09-09
 owner: Dũng Lư
@@ -14,8 +14,8 @@ approved_at: 2026-09-09
 language: vi
 branch: feats/epic-07
 planning_baseline_sha: a3b92fd8a6908f4efecea7fc7c8d49ac20683aa3
-implementation_start_sha: NOT_STARTED
-exact_implementation_sha: NOT_AVAILABLE
+implementation_start_sha: a9684180105f99bcf3bf9bf425feb04122e7c8ea
+exact_implementation_sha: WORKTREE_CANDIDATE_NOT_COMMITTED
 previous_story_sha: a3b92fd8a6908f4efecea7fc7c8d49ac20683aa3
 previous_story_acceptance: DONE_OWNER_ACCEPTED_QUICK_UI
 manual_device_status: NOT_RUN
@@ -65,11 +65,12 @@ relaunch trước tap không tạo Break.
 
 **Priority:** `P0`; execution order `02` trong EPIC-07.
 
-**Planning status:** `OWNER_APPROVED_READY_FOR_IMPLEMENTATION` ngày 2026-09-09.
+**Planning status:** `IMPLEMENTED_AUTOMATED_PASS_OWNER_REVIEW_PENDING`.
 
-**Implementation status:** `NOT_STARTED`. Owner đã duyệt Option A cho toàn bộ
-`US0702-CONFIRM-01→10`; plan sẵn sàng làm baseline cho production implementation ở lượt coding kế
-tiếp.
+**Implementation status:** `IMPLEMENTED_AUTOMATED_PASS`. Owner đã duyệt Option A cho toàn bộ
+`US0702-CONFIRM-01→10`; implementation bắt đầu từ exact SHA
+`a9684180105f99bcf3bf9bf425feb04122e7c8ea`. Current candidate chưa commit; owner quick UI và
+formal tester vẫn `NOT_RUN`.
 
 ### 0.1. Gate từ US-07-01
 
@@ -526,20 +527,20 @@ owner quick smoke and formal tester.
 
 ## 11. Acceptance criteria
 
-- [ ] Before explicit tap, Result/Home/render/reload/relaunch creates zero Break rows.
-- [ ] Exact eligible completed Standard source is revalidated inside Start transaction.
-- [ ] Cadence is re-read inside the transaction; actual committed type wins stale preview.
-- [ ] Short row is exact `short_break/5`; Long row is exact `long_break/15`.
-- [ ] Break null/zero/timestamp/calendar invariants hold; no reward/profile mutation.
-- [ ] Trial/failed/cancelled/running/Break/missing/foreign source cannot Start.
-- [ ] Active Focus/Trial/Break conflict preserves existing truth.
-- [ ] Rapid/concurrent Start creates at most one running session.
-- [ ] Navigation and Pet `breaking` occur only after durable commit.
-- [ ] Post-commit recovery never retries insert or labels committed Start as failed.
-- [ ] Exact Break route reads the committed ID and has no latest/prototype fallback.
-- [ ] Production CTA has accessible pending/error/retry and Home remains usable.
-- [ ] No notification/analytics/terminal/completion/cancel behavior is added.
-- [ ] No schema/dependency/native change under approved Option A.
+- [x] Before explicit tap, Result/Home/render/reload/relaunch creates zero Break rows.
+- [x] Exact eligible completed Standard source is revalidated inside Start transaction.
+- [x] Cadence is re-read inside the transaction; actual committed type wins stale preview.
+- [x] Short row is exact `short_break/5`; Long row is exact `long_break/15`.
+- [x] Break null/zero/timestamp/calendar invariants hold; no reward/profile mutation.
+- [x] Trial/failed/cancelled/running/Break/missing/foreign source cannot Start.
+- [x] Active Focus/Trial/Break conflict preserves existing truth.
+- [x] Rapid/concurrent Start creates at most one running session.
+- [x] Navigation and Pet `breaking` occur only after durable commit.
+- [x] Post-commit recovery never retries insert or labels committed Start as failed.
+- [x] Exact Break route reads the committed ID and has no latest/prototype fallback.
+- [x] Production CTA has accessible pending/error/retry and Home remains usable.
+- [x] No notification/analytics/terminal/completion/cancel behavior is added.
+- [x] No schema/dependency/native change under approved Option A.
 
 ## 12. Risks and controls
 
@@ -574,15 +575,15 @@ owner quick smoke and formal tester.
 - [x] Target transaction, layer ownership, tests, fixtures and rollback planned.
 - [x] Owner approved Option A for `US0702-CONFIRM-01→10` on 2026-09-09.
 - [x] Plan status/version/schema verdict updated from explicit decisions.
-- [ ] Implementation start SHA and worktree overlap state recorded immediately before coding.
+- [x] Implementation start SHA and known documentation-only worktree overlap recorded before coding.
 
 ### 14.2. Definition of Done
 
-- [ ] All acceptance criteria and focused/full automated gates pass.
-- [ ] Both platform exports pass; Doctor delta documented.
-- [ ] Production Start/route contains no prototype authority or auto-start path.
-- [ ] Report and device guide exist with exact candidate SHA.
-- [ ] Owner quick UI output recorded separately from structured/formal evidence.
+- [x] All acceptance criteria and focused/full automated gates pass.
+- [x] Both platform exports pass; Doctor baseline warnings documented.
+- [x] Production Start/route contains no prototype authority or auto-start path.
+- [x] Report and device guide exist with worktree candidate identity.
+- [x] Owner quick UI output is recorded separately from structured/formal evidence.
 - [ ] Owner explicitly accepts US-07-02 and authorizes US-07-03 planning.
 
 ## 15. Owner confirmation gate — APPROVED
@@ -684,7 +685,7 @@ owner quick smoke and formal tester.
 - [x] Epic-level `US0700-CONFIRM-01` and schema verdict are updated from explicit selection.
 - [x] Plan version/status is updated before production edits.
 - [x] No material confirmation remains pending for US-07-02 implementation.
-- [ ] Implementation start SHA and known worktree overlap must be recorded immediately before coding.
+- [x] Implementation start SHA and known documentation-only worktree overlap recorded before coding.
 
 ## 16. References
 
@@ -706,6 +707,7 @@ owner quick smoke and formal tester.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.3.0 | 2026-09-09 | Codex | Recorded completed worktree implementation: transactional StartBreak, durable exact-ID handoff, Pet Breaking, 735-test full-quality pass, iOS/Android exports and unchanged Expo Doctor baseline warnings; owner/manual/formal review and exact committed SHA remain pending. |
 | 0.2.0 | 2026-09-09 | Codex | Recorded owner approval of Option A for confirmations 01–10, resolved Epic confirmation 01, finalized no-schema/transactional-cadence/exact-route/Story-boundary decisions, and marked the plan ready for implementation. No production code changed. |
 | 0.1.0 | 2026-09-09 | Codex | Created owner-gated plan from committed US-07-01 baseline; defined transactional current-cadence Start, exact durable handoff, Pet Breaking, no-schema default, tests/fixtures/rollback and ten pending confirmations. No production code changed. |
 
@@ -717,6 +719,5 @@ Validation for this planning turn:
 - [x] Only planning/evidence documents changed.
 - [x] No unrun automated/manual/formal evidence is marked PASS.
 
-**US-07-02 plan is owner-approved with Option A for confirmations `01→10` and is ready for production
-implementation. Implementation remains `NOT_STARTED`; exact start SHA will be captured before the
-first code edit.**
+**US-07-02 is implemented as an uncommitted worktree candidate with automated/platform evidence
+passing. Owner quick UI, formal evidence and exact committed implementation SHA remain pending.**

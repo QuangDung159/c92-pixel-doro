@@ -1,57 +1,60 @@
-import { useCallback, useState } from 'react';
-import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback } from 'react';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 
-import { BreakResultScreen, BreakSessionScreen } from '@/presentation/features/break';
+import { ErrorState, LoadingState, ScreenShell } from '@/presentation/components';
+import { BreakStartedScreen } from '@/presentation/features/break/break-started-screen';
+import {
+  useBreakSessionActions,
+  useBreakSessionProjection,
+} from '@/presentation/providers/break-hooks';
 import {
   useDismissPetTerminalFeedbackError,
   usePetCompanionRefresh,
   usePetVisualProjection,
 } from '@/presentation/providers/mobile-application-context';
-import { usePrototype } from '@/presentation/prototype/prototype-context';
 
-import { usePrototypeBack } from '../use-prototype-back';
 import { PetRouteVisibility } from '../pet-route-visibility';
 
 export default function BreakSessionRoute() {
   const router = useRouter();
-  const [cancelRequestToken, setCancelRequestToken] = useState(0);
+  const { sessionId } = useLocalSearchParams<{ readonly sessionId?: string | string[] }>();
+  const projection = useBreakSessionProjection();
+  const { refresh, reset } = useBreakSessionActions();
   const pet = usePetVisualProjection();
   const refreshPet = usePetCompanionRefresh();
   const dismissPetFeedbackError = useDismissPetTerminalFeedbackError();
-  const { activeSession, breakResult, resolveBreak } = usePrototype();
-  const session = activeSession?.kind === 'break' ? activeSession : null;
-  const goHome = () => router.replace('/(tabs)');
+  const validSessionId = typeof sessionId === 'string' && sessionId.trim() ? sessionId : null;
 
-  useFocusEffect(
-    useCallback(() => {
-      void refreshPet();
-    }, [refreshPet]),
-  );
+  useFocusEffect(useCallback(() => {
+    if (validSessionId !== null) {
+      void Promise.all([refresh(validSessionId), refreshPet()]);
+    }
+    return reset;
+  }, [refresh, refreshPet, reset, validSessionId]));
 
-  usePrototypeBack(() => {
-    if (breakResult === null) setCancelRequestToken((token) => token + 1);
-    else goHome();
-  });
-
-  if (breakResult !== null && session === null) {
-    return (
-      <PetRouteVisibility>
-        <BreakResultScreen onHome={goHome} result={breakResult} />
-      </PetRouteVisibility>
-    );
+  if (validSessionId === null) {
+    return <ScreenShell><ErrorState
+      title="Chưa thể mở phiên nghỉ"
+      body="Định danh phiên nghỉ không hợp lệ. PixelDoro sẽ không dùng một phiên khác thay thế."
+      onRetry={() => router.replace('/(tabs)')}
+    /></ScreenShell>;
   }
-
-  return (
-    <PetRouteVisibility>
-      <BreakSessionScreen
-        cancelRequestToken={cancelRequestToken}
-        onMissingSession={goHome}
-        onDismissPetFeedbackError={dismissPetFeedbackError}
-        onRetryPet={() => void refreshPet()}
-        onResolve={resolveBreak}
-        pet={pet}
-        session={session}
-      />
-    </PetRouteVisibility>
-  );
+  if (projection.status === 'error') {
+    return <ScreenShell><ErrorState
+      title="Chưa thể đọc phiên nghỉ"
+      body="Phiên đã lưu vẫn an toàn. Hãy thử đọc lại đúng phiên này."
+      onRetry={() => void refresh(validSessionId)}
+    /></ScreenShell>;
+  }
+  if (projection.status !== 'ready' || projection.session.sessionId !== validSessionId) {
+    return <ScreenShell><LoadingState label="Đang mở phiên nghỉ đã lưu…" /></ScreenShell>;
+  }
+  return <PetRouteVisibility>
+    <BreakStartedScreen
+      session={projection.session}
+      pet={pet}
+      onDismissPetFeedbackError={dismissPetFeedbackError}
+      onRetryPet={() => void refreshPet()}
+    />
+  </PetRouteVisibility>;
 }

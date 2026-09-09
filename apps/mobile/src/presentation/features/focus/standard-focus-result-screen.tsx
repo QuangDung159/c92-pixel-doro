@@ -1,5 +1,5 @@
 import type { PetVisualProjection, StandardFocusTerminalResult } from '@pixeldoro/application';
-import type { BreakRecommendationProjection } from '@/application';
+import type { BreakRecommendationProjection, BreakStartProjection } from '@/application';
 import { StyleSheet, Text, View } from 'react-native';
 
 import {
@@ -28,14 +28,15 @@ export interface StandardFocusResultScreenProps {
   readonly onRetryPet: () => void;
   readonly onHome: () => void;
   readonly breakRecommendation: BreakRecommendationProjection;
+  readonly breakStart: BreakStartProjection;
   readonly onRetryBreakRecommendation: () => void;
-  readonly onReviewStartBreak?: () => void;
+  readonly onStartBreak: () => void;
   readonly onReviewReload?: () => void;
 }
 
 export const StandardFocusResultScreen = ({
-  result, pet, breakRecommendation, onDismissPetFeedbackError, onRetryPet,
-  onHome, onRetryBreakRecommendation, onReviewStartBreak, onReviewReload,
+  result, pet, breakRecommendation, breakStart, onDismissPetFeedbackError, onRetryPet,
+  onHome, onRetryBreakRecommendation, onStartBreak, onReviewReload,
 }: StandardFocusResultScreenProps) => {
   const failed = result.status === 'failed';
   const completed = result.status === 'completed';
@@ -76,10 +77,13 @@ export const StandardFocusResultScreen = ({
     </InlineNotice>
     {completed ? <BreakRecommendationPanel
       projection={breakRecommendation}
+      startProjection={breakStart}
       onRetry={onRetryBreakRecommendation}
-      {...(onReviewStartBreak === undefined ? {} : { onReviewStartBreak })}
+      onStartBreak={onStartBreak}
     /> : null}
-    <PrimaryButton label="Về Home" onPress={onHome} />
+    {completed && breakRecommendation.status === 'ready'
+      ? <SecondaryButton label="Về Home" onPress={onHome} />
+      : <PrimaryButton label="Về Home" onPress={onHome} />}
     {onReviewReload === undefined ? null : <Panel>
       <Text style={styles.title}>Development Build · {result.sessionId}</Text>
       <SecondaryButton label="Đọc lại kết quả đã lưu" onPress={onReviewReload} />
