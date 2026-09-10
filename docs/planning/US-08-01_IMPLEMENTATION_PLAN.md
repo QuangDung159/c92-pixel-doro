@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_08_01_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-08-01 Implementation Plan
-version: 0.2.0
-status: IMPLEMENTED_AWAITING_OWNER_QUICK_UI
-implementation_status: IMPLEMENTED_UNCOMMITTED_CANDIDATE
+version: 0.3.0
+status: DONE_OWNER_ACCEPTED
+implementation_status: DONE_COMMITTED_OWNER_ACCEPTED
 date: 2026-09-10
 last_updated: 2026-09-10
 owner: Dũng Lư
@@ -13,11 +13,11 @@ language: vi
 branch: feats/epic-08
 planning_baseline_sha: 6e68fe5d800342e187f267f356b08335ace9a6b6
 implementation_start_sha: 41e46df9cc122a56b60cfc08ee72dee3a351a2c7
-exact_implementation_sha: null
+exact_implementation_sha: 9be0a0f399a78014bb1a67239b0c478b30a7cdcd
 previous_epic: EPIC-07
 previous_epic_status: DONE_OWNER_ACCEPTED
 previous_epic_implementation_sha: f6c7b9269b2abee07bfe8eeb5d804c6245b67c0a
-manual_device_status: NOT_RUN
+manual_device_status: PASS_OWNER_QUICK_UI_STRUCTURED_MATRIX_NOT_RUN
 formal_tester_status: NOT_RUN_DEFERRED_TO_EPIC_12_UNLESS_EXECUTED
 schema_change: NONE_PROPOSED
 dependency_change: NONE_PROPOSED
@@ -62,7 +62,7 @@ sample item, prototype controls hoặc action giả.
 candidate read-only này, gồm catalog identity, projection ownership, UI states và no-write evidence.
 
 **Planning status:** `APPROVED_OPTION_A_01_TO_05`.
-**Implementation status:** `IMPLEMENTED_UNCOMMITTED_CANDIDATE_AWAITING_OWNER_QUICK_UI`.
+**Implementation status:** `DONE_COMMITTED_OWNER_ACCEPTED` at exact SHA `9be0a0f399a...`.
 
 ### 0.1. Baseline và working-tree audit
 
@@ -683,9 +683,9 @@ adb shell am start -W -a android.intent.action.VIEW -d 'pixeldoro://shop?review=
 
 ### 11.3. Gate mở US-08-02
 
-- [ ] Owner reviews exact US-08-01 candidate on available device/simulator.
-- [ ] Owner explicitly accepts US-08-01 and authorizes US-08-02 planning.
-- [ ] Purchase implementation remains absent until that gate opens.
+- [x] Owner reviewed exact US-08-01 candidate and reported no crash / expected behavior.
+- [x] Owner explicitly accepted US-08-01 and authorized US-08-02 planning.
+- [x] Purchase implementation remained absent until this gate opened.
 
 ## 12. Owner confirmations — resolved
 
@@ -753,5 +753,6 @@ History/Settings retirement, Pet naming/evolution and Product `OPEN-006/009`.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.3.0 | 2026-09-10 | Codex | Recorded exact implementation SHA `9be0a0f...` and owner quick UI PASS: no crash, behavior worked as expected. US-08-01 is DONE_OWNER_ACCEPTED; structured/formal matrices remain NOT_RUN. |
 | 0.2.0 | 2026-09-10 | Codex | Recorded owner Option A approval and coding authorization; implementation completed as an uncommitted candidate. Full quality passed 163 files/856 tests; iOS/Android exports passed; Doctor 20/21 with existing Expo patch drift. Manual/formal evidence remains NOT_RUN. |
 | 0.1.0 | 2026-09-10 | Codex | Initial implementation plan after breakdown/code audit. Proposed existing-port/coordinator reuse, Shop production composition, common progression/item components, recovery/analytics contract and five owner confirmations. Corrected unreachable durable `49 XP` fixture to reachable `45→50`; no production code created. |

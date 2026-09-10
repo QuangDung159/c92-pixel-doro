@@ -1,6 +1,9 @@
 # US-08-01 — Progression & catalog quick UI smoke
 
-Status: `NOT_RUN`. Automated checks do not replace owner/device evidence.
+Status: `OWNER_QUICK_UI_SMOKE_REPORTED`. Owner quick UI: `PASS` on 2026-09-10 — no crash and
+behavior worked as expected at exact SHA `9be0a0f399a78014bb1a67239b0c478b30a7cdcd`.
+Structured fixture/platform/accessibility cases below remain `NOT_RUN`; automated checks and the
+general owner smoke do not replace those evidence rows.
 
 ## 1. Setup an toàn
 
@@ -70,6 +73,7 @@ pnpm start --clear
 
 | Platform/device/OS | Fixture | Scenario | Result | Artifact/notes |
 |---|---|---|---|---|
+| `Owner report; metadata not recorded` | `Quick UI smoke` | App stability + expected US-08-01 behavior | `PASS` | 2026-09-10: no crash, worked as expected. Not a structured/formal matrix. |
 | `<fill>` | `shop_fresh_zero` | Catalog + parity + offline | `NOT_RUN` | `<fill>` |
 | `<fill>` | `shop_progress_45/50` | Level boundary | `NOT_RUN` | `<fill>` |
 | `<fill>` | `shop_owned_mixed` | Item states | `NOT_RUN` | `<fill>` |

@@ -1,15 +1,15 @@
 ---
 document_id: PIXELDORO_US_08_01_IMPLEMENTATION_REPORT
 title: PixelDoro Mobile MVP — US-08-01 Implementation Report
-version: 0.1.0
-status: IMPLEMENTED_AWAITING_OWNER_QUICK_UI
+version: 0.2.0
+status: DONE_OWNER_ACCEPTED
 date: 2026-09-10
 owner: Dũng Lư
 branch: feats/epic-08
 implementation_start_sha: 41e46df9cc122a56b60cfc08ee72dee3a351a2c7
-exact_implementation_sha: null
-candidate_identity: UNCOMMITTED_WORKTREE_ON_IMPLEMENTATION_START_SHA
-owner_smoke_status: NOT_RUN
+exact_implementation_sha: 9be0a0f399a78014bb1a67239b0c478b30a7cdcd
+candidate_identity: EXACT_COMMITTED_OWNER_ACCEPTED_SHA
+owner_smoke_status: PASS_OWNER_QUICK_UI
 formal_tester_status: NOT_RUN_DEFERRED_TO_EPIC_12_UNLESS_EXECUTED
 schema_change: NONE
 dependency_change: NONE
@@ -63,11 +63,11 @@ native_change: NONE
   deferred to US-08-02→04.
 - The production migration source and checksum are unchanged. Composition injects the migration-owned
   catalog contract without creating a second catalog authority.
-- No commit or push was performed. Therefore `exact_implementation_sha` remains `null`; the review
-  candidate is the current working tree on start SHA `41e46df9...`.
+- The implementation was committed at exact SHA `9be0a0f399a78014bb1a67239b0c478b30a7cdcd`.
 
-## Residual gate
+## Owner acceptance and residual evidence
 
-Owner quick UI and structured device evidence remain `NOT_RUN`. US-08-02 stays blocked until the owner
-reviews this exact candidate, reports the quick smoke result and explicitly accepts US-08-01. Formal
-iOS/Android, accessibility and offline breadth remains deferred to EPIC-12 unless actually executed.
+Owner reported quick UI `PASS` on 2026-09-10 for the exact committed candidate: no crash and behavior
+worked as expected. US-08-01 is `DONE_OWNER_ACCEPTED`; US-08-02 planning is open. Structured fixture,
+iOS/Android, accessibility and offline matrices remain `NOT_RUN`, and formal breadth remains deferred
+to EPIC-12 unless actually executed.

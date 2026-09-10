@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_EPIC_08_USER_STORIES
 title: PixelDoro EPIC-08 — Progression, Shop và Inventory Loop User Stories
-version: 0.3.0
-status: US_08_01_IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE
+version: 0.4.0
+status: US_08_01_DONE_US_08_02_PLANNING
 date: 2026-09-10
 last_updated: 2026-09-10
 owner: Dũng Lư
@@ -20,12 +20,12 @@ baseline_sha: 6e68fe5d800342e187f267f356b08335ace9a6b6
 previous_epic: EPIC-07
 previous_epic_status: DONE_OWNER_ACCEPTED
 previous_epic_implementation_sha: f6c7b9269b2abee07bfe8eeb5d804c6245b67c0a
-implementation_status: US_08_01_UNCOMMITTED_CANDIDATE
+implementation_status: US_08_01_DONE_OWNER_ACCEPTED
 formal_tester_status: DEFERRED_TO_EPIC_12_UNLESS_ACTUALLY_RUN
 schema_impact: NONE_APPROVED_EXISTING_SCHEMA_001_SUFFICIENT
 dependency_impact: NONE_APPROVED
 native_impact: NONE_APPROVED
-next_gate: OWNER_US_08_01_QUICK_UI_ACCEPTANCE
+next_gate: OWNER_US_08_02_PLAN_CONFIRMATION
 product_truth: ../PIXELDORO_CORE_TRUTH.md
 epic_baseline: ./MVP_EPICS.md
 gamification_specification: ../specifications/gamification-rules.md
@@ -37,8 +37,8 @@ data_model: ../architecture/data-model.md
 ## 0. Mục đích và authority
 
 Tài liệu này phân rã `EPIC-08` thành các vertical slice nhỏ, có outcome nhìn thấy, rollback và review
-độc lập. Owner đã duyệt US-08-01 Option A và authorize coding; Story 01 hiện là candidate chưa commit,
-chờ quick UI acceptance. Không có migration, dependency hoặc native configuration change.
+độc lập. US-08-01 đã được owner quick-UI accept tại exact SHA `9be0a0f399a...`; US-08-02 đang ở
+planning gate. Không có migration, dependency hoặc native configuration change.
 
 Thứ tự authority khi review hoặc triển khai:
 
@@ -66,7 +66,7 @@ các decision trong mục 20 nhưng không tự phê duyệt implementation plan
 | EPIC-07 status | `DONE_OWNER_ACCEPTED` |
 | EPIC-07 exact implementation SHA | `f6c7b9269b2abee07bfe8eeb5d804c6245b67c0a` |
 | Accepted candidate → planning baseline | Chỉ closure/master/device-documentation changes; không đổi production behavior |
-| EPIC-08 implementation | `US_08_01_UNCOMMITTED_CANDIDATE` |
+| EPIC-08 implementation | `US_08_01_DONE_OWNER_ACCEPTED` at `9be0a0f399a...` |
 | Formal tester | `NOT_RUN`; EPIC-05→07 deferred evidence không được kế thừa là PASS |
 
 Kết luận: gate lập Story EPIC-08 đã mở, toàn bộ confirmation đã được duyệt Option A và owner đã
@@ -195,8 +195,8 @@ selection, visual payoff và cuối cùng cross-feature exit. Mỗi Story chỉ 
 
 | Order | Story | User outcome | Priority | Dependencies | Initial status |
 |---:|---|---|---|---|---|
-| 1 | US-08-01 — Committed Progression và Production Catalog | User sees trustworthy level/XP/Coin and all 12 catalog items | P0 | EPIC-07; confirmations 01/03/08/09/10 approved | IMPLEMENTED_AWAITING_OWNER_QUICK_UI |
-| 2 | US-08-02 — Atomic One-time Purchase | User can safely buy one affordable item once | P0 | 01; confirmations 02/03/04/08/09 | BLOCKED |
+| 1 | US-08-01 — Committed Progression và Production Catalog | User sees trustworthy level/XP/Coin and all 12 catalog items | P0 | EPIC-07; confirmations 01/03/08/09/10 approved | DONE_OWNER_ACCEPTED (`9be0a0f...`) |
+| 2 | US-08-02 — Atomic One-time Purchase | User can safely buy one affordable item once | P0 | 01; confirmations 02/03/04/08/09 | PLANNING_AWAITING_OWNER_CONFIRMATION |
 | 3 | US-08-03 — Durable Inventory và Free Equip | User can distinguish owned items and equip/unequip without cost | P0 | 02; confirmations 05/06/08/09 | BLOCKED |
 | 4 | US-08-04 — Equipped Decorations in Pet Room | User sees equipped purchases persist in the room | P1 | 03; confirmations 06/07/09 | BLOCKED |
 | 5 | US-08-05 — Offline Loop Integrity và Exit Candidate | User can complete reward→buy→equip→relaunch loop reliably | P1 | 01–04; confirmations 08/09/10/11 | BLOCKED |
@@ -293,7 +293,7 @@ Android: `adb shell am start -W -a android.intent.action.VIEW -d 'pixeldoro://sh
 - [x] **DoD automated:** acceptance checks pass; guide exists; unexecuted manual cases retain `NOT_RUN`.
 - [x] **DoD automated:** production Shop replaces only its prototype owner; no schema/dependency/native change.
 - [ ] **Evidence owner gate:** report/test counts/exports exist; exact SHA and screenshots await commit/quick UI.
-- [ ] **Gate US-08-02:** owner accepts exact US-08-01 candidate after quick UI review.
+- [x] **Gate US-08-02:** owner accepted exact US-08-01 candidate after quick UI review.
 
 ## 8. US-08-02 — Atomic One-time Purchase
 
@@ -1054,6 +1054,7 @@ locked to `NONE` unless a later demonstrated gap is separately reviewed.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.4.0 | 2026-09-10 | Codex | Recorded owner quick UI PASS for US-08-01 at exact SHA `9be0a0f...`: no crash and expected behavior. Story 01 is DONE_OWNER_ACCEPTED and US-08-02 planning is open; structured/formal device evidence remains NOT_RUN. |
 | 0.3.0 | 2026-09-10 | Codex | Recorded US-08-01 plan approval and coding authorization. Story 01 is an uncommitted candidate awaiting owner quick UI; automated quality and both platform exports pass, manual/formal evidence remains NOT_RUN. |
 | 0.2.1 | 2026-09-10 | Codex | Corrected the US-08-01 durable/device threshold fixture from unreachable `49 XP` to production-reachable `45→50 XP`; retained `49 XP` as an exact unit boundary. No scope or production behavior changed. |
 | 0.2.0 | 2026-09-10 | Codex | Recorded owner approval of Option A for all eleven confirmations. Locked no schema/dependency/native change, incremental Shop-only prototype retirement, deterministic local analytics, multi-equip/fixed-anchor direction and formal breadth deferral to EPIC-12. Exact decoration artwork still requires its own candidate approval. No implementation plan or production code was created. |
