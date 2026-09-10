@@ -16,6 +16,10 @@ describe('Break running review fixture', () => {
       .toBe('break_running_long_fast_clock');
     expect(breakRunningReviewDatabaseName('break_completion_write_failure_once'))
       .toBe('pixeldoro-us-07-03-break_completion_write_failure_once.db');
+    expect(resolveBreakRunningReviewScenario('break_cancel_long', true))
+      .toBe('break_cancel_long');
+    expect(breakRunningReviewDatabaseName('break_cancel_short'))
+      .toBe('pixeldoro-us-07-04-break_cancel_short.db');
   });
 
   it('uses wall time before preparation and exposes the accelerated scheduler cadence', () => {

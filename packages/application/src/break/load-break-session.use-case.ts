@@ -1,6 +1,6 @@
 import type { SessionRepository } from '../persistence/session.repository';
 import type { ApplicationResult } from '../result/application-result';
-import { isCompletedBreak, isRunningBreak } from './break-session-record';
+import { isCancelledBreak, isCompletedBreak, isRunningBreak } from './break-session-record';
 
 interface BreakProjectionBase {
   readonly sessionId: string;
@@ -14,6 +14,10 @@ export type BreakSessionProjection =
   | (BreakProjectionBase & { readonly status: 'running' })
   | (BreakProjectionBase & {
       readonly status: 'completed';
+      readonly resolvedAt: number;
+    })
+  | (BreakProjectionBase & {
+      readonly status: 'cancelled';
       readonly resolvedAt: number;
     });
 
@@ -38,7 +42,8 @@ export class LoadBreakSessionUseCase {
       const result = await this.sessions.findById(sessionId);
       if (!result.ok) return failure('BREAK_SESSION_READ_FAILED');
       const row = result.value;
-      if (row === null || (!isRunningBreak(row) && !isCompletedBreak(row))) {
+      if (row === null || (!isRunningBreak(row) && !isCompletedBreak(row) &&
+        !isCancelledBreak(row))) {
         return failure('BREAK_SESSION_INELIGIBLE');
       }
       const base = {
@@ -48,9 +53,11 @@ export class LoadBreakSessionUseCase {
         startedAt: row.startedAt,
         endsAt: row.endsAt,
       };
-      return { ok: true, value: row.status === 'completed'
+      if (row.status === 'running') return { ok: true, value:
+        Object.freeze({ ...base, status: 'running' as const }) };
+      return { ok: true, value: isCompletedBreak(row)
         ? Object.freeze({ ...base, status: 'completed' as const, resolvedAt: row.resolvedAt! })
-        : Object.freeze({ ...base, status: 'running' as const }) };
+        : Object.freeze({ ...base, status: 'cancelled' as const, resolvedAt: row.resolvedAt! }) };
     } catch {
       return failure('BREAK_SESSION_READ_FAILED');
     }

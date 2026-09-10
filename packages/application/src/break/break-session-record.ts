@@ -135,4 +135,17 @@ export const isCancelledBreak = (record: SessionRecord): boolean =>
   record.resolvedAt !== null &&
   isSafeSessionTimestamp(record.resolvedAt) &&
   record.resolvedAt >= record.startedAt &&
+  record.resolvedAt < record.endsAt &&
   record.updatedAt === record.resolvedAt;
+
+export const isRecoverableRunningBreak = (record: SessionRecord): boolean =>
+  record.status === 'running' &&
+  record.focusVariant === null && record.mode === null && record.workTag === null &&
+  record.backgroundedAt === null && record.resolvedAt === null &&
+  record.xpEarned === 0 && record.coinsEarned === 0 && record.rewardClaimedAt === null &&
+  validateBreakConfiguration({
+    sessionType: record.sessionType as 'short_break' | 'long_break',
+    durationMinutes: record.configuredDurationMinutes,
+  }).ok &&
+  isSafeSessionTimestamp(record.startedAt) && isSafeSessionTimestamp(record.endsAt) &&
+  record.endsAt === record.startedAt + record.configuredDurationMinutes * 60_000;

@@ -1,19 +1,19 @@
 ---
 document_id: PIXELDORO_US_07_04_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-07-04 Cancel, Terminal Recovery và Race-safe Break Result Plan
-version: 0.1.0
-status: DRAFT_OWNER_REVIEW_REQUIRED
-implementation_status: NOT_STARTED
+version: 0.3.0
+status: IMPLEMENTED_AUTOMATED_PASS_OWNER_REVIEW_PENDING
+implementation_status: IMPLEMENTED_WORKTREE_CANDIDATE
 date: 2026-09-09
-last_updated: 2026-09-09
+last_updated: 2026-09-10
 owner: Dũng Lư
 reviewer: Dũng Lư
 reviewer_role: Tech Lead/Product Owner
 language: vi
 branch: feats/epic-07
 planning_baseline_sha: d51e1c23683c770dba5f4a0791d29167cb84bd96
-implementation_start_sha: NOT_STARTED
-exact_implementation_sha: NOT_STARTED
+implementation_start_sha: b2227cdb7add682f8e49da556f271744da31d62d
+exact_implementation_sha: WORKTREE_CANDIDATE_NOT_COMMITTED
 previous_story_sha: d51e1c23683c770dba5f4a0791d29167cb84bd96
 previous_story_acceptance: DONE_OWNER_ACCEPTED_QUICK_UI
 manual_device_status: NOT_RUN
@@ -29,7 +29,7 @@ scope:
   - terminal_race
   - exact_break_result
   - recovery
-authority: PLANNING
+authority: IMPLEMENTATION_EVIDENCE
 story_baseline: ./EPIC-07_USER_STORIES.md
 previous_story_plan: ./US-07-03_IMPLEMENTATION_PLAN.md
 previous_story_report: ./US-07-03_IMPLEMENTATION_REPORT.md
@@ -56,8 +56,9 @@ Plan này nối running/completed Break của US-07-03 với explicit Cancel có
 terminal transaction và exact terminal Result. UI phải luôn render durable winner khi Cancel và
 completion cạnh tranh; modal, countdown hoặc thao tác Back không được tự quyết định terminal state.
 
-Lượt hiện tại chỉ cập nhật planning/evidence documents; **không sửa production code**, schema,
-dependency, lockfile hoặc native configuration.
+Implementation đã hoàn tất trong worktree theo toàn bộ Option A; schema, dependency, lockfile và
+native configuration không thay đổi. Automated quality/platform gates đã pass; owner quick UI và
+formal device matrix vẫn chờ chạy.
 
 **Story outcome:** người dùng có thể dismiss hoặc xác nhận dừng Short/Long Break; cancel hợp lệ trước
 deadline commit `cancelled` đúng một lần, không reward; tại/sau deadline completion được xét theo
@@ -68,10 +69,13 @@ owner-confirmed precedence; exact Result phản ánh committed `completed` hoặ
 **Dependency:** US-07-03 đã commit/push và owner accepted quick UI tại exact SHA
 `d51e1c23683c770dba5f4a0791d29167cb84bd96` ngày 2026-09-09.
 
-**Planning status:** `DRAFT_OWNER_REVIEW_REQUIRED`.
+**Planning status:** `IMPLEMENTED_AUTOMATED_PASS_OWNER_REVIEW_PENDING`.
 
-**Implementation status:** `NOT_STARTED`. Coding bị khóa tới khi owner duyệt plan và confirmations
-`US0704-CONFIRM-01→10`; confirmations 01/02 cũng resolve Epic-level `US0700-CONFIRM-03/04`.
+**Implementation status:** `IMPLEMENTED_WORKTREE_CANDIDATE`. Owner duyệt toàn bộ Option A cho confirmations
+`US0704-CONFIRM-01→10` ngày 2026-09-10; confirmations 01/02 đồng thời resolve Epic-level
+`US0700-CONFIRM-03/04`. Exact implementation-start SHA là
+`b2227cdb7add682f8e49da556f271744da31d62d`; candidate chưa được commit nên exact implementation
+SHA vẫn là `WORKTREE_CANDIDATE_NOT_COMMITTED`.
 
 ### 0.1. Gate từ US-07-03
 
@@ -81,7 +85,7 @@ owner-confirmed precedence; exact Result phản ánh committed `completed` hoặ
 - [x] Existing `/break/session` đã có running, deadline-pending và completed projection.
 - [ ] Structured iOS/Android/accessibility matrix và formal tester vẫn `NOT_RUN`; không suy diễn từ
   owner quick smoke.
-- [ ] Epic confirmations `US0700-CONFIRM-03/04` còn pending và phải được khóa trước coding.
+- [x] Epic confirmations `US0700-CONFIRM-03/04` đã được owner duyệt Option A ngày 2026-09-10.
 
 ### 0.2. Story boundary bắt buộc
 
@@ -404,19 +408,19 @@ formal tester remain separate.
 
 ## 11. Acceptance criteria
 
-- [ ] Back/Dừng opens accessible confirmation; dismiss writes nothing and countdown continues.
-- [ ] Confirm before deadline commits exact cancelled once with zero reward.
-- [ ] Confirm at/past deadline follows owner-approved precedence and durable truth.
-- [ ] Cancel-first and completion-first races preserve the first valid conditional terminal commit.
-- [ ] Duplicate confirm/cancel returns stable terminal truth and one navigation.
-- [ ] Exact terminal Result reads completed/cancelled only; rejects foreign/missing/corrupt data.
-- [ ] Read/write/transaction/Post-commit hydration failure never invents result or reward.
-- [ ] Completed/cancelled Result has Pet Idle and no Celebrate/Bugged/reward/progression UI.
-- [ ] Cancelled Long does not reset cadence; completed Long continues to reset it.
-- [ ] Background/relaunch/offline behavior preserves committed winner without side-effect replay.
-- [ ] No notification/analytics/Pause/Strict/failed behavior leaks into scope.
-- [ ] No schema/dependency/native change.
-- [ ] Full automated/platform/static gates pass and evidence is recorded honestly.
+- [x] Back/Dừng opens accessible confirmation; dismiss writes nothing and countdown continues.
+- [x] Confirm before deadline commits exact cancelled once with zero reward.
+- [x] Confirm at/past deadline follows owner-approved precedence and durable truth.
+- [x] Cancel-first and completion-first races preserve the first valid conditional terminal commit.
+- [x] Duplicate confirm/cancel returns stable terminal truth and one navigation.
+- [x] Exact terminal Result reads completed/cancelled only; rejects foreign/missing/corrupt data.
+- [x] Read/write/transaction/Post-commit hydration failure never invents result or reward.
+- [x] Completed/cancelled Result has Pet Idle and no Celebrate/Bugged/reward/progression UI.
+- [x] Cancelled Long does not reset cadence; completed Long continues to reset it.
+- [x] Background/relaunch/offline behavior preserves committed winner without side-effect replay.
+- [x] No notification/analytics/Pause/Strict/failed behavior leaks into scope.
+- [x] No schema/dependency/native change.
+- [x] Full automated/platform/static gates pass and evidence is recorded honestly.
 
 ## 12. Risks and controls
 
@@ -453,21 +457,21 @@ formal tester remain separate.
 - [x] Existing common components and Trial/Standard cancel consumers audited.
 - [x] No-schema/dependency/native default established.
 - [x] Transaction/race/recovery/test/fixture strategy documented.
-- [ ] Owner approves `US0704-CONFIRM-01→10`.
-- [ ] Epic `US0700-CONFIRM-03/04` are resolved consistently.
-- [ ] Plan status/version and exact implementation-start SHA updated before coding.
+- [x] Owner approves `US0704-CONFIRM-01→10` on 2026-09-10.
+- [x] Epic `US0700-CONFIRM-03/04` are resolved consistently.
+- [x] Plan status/version and exact implementation-start SHA updated before coding.
 
 ### 14.2. Definition of Done
 
-- [ ] All acceptance criteria and focused/full automated gates pass.
-- [ ] Both platform exports pass; Doctor warnings recorded truthfully.
-- [ ] Exact running/completed/cancelled route contains no prototype/fallback authority.
-- [ ] No reward/profile/notification/analytics write is reachable.
-- [ ] Report/device guide/exact implementation SHA exist.
+- [x] All acceptance criteria and focused/full automated gates pass.
+- [x] Both platform exports pass; Doctor warnings recorded truthfully.
+- [x] Exact running/completed/cancelled route contains no prototype/fallback authority.
+- [x] No reward/profile/notification/analytics write is reachable.
+- [ ] Report/device guide exist; exact implementation SHA waits for commit.
 - [ ] Owner quick UI output is recorded separately from structured/formal evidence.
 - [ ] Owner explicitly accepts US-07-04 and authorizes US-07-05 planning.
 
-## 15. Owner confirmation gate — PENDING
+## 15. Owner confirmation gate — APPROVED
 
 ### US0704-CONFIRM-01 — Terminal destination (`US0700-CONFIRM-03`)
 
@@ -475,7 +479,7 @@ formal tester remain separate.
 - **Option B:** completed có Result; cancelled về Home ngay.
 - **Option C:** cả hai về Home với transient notice.
 - **Impact:** khóa terminal navigation, reader/screen và cold/warm handoff.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-10.
 
 ### US0704-CONFIRM-02 — Cancel đúng/sau deadline (`US0700-CONFIRM-04`)
 
@@ -484,7 +488,7 @@ formal tester remain separate.
 - **Option B:** transaction cancel lock trước thì thắng kể cả tap sau deadline.
 - **Option C:** disable Cancel bằng buffer ở giây cuối.
 - **Impact:** khóa domain boundary và cả hai thứ tự race.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-10.
 
 ### US0704-CONFIRM-03 — Route cho terminal Result
 
@@ -492,7 +496,7 @@ formal tester remain separate.
   cancelled; không tạo route mới.
 - **Option B:** terminal chuyển sang `/break/result?sessionId=<id>`.
 - **Impact:** A reuse hydration/lifecycle hiện có; B tách surface nhưng thêm bridge/test.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-10.
 
 ### US0704-CONFIRM-04 — Back và modal lifecycle
 
@@ -501,7 +505,7 @@ formal tester remain separate.
 - **Option B:** modal giữ mở qua background/foreground.
 - **Option C:** Back về Home không confirmation, chỉ nút Dừng mới mở modal.
 - **Impact:** khóa navigation safety và transient state tests.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-10.
 
 ### US0704-CONFIRM-05 — Cancelled Result content
 
@@ -510,7 +514,7 @@ formal tester remain separate.
 - **Option B:** render stat card XP/Coin đều 0.
 - **Option C:** cancelled chỉ hiện notice ngắn.
 - **Impact:** khóa visual hierarchy và component reuse.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-10.
 
 ### US0704-CONFIRM-06 — Cold relaunch terminal policy
 
@@ -519,7 +523,7 @@ formal tester remain separate.
 - **Option B:** mọi cold launch mở latest terminal Break Result.
 - **Option C:** thêm durable viewed marker để reopen unseen Result.
 - **Impact:** A giữ no-schema/exact-ID; B dùng latest fallback; C cần data-model/migration review.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-10.
 
 ### US0704-CONFIRM-07 — Post-commit read/Pet failure
 
@@ -527,7 +531,7 @@ formal tester remain separate.
   cancel intent như mutation mới.
 - **Option B:** coi toàn flow failed và cho nút Cancel Retry.
 - **Impact:** khóa idempotency và recovery surface.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-10.
 
 ### US0704-CONFIRM-08 — Corrupt active Break recovery
 
@@ -537,7 +541,7 @@ formal tester remain separate.
 - **Option B:** chỉ Retry/global confirmed reset; không recovery-cancel trong Story này.
 - **Option C:** raw force-cancel mọi corrupt session.
 - **Impact:** khóa Timer `TE-EDGE-002` recovery interpretation và infrastructure seam; C không đề xuất.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-10.
 
 ### US0704-CONFIRM-09 — Review fixtures
 
@@ -546,7 +550,7 @@ formal tester remain separate.
 - **Option B:** persist Break vài giây để test nhanh.
 - **Option C:** mutate normal database thủ công.
 - **Impact:** khóa evidence fidelity/data safety.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-10.
 
 ### US0704-CONFIRM-10 — Scope/schema/side effects
 
@@ -555,15 +559,15 @@ formal tester remain separate.
 - **Option B:** kéo Break notification vào Story 04.
 - **Option C:** thêm terminal/source/viewed schema.
 - **Impact:** khóa Story size và gate US-07-05.
-- [ ] Owner selected option: PENDING.
+- [x] Owner selected option: A — 2026-09-10.
 
 ### 15.1. Approval checklist
 
-- [ ] Owner selects one option for confirmations `01→10`.
-- [ ] Any non-A selection is reconciled against authority, file impact and test plan.
-- [ ] Epic `US0700-CONFIRM-03/04` status is updated from explicit owner decisions.
-- [ ] Plan version/status and exact implementation-start SHA are updated before coding.
-- [ ] No material confirmation remains pending.
+- [x] Owner selected Option A for confirmations `01→10` on 2026-09-10.
+- [x] No non-A selection requires authority, file-impact or test-plan reconciliation.
+- [x] Epic `US0700-CONFIRM-03/04` status is updated from explicit owner decisions.
+- [x] Plan version/status and exact implementation-start SHA are updated before coding.
+- [x] No material confirmation remains pending.
 
 ## 16. References
 
@@ -588,14 +592,18 @@ formal tester remain separate.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.3.0 | 2026-09-10 | Codex | Implemented all approved Option A behavior in the worktree: cancellation decision/use case, conditional terminal winner, exact cancelled Result, modal/back lifecycle, narrow recovery, Long cadence preservation, review fixtures and device guide. Focused 9-file/42-test suite, full 148-file/798-test quality, iOS/Android exports pass; Doctor remains baseline 19/21; owner/formal smoke remains NOT_RUN. |
+| 0.2.0 | 2026-09-10 | Codex | Recorded owner approval of all Option A confirmations 01–10, resolved Epic confirmations 03/04, locked same-route exact Result, deadline completion precedence, modal/relaunch/recovery/fixture/no-schema boundaries and opened implementation at exact SHA `b2227cdb7add682f8e49da556f271744da31d62d`. |
 | 0.1.0 | 2026-09-09 | Codex | Created owner-gated US-07-04 plan from accepted US-07-03 exact SHA; defined cancel/deadline decision, shared conditional race, exact terminal Result, recovery, common reuse, fixtures/tests and ten pending confirmations. No production code changed. |
 
-Validation required for this planning turn:
+Validation for this implementation candidate:
 
 - [x] `git diff --check` passes.
-- [x] All relative Markdown references resolve.
-- [x] Confirmation IDs are continuous `01→10`.
-- [x] Only planning/evidence documents changed.
+- [x] Focused US-07-04 tests pass: 9 files / 42 tests.
+- [x] Full quality pass: 148 files / 798 tests.
+- [x] iOS/Android JS exports pass.
+- [x] Expo Doctor reports unchanged baseline `19/21`; no opportunistic upgrade.
 - [x] No unrun automated/manual/formal evidence is marked PASS.
 
-**Do not implement US-07-04 until owner approves the plan and all material confirmations.**
+**US-07-04 implementation is an automated-pass worktree candidate awaiting owner quick UI smoke and
+an exact commit SHA.**

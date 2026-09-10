@@ -2,6 +2,7 @@ import { useSyncExternalStore } from 'react';
 
 import type {
   BreakRecommendationProjection,
+  BreakCancelProjection,
   BreakSessionProjection,
   BreakStartProjection,
 } from '@/application';
@@ -56,4 +57,18 @@ export const useBreakSessionActions = () => {
     refresh: breakSession.refresh,
     reset: breakSession.reset,
   };
+};
+
+export const useBreakCancelProjection = (): BreakCancelProjection => {
+  const { breakCancel } = useMobileApplication();
+  return useSyncExternalStore(
+    breakCancel.subscribe,
+    breakCancel.getSnapshot,
+    breakCancel.getSnapshot,
+  );
+};
+
+export const useBreakCancelActions = () => {
+  const { breakCancel } = useMobileApplication();
+  return { cancel: breakCancel.cancel, reset: breakCancel.reset };
 };

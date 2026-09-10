@@ -17,7 +17,7 @@ const load = (value: SessionRecord | null) => new LoadBreakSessionUseCase({
 });
 
 describe('LoadBreakSessionUseCase', () => {
-  it('loads exact running and completed Break projections', async () => {
+  it('loads exact running, completed and cancelled Break projections', async () => {
     expect(await load(running).execute('break-1')).toEqual({ ok: true, value: {
       status: 'running', sessionId: 'break-1', kind: 'short', durationMinutes: 5,
       startedAt: 1_000, endsAt: 301_000,
@@ -27,11 +27,16 @@ describe('LoadBreakSessionUseCase', () => {
       status: 'completed', sessionId: 'break-1', kind: 'short', durationMinutes: 5,
       startedAt: 1_000, endsAt: 301_000, resolvedAt: 302_000,
     } });
+    expect(await load({ ...running, status: 'cancelled', resolvedAt: 2_000,
+      updatedAt: 2_000 }).execute('break-1')).toEqual({ ok: true, value: {
+      status: 'cancelled', sessionId: 'break-1', kind: 'short', durationMinutes: 5,
+      startedAt: 1_000, endsAt: 301_000, resolvedAt: 2_000,
+    } });
   });
 
   it.each([
     null,
-    { ...running, status: 'cancelled', resolvedAt: 2_000, updatedAt: 2_000 },
+    { ...running, status: 'cancelled', resolvedAt: 301_000, updatedAt: 301_000 },
     { ...running, status: 'completed', resolvedAt: 300_000, updatedAt: 300_000 },
     { ...running, sessionType: 'focus', focusVariant: 'standard', mode: 'relax', workTag: 'coding' },
   ])('fails closed for missing, unsupported terminal, corrupt and foreign rows', async (value) => {

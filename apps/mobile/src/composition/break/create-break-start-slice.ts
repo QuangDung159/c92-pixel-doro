@@ -1,4 +1,5 @@
 import {
+  CancelBreakUseCase,
   LoadBreakSessionUseCase,
   StartBreakUseCase,
   type ClockPort,
@@ -14,6 +15,7 @@ import {
 
 import {
   BreakSessionController,
+  BreakCancelController,
   BreakStartController,
   type CommandReadinessPort,
   type BreakStartUiErrorCode,
@@ -31,7 +33,7 @@ export interface CreateBreakStartSliceDependencies {
   readonly readiness: CommandReadinessPort;
   readonly sessions: Pick<SessionRepository,
     'findById' | 'findByIdInTransaction' | 'findActiveInTransaction' |
-    'insertRunningInTransaction'>;
+    'insertRunningInTransaction' | 'transitionFromRunningInTransaction'>;
   readonly transaction: TransactionPort;
   readonly scheduler: TickScheduler;
   readonly appInitiallyVisible: boolean;
@@ -79,12 +81,33 @@ export const createBreakStartSlice = (dependencies: CreateBreakStartSliceDepende
     ...(dependencies.onDeadlineReached === undefined
       ? {} : { onDeadlineReached: dependencies.onDeadlineReached }),
   });
+  const cancelUseCase = new CancelBreakUseCase({
+    clock: dependencies.clock,
+    coordinator: dependencies.coordinator,
+    sessions: dependencies.sessions,
+    transaction: dependencies.transaction,
+  });
+  const cancel = new BreakCancelController({
+    cancel: async (sessionId) => {
+      const allowed = dependencies.readiness.run(() => cancelUseCase.execute(sessionId));
+      return allowed.ok ? allowed.value : { ok: false, error: {
+        kind: 'cancel_break_error' as const, code: 'BREAK_CANCEL_TRANSACTION_FAILED' as const,
+      } };
+    },
+    afterCommitted: async (sessionId) => {
+      dependencies.petTerminalFeedback.discardActive();
+      await Promise.all([
+        session.refresh(sessionId),
+        dependencies.petCompanion.refresh().catch(() => undefined),
+      ]);
+    },
+  });
   return {
-    start,
-    session,
+    start, session, cancel,
     dispose: () => {
       start.dispose();
       session.dispose();
+      cancel.dispose();
     },
   };
 };

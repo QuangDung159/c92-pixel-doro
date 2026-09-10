@@ -31,6 +31,24 @@ const breakStartFlow = await readFile(`${deviceDirectory}break-start-smoke.md`, 
 const breakRunningCompletionFlow = await readFile(
   `${deviceDirectory}break-running-completion-smoke.md`, 'utf8',
 );
+const breakCancelResultFlow = await readFile(
+  `${deviceDirectory}break-cancel-result-smoke.md`, 'utf8',
+);
+for (const evidence of [
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_cancel_short',
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_cancel_long',
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_cancel_write_failure_once',
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_cancel_read_failure_once',
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_cancel_completion_first',
+  'pixeldoro-us-07-04-', 'Nghỉ ngắn · 5 phút', 'Nghỉ dài · 15 phút',
+  'CANCELLED', 'COMPLETED', 'VoiceOver', 'TalkBack', 'Reduce Motion',
+  'Airplane mode', '<implementation-sha>', 'NOT_RUN',
+  'unset EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE',
+]) {
+  if (!breakCancelResultFlow.includes(evidence)) {
+    throw new Error(`Break cancel/Result flow is missing: ${evidence}`);
+  }
+}
 for (const evidence of [
   'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_running_short_fast_clock',
   'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_running_long_fast_clock',

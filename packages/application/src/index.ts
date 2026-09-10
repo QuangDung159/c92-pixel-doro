@@ -118,10 +118,17 @@ export {
   createBreakSessionRecord,
   isCancelledBreak,
   isCompletedBreak,
+  isRecoverableRunningBreak,
   isRunningBreak,
   type BreakSessionRecordError,
   type BreakSessionRecordInput,
 } from './break/break-session-record';
+export {
+  CancelBreakUseCase,
+  type CancelBreakDependencies,
+  type CancelBreakError,
+  type CancelBreakOutcome,
+} from './break/cancel-break.use-case';
 export {
   StartBreakUseCase,
   type StartBreakDependencies,

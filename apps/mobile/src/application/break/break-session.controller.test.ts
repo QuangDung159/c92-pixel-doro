@@ -78,6 +78,19 @@ describe('BreakSessionController', () => {
     });
   });
 
+  it('publishes exact committed cancellation', async () => {
+    const controller = new BreakSessionController({
+      clock: { nowMs: () => 2_000 }, scheduler: { schedule: vi.fn() },
+      loader: { execute: async () => ({ ok: true as const, value: {
+        ...running, status: 'cancelled' as const, resolvedAt: 2_000,
+      } }) },
+    });
+    await controller.refresh('break-1');
+    expect(controller.getSnapshot()).toMatchObject({
+      status: 'ready', phase: 'cancelled', session: { resolvedAt: 2_000 },
+    });
+  });
+
   it('maps ineligible and read failures separately', async () => {
     const build = (code: 'BREAK_SESSION_INELIGIBLE' | 'BREAK_SESSION_READ_FAILED') =>
       new BreakSessionController({

@@ -852,6 +852,7 @@ export const createMobileApplication = (
   return {
     appVisibility,
     breakRecommendation: breakRecommendation.recommendation,
+    breakCancel: breakStart.cancel,
     breakStart: breakStart.start,
     breakSession: breakStart.session,
     bootstrap,

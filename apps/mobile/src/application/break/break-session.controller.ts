@@ -29,6 +29,11 @@ export type BreakSessionProjection =
       readonly session: Extract<DurableBreakSessionProjection, { status: 'completed' }>;
     }
   | {
+      readonly status: 'ready';
+      readonly phase: 'cancelled';
+      readonly session: Extract<DurableBreakSessionProjection, { status: 'cancelled' }>;
+    }
+  | {
       readonly status: 'error';
       readonly code: 'SESSION_UNAVAILABLE' | 'SESSION_READ_FAILED';
     };
@@ -142,9 +147,10 @@ export class BreakSessionController {
 
   private projectNow(): void {
     if (this.durable === null || this.disposed) return;
-    if (this.durable.status === 'completed') {
+    if (this.durable.status !== 'running') {
       this.stopTick();
-      this.publish({ status: 'ready', phase: 'completed', session: this.durable });
+      this.publish({ status: 'ready', phase: this.durable.status, session: this.durable } as
+        Extract<BreakSessionProjection, { status: 'ready'; phase: 'completed' | 'cancelled' }>);
       return;
     }
     const remaining = projectRemainingTime(this.durable.endsAt, this.dependencies.clock.nowMs());

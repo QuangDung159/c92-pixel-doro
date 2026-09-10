@@ -1,10 +1,10 @@
 ---
 document_id: PIXELDORO_EPIC_07_USER_STORIES
 title: PixelDoro EPIC-07 — Break Experience và Long Break Cadence User Stories
-version: 0.7.0
+version: 0.9.0
 status: IN_PROGRESS
 date: 2026-09-08
-last_updated: 2026-09-09
+last_updated: 2026-09-10
 owner: Dũng Lư
 language: vi
 scope:
@@ -15,13 +15,13 @@ authority: PLANNING
 product_truth: ../PIXELDORO_CORE_TRUTH.md
 epic_baseline: ./MVP_EPICS.md
 branch_audited: feats/epic-07
-baseline_head: d51e1c23683c770dba5f4a0791d29167cb84bd96
+baseline_head: b2227cdb7add682f8e49da556f271744da31d62d
 epic_06_behavior_candidate: 458a8868ac0024e3b3d1eff64ccc26408a81b2e1
 epic_06_status: DONE_OWNER_ACCEPTED
-implementation_status: US_07_01_DONE_US_07_02_DONE_US_07_03_DONE_US_07_04_PLANNING_OWNER_REVIEW
+implementation_status: US_07_01_DONE_US_07_02_DONE_US_07_03_DONE_US_07_04_AUTOMATED_PASS
 formal_tester_status: NOT_RUN
 schema_change: NONE_APPROVED_FOR_US_07_02_US_07_03
-next_gate: US_07_04_PLAN_AND_CONFIRMATIONS_OWNER_APPROVAL
+next_gate: US_07_04_OWNER_QUICK_UI_SMOKE
 ---
 
 # EPIC-07 — Break Experience và Long Break Cadence
@@ -573,26 +573,26 @@ branch renders RewardSummary/ProgressionSummary. Pet returns Idle after either t
 
 ### 10.3. Acceptance criteria
 
-- [ ] Back/Cancel opens accessible confirmation; dismiss changes no durable facts.
-- [ ] Confirm before deadline commits cancelled once, zero reward.
-- [ ] Confirm at/past deadline follows `US0700-CONFIRM-04`; no arbitrary UI winner.
-- [ ] Completion-first blocks later cancel; cancel-first before deadline blocks later completion.
-- [ ] Duplicate cancel/rapid tap returns stable terminal/no-op result.
-- [ ] Read/write/commit failure does not navigate or invent terminal result.
-- [ ] Result reads exact Break ID and rejects Focus/trial/malformed record.
-- [ ] Completed/cancelled Break have no reward/progression/Celebrate/Bugged UI.
-- [ ] Completed Long resets cadence; cancelled Long leaves Long due.
-- [ ] Relaunch terminal Break does not replay side effects.
+- [x] Back/Cancel opens accessible confirmation; dismiss changes no durable facts.
+- [x] Confirm before deadline commits cancelled once, zero reward.
+- [x] Confirm at/past deadline follows `US0700-CONFIRM-04`; no arbitrary UI winner.
+- [x] Completion-first blocks later cancel; cancel-first before deadline blocks later completion.
+- [x] Duplicate cancel/rapid tap returns stable terminal/no-op result.
+- [x] Read/write/commit failure does not navigate or invent terminal result.
+- [x] Result reads exact Break ID and rejects Focus/trial/malformed record.
+- [x] Completed/cancelled Break have no reward/progression/Celebrate/Bugged UI.
+- [x] Completed Long resets cadence; cancelled Long leaves Long due.
+- [x] Relaunch terminal Break does not replay side effects.
 
 ### 10.4. Automated test checklist
 
-- [ ] Cancel use case before/equal/after deadline, already terminal, foreign, invalid and DB failure.
-- [ ] Coordinator concurrent cancel/reconcile and duplicate calls.
-- [ ] Real SQLite cancel-first/completion-first/rollback/reopen/cadence assertions.
-- [ ] Cancel controller busy/error/reset/dispose and detached callback tests.
-- [ ] Exact Result reader completed/cancelled/foreign/no-reward corruption tests.
-- [ ] Screen/route modal/back/result/accessibility tests.
-- [ ] Regression: Standard/Trial cancel modal and Home/result actions pass.
+- [x] Cancel use case before/equal/after deadline, already terminal, foreign, invalid and DB failure.
+- [x] Coordinator concurrent cancel/reconcile and duplicate calls.
+- [x] Real SQLite cancel-first/completion-first/rollback/reopen/cadence assertions.
+- [x] Cancel controller busy/error/reset/dispose and detached callback tests.
+- [x] Exact Result reader completed/cancelled/foreign/no-reward corruption tests.
+- [x] Screen/route modal/back/result static/accessibility contract tests.
+- [x] Regression: Standard/Trial cancel modal and Home/result actions pass in full suite.
 
 ### 10.5. Manual UI/device test guide
 
@@ -619,12 +619,12 @@ branch renders RewardSummary/ProgressionSummary. Pet returns Idle after either t
 
 ### 10.6. DoR, DoD, evidence và next gate
 
-- [ ] **DoR:** US-07-03 accepted; confirmations 03/04 remain pending; exact terminal navigation is
-  proposed in `US-07-04_IMPLEMENTATION_PLAN.md` for owner approval.
+- [x] **DoR:** US-07-03 accepted; confirmations 03/04 and all Story options approved as Option A.
 - [ ] **DoD:** cancel/race/result/recovery matrices pass; report/SHA/guide exist; owner accepts.
-- [ ] **Evidence files:** `US-07-04_IMPLEMENTATION_PLAN.md`, `US-07-04_IMPLEMENTATION_REPORT.md`,
+- [x] **Evidence files:** `US-07-04_IMPLEMENTATION_PLAN.md`, `US-07-04_IMPLEMENTATION_REPORT.md`,
   `apps/mobile/test/device/break-cancel-result-smoke.md`.
-- [ ] **Gate sang US-07-05:** no reward/Pet/cadence regression and both race orders proven in SQLite.
+- [x] **Automated gate:** no reward/Pet/cadence regression and both race orders proven in SQLite.
+- [ ] **Gate sang US-07-05:** owner quick UI acceptance and exact implementation SHA recorded.
 
 ## 11. US-07-05 — Notification, analytics hooks, accessibility và Epic integrity
 
@@ -921,7 +921,8 @@ one-active invariant được enforce nhưng không claim durable one-Break-per-
 - **Option C:** cả hai về Home trực tiếp với accessible notice. Impact: ít surface hơn nhưng bỏ approved
   prototype Result hierarchy và làm terminal evidence ít trực quan.
 
-**Status:** `PENDING_OWNER`; blocks US-07-04 navigation plan.
+**Status:** `APPROVED_OPTION_A` — owner confirmed 2026-09-10. Completed/cancelled both render exact
+Break Result before explicit Home navigation.
 
 ### US0700-CONFIRM-04 — Cancel tại hoặc sau deadline
 
@@ -933,7 +934,8 @@ one-active invariant được enforce nhưng không claim durable one-Break-per-
 - **Option C:** disable cancel ở `00:01` buffer. Impact: invent grace/buffer không có Product truth;
   không đề xuất.
 
-**Status:** `PENDING_OWNER`; blocks US-07-04 command plan.
+**Status:** `APPROVED_OPTION_A` — owner confirmed 2026-09-10. Captured time at/past deadline resolves
+completion; a request captured before deadline remains cancel-eligible while queued.
 
 ### US0700-CONFIRM-05 — Notification copy và tap destination
 
@@ -962,8 +964,8 @@ one-active invariant được enforce nhưng không claim durable one-Break-per-
 
 - [x] Owner selected Option A for `US0700-CONFIRM-01` on 2026-09-09.
 - [x] Owner selected Option A for `US0700-CONFIRM-02` on 2026-09-08.
-- [ ] Owner selects one option for `US0700-CONFIRM-03`.
-- [ ] Owner selects one option for `US0700-CONFIRM-04`.
+- [x] Owner selected Option A for `US0700-CONFIRM-03` on 2026-09-10.
+- [x] Owner selected Option A for `US0700-CONFIRM-04` on 2026-09-10.
 - [ ] Owner selects one option for `US0700-CONFIRM-05`.
 - [ ] Owner selects one option for `US0700-CONFIRM-06`.
 - [x] Document version/status/schema verdict updated for confirmations affecting US-07-02.
@@ -988,6 +990,8 @@ one-active invariant được enforce nhưng không claim durable one-Break-per-
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.9.0 | 2026-09-10 | Codex | Recorded US-07-04 worktree implementation and automated/platform PASS: exact cancel/completion winner, same-route cancelled Result, zero reward, Long cadence preservation, recovery fixtures and device guide. Owner/formal device evidence and exact commit SHA remain pending. |
+| 0.8.0 | 2026-09-10 | Codex | Recorded owner approval of US-07-04 Option A confirmations and Epic `US0700-CONFIRM-03/04`; opened US-07-04 implementation from exact SHA `b2227cdb7add682f8e49da556f271744da31d62d`. |
 | 0.7.0 | 2026-09-09 | Codex | Recorded US-07-03 exact committed SHA and owner quick UI PASS; closed Story 03 and opened owner-gated US-07-04 planning while preserving structured/formal evidence as NOT_RUN. |
 | 0.6.0 | 2026-09-09 | Codex | Recorded US-07-03 worktree implementation and automated/platform PASS; owner quick UI, exact committed SHA and US-07-04 gate remain pending. |
 | 0.5.0 | 2026-09-09 | Codex | Recorded owner approval of all US0703 Option A confirmations and opened US-07-03 implementation from exact SHA `b6339899003f88e7554b6ea301229af3950d3493`; no-schema/dependency/native scope remains locked. |

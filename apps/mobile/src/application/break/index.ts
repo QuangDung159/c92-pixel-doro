@@ -22,3 +22,9 @@ export {
   BreakOutcomeController,
   type BreakOutcomeProjection,
 } from './break-outcome.controller';
+export {
+  BreakCancelController,
+  type BreakCancelControllerDependencies,
+  type BreakCancelProjection,
+  type BreakCancelResult,
+} from './break-cancel.controller';

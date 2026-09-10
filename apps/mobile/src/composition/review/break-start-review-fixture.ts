@@ -20,7 +20,7 @@ export type BreakStartReviewScenario =
 
 type BreakStartSessions = Pick<SessionRepository,
 'findById' | 'findByIdInTransaction' | 'findActiveInTransaction' |
-'insertRunningInTransaction'>;
+'insertRunningInTransaction' | 'transitionFromRunningInTransaction'>;
 
 interface FixtureDependencies {
   readonly installation: {
@@ -132,6 +132,8 @@ export const createBreakStartReviewFixture = (
       }
       return delegate.insertRunningInTransaction(scope, record);
     },
+    transitionFromRunningInTransaction: (scope, input) =>
+      delegate.transitionFromRunningInTransaction(scope, input),
   };
   const sourceSessionId = `us0702-focus-${focusCountFor(scenario)}`;
   return {

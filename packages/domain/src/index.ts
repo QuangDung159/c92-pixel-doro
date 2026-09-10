@@ -72,6 +72,11 @@ export {
   type BreakReconciliationInput,
 } from './break/break-reconciliation.decision';
 export {
+  decideBreakCancellation,
+  type BreakCancellationDecision,
+  type BreakCancellationInput,
+} from './break/break-cancellation.decision';
+export {
   decideStrictReconciliation,
   STRICT_BACKGROUND_GRACE_MS,
   type StrictReconciliationDecision,

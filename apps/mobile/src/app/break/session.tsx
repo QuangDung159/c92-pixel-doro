@@ -1,28 +1,36 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 
 import { ErrorState, LoadingState, ScreenShell } from '@/presentation/components';
 import { BreakStartedScreen } from '@/presentation/features/break/break-started-screen';
 import {
+  useBreakCancelActions,
+  useBreakCancelProjection,
   useBreakSessionActions,
   useBreakSessionProjection,
 } from '@/presentation/providers/break-hooks';
 import {
+  useAppVisibility,
   useDismissPetTerminalFeedbackError,
   usePetCompanionRefresh,
   usePetVisualProjection,
 } from '@/presentation/providers/mobile-application-context';
 
 import { PetRouteVisibility } from '../pet-route-visibility';
+import { useSessionCancelBack } from '../use-session-cancel-back';
 
 export default function BreakSessionRoute() {
   const router = useRouter();
   const { sessionId } = useLocalSearchParams<{ readonly sessionId?: string | string[] }>();
   const projection = useBreakSessionProjection();
+  const cancelProjection = useBreakCancelProjection();
+  const { cancel, reset: resetCancel } = useBreakCancelActions();
+  const [cancelRequestToken, setCancelRequestToken] = useState(0);
   const { activate, deactivate, refresh, reset } = useBreakSessionActions();
   const pet = usePetVisualProjection();
   const refreshPet = usePetCompanionRefresh();
   const dismissPetFeedbackError = useDismissPetTerminalFeedbackError();
+  const appVisibility = useAppVisibility();
   const validSessionId = typeof sessionId === 'string' && sessionId.trim() ? sessionId : null;
 
   useFocusEffect(useCallback(() => {
@@ -33,8 +41,18 @@ export default function BreakSessionRoute() {
     return () => {
       deactivate();
       reset();
+      resetCancel();
     };
-  }, [activate, deactivate, refreshPet, reset, validSessionId]));
+  }, [activate, deactivate, refreshPet, reset, resetCancel, validSessionId]));
+
+  useSessionCancelBack(() => {
+    if (projection.status === 'ready' && projection.phase === 'running') {
+      setCancelRequestToken((token) => token + 1);
+    } else if (projection.status === 'ready' &&
+      (projection.phase === 'completed' || projection.phase === 'cancelled')) {
+      router.replace('/(tabs)');
+    }
+  });
 
   if (validSessionId === null) {
     return <ScreenShell><ErrorState
@@ -55,6 +73,16 @@ export default function BreakSessionRoute() {
   }
   return <PetRouteVisibility>
     <BreakStartedScreen
+      appVisible={appVisibility === 'active'}
+      cancelBusy={cancelProjection.status === 'submitting'}
+      cancelError={cancelProjection.status !== 'error' ? null
+        : cancelProjection.code === 'STATE_INVALID'
+          ? 'Phiên đã có kết quả khác hoặc dữ liệu không còn phù hợp. Hãy đọc lại phiên đã lưu.'
+          : 'Chưa thể dừng. Phiên vẫn an toàn; bạn có thể thử lại.'}
+      cancelRequestToken={cancelRequestToken}
+      key={`${validSessionId}:${cancelProjection.status === 'submitting'
+        ? 'busy' : appVisibility}`}
+      onConfirmCancel={() => { void cancel(validSessionId); }}
       projection={projection}
       pet={pet}
       onDismissPetFeedbackError={dismissPetFeedbackError}

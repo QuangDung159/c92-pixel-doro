@@ -26,6 +26,7 @@ import type {
 } from './standard-focus';
 import type {
   BreakRecommendationController,
+  BreakCancelController,
   BreakSessionController,
   BreakStartController,
 } from './break';
@@ -45,6 +46,7 @@ export interface MobileApplicationFacade {
   readonly bootstrap: MobileBootstrap;
   readonly firstUseEntry: FirstUseEntryController;
   readonly breakRecommendation: BreakRecommendationController;
+  readonly breakCancel: BreakCancelController;
   readonly breakStart: BreakStartController;
   readonly breakSession: BreakSessionController;
   readonly standardFocusSetup: StandardFocusSetupController;
