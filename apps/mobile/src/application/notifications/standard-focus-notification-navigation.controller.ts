@@ -5,6 +5,7 @@ export type StandardFocusNotificationDestination =
       readonly destination: 'home' | 'running' | 'result';
       readonly sessionId: string;
       readonly requestId: number;
+      readonly flow?: 'break';
     };
 
 export class StandardFocusNotificationNavigationController {
@@ -21,7 +22,11 @@ export class StandardFocusNotificationNavigationController {
     return () => this.listeners.delete(listener);
   };
 
-  publish(destination: 'home' | 'running' | 'result', sessionId: string): void {
+  publish(
+    destination: 'home' | 'running' | 'result',
+    sessionId: string,
+    flow?: 'break',
+  ): void {
     if (this.disposed || sessionId.trim().length === 0) return;
     this.requestId += 1;
     this.projection = Object.freeze({
@@ -29,6 +34,7 @@ export class StandardFocusNotificationNavigationController {
       destination,
       sessionId,
       requestId: this.requestId,
+      ...(flow === undefined ? {} : { flow }),
     });
     for (const listener of this.listeners) listener();
   }

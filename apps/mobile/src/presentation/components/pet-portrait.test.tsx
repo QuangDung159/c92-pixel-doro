@@ -14,8 +14,17 @@ describe('PetPortrait production stills', () => {
     (state) => {
       const tree = PetPortrait({ state });
       expect(tree.props.testID).toBe(`pet-sprite-${state}-still`);
-      expect(tree.props.children.type).toBe('Image');
-      expect(tree.props.children.props.source).toBeDefined();
+      expect(tree.props.children.type).toBe('View');
+      expect(tree.props.children.props.children.type).toBe('Image');
+      expect(tree.props.children.props.children.props.source).toBeDefined();
     },
   );
+
+  it('keeps the breaking pose in place while masking its top-edge artifact', () => {
+    const tree = PetPortrait({ state: 'breaking' });
+    const clip = tree.props.children;
+    const image = clip.props.children;
+    expect(clip.props.style).toMatchObject({ overflow: 'hidden', top: expect.any(Number) });
+    expect(image.props.style[1].top).toBe(-clip.props.style.top);
+  });
 });

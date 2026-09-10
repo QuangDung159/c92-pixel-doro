@@ -1,6 +1,9 @@
 import {
+  isRunningBreak,
   isRunningStandardFocus,
   type ApplicationResult,
+  type ReconcileBreakError,
+  type ReconcileBreakOutcome,
   type ReconcileStandardFocusError,
   type ReconcileStandardFocusOutcome,
   type RunningSessionRecord,
@@ -34,6 +37,16 @@ export class ActiveSessionStartupReconciliationAdapter implements StartupReconci
       afterTerminal?(
         sessionId: string,
         freshness: 'fresh_commit' | 'existing_terminal',
+      ): void;
+    },
+    private readonly breakLifecycle?: {
+      reconcile(): Promise<ApplicationResult<ReconcileBreakOutcome, ReconcileBreakError>>;
+      publishCompleted(sessionId: string, resolvedAt: number): void;
+      ensureRunning?(session: RunningSessionRecord): void;
+      afterTerminal?(
+        sessionId: string,
+        status: 'completed' | 'cancelled',
+        freshness: 'fresh_commit' | 'existing_terminal' | 'recovery_commit',
       ): void;
     },
   ) {}
@@ -77,24 +90,46 @@ export class ActiveSessionStartupReconciliationAdapter implements StartupReconci
           standardChanged = true;
         }
       }
+      let breakChanged = false;
+      if (this.breakLifecycle !== undefined) {
+        const breakResult = await this.breakLifecycle.reconcile();
+        if (!breakResult.ok) return { ok: false, error: startupReconciliationError() };
+        if (breakResult.value.outcome === 'completed') {
+          breakChanged = breakResult.value.freshness === 'fresh_commit';
+          this.breakLifecycle.publishCompleted(
+            breakResult.value.sessionId,
+            breakResult.value.resolvedAt,
+          );
+          const { sessionId, freshness } = breakResult.value;
+          bestEffort(() => this.breakLifecycle?.afterTerminal?.(
+            sessionId, 'completed', freshness,
+          ));
+        } else if (breakResult.value.outcome === 'terminal_winner') {
+          const { sessionId } = breakResult.value;
+          bestEffort(() => this.breakLifecycle?.afterTerminal?.(
+            sessionId, 'cancelled', 'existing_terminal',
+          ));
+        }
+      }
       const active = await this.sessions.findActive();
       if (!active.ok) return { ok: false, error: startupReconciliationError() };
-      if (
-        active.value !== null &&
-        active.value.focusVariant === 'standard' &&
-        !isRunningStandardFocus(active.value)
-      ) {
+      if (active.value !== null && !isRunningStandardFocus(active.value) &&
+        !isRunningBreak(active.value)) {
         return { ok: false, error: startupReconciliationError() };
       }
       if (active.value !== null && isRunningStandardFocus(active.value)) {
         const running = active.value;
         bestEffort(() => this.standard?.ensureRunning?.(running));
       }
+      if (active.value !== null && isRunningBreak(active.value)) {
+        const running = active.value;
+        bestEffort(() => this.breakLifecycle?.ensureRunning?.(running));
+      }
       return {
         ok: true,
         value: {
           durableDataChanged:
-            reconciled.value.durableDataChanged || standardChanged,
+            reconciled.value.durableDataChanged || standardChanged || breakChanged,
         },
       };
     } catch {

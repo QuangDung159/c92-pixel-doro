@@ -24,6 +24,12 @@ import type {
   StandardFocusSetupController,
   StandardFocusOutcomeController,
 } from './standard-focus';
+import type {
+  BreakRecommendationController,
+  BreakCancelController,
+  BreakSessionController,
+  BreakStartController,
+} from './break';
 import type { StandardFocusNotificationNavigationController } from './notifications';
 import type { PetVisualDiagnostic } from './ports/pet-visual-diagnostics.port';
 import type {
@@ -39,6 +45,10 @@ import type {
 export interface MobileApplicationFacade {
   readonly bootstrap: MobileBootstrap;
   readonly firstUseEntry: FirstUseEntryController;
+  readonly breakRecommendation: BreakRecommendationController;
+  readonly breakCancel: BreakCancelController;
+  readonly breakStart: BreakStartController;
+  readonly breakSession: BreakSessionController;
   readonly standardFocusSetup: StandardFocusSetupController;
   readonly standardFocusSession: StandardFocusSessionController;
   readonly standardFocusCancel: StandardFocusCancelController;

@@ -7,6 +7,7 @@ import {
   type EconomyConsistencySnapshot,
   type LongBreakCadenceFacts,
   type LongBreakCadenceQuery,
+  type TransactionalLongBreakCadenceQuery,
   type PersistenceError,
   type StandardFocusHistoryEntry,
   type StandardFocusHistoryPage,
@@ -334,13 +335,33 @@ export class SQLiteContributionQuery implements ContributionQuery {
   }
 }
 
-export class SQLiteLongBreakCadenceQuery implements LongBreakCadenceQuery {
-  constructor(private readonly owner: SQLiteDatabaseOwner) {}
+export class SQLiteLongBreakCadenceQuery implements LongBreakCadenceQuery,
+TransactionalLongBreakCadenceQuery {
+  constructor(
+    private readonly owner: SQLiteDatabaseOwner,
+    private readonly transaction: SQLiteTransaction,
+  ) {}
 
   getFacts(profileId: number): ReturnType<LongBreakCadenceQuery['getFacts']> {
     if (profileId !== 1) return invalidQuery('sessions', 'profile_id');
-    return readWithOwner(this.owner, 'sessions', async (executor) => {
-      const result = await readMappedOne<CadenceRow, LongBreakCadenceFacts>(
+    return readWithOwner(this.owner, 'sessions', (executor) =>
+      this.readFacts(executor, profileId));
+  }
+
+  getFactsInTransaction(
+    scope: Parameters<TransactionalLongBreakCadenceQuery['getFactsInTransaction']>[0],
+    profileId: number,
+  ): ReturnType<TransactionalLongBreakCadenceQuery['getFactsInTransaction']> {
+    if (profileId !== 1) return invalidQuery('sessions', 'profile_id');
+    return withTransactionExecutor(this.transaction, scope, 'sessions', (executor) =>
+      this.readFacts(executor, profileId));
+  }
+
+  private async readFacts(
+    executor: SQLiteExecutor,
+    profileId: number,
+  ): ReturnType<LongBreakCadenceQuery['getFacts']> {
+    const result = await readMappedOne<CadenceRow, LongBreakCadenceFacts>(
         executor,
         'sessions',
         `WITH latest_completed_long_break AS (
@@ -361,12 +382,11 @@ export class SQLiteLongBreakCadenceQuery implements LongBreakCadenceQuery {
         [profileId, profileId],
         (row) => mapCadenceRow(profileId, row),
       );
-      if (!result.ok) return result;
-      return result.value === null
-        ? { ok: false, error: persistenceError(
-            'PERSISTENCE_CORRUPT_DATA', 'sessions', 'cadence') }
-        : { ok: true, value: result.value };
-    });
+    if (!result.ok) return result;
+    return result.value === null
+      ? { ok: false, error: persistenceError(
+          'PERSISTENCE_CORRUPT_DATA', 'sessions', 'cadence') }
+      : { ok: true, value: result.value };
   }
 }
 

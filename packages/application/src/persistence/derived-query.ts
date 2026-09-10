@@ -1,4 +1,5 @@
 import type { PersistenceResult } from './persistence.error';
+import type { TransactionScope } from '../ports/transaction.port';
 import type {
   FocusMode,
   SessionStatus,
@@ -71,6 +72,13 @@ export interface LongBreakCadenceFacts {
 
 export interface LongBreakCadenceQuery {
   getFacts(
+    profileId: number,
+  ): Promise<PersistenceResult<LongBreakCadenceFacts>>;
+}
+
+export interface TransactionalLongBreakCadenceQuery {
+  getFactsInTransaction(
+    scope: TransactionScope,
     profileId: number,
   ): Promise<PersistenceResult<LongBreakCadenceFacts>>;
 }

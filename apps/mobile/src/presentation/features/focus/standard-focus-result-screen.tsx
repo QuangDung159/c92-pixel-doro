@@ -1,4 +1,5 @@
 import type { PetVisualProjection, StandardFocusTerminalResult } from '@pixeldoro/application';
+import type { BreakRecommendationProjection, BreakStartProjection } from '@/application';
 import { StyleSheet, Text, View } from 'react-native';
 
 import {
@@ -14,6 +15,7 @@ import {
   SecondaryButton,
 } from '@/presentation/components';
 import { palette } from '@/presentation/theme/palette';
+import { BreakRecommendationPanel } from '@/presentation/features/break/break-recommendation-panel';
 
 const tagLabels = {
   coding: 'Lập trình', study: 'Học tập', writing: 'Viết', reading: 'Đọc',
@@ -25,11 +27,16 @@ export interface StandardFocusResultScreenProps {
   readonly onDismissPetFeedbackError: () => void;
   readonly onRetryPet: () => void;
   readonly onHome: () => void;
+  readonly breakRecommendation: BreakRecommendationProjection;
+  readonly breakStart: BreakStartProjection;
+  readonly onRetryBreakRecommendation: () => void;
+  readonly onStartBreak: () => void;
   readonly onReviewReload?: () => void;
 }
 
 export const StandardFocusResultScreen = ({
-  result, pet, onDismissPetFeedbackError, onRetryPet, onHome, onReviewReload,
+  result, pet, breakRecommendation, breakStart, onDismissPetFeedbackError, onRetryPet,
+  onHome, onRetryBreakRecommendation, onStartBreak, onReviewReload,
 }: StandardFocusResultScreenProps) => {
   const failed = result.status === 'failed';
   const completed = result.status === 'completed';
@@ -68,7 +75,15 @@ export const StandardFocusResultScreen = ({
         ? 'Bạn đã rời PixelDoro quá 10 giây trước deadline. Phiên không nhận phần thưởng và không mở Break.'
         : 'Phiên bị hủy không nhận phần thưởng và không mở Break. Không có dữ liệu hoàn thành giả được tạo.'}
     </InlineNotice>
-    <PrimaryButton label="Về Home" onPress={onHome} />
+    {completed ? <BreakRecommendationPanel
+      projection={breakRecommendation}
+      startProjection={breakStart}
+      onRetry={onRetryBreakRecommendation}
+      onStartBreak={onStartBreak}
+    /> : null}
+    {completed && breakRecommendation.status === 'ready'
+      ? <SecondaryButton label="Về Home" onPress={onHome} />
+      : <PrimaryButton label="Về Home" onPress={onHome} />}
     {onReviewReload === undefined ? null : <Panel>
       <Text style={styles.title}>Development Build · {result.sessionId}</Text>
       <SecondaryButton label="Đọc lại kết quả đã lưu" onPress={onReviewReload} />

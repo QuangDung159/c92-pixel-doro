@@ -108,6 +108,59 @@ export type {
   StandardFocusTerminalResult,
 } from './standard-focus/standard-focus-terminal-result';
 export {
+  LoadNextBreakRecommendationUseCase,
+  type LoadNextBreakRecommendationDependencies,
+  type LoadNextBreakRecommendationError,
+  type LoadNextBreakRecommendationErrorCode,
+  type LoadNextBreakRecommendationOutcome,
+} from './break/load-next-break-recommendation.use-case';
+export {
+  createBreakSessionRecord,
+  isCancelledBreak,
+  isCompletedBreak,
+  isRecoverableRunningBreak,
+  isRunningBreak,
+  type BreakSessionRecordError,
+  type BreakSessionRecordInput,
+} from './break/break-session-record';
+export {
+  CancelBreakUseCase,
+  type CancelBreakDependencies,
+  type CancelBreakError,
+  type CancelBreakOutcome,
+} from './break/cancel-break.use-case';
+export {
+  StartBreakUseCase,
+  type StartBreakDependencies,
+  type StartBreakError,
+  type StartBreakErrorCode,
+  type StartBreakInput,
+  type StartBreakOutcome,
+} from './break/start-break.use-case';
+export {
+  LoadRunningBreakUseCase,
+  type LoadRunningBreakError,
+  type RunningBreakProjection,
+} from './break/load-running-break.use-case';
+export {
+  LoadBreakSessionUseCase,
+  type BreakSessionProjection,
+  type LoadBreakSessionError,
+} from './break/load-break-session.use-case';
+export {
+  completeBreakInTransaction,
+  type BreakCompletionDependencies,
+  type BreakCompletionError,
+  type BreakCompletionOutcome,
+} from './break/complete-break-transaction';
+export {
+  ReconcileBreakUseCase,
+  type ReconcileBreakDependencies,
+  type ReconcileBreakError,
+  type ReconcileBreakOutcome,
+} from './break/reconcile-break.use-case';
+export type { BreakRecommendation } from '@pixeldoro/domain';
+export {
   StartStandardFocusUseCase,
   type StartStandardFocusDependencies,
   type StartStandardFocusError,
@@ -140,6 +193,7 @@ export type {
   EconomyConsistencySnapshot,
   LongBreakCadenceFacts,
   LongBreakCadenceQuery,
+  TransactionalLongBreakCadenceQuery,
   StandardFocusHistoryCursor,
   StandardFocusHistoryEntry,
   StandardFocusHistoryInput,

@@ -4,11 +4,12 @@ import type {
 } from 'expo-notifications';
 
 import {
-  STANDARD_FOCUS_NOTIFICATION_KIND,
-  type FocusCompletionNotificationInput,
+  BREAK_NOTIFICATION_KIND,
+  type SessionCompletionNotificationInput,
 } from '@/application';
 
-const CHANNEL_ID = 'focus-completion';
+const channelId = (kind: SessionCompletionNotificationInput['kind']): string =>
+  kind === BREAK_NOTIFICATION_KIND ? 'break-completion' : 'focus-completion';
 
 export type ExpoPermissionSnapshot = {
   readonly granted: boolean;
@@ -36,9 +37,12 @@ export interface ExpoNotificationGateway {
   prepareForegroundPresentation(): Promise<void>;
   readPermission(): Promise<ExpoPermissionSnapshot>;
   requestPermission(): Promise<ExpoPermissionSnapshot>;
-  prepareAndroidChannel(soundEnabled: boolean): Promise<void>;
+  prepareAndroidChannel(
+    kind: SessionCompletionNotificationInput['kind'],
+    soundEnabled: boolean,
+  ): Promise<void>;
   listScheduled(): Promise<readonly ExpoScheduledRequest[]>;
-  schedule(input: FocusCompletionNotificationInput): Promise<string>;
+  schedule(input: SessionCompletionNotificationInput): Promise<string>;
   cancel(identifier: string): Promise<void>;
   readInitialResponse(): Promise<ExpoResponseSnapshot | null>;
   subscribeResponses(listener: (response: ExpoResponseSnapshot) => void): Promise<() => void>;
@@ -93,10 +97,13 @@ export class ExpoNotificationGatewayAdapter implements ExpoNotificationGateway {
     }));
   }
 
-  async prepareAndroidChannel(soundEnabled: boolean): Promise<void> {
+  async prepareAndroidChannel(
+    kind: SessionCompletionNotificationInput['kind'],
+    soundEnabled: boolean,
+  ): Promise<void> {
     const notifications = await this.module();
-    await notifications.setNotificationChannelAsync(CHANNEL_ID, {
-      name: 'Kết thúc phiên tập trung',
+    await notifications.setNotificationChannelAsync(channelId(kind), {
+      name: kind === BREAK_NOTIFICATION_KIND ? 'Kết thúc phiên nghỉ' : 'Kết thúc phiên tập trung',
       importance: notifications.AndroidImportance.DEFAULT,
       showBadge: false,
       ...(soundEnabled ? {} : { sound: null }),
@@ -113,17 +120,22 @@ export class ExpoNotificationGatewayAdapter implements ExpoNotificationGateway {
     }));
   }
 
-  async schedule(input: FocusCompletionNotificationInput): Promise<string> {
+  async schedule(input: SessionCompletionNotificationInput): Promise<string> {
     const notifications = await this.module();
+    const isBreak = input.kind === BREAK_NOTIFICATION_KIND;
+    const breakLabel = isBreak && input.breakType === 'long_break' ? 'Nghỉ dài' : 'Nghỉ ngắn';
     return notifications.scheduleNotificationAsync({
       identifier: input.operationKey,
       content: {
-        title: 'Phiên tập trung đã kết thúc',
-        body: 'Mèo Dev đang chờ bạn xem kết quả.',
+        title: isBreak ? 'Phiên nghỉ đã kết thúc' : 'Phiên tập trung đã kết thúc',
+        body: isBreak
+          ? `${breakLabel} đã xong. Mèo Dev đang chờ bạn quay lại.`
+          : 'Mèo Dev đang chờ bạn xem kết quả.',
         data: {
-          kind: STANDARD_FOCUS_NOTIFICATION_KIND,
+          kind: input.kind,
           sessionId: input.sessionId,
-          url: '/focus/session',
+          ...(isBreak ? { breakType: input.breakType } : {}),
+          url: isBreak ? '/break/session' : '/focus/session',
         },
         badge: 0,
         sound: input.soundEnabled ? 'default' : false,
@@ -131,7 +143,7 @@ export class ExpoNotificationGatewayAdapter implements ExpoNotificationGateway {
       trigger: {
         type: notifications.SchedulableTriggerInputTypes.DATE,
         date: input.endsAt,
-        channelId: CHANNEL_ID,
+        channelId: channelId(input.kind),
       },
     });
   }

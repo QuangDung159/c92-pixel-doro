@@ -22,6 +22,7 @@ export interface CreateStandardFocusSideEffectsDependencies {
     sessionId: string,
   ) => Promise<ApplicationResult<LoadStandardFocusResultOutcome, LoadStandardFocusResultError>>;
   readonly onNotificationSession: (sessionId: string) => Promise<void>;
+  readonly onBreakNotificationSession?: (sessionId: string) => Promise<void>;
 }
 
 export const createStandardFocusSideEffects = (
@@ -43,7 +44,9 @@ export const createStandardFocusSideEffects = (
     readSettings,
     loadResult: dependencies.loadResult,
     onNotificationSession: dependencies.onNotificationSession,
+    ...(dependencies.onBreakNotificationSession === undefined ? {} : {
+      onBreakNotificationSession: dependencies.onBreakNotificationSession,
+    }),
   });
   return Object.freeze({ analytics, coordinator, navigation });
 };
-

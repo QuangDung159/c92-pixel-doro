@@ -27,5 +27,13 @@ describe('StandardFocusNotificationNavigationController', () => {
     controller.publish('running', 'focus-1');
     expect(controller.getSnapshot()).toEqual({ status: 'idle' });
   });
-});
 
+  it('publishes a Break flow without changing the shared request contract', () => {
+    const controller = new StandardFocusNotificationNavigationController();
+    controller.publish('result', 'break-1', 'break');
+    expect(controller.getSnapshot()).toEqual({
+      status: 'pending', destination: 'result', sessionId: 'break-1',
+      requestId: 1, flow: 'break',
+    });
+  });
+});

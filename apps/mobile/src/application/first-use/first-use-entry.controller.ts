@@ -2,7 +2,7 @@ import type {
   SessionRecord,
   SessionRepository,
 } from '@pixeldoro/application';
-import { isRunningStandardFocus } from '@pixeldoro/application';
+import { isRunningBreak, isRunningStandardFocus } from '@pixeldoro/application';
 
 import type { InstallationRepository } from '../persistence';
 
@@ -12,6 +12,8 @@ export type FirstUseEntryDestination =
   | 'trial_result'
   | 'standard_focus_running'
   | 'standard_focus_result'
+  | 'break_running'
+  | 'break_completed'
   | 'home';
 
 export type FirstUseEntryErrorCode =
@@ -23,11 +25,12 @@ export type FirstUseEntryProjection =
   | { readonly status: 'loading' }
   | {
       readonly status: 'ready';
-      readonly destination: Exclude<FirstUseEntryDestination, 'standard_focus_result'>;
+      readonly destination: Exclude<FirstUseEntryDestination,
+        'standard_focus_result' | 'break_running' | 'break_completed'>;
     }
   | {
       readonly status: 'ready';
-      readonly destination: 'standard_focus_result';
+      readonly destination: 'standard_focus_result' | 'break_running' | 'break_completed';
       readonly sessionId: string;
     }
   | {
@@ -48,6 +51,11 @@ export interface FirstUseEntryControllerDependencies {
     getSnapshot():
       | { readonly status: 'idle' }
       | { readonly status: 'failed' | 'completed'; readonly sessionId: string };
+  };
+  readonly breakOutcome?: {
+    getSnapshot():
+      | { readonly status: 'idle' }
+      | { readonly status: 'completed'; readonly sessionId: string };
   };
 }
 
@@ -91,6 +99,9 @@ const destinationForCompletedOnboarding = (
   if (isRunningStandardFocus(active)) {
     return { status: 'ready', destination: 'standard_focus_running' };
   }
+  if (isRunningBreak(active)) return {
+    status: 'ready', destination: 'break_running', sessionId: active.id,
+  };
   return errorProjection('FIRST_USE_ENTRY_STATE_INVALID');
 };
 
@@ -151,6 +162,12 @@ export class FirstUseEntryController {
         if (!this.isCurrent(generation)) return;
         if (!active.ok) {
           this.publish(errorProjection('FIRST_USE_ENTRY_READ_FAILED'));
+          return;
+        }
+        const breakOutcome = this.dependencies.breakOutcome?.getSnapshot();
+        if (active.value === null && breakOutcome?.status === 'completed') {
+          this.publish({ status: 'ready', destination: 'break_completed',
+            sessionId: breakOutcome.sessionId });
           return;
         }
         const outcome = this.dependencies.standardOutcome?.getSnapshot();

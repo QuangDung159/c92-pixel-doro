@@ -1,8 +1,15 @@
 export {
+  BREAK_NOTIFICATION_KIND,
+  BREAK_NOTIFICATION_PREFIX,
   STANDARD_FOCUS_NOTIFICATION_KIND,
   STANDARD_FOCUS_NOTIFICATION_PREFIX,
+  breakNotificationKey,
+  isValidBreakNotificationSession,
   isValidStandardFocusNotificationSession,
   standardFocusNotificationKey,
+  type BreakCompletionNotificationInput,
+  type BreakCompletionNotificationPort,
+  type BreakNotificationResponse,
   type FocusCompletionNotificationError,
   type FocusCompletionNotificationInput,
   type FocusCompletionNotificationPort,
@@ -10,9 +17,10 @@ export {
   type FocusNotificationPermission,
   type FocusNotificationResponse,
   type FocusNotificationResponseSource,
+  type SessionCompletionNotificationInput,
+  type SessionNotificationResponse,
 } from './focus-completion-notification';
 export {
   StandardFocusNotificationNavigationController,
   type StandardFocusNotificationDestination,
 } from './standard-focus-notification-navigation.controller';
-

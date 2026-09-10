@@ -26,6 +26,87 @@ const standardFocusStartFlowPath = `${deviceDirectory}standard-focus-start-smoke
 const standardFocusRelaxFlowPath = `${deviceDirectory}standard-focus-relax-running-smoke.md`;
 const standardFocusCompletionFlow = await readFile(`${deviceDirectory}standard-focus-completion-smoke.md`, 'utf8');
 const standardFocusSideEffectsFlow = await readFile(`${deviceDirectory}standard-focus-side-effects-exit-smoke.md`, 'utf8');
+const breakCadenceResultFlow = await readFile(`${deviceDirectory}break-cadence-result-smoke.md`, 'utf8');
+const breakStartFlow = await readFile(`${deviceDirectory}break-start-smoke.md`, 'utf8');
+const breakRunningCompletionFlow = await readFile(
+  `${deviceDirectory}break-running-completion-smoke.md`, 'utf8',
+);
+const breakCancelResultFlow = await readFile(
+  `${deviceDirectory}break-cancel-result-smoke.md`, 'utf8',
+);
+const epic07ExitFlow = await readFile(`${deviceDirectory}epic-07-exit-smoke.md`, 'utf8');
+for (const evidence of [
+  'break_side_effect_fast_notification', 'break_side_effect_permission_denied',
+  'break_side_effect_schedule_failure_once', 'break_side_effect_cancel_failure_once',
+  'break_side_effect_queue_failure_once', 'pixeldoro-us-07-05-',
+  'Phiên nghỉ đã kết thúc', 'Nghỉ ngắn đã xong. Mèo Dev đang chờ bạn quay lại.',
+  'break-complete:<sessionId>', 'break-completion', 'VoiceOver', 'TalkBack',
+  'Reduce Motion', 'Airplane mode', 'f6c7b9269b2abee07bfe8eeb5d804c6245b67c0a', 'NOT_RUN',
+  'unset EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE',
+]) {
+  if (!epic07ExitFlow.includes(evidence)) {
+    throw new Error(`EPIC-07 exit flow is missing: ${evidence}`);
+  }
+}
+for (const evidence of [
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_cancel_short',
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_cancel_long',
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_cancel_write_failure_once',
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_cancel_read_failure_once',
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_cancel_completion_first',
+  'pixeldoro-us-07-04-', 'Nghỉ ngắn · 5 phút', 'Nghỉ dài · 15 phút',
+  'CANCELLED', 'COMPLETED', 'VoiceOver', 'TalkBack', 'Reduce Motion',
+  'Airplane mode', '<implementation-sha>', 'NOT_RUN',
+  'unset EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE',
+]) {
+  if (!breakCancelResultFlow.includes(evidence)) {
+    throw new Error(`Break cancel/Result flow is missing: ${evidence}`);
+  }
+}
+for (const evidence of [
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_running_short_fast_clock',
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_running_long_fast_clock',
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_running_relaunch_before_deadline',
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_completion_write_failure_once',
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_completion_read_failure_once',
+  'pixeldoro-us-07-03-', 'Nghỉ ngắn · 5 phút', 'Nghỉ dài · 15 phút',
+  'VoiceOver', 'TalkBack', 'Reduce Motion', 'Airplane mode',
+  '<implementation-sha>', 'NOT_RUN', 'unset EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE',
+]) {
+  if (!breakRunningCompletionFlow.includes(evidence)) {
+    throw new Error(`Break running/completion flow is missing: ${evidence}`);
+  }
+}
+for (const evidence of [
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_start_short',
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_start_long_due',
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_start_write_failure_once',
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_start_active_conflict',
+  'pixeldoro-us-07-02-', 'Nghỉ ngắn · 5 phút', 'Nghỉ dài · 15 phút',
+  'VoiceOver', 'TalkBack', 'Reduce Motion', 'Airplane mode',
+  '<implementation-sha>', 'NOT_RUN', 'unset EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE',
+]) {
+  if (!breakStartFlow.includes(evidence)) {
+    throw new Error(`Break Start flow is missing: ${evidence}`);
+  }
+}
+for (const evidence of [
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_cadence_count_0',
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_cadence_count_3',
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_cadence_count_4',
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_cadence_due_sticky',
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_cadence_completed_long_reset',
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_cadence_cancelled_long_no_reset',
+  'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_cadence_read_failure_once',
+  'Nghỉ ngắn · 5 phút', 'Nghỉ dài · 15 phút', 'Thử đọc lại',
+  'VoiceOver', 'TalkBack', 'Reduce Motion', 'Airplane mode',
+  '<implementation-sha>', 'NOT_RUN',
+  'unset EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE',
+]) {
+  if (!breakCadenceResultFlow.includes(evidence)) {
+    throw new Error(`Break cadence Result flow is missing: ${evidence}`);
+  }
+}
 for (const evidence of [
   'standard_side_effect_fast_notification', 'standard_side_effect_permission_denied',
   'standard_side_effect_schedule_failure_once', 'standard_side_effect_cancel_failure_once',

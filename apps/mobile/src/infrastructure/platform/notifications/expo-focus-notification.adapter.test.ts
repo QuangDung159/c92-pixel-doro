@@ -27,6 +27,7 @@ const gateway = (): ExpoNotificationGateway => ({
 });
 
 const input = {
+  kind: 'standard_focus_completion',
   operationKey: 'standard-focus-complete:focus-1',
   sessionId: 'focus-1',
   endsAt: 901_000,
@@ -34,6 +35,27 @@ const input = {
 } as const;
 
 describe('ExpoFocusNotificationAdapter', () => {
+  it('schedules and maps an allowlisted Break completion notification', async () => {
+    const sdk = gateway();
+    const subject = new ExpoFocusNotificationAdapter(sdk, 'android', () => 1_000);
+    const breakInput = {
+      kind: 'break_completion' as const, operationKey: 'break-complete:break-1',
+      sessionId: 'break-1', endsAt: 301_000, soundEnabled: false,
+      breakType: 'short_break' as const,
+    };
+    expect(await subject.ensure(breakInput)).toEqual({ ok: true, value: 'scheduled' });
+    expect(sdk.prepareAndroidChannel).toHaveBeenCalledWith('break_completion', false);
+    vi.mocked(sdk.readInitialResponse).mockResolvedValue({
+      actionIsDefault: true, identifier: breakInput.operationKey, notificationDate: 302_000,
+      data: { kind: 'break_completion', sessionId: 'break-1', breakType: 'short_break' },
+    });
+    expect(await subject.readInitial()).toEqual({
+      responseId: 'break-complete:break-1:302000',
+      operationKey: 'break-complete:break-1', kind: 'break_completion',
+      sessionId: 'break-1', breakType: 'short_break',
+    });
+  });
+
   it('resolves the native platform without loading deprecated React Native exports', async () => {
     const sdk = gateway();
     const subject = new ExpoFocusNotificationAdapter(sdk, 'auto', () => 1_000);
@@ -78,7 +100,7 @@ describe('ExpoFocusNotificationAdapter', () => {
     const sdk = gateway();
     const subject = new ExpoFocusNotificationAdapter(sdk, 'android', () => 1_000);
     expect(await subject.ensure(input)).toEqual({ ok: true, value: 'scheduled' });
-    expect(sdk.prepareAndroidChannel).toHaveBeenCalledWith(true);
+    expect(sdk.prepareAndroidChannel).toHaveBeenCalledWith('standard_focus_completion', true);
     expect(sdk.schedule).toHaveBeenCalledWith(input);
 
     vi.mocked(sdk.listScheduled).mockResolvedValue([{
@@ -177,5 +199,14 @@ describe('ExpoFocusNotificationAdapter', () => {
     expect(await subject.cancel(input.operationKey)).toMatchObject({
       ok: false, error: { code: 'NOTIFICATION_CANCEL_FAILED' },
     });
+  });
+
+  it('rejects a runtime-foreign notification kind before provider access', async () => {
+    const sdk = gateway();
+    const subject = new ExpoFocusNotificationAdapter(sdk, 'ios', () => 1_000);
+    expect(await subject.ensure({ ...input, kind: 'foreign' } as never)).toMatchObject({
+      ok: false, error: { code: 'NOTIFICATION_INPUT_INVALID' },
+    });
+    expect(sdk.listScheduled).not.toHaveBeenCalled();
   });
 });

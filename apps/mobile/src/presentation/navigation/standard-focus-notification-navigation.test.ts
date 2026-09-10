@@ -8,6 +8,20 @@ const pending = (
 ) => ({ status: 'pending', destination, sessionId, requestId: 1 } as const);
 
 describe('standard focus notification navigation', () => {
+  it('recognizes exact Break running and terminal routes by session identity', () => {
+    const running = { ...pending('running', 'break-1'), flow: 'break' as const };
+    const result = { ...pending('result', 'break-1'), flow: 'break' as const };
+    expect(isStandardFocusNotificationDestinationCurrent(
+      running, '/break/session', 'break-1',
+    )).toBe(true);
+    expect(isStandardFocusNotificationDestinationCurrent(
+      result, '/break/session', ['break-1'],
+    )).toBe(true);
+    expect(isStandardFocusNotificationDestinationCurrent(
+      result, '/break/session', 'break-2',
+    )).toBe(false);
+  });
+
   it('recognizes the exact Result route and suppresses a duplicate replace', () => {
     expect(isStandardFocusNotificationDestinationCurrent(
       pending('result'), '/focus/result', 'focus-1',

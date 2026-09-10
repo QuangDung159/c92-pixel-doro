@@ -5,6 +5,7 @@ import type {
   FocusCompletionNotificationPort,
   FocusNotificationResponse,
   FocusNotificationResponseSource,
+  SessionNotificationResponse,
 } from '../notifications';
 import { StandardFocusSideEffectCoordinator } from './standard-focus-side-effect.coordinator';
 
@@ -30,15 +31,15 @@ const notificationPort = () => ({
   cancel: vi.fn(async () => ({ ok: true as const, value: 'cancelled' as const })),
 }) satisfies FocusCompletionNotificationPort;
 
-const responseSource = (initial: FocusNotificationResponse | null = null) => {
-  let listener: ((response: FocusNotificationResponse) => void) | undefined;
+const responseSource = (initial: SessionNotificationResponse | null = null) => {
+  let listener: ((response: SessionNotificationResponse) => void) | undefined;
   return {
     source: {
       readInitial: vi.fn(async () => initial),
       subscribe: vi.fn(async (next) => { listener = next; return () => { listener = undefined; }; }),
       clearInitial: vi.fn(async () => undefined),
     } satisfies FocusNotificationResponseSource,
-    emit: (response: FocusNotificationResponse) => listener?.(response),
+    emit: (response: SessionNotificationResponse) => listener?.(response),
   };
 };
 
@@ -58,6 +59,7 @@ describe('StandardFocusSideEffectCoordinator', () => {
     expect(analytics.recordStarted).toHaveBeenCalledWith(running());
     expect(notifications.requestPermission).toHaveBeenCalledOnce();
     expect(notifications.ensure).toHaveBeenCalledWith({
+      kind: 'standard_focus_completion',
       operationKey: 'standard-focus-complete:focus-1',
       sessionId: 'focus-1', endsAt: 901_000, soundEnabled: true,
     });
@@ -119,5 +121,25 @@ describe('StandardFocusSideEffectCoordinator', () => {
     await coordinator.whenIdle();
     expect(onNotificationSession).toHaveBeenCalledTimes(1);
     expect(responses.source.clearInitial).toHaveBeenCalledOnce();
+  });
+
+  it('dispatches an exact Break response through the same root subscription', async () => {
+    const response = {
+      responseId: 'break-response-1', operationKey: 'break-complete:break-1',
+      kind: 'break_completion' as const, sessionId: 'break-1',
+      breakType: 'short_break' as const,
+    };
+    const responses = responseSource(response);
+    const onBreakNotificationSession = vi.fn(async () => undefined);
+    const coordinator = new StandardFocusSideEffectCoordinator({
+      analytics: { recordStarted: vi.fn(), recordTerminal: vi.fn() },
+      notifications: notificationPort(), responses: responses.source,
+      readSettings: () => null, loadResult: vi.fn(), onNotificationSession: vi.fn(),
+      onBreakNotificationSession,
+    });
+    coordinator.start();
+    await coordinator.whenIdle();
+    expect(onBreakNotificationSession).toHaveBeenCalledWith('break-1');
+    expect(responses.source.subscribe).toHaveBeenCalledOnce();
   });
 });
