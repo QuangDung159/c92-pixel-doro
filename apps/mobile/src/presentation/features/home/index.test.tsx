@@ -3,8 +3,8 @@ import { describe, expect, it, vi } from 'vitest';
 
 import {
   PetVisualStatus,
+  ProgressionSummary,
   ScreenHeader,
-  StatDisplay,
 } from '@/presentation/components';
 
 import { HomeScreen } from './index';
@@ -59,10 +59,9 @@ describe('HomeScreen', () => {
 
     expect(componentNames).toContain(ScreenHeader.name);
     expect(componentNames).toContain(PetVisualStatus.name);
-    expect(componentNames.filter((name) => name === StatDisplay.name)).toHaveLength(3);
+    expect(componentNames).toContain(ProgressionSummary.name);
     expect(componentNames).not.toContain('PrototypeBadge');
     expect(componentNames).not.toContain('PrototypeControls');
-    expect(JSON.stringify(tree)).toContain('Còn ');
-    expect(JSON.stringify(tree)).toContain('20');
+    expect(JSON.stringify(tree)).toContain('"variant":"full"');
   });
 });

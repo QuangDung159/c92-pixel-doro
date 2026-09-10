@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_EPIC_08_USER_STORIES
 title: PixelDoro EPIC-08 — Progression, Shop và Inventory Loop User Stories
-version: 0.2.1
-status: CONFIRMATIONS_APPROVED_AWAITING_OWNER_STORY_REVIEW
+version: 0.3.0
+status: US_08_01_IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE
 date: 2026-09-10
 last_updated: 2026-09-10
 owner: Dũng Lư
@@ -20,12 +20,12 @@ baseline_sha: 6e68fe5d800342e187f267f356b08335ace9a6b6
 previous_epic: EPIC-07
 previous_epic_status: DONE_OWNER_ACCEPTED
 previous_epic_implementation_sha: f6c7b9269b2abee07bfe8eeb5d804c6245b67c0a
-implementation_status: NOT_STARTED
+implementation_status: US_08_01_UNCOMMITTED_CANDIDATE
 formal_tester_status: DEFERRED_TO_EPIC_12_UNLESS_ACTUALLY_RUN
 schema_impact: NONE_APPROVED_EXISTING_SCHEMA_001_SUFFICIENT
 dependency_impact: NONE_APPROVED
 native_impact: NONE_APPROVED
-next_gate: OWNER_STORY_BREAKDOWN_ACCEPTANCE_THEN_US_08_01_IMPLEMENTATION_PLANNING
+next_gate: OWNER_US_08_01_QUICK_UI_ACCEPTANCE
 product_truth: ../PIXELDORO_CORE_TRUTH.md
 epic_baseline: ./MVP_EPICS.md
 gamification_specification: ../specifications/gamification-rules.md
@@ -37,8 +37,8 @@ data_model: ../architecture/data-model.md
 ## 0. Mục đích và authority
 
 Tài liệu này phân rã `EPIC-08` thành các vertical slice nhỏ, có outcome nhìn thấy, rollback và review
-độc lập. Đây chỉ là planning/documentation: chưa cho phép sửa production code, migration, dependency,
-native configuration, commit hoặc push.
+độc lập. Owner đã duyệt US-08-01 Option A và authorize coding; Story 01 hiện là candidate chưa commit,
+chờ quick UI acceptance. Không có migration, dependency hoặc native configuration change.
 
 Thứ tự authority khi review hoặc triển khai:
 
@@ -66,11 +66,11 @@ các decision trong mục 20 nhưng không tự phê duyệt implementation plan
 | EPIC-07 status | `DONE_OWNER_ACCEPTED` |
 | EPIC-07 exact implementation SHA | `f6c7b9269b2abee07bfe8eeb5d804c6245b67c0a` |
 | Accepted candidate → planning baseline | Chỉ closure/master/device-documentation changes; không đổi production behavior |
-| EPIC-08 implementation | `NOT_STARTED` |
+| EPIC-08 implementation | `US_08_01_UNCOMMITTED_CANDIDATE` |
 | Formal tester | `NOT_RUN`; EPIC-05→07 deferred evidence không được kế thừa là PASS |
 
-Kết luận: gate lập Story EPIC-08 đã mở và toàn bộ confirmation đã được duyệt Option A. Gate tạo
-implementation plan cho US-08-01 vẫn chờ owner chấp nhận Story breakdown này.
+Kết luận: gate lập Story EPIC-08 đã mở, toàn bộ confirmation đã được duyệt Option A và owner đã
+authorize coding US-08-01. Candidate hiện chờ owner quick UI acceptance.
 
 ### 1.2. Tài liệu đã audit và phân loại
 
@@ -195,7 +195,7 @@ selection, visual payoff và cuối cùng cross-feature exit. Mỗi Story chỉ 
 
 | Order | Story | User outcome | Priority | Dependencies | Initial status |
 |---:|---|---|---|---|---|
-| 1 | US-08-01 — Committed Progression và Production Catalog | User sees trustworthy level/XP/Coin and all 12 catalog items | P0 | EPIC-07; confirmations 01/03/08/09/10 approved | BLOCKED_OWNER_STORY_REVIEW |
+| 1 | US-08-01 — Committed Progression và Production Catalog | User sees trustworthy level/XP/Coin and all 12 catalog items | P0 | EPIC-07; confirmations 01/03/08/09/10 approved | IMPLEMENTED_AWAITING_OWNER_QUICK_UI |
 | 2 | US-08-02 — Atomic One-time Purchase | User can safely buy one affordable item once | P0 | 01; confirmations 02/03/04/08/09 | BLOCKED |
 | 3 | US-08-03 — Durable Inventory và Free Equip | User can distinguish owned items and equip/unequip without cost | P0 | 02; confirmations 05/06/08/09 | BLOCKED |
 | 4 | US-08-04 — Equipped Decorations in Pet Room | User sees equipped purchases persist in the room | P1 | 03; confirmations 06/07/09 | BLOCKED |
@@ -242,15 +242,15 @@ selection, visual payoff và cuối cùng cross-feature exit. Mỗi Story chỉ 
 
 ### 7.2. Automated tests
 
-- [ ] Domain unit: level 0/49/50/124/125 XP, large safe integer and invalid total.
-- [ ] Application query/controller: loading/ready/error/retry, exact order, invalid/empty/duplicate facts.
-- [ ] Repository/mapper: list catalog + owned/profile corrupt rows and thrown/read failure.
-- [ ] Real SQLite: fresh seed, earned rewards, owned/equipped fixtures, close/reopen exact projection.
-- [ ] Component: balance, progress, 12 tiles, ownership semantics, largest-text-friendly wrapping.
-- [ ] Navigation: Shop tab refocus refresh, Home values parity, no write on render/back.
-- [ ] Analytics: disabled/failure/dedupe behavior if hook is in this Story.
-- [ ] Static architecture: no prototype/import leakage, no component >300 lines.
-- [ ] iOS/Android JS export and device guide validator at candidate gate.
+- [x] Domain unit: exact level boundaries and invalid total.
+- [x] Application query/controller: loading/ready/error/retry, exact order, invalid/empty/duplicate facts.
+- [x] Repository/mapper: production list paths plus corrupt/thrown/read-failure handling.
+- [x] Real SQLite: fresh seed, earned rewards, owned/equipped fixtures, close/reopen exact projection.
+- [x] Component: balance, progress, 12 tiles and ownership semantics; largest-text remains manual.
+- [x] Navigation: Shop tab refocus refresh, Home values parity and static no-mutation boundary.
+- [x] Analytics: disabled/failure/focus-episode dedupe behavior.
+- [x] Static architecture: no prototype/import leakage, no component >300 lines.
+- [x] iOS/Android JS export and device guide validator at candidate gate.
 
 ### 7.3. Fixture/data requirements
 
@@ -288,11 +288,11 @@ Android: `adb shell am start -W -a android.intent.action.VIEW -d 'pixeldoro://sh
 
 ### 7.5. DoR, DoD và next gate
 
-- [ ] **DoR:** owner approves breakdown plus confirmations 01/03/08/09/10 relevant to read slice.
-- [ ] **DoR:** planned controller/component APIs and fixture isolation are reviewed.
-- [ ] **DoD:** acceptance and automated checks pass; guide exists; executed cases retain actual status.
-- [ ] **DoD:** production Shop replaces only its prototype owner; no schema/dependency/native change.
-- [ ] **Evidence:** implementation report, exact SHA, test counts, exports, screenshots/manual table.
+- [x] **DoR:** owner approves breakdown plus confirmations 01/03/08/09/10 relevant to read slice.
+- [x] **DoR:** planned controller/component APIs and fixture isolation are reviewed.
+- [x] **DoD automated:** acceptance checks pass; guide exists; unexecuted manual cases retain `NOT_RUN`.
+- [x] **DoD automated:** production Shop replaces only its prototype owner; no schema/dependency/native change.
+- [ ] **Evidence owner gate:** report/test counts/exports exist; exact SHA and screenshots await commit/quick UI.
 - [ ] **Gate US-08-02:** owner accepts exact US-08-01 candidate after quick UI review.
 
 ## 8. US-08-02 — Atomic One-time Purchase
@@ -1054,6 +1054,7 @@ locked to `NONE` unless a later demonstrated gap is separately reviewed.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.3.0 | 2026-09-10 | Codex | Recorded US-08-01 plan approval and coding authorization. Story 01 is an uncommitted candidate awaiting owner quick UI; automated quality and both platform exports pass, manual/formal evidence remains NOT_RUN. |
 | 0.2.1 | 2026-09-10 | Codex | Corrected the US-08-01 durable/device threshold fixture from unreachable `49 XP` to production-reachable `45→50 XP`; retained `49 XP` as an exact unit boundary. No scope or production behavior changed. |
 | 0.2.0 | 2026-09-10 | Codex | Recorded owner approval of Option A for all eleven confirmations. Locked no schema/dependency/native change, incremental Shop-only prototype retirement, deterministic local analytics, multi-equip/fixed-anchor direction and formal breadth deferral to EPIC-12. Exact decoration artwork still requires its own candidate approval. No implementation plan or production code was created. |
 | 0.1.0 | 2026-09-10 | Codex | Audited EPIC-01→07 docs/current code and baseline; confirmed EPIC-07 exact accepted implementation SHA and clean EPIC-08 planning baseline; created five risk-ordered vertical Stories, reuse/screen/durable/navigation/error/test/fixture/manual matrices, no-schema verdict and eleven pending owner confirmations. No production code, migration, dependency or native configuration changed. |

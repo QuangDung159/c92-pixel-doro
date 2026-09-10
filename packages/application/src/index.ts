@@ -8,6 +8,16 @@ export {
   type HomeProfileProjection,
 } from './home/create-home-profile.projection';
 export {
+  LoadShopProjectionUseCase,
+  type ApprovedShopCatalogItem,
+  type LoadShopProjectionDependencies,
+  type LoadShopProjectionError,
+  type LoadShopProjectionErrorCode,
+  type ShopItemProjection,
+  type ShopItemState,
+  type ShopProjection,
+} from './shop/load-shop-projection.use-case';
+export {
   loadPetCompanionProjection,
   type PetCompanionProjection,
   type PetCompanionSessionReader,

@@ -18,6 +18,8 @@ export { ScreenHeader, type ScreenHeaderProps } from './screen-header';
 export { ScreenShell, ScreenShell as PrototypeScreen } from './screen-shell';
 export { RewardSummary, type RewardSummaryProps } from './reward-summary';
 export { ProgressionSummary, type ProgressionSummaryProps } from './progression-summary';
+export { ItemTile, type ItemTileModel } from './item-tile';
+export { ItemGrid } from './item-grid';
 export { SectionLabel } from './section-label';
 export { Stat, StatDisplay, type StatDisplayProps } from './stat-display';
 export { EmptyState, ErrorState, LoadingState } from './status-surface';

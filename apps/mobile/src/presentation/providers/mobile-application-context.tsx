@@ -22,6 +22,7 @@ import type {
   OnboardingTrialHandoffProjection,
   OnboardingTrialResultProjection,
   PetVisualDiagnostic,
+  ShopControllerProjection,
 } from '@/application';
 
 const MobileApplicationContext = createContext<MobileApplicationFacade | undefined>(undefined);
@@ -150,6 +151,24 @@ export const useHomeProfileProjection = (): HomeProfileProjection | null => {
   const projection = useBootstrapProjection();
   if (projection.status !== 'ready') return null;
   return createHomeProfileProjection(projection.snapshot.profile);
+};
+
+export const useShopProjection = (): ShopControllerProjection => {
+  const { shop } = useMobileApplication();
+  return useSyncExternalStore(
+    shop.subscribe,
+    shop.getSnapshot,
+    shop.getSnapshot,
+  );
+};
+
+export const useShopActions = () => {
+  const { shop } = useMobileApplication();
+  return {
+    activate: shop.activate,
+    deactivate: shop.deactivate,
+    retry: shop.retry,
+  };
 };
 
 export const usePetCompanionProjection = (): PetCompanionProjection => {

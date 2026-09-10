@@ -2,16 +2,16 @@ import type {
   HomeProfileProjection,
   PetVisualProjection,
 } from '@pixeldoro/application';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 
 import {
   LoadingState,
   Panel,
   PetVisualStatus,
   PrimaryButton,
+  ProgressionSummary,
   ScreenHeader,
   ScreenShell,
-  StatDisplay,
 } from '@/presentation/components';
 import { palette } from '@/presentation/theme/palette';
 
@@ -30,8 +30,6 @@ export const HomeScreen = ({
   onDismissPetFeedbackError,
   onStartFocus,
 }: HomeScreenProps) => {
-  const progressWidth = `${profile?.levelProgressPercent ?? 0}%` as `${number}%`;
-
   return (
     <ScreenShell>
       <ScreenHeader
@@ -49,11 +47,7 @@ export const HomeScreen = ({
             onRetryBase={onRetryPet}
             projection={pet}
           />
-          <View accessibilityRole="summary" style={styles.statsRow}>
-            <StatDisplay label="Level" value={String(profile.level)} />
-            <StatDisplay label="XP" value={String(profile.totalXp)} />
-            <StatDisplay label="Coin" value={String(profile.coinBalance)} />
-          </View>
+          <ProgressionSummary progression={profile} variant="full" />
           <Panel tone="strong">
             <Text style={styles.cardEyebrow}>TIẾP THEO</Text>
             <Text style={styles.cardTitle}>Sẵn sàng cho một phiên 25 phút?</Text>
@@ -62,24 +56,6 @@ export const HomeScreen = ({
             </Text>
             <PrimaryButton label="Bắt đầu tập trung" onPress={onStartFocus} />
           </Panel>
-          <Panel>
-            <Text style={styles.cardEyebrow}>TIẾN TRÌNH ĐỒNG HÀNH</Text>
-            <View
-              accessibilityLabel={`Tiến trình Level ${profile.level}: ${profile.levelProgressPercent} phần trăm`}
-              accessibilityRole="progressbar"
-              accessibilityValue={{
-                min: 0,
-                max: 100,
-                now: profile.levelProgressPercent,
-              }}
-              style={styles.progressTrack}
-            >
-              <View style={[styles.progressFill, { width: progressWidth }]} />
-            </View>
-            <Text style={styles.cardBody}>
-              Còn {profile.xpToNextLevel} XP để đạt Level {profile.level + 1}.
-            </Text>
-          </Panel>
         </>
       )}
     </ScreenShell>
@@ -87,7 +63,6 @@ export const HomeScreen = ({
 };
 
 const styles = StyleSheet.create({
-  statsRow: { flexDirection: 'row', gap: 9 },
   cardEyebrow: {
     color: palette.accentDark,
     fontSize: 11,
@@ -101,12 +76,4 @@ const styles = StyleSheet.create({
     lineHeight: 27,
   },
   cardBody: { color: palette.textSecondary, fontSize: 14, lineHeight: 21 },
-  progressTrack: {
-    backgroundColor: palette.background,
-    borderColor: palette.border,
-    borderWidth: 2,
-    height: 22,
-    overflow: 'hidden',
-  },
-  progressFill: { backgroundColor: palette.accentGold, height: '100%' },
 });

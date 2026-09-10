@@ -95,6 +95,7 @@ export {
 export type { MobileApplicationFacade } from './mobile-application.facade';
 export { AppVisibilityController } from './visibility/app-visibility.controller';
 export * from './break';
+export * from './shop';
 export {
   OnboardingTrialRunningController,
   type OnboardingTrialRunningControllerDependencies,

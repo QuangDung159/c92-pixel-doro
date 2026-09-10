@@ -111,6 +111,12 @@ import { createBreakRecommendationSlice } from './break/create-break-recommendat
 import { createBreakStartSlice } from './break/create-break-start-slice';
 import { createBreakSideEffects } from './break/create-break-side-effects';
 import { createStandardFocusSideEffects } from './standard-focus/create-standard-focus-side-effects';
+import { createShopSlice } from './shop/create-shop-slice';
+import {
+  createShopReviewFixture,
+  resolveShopReviewScenario,
+  shopReviewDatabaseName,
+} from './review/shop-review-fixture';
 
 const PIXELDORO_DATABASE_NAME = 'pixeldoro.db';
 
@@ -161,6 +167,10 @@ export const createMobileApplication = (
     options.diagnosticsEnabled !== false &&
     typeof __DEV__ !== 'undefined' &&
     __DEV__;
+  const shopReviewScenario = resolveShopReviewScenario(
+    process.env.EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE,
+    reviewFixturesEnabled,
+  );
   const breakCadenceReviewScenario = resolveBreakCadenceReviewScenario(
     process.env.EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE,
     reviewFixturesEnabled,
@@ -174,7 +184,9 @@ export const createMobileApplication = (
     reviewFixturesEnabled,
   );
   const databaseOwner = new SQLiteDatabaseOwner(
-    options.databaseName ?? (breakCadenceReviewScenario !== undefined
+    options.databaseName ?? (shopReviewScenario !== undefined
+      ? shopReviewDatabaseName(shopReviewScenario)
+      : breakCadenceReviewScenario !== undefined
       ? breakCadenceReviewDatabaseName(breakCadenceReviewScenario)
       : breakStartReviewScenario !== undefined
         ? breakStartReviewDatabaseName(breakStartReviewScenario)
@@ -185,6 +197,10 @@ export const createMobileApplication = (
   );
   const transaction = new SQLiteTransaction(databaseOwner);
   const persistence = createSQLitePersistenceGraph(databaseOwner, transaction);
+  const shopReviewFixture = createShopReviewFixture(
+    shopReviewScenario,
+    persistence.catalog,
+  );
   const breakCadenceReviewFixture = createBreakCadenceReviewFixture(
     breakCadenceReviewScenario,
     persistence.longBreakCadence,
@@ -426,6 +442,17 @@ export const createMobileApplication = (
       },
       queue: persistence.analyticsQueue,
     });
+  const shop = createShopSlice({
+    analyticsQueue: coordinatedSideEffectAnalyticsQueue,
+    catalog: shopReviewFixture?.catalog ?? persistence.catalog,
+    clock,
+    coordinator: sessionCommands,
+    criticalRecovery: bootstrap,
+    economy: persistence.economyConsistency,
+    id,
+    ownedItems: persistence.ownedItems,
+    readBootstrap: bootstrap.getSnapshot,
+  });
   const confirmedReset = new ConfirmedLocalDataReset({
     activeSessions: persistence.sessions,
     bootstrap,
@@ -928,6 +955,7 @@ export const createMobileApplication = (
     standardFocusOutcome,
     requestStandardFocusOutcomeFeedback: requestStandardOutcomeFeedback,
     standardFocusNotificationNavigation: standardFocusSideEffects.navigation,
+    shop: shop.shop,
     standardFocusReviewResetAvailable: reviewFixturesEnabled,
     onboardingTrialRunning,
     onboardingTrialCompletion,
@@ -946,6 +974,25 @@ export const createMobileApplication = (
     boot: async () => {
       await runProbeIfEnabled();
       await bootstrap.boot();
+      if (
+        bootstrap.getSnapshot().status === 'ready' &&
+        shopReviewFixture !== undefined
+      ) {
+        const changed = await shopReviewFixture.prepare({
+          catalog: persistence.catalog,
+          coordinator: sessionCommands,
+          ownedItems: persistence.ownedItems,
+          profile: persistence.profile,
+          purchases: persistence.purchases,
+          rewards: persistence.rewards,
+          sessions: persistence.sessions,
+          transaction,
+        });
+        if (changed) {
+          const refreshed = await bootstrap.refreshReadySnapshot();
+          if (!refreshed.ok) bootstrap.enterRecovery('DATABASE_READ_FAILED');
+        }
+      }
       if (
         bootstrap.getSnapshot().status === 'ready' &&
         breakCadenceReviewFixture !== undefined
@@ -1129,6 +1176,7 @@ export const createMobileApplication = (
         standardFocusSideEffects.coordinator.dispose();
         breakSideEffects.coordinator.dispose();
         standardFocusSideEffects.navigation.dispose();
+        shop.dispose();
         onboardingTrialRunning.dispose();
         onboardingTrialHandoff.dispose();
         onboardingTrialPetFeedback.dispose();

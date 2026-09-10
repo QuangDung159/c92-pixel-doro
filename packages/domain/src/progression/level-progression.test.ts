@@ -4,6 +4,16 @@ import { deriveLevelProgression, levelThresholdXp } from './level-progression';
 
 describe('level progression', () => {
   it.each([
+    [0, 1, 50],
+    [49, 1, 1],
+    [50, 2, 75],
+    [124, 2, 1],
+    [125, 3, 100],
+  ])('projects exact threshold boundary at %i XP', (totalXp, level, xpToNextLevel) => {
+    expect(deriveLevelProgression(totalXp)).toMatchObject({ level, xpToNextLevel });
+  });
+
+  it.each([
     [1, 0],
     [2, 50],
     [3, 125],

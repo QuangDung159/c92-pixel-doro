@@ -31,6 +31,7 @@ import type {
   BreakStartController,
 } from './break';
 import type { StandardFocusNotificationNavigationController } from './notifications';
+import type { ShopController } from './shop';
 import type { PetVisualDiagnostic } from './ports/pet-visual-diagnostics.port';
 import type {
   CompleteFirstUseHandoffOutcome,
@@ -55,6 +56,7 @@ export interface MobileApplicationFacade {
   readonly standardFocusResult: StandardFocusResultController;
   readonly standardFocusOutcome: StandardFocusOutcomeController;
   readonly standardFocusNotificationNavigation: StandardFocusNotificationNavigationController;
+  readonly shop: ShopController;
   readonly standardFocusReviewResetAvailable: boolean;
   readonly onboardingTrialRunning: OnboardingTrialRunningController;
   readonly onboardingTrialCompletion: OnboardingTrialCompletionController;

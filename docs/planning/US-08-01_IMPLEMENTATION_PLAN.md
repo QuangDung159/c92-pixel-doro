@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_08_01_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-08-01 Implementation Plan
-version: 0.1.0
-status: DRAFT_AWAITING_OWNER_CONFIRMATION
-implementation_status: NOT_STARTED
+version: 0.2.0
+status: IMPLEMENTED_AWAITING_OWNER_QUICK_UI
+implementation_status: IMPLEMENTED_UNCOMMITTED_CANDIDATE
 date: 2026-09-10
 last_updated: 2026-09-10
 owner: Dũng Lư
@@ -12,7 +12,7 @@ reviewer_role: Tech Lead/Product Owner
 language: vi
 branch: feats/epic-08
 planning_baseline_sha: 6e68fe5d800342e187f267f356b08335ace9a6b6
-implementation_start_sha: null
+implementation_start_sha: 41e46df9cc122a56b60cfc08ee72dee3a351a2c7
 exact_implementation_sha: null
 previous_epic: EPIC-07
 previous_epic_status: DONE_OWNER_ACCEPTED
@@ -30,7 +30,7 @@ scope:
   - production_catalog
   - read_only_shop
   - shop_viewed_analytics
-authority: PLANNING
+authority: APPROVED_IMPLEMENTATION_PLAN
 story_baseline: ./EPIC-08_USER_STORIES.md
 epic_baseline: ./MVP_EPICS.md
 source_of_truth: ../PIXELDORO_CORE_TRUTH.md
@@ -48,9 +48,9 @@ adr_analytics: ../architecture/decisions/ADR-008-posthog-analytics-and-cost-guar
 
 ## 0. Mục đích, outcome và gate
 
-Tài liệu này chuyển `US-08-01` trong breakdown EPIC-08 thành một implementation plan có thể thực thi
-sau khi owner duyệt. Lượt hiện tại chỉ tạo planning documentation; không sửa production code,
-migration/schema, package/dependency, native configuration, không commit và không push.
+Tài liệu này chuyển `US-08-01` trong breakdown EPIC-08 thành implementation plan đã được owner duyệt
+và được triển khai thành candidate chưa commit. Không có thay đổi migration/schema,
+package/dependency hoặc native configuration; chưa commit và chưa push.
 
 **User outcome:** user mở Pet Room hoặc tab Cửa hàng và thấy cùng một Level/XP/Coin committed, cùng
 đúng 12 item catalog đã duyệt, price/ownership/equipped state đọc từ SQLite; Shop không còn mock Coin,
@@ -61,21 +61,21 @@ sample item, prototype controls hoặc action giả.
 **Blocks:** `US-08-02 — Atomic One-time Purchase`. Story 02 không được mở trước khi owner chấp nhận
 candidate read-only này, gồm catalog identity, projection ownership, UI states và no-write evidence.
 
-**Planning status:** `DRAFT_AWAITING_OWNER_CONFIRMATION`.
-**Implementation status:** `NOT_STARTED`.
+**Planning status:** `APPROVED_OPTION_A_01_TO_05`.
+**Implementation status:** `IMPLEMENTED_UNCOMMITTED_CANDIDATE_AWAITING_OWNER_QUICK_UI`.
 
 ### 0.1. Baseline và working-tree audit
 
 | Fact | Kết quả |
 |---|---|
 | Branch | `feats/epic-08` |
-| HEAD / origin | `6e68fe5d800342e187f267f356b08335ace9a6b6`; trùng `origin/feats/epic-08` và `origin/dev` |
-| Commit gần nhất | `6e68fe5 Feats/epic 07 (#10)` |
+| Implementation start HEAD / origin | `41e46df9cc122a56b60cfc08ee72dee3a351a2c7`; trùng `origin/feats/epic-08` |
+| Commit gần nhất trước production edit | `41e46df Epic 08 - US-08-01` (planning documents only) |
 | EPIC-07 | `DONE_OWNER_ACCEPTED`; exact implementation SHA `f6c7b926...` |
 | Existing worktree delta trước plan | `docs/planning/EPIC-08_USER_STORIES.md` là untracked owner work; giữ nguyên |
-| EPIC-08 implementation | Chưa có production change |
+| EPIC-08 implementation | US-08-01 candidate đã implement trên working tree, chưa commit |
 | Breakdown confirmations | `US0800-CONFIRM-01→11` đã ghi `APPROVED_OPTION_A` ngày 2026-09-10 |
-| Story gate | Draft plan được user yêu cầu; production edit vẫn chờ confirm mục 12 |
+| Story gate | Owner duyệt `US0801-CONFIRM-01→05 theo Option A` và authorize coding ngày 2026-09-10 |
 
 ### 0.2. Readiness checklist trước implementation
 
@@ -85,9 +85,9 @@ candidate read-only này, gồm catalog identity, projection ownership, UI state
   controller/composition pattern, Shop prototype, common UI và tests đã audit.
 - [x] Schema `001` đủ durable facts và invariant cho read slice; không có migration gap.
 - [x] Không cần package, native module, prebuild hoặc permission mới.
-- [ ] Owner chấp nhận Story breakdown là implementation baseline.
-- [ ] Owner duyệt `US0801-CONFIRM-01→05` hoặc yêu cầu sửa cụ thể.
-- [ ] Ghi `implementation_start_sha` ngay trước production edit đầu tiên.
+- [x] Owner chấp nhận Story breakdown là implementation baseline.
+- [x] Owner duyệt `US0801-CONFIRM-01→05 theo Option A` ngày 2026-09-10.
+- [x] `implementation_start_sha` được khóa tại `41e46df9...` trước production edit.
 
 ## 1. Breakdown review và authority reconciliation
 
@@ -507,37 +507,37 @@ Explicitly unchanged:
 
 ### T00 gate
 
-- [ ] Owner confirms `US0801-CONFIRM-01→05`.
-- [ ] Breakdown correction `49 durable fixture → 45` is reflected or recorded as approved variance.
-- [ ] No new worktree conflict exists in planned files.
-- [ ] `implementation_start_sha` is recorded before T01/T04/T05 edits.
+- [x] Owner confirms `US0801-CONFIRM-01→05 theo Option A`.
+- [x] Breakdown correction `49 durable fixture → 45` is reflected in the approved baseline.
+- [x] No pre-existing worktree conflict existed in planned production files.
+- [x] `implementation_start_sha` was recorded before T01/T04/T05 edits.
 
 ### T01–T03 gate
 
-- [ ] Loader has no UI/mobile/SQL import and returns frozen typed projection.
-- [ ] Approved catalog enters through composition dependency; no production copy is added.
-- [ ] Existing economy verifier and repositories are reused.
-- [ ] Coordinator serializes projection read; no nested transaction/deadlock.
-- [ ] Controller separates transient Retry from durable Recovery.
-- [ ] Analytics failure/disabled state cannot affect Shop projection.
+- [x] Loader has no UI/mobile/SQL import and returns frozen typed projection.
+- [x] Approved catalog enters through composition dependency; no production copy is added.
+- [x] Existing economy verifier and repositories are reused.
+- [x] Coordinator serializes projection read; no nested transaction/deadlock.
+- [x] Controller separates transient Retry from durable Recovery.
+- [x] Analytics failure/disabled state cannot affect Shop projection.
 
 ### T04–T06 gate
 
-- [ ] Existing Result `ProgressionSummary` semantics remain regression-covered.
-- [ ] Home/Shop render same provided committed profile values.
-- [ ] Shop contains exactly one grid source from projection and no hard-coded samples.
-- [ ] Tiles have no interactive role/action in this Story.
-- [ ] Prototype imports/controls/mock copy are absent only from Shop owner.
+- [x] Existing Result `ProgressionSummary` semantics remain regression-covered.
+- [x] Home/Shop render same provided committed profile values.
+- [x] Shop contains exactly one grid source from projection and no hard-coded samples.
+- [x] Tiles have no interactive role/action in this Story.
+- [x] Prototype imports/controls/mock copy are absent only from Shop owner.
 - [ ] Largest text can scroll and never clips price/status/action-free tiles.
 
 ### T07–T09 gate
 
-- [ ] Every fixture uses dedicated database or decorated port and has cleanup.
-- [ ] `45→50` device fixture uses production completed reward commands.
-- [ ] Real SQLite close/reopen returns exact projection.
-- [ ] Product table fingerprints prove render/focus/retry/back are read-only.
-- [ ] Manual/formal status remains `NOT_RUN` until actually executed.
-- [ ] Exact candidate SHA is not claimed before an authorized commit exists.
+- [x] Every fixture uses a dedicated database and/or scoped decorated port; guide defines cleanup.
+- [x] `45→50` device fixture uses production completed reward commands.
+- [x] Real SQLite close/reopen returns exact projection.
+- [x] Product table fingerprints prove projection reads are read-only.
+- [x] Manual/formal status remains `NOT_RUN` until actually executed.
+- [x] Exact candidate SHA is not claimed before an authorized commit exists.
 
 ## 8. Automated test strategy
 
@@ -642,44 +642,44 @@ adb shell am start -W -a android.intent.action.VIEW -d 'pixeldoro://shop?review=
 
 ## 10. Acceptance criteria
 
-- [ ] Shop route/feature has no PrototypeBadge/Controls/Screen, sample item array, mock Coin or fake CTA.
-- [ ] Ready state displays exact 12 approved IDs/names/category/prices from committed SQLite facts.
-- [ ] Catalog order is exact price then stable ID and all items are visible at Level 1/0 XP/0 Coin.
-- [ ] No rarity/filter/locked/coming-soon/level-gate/purchase/equip behavior is introduced.
-- [ ] Level/XP/Coin uses one Application projection rule and reusable Home/Shop presentation.
-- [ ] Home and Shop show the same committed profile facts after relevant refresh.
-- [ ] Owned/equipped labels are truthful and read-only; unavailable rows fail closed.
-- [ ] Missing/extra/duplicate/corrupt catalog/profile/ownership never renders hard-coded fallback.
-- [ ] Transient read error has Retry; durable invariant violation enters approved Recovery.
-- [ ] Render/focus/retry/back/offline/relaunch creates zero reward/purchase/ownership/equip write.
-- [ ] `shop_viewed` is local/best-effort, `{}`, once per focus episode and never affects Shop truth.
-- [ ] Screen imports only hooks/common components and stays below responsibility/size gates.
+- [x] Shop route/feature has no PrototypeBadge/Controls/Screen, sample item array, mock Coin or fake CTA.
+- [x] Ready state displays exact 12 approved IDs/names/category/prices from committed SQLite facts.
+- [x] Catalog order is exact price then stable ID and all items are visible at Level 1/0 XP/0 Coin.
+- [x] No rarity/filter/locked/coming-soon/level-gate/purchase/equip behavior is introduced.
+- [x] Level/XP/Coin uses one Application projection rule and reusable Home/Shop presentation.
+- [x] Home and Shop show the same committed profile facts after relevant refresh.
+- [x] Owned/equipped labels are truthful and read-only; unavailable rows fail closed.
+- [x] Missing/extra/duplicate/corrupt catalog/profile/ownership never renders hard-coded fallback.
+- [x] Transient read error has Retry; durable invariant violation enters approved Recovery.
+- [x] Render/focus/retry/back/offline/relaunch creates zero reward/purchase/ownership/equip write.
+- [x] `shop_viewed` is local/best-effort, `{}`, once per focus episode and never affects Shop truth.
+- [x] Screen imports only hooks/common components and stays below responsibility/size gates.
 - [ ] UI meaning survives largest text, grayscale, Reduce Motion and screen reader.
-- [ ] Focus/Break/Pet/Home/Result/bootstrap behavior remains regression-green.
-- [ ] No schema/migration/dependency/native change exists.
-- [ ] Manual/formal evidence status is recorded honestly.
+- [x] Focus/Break/Pet/Home/Result/bootstrap behavior remains regression-green.
+- [x] No schema/migration/dependency/native change exists.
+- [x] Manual/formal evidence status is recorded honestly as `NOT_RUN`.
 
 ## 11. DoR, DoD và next gate
 
 ### 11.1. Definition of Ready
 
-- [ ] Owner accepts the US-08-01 breakdown and this plan's Option A confirmations.
-- [ ] Fixture correction `49 durable → 45 durable; 49 unit-only` is accepted.
-- [ ] Planned API/recovery/refresh/neutral visual/analytics timing is settled.
-- [ ] Existing worktree changes are preserved and conflicts re-audited.
-- [ ] Start SHA is recorded and no implementation task begins before authorization.
+- [x] Owner accepts the US-08-01 breakdown and this plan's Option A confirmations.
+- [x] Fixture correction `49 durable → 45 durable; 49 unit-only` is accepted with the implementation baseline.
+- [x] Planned API/recovery/refresh/neutral visual/analytics timing is settled.
+- [x] Existing worktree changes are preserved and conflicts re-audited.
+- [x] Start SHA is recorded and implementation began only after authorization.
 
 ### 11.2. Definition of Done
 
-- [ ] All acceptance and automated checklists pass with exact command/test counts.
-- [ ] Real SQLite, coordinator race, close/reopen, corrupt/read-failure and no-write tests pass.
-- [ ] Production Shop-only prototype owner is removed; later consumers remain intact.
-- [ ] Common changes pass all current consumers and size gates.
-- [ ] iOS/Android JS exports pass; Doctor/pre-existing warnings are recorded.
-- [ ] Device guide exists and keeps actual manual/formal status.
-- [ ] Implementation report records files, decisions, tests, evidence and exact candidate identity.
-- [ ] No migration/schema/dependency/native/package/asset change.
-- [ ] `git diff --check`, quality, boundaries, repository hygiene and guide validator pass.
+- [x] All automated acceptance/checklists pass: full quality `163 files / 856 tests`.
+- [x] Real SQLite, coordinator race, close/reopen, corrupt/read-failure and no-write tests pass.
+- [x] Production Shop-only prototype owner is removed; later consumers remain intact.
+- [x] Common changes pass all current consumers and size gates.
+- [x] iOS/Android JS exports pass; Doctor `20/21` patch drift is recorded.
+- [x] Device guide exists and keeps actual manual/formal status `NOT_RUN`.
+- [x] Implementation report records files, decisions, tests, evidence and uncommitted candidate identity.
+- [x] No migration/schema/dependency/native/package/asset change.
+- [x] `git diff --check`, quality, boundaries, repository hygiene and guide validator pass.
 
 ### 11.3. Gate mở US-08-02
 
@@ -687,7 +687,7 @@ adb shell am start -W -a android.intent.action.VIEW -d 'pixeldoro://shop?review=
 - [ ] Owner explicitly accepts US-08-01 and authorizes US-08-02 planning.
 - [ ] Purchase implementation remains absent until that gate opens.
 
-## 12. Open questions cần owner confirm
+## 12. Owner confirmations — resolved
 
 ### US0801-CONFIRM-01 — Catalog contract injection
 
@@ -695,7 +695,7 @@ adb shell am start -W -a android.intent.action.VIEW -d 'pixeldoro://shop?review=
   loader; không sửa/copy migration source.
 - **Option B:** tạo catalog constant thứ hai trong Domain/Application rồi giữ parity bằng test.
 - **Impact/block:** A tránh checksum drift và duplicate truth; block T01/T03.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-10.
 
 ### US0801-CONFIRM-02 — Durable corruption recovery
 
@@ -703,7 +703,7 @@ adb shell am start -W -a android.intent.action.VIEW -d 'pixeldoro://shop?review=
   ownership invariant mismatch vào global Recovery.
 - **Option B:** giữ mọi lỗi trong Shop local ErrorState.
 - **Impact/block:** A fail closed nhất quán với bootstrap; block controller/error acceptance.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-10.
 
 ### US0801-CONFIRM-03 — Refocus refresh UX
 
@@ -711,7 +711,7 @@ adb shell am start -W -a android.intent.action.VIEW -d 'pixeldoro://shop?review=
   subtle refreshing state, transient failure giữ content + inline Retry.
 - **Option B:** mọi refresh thay toàn màn hình bằng Loading/ErrorState.
 - **Impact/block:** A tránh flicker nhưng controller có thêm `refreshing`; block UI/controller shape.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-10.
 
 ### US0801-CONFIRM-04 — Item visual trước art gate
 
@@ -719,7 +719,7 @@ adb shell am start -W -a android.intent.action.VIEW -d 'pixeldoro://shop?review=
   rõ không phải final room art; không dùng prototype glyph.
 - **Option B:** text-only tile.
 - **Impact/block:** A dễ scan hơn nhưng vẫn không giả định artwork; block ItemTile snapshot/UI review.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-10.
 
 ### US0801-CONFIRM-05 — `shop_viewed` timing
 
@@ -728,10 +728,10 @@ adb shell am start -W -a android.intent.action.VIEW -d 'pixeldoro://shop?review=
 - **Option B:** chỉ enqueue sau first ready projection success.
 - **Impact/block:** A đo visit intent đúng focus semantics đã duyệt; B đo successful catalog view;
   block controller/analytics tests.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-10.
 
-Owner có thể duyệt một lần bằng `Duyệt US0801-CONFIRM-01→05 theo Option A` hoặc nêu ID cần chỉnh.
-Approval mở implementation planning gate nhưng không tự authorize commit/push.
+Owner đã duyệt một lần bằng `Duyệt US0801-CONFIRM-01→05 theo Option A` và authorize coding.
+Approval không bao gồm commit/push; candidate tiếp tục chờ quick UI acceptance.
 
 ## 13. Impact verdict và deferred boundary
 
@@ -753,4 +753,5 @@ History/Settings retirement, Pet naming/evolution and Product `OPEN-006/009`.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.2.0 | 2026-09-10 | Codex | Recorded owner Option A approval and coding authorization; implementation completed as an uncommitted candidate. Full quality passed 163 files/856 tests; iOS/Android exports passed; Doctor 20/21 with existing Expo patch drift. Manual/formal evidence remains NOT_RUN. |
 | 0.1.0 | 2026-09-10 | Codex | Initial implementation plan after breakdown/code audit. Proposed existing-port/coordinator reuse, Shop production composition, common progression/item components, recovery/analytics contract and five owner confirmations. Corrected unreachable durable `49 XP` fixture to reachable `45→50`; no production code created. |

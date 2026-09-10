@@ -35,6 +35,23 @@ const breakCancelResultFlow = await readFile(
   `${deviceDirectory}break-cancel-result-smoke.md`, 'utf8',
 );
 const epic07ExitFlow = await readFile(`${deviceDirectory}epic-07-exit-smoke.md`, 'utf8');
+const progressionCatalogFlow = await readFile(
+  `${deviceDirectory}progression-catalog-smoke.md`, 'utf8',
+);
+for (const evidence of [
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=shop_fresh_zero',
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=shop_progress_45',
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=shop_progress_50',
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=shop_owned_mixed',
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=shop_read_failure_once',
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=shop_catalog_corrupt',
+  'pixeldoro-us-08-01-', 'Thử lại', 'VoiceOver/TalkBack', 'Reduce Motion',
+  'Airplane mode', 'NOT_RUN', 'unset EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE',
+]) {
+  if (!progressionCatalogFlow.includes(evidence)) {
+    throw new Error(`Progression/catalog device guide is missing: ${evidence}`);
+  }
+}
 for (const evidence of [
   'break_side_effect_fast_notification', 'break_side_effect_permission_denied',
   'break_side_effect_schedule_failure_once', 'break_side_effect_cancel_failure_once',
