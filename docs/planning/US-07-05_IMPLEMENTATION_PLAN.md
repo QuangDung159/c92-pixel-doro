@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_07_05_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-07-05 Notification, Analytics Hooks, Accessibility và EPIC-07 Exit Plan
-version: 0.3.0
-status: IMPLEMENTED_AWAITING_OWNER_SMOKE
-implementation_status: IMPLEMENTED_AUTOMATED_PASS
+version: 0.4.0
+status: DONE_OWNER_ACCEPTED
+implementation_status: DONE_OWNER_ACCEPTED
 date: 2026-09-10
 last_updated: 2026-09-10
 owner: Dũng Lư
@@ -13,10 +13,10 @@ language: vi
 branch: feats/epic-07
 planning_baseline_sha: a3cafa39f6b2882b126562e6c8f54eb186887cc2
 implementation_start_sha: a3cafa39f6b2882b126562e6c8f54eb186887cc2
-exact_implementation_sha: WORKTREE_CANDIDATE_NOT_COMMITTED
+exact_implementation_sha: f6c7b9269b2abee07bfe8eeb5d804c6245b67c0a
 previous_story_sha: a3cafa39f6b2882b126562e6c8f54eb186887cc2
 previous_story_acceptance: DONE_OWNER_ACCEPTED_QUICK_UI
-manual_device_status: NOT_RUN
+manual_device_status: PASS_OWNER_QUICK_UI
 formal_tester_status: NOT_RUN
 schema_change: NONE_PROPOSED
 dependency_change: NONE_PROPOSED
@@ -63,8 +63,9 @@ Plan đã được owner duyệt toàn bộ Option A ngày 2026-09-10. Implement
 `a3cafa39f6b2882b126562e6c8f54eb186887cc2`; no-schema/dependency/native scope được khóa.
 
 Implementation candidate hoàn tất ngày 2026-09-10: full quality PASS `152 files / 817 tests`, iOS và
-Android JS export PASS. Owner quick UI/formal tester vẫn `NOT_RUN`; Story chưa owner-accepted và exact
-implementation SHA chưa bind cho tới candidate commit.
+Android JS export PASS. Owner xác nhận quick UI không crash và hoạt động đúng kỳ vọng ngày
+2026-09-10 tại exact implementation SHA `f6c7b9269b2abee07bfe8eeb5d804c6245b67c0a`.
+Structured physical-device/accessibility matrix và formal tester vẫn `NOT_RUN`.
 
 ## 1. Authority và scope
 
@@ -344,19 +345,19 @@ PASS/FAIL/BLOCKED/NOT_RUN. Owner quick smoke không thay formal/structured matri
 
 ## 10. Acceptance criteria
 
-- [ ] Allowed permission schedules at most one exact-deadline Short/Long notification.
-- [ ] Denied/off/provider failure never blocks Break core truth or navigation.
-- [ ] Completion/cancel terminal cleanup is best-effort, idempotent and exact-key only.
-- [ ] Warm/cold tap reads/reconciles exact durable Break and follows approved destination.
-- [ ] Early/stale/repeated/malformed taps cannot invent terminal state, reward or replay side effects.
-- [ ] Notification copy distinguishes Short/Long without implying XP/Coin.
-- [ ] Approved `break_started`/`break_completed` events are deterministic, privacy-safe and fresh-only.
-- [ ] Cancelled Break creates no unapproved analytics event.
-- [ ] Startup/reset handle known Break notification safely without broad OS deletion.
-- [ ] Break UI passes semantic/source audit; unrun device accessibility remains honestly labeled.
-- [ ] Production Break route/screen has no prototype authority; out-of-scope prototype tabs still work.
-- [ ] No schema/dependency/native change and no PostHog provider scope.
-- [ ] Full automated/platform/static gates pass and Epic exit evidence exists.
+- [x] Allowed permission schedules at most one exact-deadline Short/Long notification.
+- [x] Denied/off/provider failure never blocks Break core truth or navigation.
+- [x] Completion/cancel terminal cleanup is best-effort, idempotent and exact-key only.
+- [x] Warm/cold tap reads/reconciles exact durable Break and follows approved destination.
+- [x] Early/stale/repeated/malformed taps cannot invent terminal state, reward or replay side effects.
+- [x] Notification copy distinguishes Short/Long without implying XP/Coin.
+- [x] Approved `break_started`/`break_completed` events are deterministic, privacy-safe and fresh-only.
+- [x] Cancelled Break creates no unapproved analytics event.
+- [x] Startup/reset handle known Break notification safely without broad OS deletion.
+- [x] Break UI passes semantic/source audit; unrun device accessibility remains honestly labeled.
+- [x] Production Break route/screen has no prototype authority; out-of-scope prototype tabs still work.
+- [x] No schema/dependency/native change and no PostHog provider scope.
+- [x] Full automated/platform/static gates pass and Epic exit evidence exists.
 
 ## 11. Risks và controls
 
@@ -515,6 +516,7 @@ PASS/FAIL/BLOCKED/NOT_RUN. Owner quick smoke không thay formal/structured matri
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.4.0 | 2026-09-10 | Codex | Bound exact implementation SHA `f6c7b9269b2abee07bfe8eeb5d804c6245b67c0a` and recorded owner quick UI PASS: no crash, behavior matched expectations. Closed US-07-05 as `DONE_OWNER_ACCEPTED`; structured accessibility/formal evidence remains `NOT_RUN`. |
 | 0.3.0 | 2026-09-10 | Codex | Implemented approved Option A candidate: shared typed Focus/Break notification response pipeline, exact Break scheduling/tap/cleanup, fresh-only analytics, finite fixtures, SQLite/integrity tests and device/exit evidence. Full quality and both JS exports PASS; owner/formal smoke remains `NOT_RUN`. |
 | 0.2.0 | 2026-09-10 | Codex | Recorded owner approval of all Option A confirmations 01–12, resolved Epic confirmations 05/06, locked shared notification/tap, fresh-only analytics, permission/cleanup/reset/prototype/evidence/no-change boundaries and opened implementation at exact SHA `a3cafa39f6b2882b126562e6c8f54eb186887cc2`. |
 | 0.1.0 | 2026-09-10 | Codex | Created owner-gated US-07-05 plan from accepted exact SHA `a3cafa39f6b2882b126562e6c8f54eb186887cc2`; audited reusable Standard notification/analytics pipeline, proposed one shared dispatcher, exact Break tap, fresh-only events, accessibility/prototype integrity and Epic exit evidence with no schema/dependency/native default. |

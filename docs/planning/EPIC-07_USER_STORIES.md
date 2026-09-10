@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_07_USER_STORIES
 title: PixelDoro EPIC-07 — Break Experience và Long Break Cadence User Stories
-version: 1.2.0
+version: 1.3.0
 status: IN_PROGRESS
 date: 2026-09-08
 last_updated: 2026-09-10
@@ -18,10 +18,10 @@ branch_audited: feats/epic-07
 baseline_head: a3cafa39f6b2882b126562e6c8f54eb186887cc2
 epic_06_behavior_candidate: 458a8868ac0024e3b3d1eff64ccc26408a81b2e1
 epic_06_status: DONE_OWNER_ACCEPTED
-implementation_status: US_07_01_TO_04_DONE_US_07_05_IMPLEMENTED_AWAITING_OWNER_SMOKE
+implementation_status: US_07_01_TO_05_DONE_OWNER_ACCEPTED
 formal_tester_status: NOT_RUN
 schema_change: NONE_APPROVED_FOR_US_07_01_TO_US_07_05
-next_gate: US_07_05_OWNER_SMOKE_AND_EXACT_SHA_BINDING
+next_gate: EXPLICIT_EPIC_07_CLOSURE_DECISION
 ---
 
 # EPIC-07 — Break Experience và Long Break Cadence
@@ -721,8 +721,8 @@ Reduce Motion preserves textual meaning.
 
 - [x] **DoR:** US-07-04 accepted; confirmations 05/06 approved; dependency/native impact confirmed as
   reuse-only unless plan proves otherwise.
-- [ ] **DoD:** all automated/exports pass; manual status honest; prototype production path removed;
-  exact SHA/report/exit report created; owner accepts Epic closure explicitly.
+- [x] **DoD:** all automated/exports pass; manual status honest; prototype production path removed;
+  exact SHA/report/exit report created; owner accepts US-07-05 explicitly.
 - [x] **Evidence files:** `US-07-05_IMPLEMENTATION_PLAN.md`, `US-07-05_IMPLEMENTATION_REPORT.md`,
   `apps/mobile/test/device/epic-07-exit-smoke.md`, `EPIC-07_EXIT_REPORT.md`.
 - [ ] **Exit gate:** only explicit owner acceptance may set `DONE_OWNER_ACCEPTED` and open EPIC-08
@@ -993,6 +993,7 @@ completion; a request captured before deadline remains cancel-eligible while que
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 1.3.0 | 2026-09-10 | Codex | Bound US-07-05 exact SHA `f6c7b9269b2abee07bfe8eeb5d804c6245b67c0a`, recorded owner quick UI PASS (no crash; behavior as expected), and closed the Story as `DONE_OWNER_ACCEPTED`. EPIC-07 is ready for a separate explicit closure decision; formal evidence remains `NOT_RUN`. |
 | 1.2.0 | 2026-09-10 | Codex | Recorded US-07-05 worktree candidate and automated/platform PASS (`152 files / 817 tests`): shared Focus/Break notification pipeline, exact durable tap, fresh-only bounded analytics, finite fixtures and Epic exit evidence. Owner/formal smoke and final exact SHA remain pending. |
 | 1.1.0 | 2026-09-10 | Codex | Recorded owner approval of all US-07-05 Option A confirmations and Epic `US0700-CONFIRM-05/06`; opened US-07-05 implementation from exact SHA `a3cafa39f6b2882b126562e6c8f54eb186887cc2`. |
 | 1.0.0 | 2026-09-10 | Codex | Recorded owner quick UI PASS and closure of US-07-04 at final exact SHA `a3cafa39f6b2882b126562e6c8f54eb186887cc2`; opened owner-gated US-07-05 planning while structured/formal evidence remains NOT_RUN. |

@@ -1,7 +1,10 @@
 # EPIC-07 / US-07-05 device smoke
 
-Status: `NOT_RUN`  
-Implementation SHA: `<implementation-sha>`
+Status: `PASS_OWNER_QUICK_UI`
+Implementation SHA: `f6c7b9269b2abee07bfe8eeb5d804c6245b67c0a`
+
+Owner evidence (2026-09-10): smoke completed without crash and behavior matched expectations. This
+records the quick UI path only; unexecuted structured iOS/Android/accessibility cases remain `NOT_RUN`.
 
 ## Preconditions
 

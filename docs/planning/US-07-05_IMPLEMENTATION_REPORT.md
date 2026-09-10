@@ -1,14 +1,14 @@
 ---
 document_id: PIXELDORO_US_07_05_IMPLEMENTATION_REPORT
 title: PixelDoro Mobile MVP — US-07-05 Implementation Report
-version: 0.1.0
-status: IMPLEMENTED_AWAITING_OWNER_SMOKE
+version: 0.2.0
+status: DONE_OWNER_ACCEPTED
 date: 2026-09-10
 owner: Dũng Lư
 branch: feats/epic-07
 implementation_start_sha: a3cafa39f6b2882b126562e6c8f54eb186887cc2
-exact_implementation_sha: WORKTREE_CANDIDATE_NOT_COMMITTED
-owner_smoke_status: NOT_RUN
+exact_implementation_sha: f6c7b9269b2abee07bfe8eeb5d804c6245b67c0a
+owner_smoke_status: PASS_OWNER_QUICK_UI
 formal_tester_status: NOT_RUN
 schema_change: NONE
 dependency_change: NONE
@@ -48,6 +48,7 @@ native_change: NONE
 
 ## Manual evidence and residual gate
 
-Owner quick UI, structured iOS/Android notification/accessibility matrix and formal tester are
-`NOT_RUN`. Follow `apps/mobile/test/device/epic-07-exit-smoke.md`. Do not mark Story/Epic owner-accepted
-or bind a final exact SHA until owner confirmation and candidate commit exist.
+Owner confirmed quick UI PASS on 2026-09-10 at exact SHA
+`f6c7b9269b2abee07bfe8eeb5d804c6245b67c0a`: no crash and behavior matched expectations. US-07-05
+is `DONE_OWNER_ACCEPTED`. Structured iOS/Android notification/accessibility cases and formal tester
+remain `NOT_RUN`; this quick smoke does not upgrade those evidence classes.

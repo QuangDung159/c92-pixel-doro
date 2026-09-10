@@ -41,7 +41,7 @@ for (const evidence of [
   'break_side_effect_queue_failure_once', 'pixeldoro-us-07-05-',
   'Phiên nghỉ đã kết thúc', 'Nghỉ ngắn đã xong. Mèo Dev đang chờ bạn quay lại.',
   'break-complete:<sessionId>', 'break-completion', 'VoiceOver', 'TalkBack',
-  'Reduce Motion', 'Airplane mode', '<implementation-sha>', 'NOT_RUN',
+  'Reduce Motion', 'Airplane mode', 'f6c7b9269b2abee07bfe8eeb5d804c6245b67c0a', 'NOT_RUN',
   'unset EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE',
 ]) {
   if (!epic07ExitFlow.includes(evidence)) {
