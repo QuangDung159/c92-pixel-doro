@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_US_07_05_IMPLEMENTATION_REPORT
 title: PixelDoro Mobile MVP — US-07-05 Implementation Report
-version: 0.2.0
+version: 0.3.0
 status: DONE_OWNER_ACCEPTED
 date: 2026-09-10
 owner: Dũng Lư
@@ -9,7 +9,7 @@ branch: feats/epic-07
 implementation_start_sha: a3cafa39f6b2882b126562e6c8f54eb186887cc2
 exact_implementation_sha: f6c7b9269b2abee07bfe8eeb5d804c6245b67c0a
 owner_smoke_status: PASS_OWNER_QUICK_UI
-formal_tester_status: NOT_RUN
+formal_tester_status: DEFERRED_TO_LATER_PHASE
 schema_change: NONE
 dependency_change: NONE
 native_change: NONE
@@ -52,3 +52,9 @@ Owner confirmed quick UI PASS on 2026-09-10 at exact SHA
 `f6c7b9269b2abee07bfe8eeb5d804c6245b67c0a`: no crash and behavior matched expectations. US-07-05
 is `DONE_OWNER_ACCEPTED`. Structured iOS/Android notification/accessibility cases and formal tester
 remain `NOT_RUN`; this quick smoke does not upgrade those evidence classes.
+
+## Epic closure
+
+Owner explicitly closed EPIC-07 on 2026-09-10 and authorized EPIC-08 planning. The formal iOS/Android,
+accessibility, offline and full failure-injection matrix remains `DEFERRED / NOT_RUN` in the EPIC-07
+Exit Report and must not be interpreted as PASS.

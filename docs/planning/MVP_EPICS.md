@@ -1,16 +1,16 @@
 ---
 document_id: PIXELDORO_MVP_EPIC_BREAKDOWN
 title: PixelDoro Mobile MVP — Epic Breakdown
-version: 1.6.0
-status: EPIC_01_TO_06_DONE_EPIC_07_PLANNING_READY
-last_updated: 2026-09-07
+version: 1.7.0
+status: EPIC_01_TO_07_DONE_EPIC_08_PLANNING_READY
+last_updated: 2026-09-10
 owner: Dũng Lư
 reviewer: Dũng Lư
 reviewer_role: Tech Lead
 approved_by: Dũng Lư
 approver_role: Product Owner
 approved_at: 2026-08-27
-amended_at: 2026-09-07
+amended_at: 2026-09-10
 amendment_approved_by: Dũng Lư
 language: vi
 scope:
@@ -127,14 +127,14 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 - [x] `04 / EPIC-04 / W3` — Pet Companion — `DONE_OWNER_ACCEPTED` 2026-08-31.
 - [x] `05 / EPIC-05 / W3` — Onboarding Trial — `DONE_OWNER_ACCEPTED` 2026-09-03.
 - [x] `06 / EPIC-06 / W3` — Standard Focus — `DONE_OWNER_ACCEPTED` 2026-09-07.
-- [ ] `07 / EPIC-07 / W3` — Break & Cadence.
+- [x] `07 / EPIC-07 / W3` — Break & Cadence — `DONE_OWNER_ACCEPTED` 2026-09-10.
 - [ ] `08 / EPIC-08 / W3` — Progression & Shop.
 - [ ] `09 / EPIC-09 / W3` — History & Contribution.
 - [ ] `10 / EPIC-10 / W3` — Settings & Data Control.
 - [ ] `11 / EPIC-11 / W3` — Analytics, Feedback & Store Review.
 - [ ] `12 / EPIC-12 / W4` — Beta Readiness.
 
-### 2.4. Trạng thái sau sáu Epic đầu tiên
+### 2.4. Trạng thái sau bảy Epic đầu tiên
 
 | Phạm vi | Trạng thái | Evidence/gate |
 |---|---|---|
@@ -144,9 +144,10 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 | `EPIC-04` | `DONE_OWNER_ACCEPTED` | Pet/Home production slice, Cat Dev asset và device/performance evidence hoàn tất. |
 | `EPIC-05` | `DONE_OWNER_ACCEPTED` | Exact implementation SHA `580f559`; root `82/391`, SQLite exclusions và owner quick UI smoke pass. Formal tester matrix deferred. |
 | `EPIC-06` | `DONE_OWNER_ACCEPTED` | Exact candidate `458a886`; Standard Relax/Strict end-to-end, notification/analytics/a11y hooks, owner iOS/Android quick smoke. Formal tester deferred. |
-| `EPIC-07` | `PLANNING_READY` | Start gate đã mở; implementation chưa bắt đầu. |
+| `EPIC-07` | `DONE_OWNER_ACCEPTED` | Exact candidate `f6c7b92`; Break/cadence lifecycle, notification/analytics and owner quick UI pass. Formal device/accessibility matrix deferred. |
+| `EPIC-08` | `PLANNING_READY` | Start gate đã mở; implementation chưa bắt đầu. |
 
-Sáu Epic đầu đã hoàn thành không đồng nghĩa Mobile MVP hoàn tất. `EPIC-07`–`12` vẫn là `MUST` và
+Bảy Epic đầu đã hoàn thành không đồng nghĩa Mobile MVP hoàn tất. `EPIC-08`–`12` vẫn là `MUST` và
 giữ nguyên execution order. Không được dùng closure này để nhận là Break, Shop, History, Settings,
 provider analytics hoặc Beta Readiness đã production-ready.
 
@@ -537,16 +538,16 @@ matrix tiếp tục `DEFERRED_TO_LATER_PHASE` và được carry sang later vali
 
 **Epic completion checklist:**
 
-- [ ] Break không auto-start khi Focus complete, Result render hoặc app relaunch.
-- [ ] Failed/cancelled Focus không thể tạo Break từ terminal Result đó.
-- [ ] Completed Focus thứ 1–3 chọn Short Break.
-- [ ] Completed Focus thứ 4 làm Long Break due.
-- [ ] Trial/failed/cancelled Focus không tăng cadence.
-- [ ] Long Break due sống qua Home/relaunch/additional Focus.
-- [ ] Cancelled Long Break không reset due; completed Long Break reset cycle.
-- [ ] Break background/lock/crash/kill không resolve `failed`.
-- [ ] Completed/cancelled Break không nhận XP/Coin hoặc celebrate.
-- [ ] Cancel/completion race và notification behavior dùng cùng durable rules.
+- [x] Break không auto-start khi Focus complete, Result render hoặc app relaunch.
+- [x] Failed/cancelled Focus không thể tạo Break từ terminal Result đó.
+- [x] Completed Focus thứ 1–3 chọn Short Break.
+- [x] Completed Focus thứ 4 làm Long Break due.
+- [x] Trial/failed/cancelled Focus không tăng cadence.
+- [x] Long Break due sống qua Home/relaunch/additional Focus.
+- [x] Cancelled Long Break không reset due; completed Long Break reset cycle.
+- [x] Break background/lock/crash/kill không resolve `failed`.
+- [x] Completed/cancelled Break không nhận XP/Coin hoặc celebrate.
+- [x] Cancel/completion race và notification behavior dùng cùng durable rules.
 
 **Out of scope:** Auto-start Break, auto-start Focus, Strict Break, pause/resume và configurable Break duration.
 
@@ -867,6 +868,14 @@ Story hoặc implementation tương lai.
 - [x] Không estimate deadline trước khi Story refinement hoàn tất.
 
 ## 10. Change log
+
+### 1.7.0 — 2026-09-10
+
+- Đóng `EPIC-07` ở `DONE_OWNER_ACCEPTED` tại exact behavior candidate `f6c7b92` sau full quality
+  `152 files / 817 tests`, iOS/Android JS exports và owner quick UI smoke.
+- Ghi formal device/accessibility, full manual failure matrix và Expo Doctor `18/21` là deferred,
+  không suy diễn thành PASS.
+- Đồng bộ master checklist và mở duy nhất `EPIC-08_PLANNING_READY`; implementation EPIC-08 chưa bắt đầu.
 
 ### 1.6.0 — 2026-09-07
 

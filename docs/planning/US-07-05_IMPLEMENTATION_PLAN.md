@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_US_07_05_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-07-05 Notification, Analytics Hooks, Accessibility và EPIC-07 Exit Plan
-version: 0.4.0
+version: 0.5.0
 status: DONE_OWNER_ACCEPTED
 implementation_status: DONE_OWNER_ACCEPTED
 date: 2026-09-10
@@ -17,7 +17,7 @@ exact_implementation_sha: f6c7b9269b2abee07bfe8eeb5d804c6245b67c0a
 previous_story_sha: a3cafa39f6b2882b126562e6c8f54eb186887cc2
 previous_story_acceptance: DONE_OWNER_ACCEPTED_QUICK_UI
 manual_device_status: PASS_OWNER_QUICK_UI
-formal_tester_status: NOT_RUN
+formal_tester_status: DEFERRED_TO_LATER_PHASE
 schema_change: NONE_PROPOSED
 dependency_change: NONE_PROPOSED
 native_change: NONE_PROPOSED
@@ -399,11 +399,11 @@ PASS/FAIL/BLOCKED/NOT_RUN. Owner quick smoke không thay formal/structured matri
 
 ### Done
 
-- [ ] All acceptance criteria and full automated/platform/static gates pass.
-- [ ] Standard Focus notification behavior remains unchanged.
-- [ ] Implementation report, device guide and EPIC-07 Exit Report bind exact SHA.
-- [ ] Owner quick UI status and structured/formal evidence recorded separately.
-- [ ] Owner explicitly accepts US-07-05/EPIC-07 and authorizes EPIC-08 planning.
+- [x] All acceptance criteria and full automated/platform/static gates pass.
+- [x] Standard Focus notification behavior remains unchanged.
+- [x] Implementation report, device guide and EPIC-07 Exit Report bind exact SHA.
+- [x] Owner quick UI status and structured/formal evidence recorded separately.
+- [x] Owner explicitly accepts US-07-05/EPIC-07 and authorizes EPIC-08 planning.
 
 ## 14. Owner confirmation gate — APPROVED
 
@@ -516,6 +516,7 @@ PASS/FAIL/BLOCKED/NOT_RUN. Owner quick smoke không thay formal/structured matri
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.5.0 | 2026-09-10 | Codex | Recorded explicit EPIC-07 closure and EPIC-08 planning authorization. Completed the Story Done checklist while preserving unexecuted formal platform/accessibility/offline/failure cases as deferred, not PASS. |
 | 0.4.0 | 2026-09-10 | Codex | Bound exact implementation SHA `f6c7b9269b2abee07bfe8eeb5d804c6245b67c0a` and recorded owner quick UI PASS: no crash, behavior matched expectations. Closed US-07-05 as `DONE_OWNER_ACCEPTED`; structured accessibility/formal evidence remains `NOT_RUN`. |
 | 0.3.0 | 2026-09-10 | Codex | Implemented approved Option A candidate: shared typed Focus/Break notification response pipeline, exact Break scheduling/tap/cleanup, fresh-only analytics, finite fixtures, SQLite/integrity tests and device/exit evidence. Full quality and both JS exports PASS; owner/formal smoke remains `NOT_RUN`. |
 | 0.2.0 | 2026-09-10 | Codex | Recorded owner approval of all Option A confirmations 01–12, resolved Epic confirmations 05/06, locked shared notification/tap, fresh-only analytics, permission/cleanup/reset/prototype/evidence/no-change boundaries and opened implementation at exact SHA `a3cafa39f6b2882b126562e6c8f54eb186887cc2`. |

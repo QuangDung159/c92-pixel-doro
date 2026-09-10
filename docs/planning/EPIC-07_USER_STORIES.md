@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_EPIC_07_USER_STORIES
 title: PixelDoro EPIC-07 — Break Experience và Long Break Cadence User Stories
-version: 1.3.0
-status: IN_PROGRESS
+version: 1.4.0
+status: DONE_OWNER_ACCEPTED
 date: 2026-09-08
 last_updated: 2026-09-10
 owner: Dũng Lư
@@ -19,9 +19,9 @@ baseline_head: a3cafa39f6b2882b126562e6c8f54eb186887cc2
 epic_06_behavior_candidate: 458a8868ac0024e3b3d1eff64ccc26408a81b2e1
 epic_06_status: DONE_OWNER_ACCEPTED
 implementation_status: US_07_01_TO_05_DONE_OWNER_ACCEPTED
-formal_tester_status: NOT_RUN
+formal_tester_status: DEFERRED_TO_LATER_PHASE
 schema_change: NONE_APPROVED_FOR_US_07_01_TO_US_07_05
-next_gate: EXPLICIT_EPIC_07_CLOSURE_DECISION
+next_gate: EPIC_08_PLANNING_READY
 ---
 
 # EPIC-07 — Break Experience và Long Break Cadence
@@ -114,8 +114,8 @@ Các phần sau chỉ là UX evidence hoặc lịch sử, không phải requirem
 | EPIC-06 accepted behavior | `458a8868ac0024e3b3d1eff64ccc26408a81b2e1` |
 | Diff accepted candidate → audit HEAD | Chỉ documentation/master-state merge; không có production code change. |
 | EPIC-06 gate | `DONE_OWNER_ACCEPTED`; owner quick smoke iOS/Android reported. |
-| Formal tester | EPIC-05/06 matrix vẫn `DEFERRED_TO_LATER_PHASE`; EPIC-07 là `NOT_RUN`. |
-| EPIC-07 | `PLANNING_READY`, production implementation chưa bắt đầu. |
+| Formal tester | EPIC-05/06/07 matrix `DEFERRED_TO_LATER_PHASE`; các case chưa chạy vẫn là `NOT_RUN`. |
+| EPIC-07 | `DONE_OWNER_ACCEPTED` tại exact candidate `f6c7b92`; formal device/accessibility deferred. |
 | Working tree trước file này | Clean. |
 
 Readiness conclusion: đủ điều kiện tạo breakdown. Chưa đủ điều kiện tạo/duyệt implementation plan
@@ -673,8 +673,7 @@ Reduce Motion preserves textual meaning.
 - [x] Common component regression passes for Trial and Standard Focus consumers.
 - [x] Screen reader, largest text, Reduce Motion and touch targets pass source/automated audit;
   unexecuted device cases remain `NOT_RUN`/`DEFERRED`.
-- [x] EPIC-07 exit report candidate separates automated/owner/formal evidence; exact SHA binding awaits
-  owner smoke/candidate commit.
+- [x] EPIC-07 Exit Report binds exact SHA and separates automated/owner/formal evidence.
 
 ### 11.4. Automated test checklist
 
@@ -725,8 +724,8 @@ Reduce Motion preserves textual meaning.
   exact SHA/report/exit report created; owner accepts US-07-05 explicitly.
 - [x] **Evidence files:** `US-07-05_IMPLEMENTATION_PLAN.md`, `US-07-05_IMPLEMENTATION_REPORT.md`,
   `apps/mobile/test/device/epic-07-exit-smoke.md`, `EPIC-07_EXIT_REPORT.md`.
-- [ ] **Exit gate:** only explicit owner acceptance may set `DONE_OWNER_ACCEPTED` and open EPIC-08
-  planning; formal deferred status remains explicit.
+- [x] **Exit gate:** owner explicitly closed EPIC-07 and opened EPIC-08 planning on 2026-09-10;
+  formal deferred status remains explicit.
 
 ## 12. Common Component Reuse Matrix
 
@@ -818,70 +817,74 @@ Feature-local components được phép:
 
 ### 17.1. Test pyramid
 
-- [ ] Domain: cadence selection, Break identity, deadline/terminal rules and no reward.
-- [ ] Shared Application: recommendation, Start, Reconcile, Cancel, exact Result and coordinator races.
-- [ ] Mobile Application/controllers: pending/error/refresh/lifecycle/dispose/navigation handoff.
-- [ ] Infrastructure: mapper/repository/query/notification adapter and migration constraint regression.
-- [ ] Real SQLite: end-to-end mixed cadence, both types, rollback, race, reopen and zero economy delta.
-- [ ] Presentation: completed-only CTA, fixed type/duration, countdown/modal/result/accessibility.
-- [ ] Static integrity: no prototype production import, file-size boundary, no schema drift.
-- [ ] Root gates at each Story proportional to risk; full `pnpm quality`, exports and diff check at Epic
+- [x] Domain: cadence selection, Break identity, deadline/terminal rules and no reward.
+- [x] Shared Application: recommendation, Start, Reconcile, Cancel, exact Result and coordinator races.
+- [x] Mobile Application/controllers: pending/error/refresh/lifecycle/dispose/navigation handoff.
+- [x] Infrastructure: mapper/repository/query/notification adapter and migration constraint regression.
+- [x] Real SQLite: end-to-end mixed cadence, both types, rollback, race, reopen and zero economy delta.
+- [x] Presentation: completed-only CTA, fixed type/duration, countdown/modal/result/accessibility.
+- [x] Static integrity: no prototype production import, file-size boundary, no schema drift.
+- [x] Root gates at each Story proportional to risk; full `pnpm quality`, exports and diff check at Epic
   candidate.
 
 ### 17.2. Required deterministic fixture vocabulary
 
-- [ ] `cadence_0`, `cadence_3`, `cadence_4_due`, `cadence_completed_long_reset`,
-  `cadence_cancelled_long_sticky`.
-- [ ] `break_start_short`, `break_start_long`, `break_start_conflict`, `break_start_write_failure_once`.
-- [ ] `break_running_fast_clock`, `break_completion_write_failure_once`, `break_result_read_failure_once`.
-- [ ] `break_cancel_write_failure_once`, `break_cancel_completion_race`.
-- [ ] `break_notification_fast`, `permission_denied`, `schedule_failure_once`, `cancel_failure_once`,
-  `queue_failure_once`, `early_tap`, `stale_tap`, `repeated_tap`.
-- [ ] Fixtures default-absent, Development Build only, finite, typed and unable to bypass production
+- [x] `break_cadence_count_0/3/4`, due-sticky, completed-Long-reset and cancelled-Long-no-reset.
+- [x] `break_start_short`, `break_start_long_due`, active-conflict and write-failure-once.
+- [x] Short/Long fast-clock, relaunch-before-deadline and completion read/write-failure-once.
+- [x] Short/Long cancel, cancel read/write-failure-once and completion-first race.
+- [x] Break side-effect fast-notification, permission-denied and schedule/cancel/queue-failure-once.
+- [x] Fixtures default-absent, Development Build only, finite, typed and unable to bypass production
   command/repository semantics.
+
+### 17.3. Deferred manual checklist
+
+The detailed unchecked steps in sections 7.5, 8.5, 9.5, 10.5 and 11.5 are retained as the formal
+device matrix. Owner quick UI paths passed, but unexecuted per-platform, accessibility, offline and
+failure-injection cases remain `DEFERRED / NOT_RUN`; they are not retroactively marked PASS.
 
 ## 18. Per-Story DoR/DoD và EPIC-07 exit checklist
 
 ### 18.1. Shared Story Definition of Ready
 
-- [ ] Previous Story gate explicitly accepted.
-- [ ] Affected confirmation IDs approved; no implicit Option A selection.
-- [ ] User-visible outcome, exact source identity and error/recovery path are defined.
-- [ ] Durable reads/writes, Domain rule, command/query owner and transaction boundary are named.
-- [ ] Schema/dependency/native impact audited; any gap is a blocker before code.
-- [ ] Common component matrix and all existing consumers/regressions are listed.
-- [ ] Fixture and manual guide avoid unsafe production-data deletion.
+- [x] Previous Story gate explicitly accepted.
+- [x] Affected confirmation IDs approved; no implicit Option A selection.
+- [x] User-visible outcome, exact source identity and error/recovery path are defined.
+- [x] Durable reads/writes, Domain rule, command/query owner and transaction boundary are named.
+- [x] Schema/dependency/native impact audited; any gap is a blocker before code.
+- [x] Common component matrix and all existing consumers/regressions are listed.
+- [x] Fixture and manual guide avoid unsafe production-data deletion.
 
 ### 18.2. Shared Story Definition of Done
 
-- [ ] Story acceptance checklist passes with automated evidence.
-- [ ] Output is observable on Development Build and owner status is recorded honestly.
-- [ ] Formal tester cases not executed remain `NOT_RUN`/`DEFERRED`.
-- [ ] No business/timer/cadence/reward/persistence rule lives in screen/component.
-- [ ] No component exceeds 300 lines; 240–260-line files have documented split review.
-- [ ] Common changes pass every old Trial/Standard/Home/Pet consumer regression.
-- [ ] No Product `OPEN`, prototype behavior or EPIC-08→12 scope is silently promoted.
-- [ ] Implementation report, exact SHA, guide and durable before/after evidence are recorded.
-- [ ] `git diff --check`, relevant tests, typecheck/lint/boundary/hygiene gates pass.
+- [x] Story acceptance checklist passes with automated evidence.
+- [x] Output is observable on Development Build and owner status is recorded honestly.
+- [x] Formal tester cases not executed remain `NOT_RUN`/`DEFERRED`.
+- [x] No business/timer/cadence/reward/persistence rule lives in screen/component.
+- [x] No component exceeds 300 lines; 240–260-line files have documented split review.
+- [x] Common changes pass every old Trial/Standard/Home/Pet consumer regression.
+- [x] No Product `OPEN`, prototype behavior or EPIC-08→12 scope is silently promoted.
+- [x] Implementation report, exact SHA, guide and durable before/after evidence are recorded.
+- [x] `git diff --check`, relevant tests, typecheck/lint/boundary/hygiene gates pass.
 
 ### 18.3. EPIC-07 exit checklist
 
-- [ ] EPIC-06 remains `DONE_OWNER_ACCEPTED`; accepted behavior regressions pass.
-- [ ] Break never auto-starts on Focus completion, Result render or relaunch.
-- [ ] Failed/cancelled Focus and trial cannot create Break from Result.
-- [ ] Focus 1–3 since marker select Short; fourth and later select Long.
-- [ ] Trial/failed/cancelled Focus do not increase cadence.
-- [ ] Long due survives Home/relaunch/additional Focus.
-- [ ] Cancelled Long does not reset; completed Long resets.
-- [ ] Break background/lock/crash/kill cannot fail.
-- [ ] Break completion/cancel is race-safe, durable and exact-ID.
-- [ ] No Break reward receipt/profile delta/Reward UI/Celebrate/Bugged.
-- [ ] Local notification denial/failure/stale/repeated tap cannot change truth.
-- [ ] Production Break flow has no prototype authority/fallback.
-- [ ] Offline, screen reader, large text, Reduce Motion and touch requirements have recorded status.
-- [ ] Full automated gates and both platform JS exports pass at exact candidate.
-- [ ] Owner quick smoke and formal tester evidence are clearly separated.
-- [ ] EPIC-07 Exit Report exists and owner explicitly authorizes closure/EPIC-08 planning.
+- [x] EPIC-06 remains `DONE_OWNER_ACCEPTED`; accepted behavior regressions pass.
+- [x] Break never auto-starts on Focus completion, Result render or relaunch.
+- [x] Failed/cancelled Focus and trial cannot create Break from Result.
+- [x] Focus 1–3 since marker select Short; fourth and later select Long.
+- [x] Trial/failed/cancelled Focus do not increase cadence.
+- [x] Long due survives Home/relaunch/additional Focus.
+- [x] Cancelled Long does not reset; completed Long resets.
+- [x] Break background/lock/crash/kill cannot fail.
+- [x] Break completion/cancel is race-safe, durable and exact-ID.
+- [x] No Break reward receipt/profile delta/Reward UI/Celebrate/Bugged.
+- [x] Local notification denial/failure/stale/repeated tap cannot change truth.
+- [x] Production Break flow has no prototype authority/fallback.
+- [x] Offline, screen reader, large text, Reduce Motion and touch requirements have recorded status.
+- [x] Full automated gates and both platform JS exports pass at exact candidate.
+- [x] Owner quick smoke and formal tester evidence are clearly separated.
+- [x] EPIC-07 Exit Report exists and owner explicitly authorizes closure/EPIC-08 planning.
 
 ## 19. Owner confirmation register
 
@@ -993,6 +996,7 @@ completion; a request captured before deadline remains cancel-eligible while que
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 1.4.0 | 2026-09-10 | Codex | Closed EPIC-07 as `DONE_OWNER_ACCEPTED` and opened EPIC-08 planning by explicit owner direction. Reconciled automated/exit checklists and retained the unexecuted formal platform/accessibility/offline/failure matrix as `DEFERRED / NOT_RUN`. |
 | 1.3.0 | 2026-09-10 | Codex | Bound US-07-05 exact SHA `f6c7b9269b2abee07bfe8eeb5d804c6245b67c0a`, recorded owner quick UI PASS (no crash; behavior as expected), and closed the Story as `DONE_OWNER_ACCEPTED`. EPIC-07 is ready for a separate explicit closure decision; formal evidence remains `NOT_RUN`. |
 | 1.2.0 | 2026-09-10 | Codex | Recorded US-07-05 worktree candidate and automated/platform PASS (`152 files / 817 tests`): shared Focus/Break notification pipeline, exact durable tap, fresh-only bounded analytics, finite fixtures and Epic exit evidence. Owner/formal smoke and final exact SHA remain pending. |
 | 1.1.0 | 2026-09-10 | Codex | Recorded owner approval of all US-07-05 Option A confirmations and Epic `US0700-CONFIRM-05/06`; opened US-07-05 implementation from exact SHA `a3cafa39f6b2882b126562e6c8f54eb186887cc2`. |
