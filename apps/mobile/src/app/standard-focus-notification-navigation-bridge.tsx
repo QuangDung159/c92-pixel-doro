@@ -31,7 +31,12 @@ export const StandardFocusNotificationNavigationBridge = () => {
     // Result. Let that route settle first so a notification tap cannot remount
     // the same Result and discard its one-shot Pet feedback.
     const timeout = setTimeout(() => {
-      if (projection.destination === 'result') {
+      if (projection.flow === 'break' && projection.destination !== 'home') {
+        router.replace({
+          pathname: '/break/session',
+          params: { sessionId: projection.sessionId },
+        });
+      } else if (projection.destination === 'result') {
         router.replace({
           pathname: '/focus/result',
           params: { sessionId: projection.sessionId },

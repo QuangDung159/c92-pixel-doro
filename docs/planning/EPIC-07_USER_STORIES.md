@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_07_USER_STORIES
 title: PixelDoro EPIC-07 — Break Experience và Long Break Cadence User Stories
-version: 0.9.1
+version: 1.2.0
 status: IN_PROGRESS
 date: 2026-09-08
 last_updated: 2026-09-10
@@ -15,13 +15,13 @@ authority: PLANNING
 product_truth: ../PIXELDORO_CORE_TRUTH.md
 epic_baseline: ./MVP_EPICS.md
 branch_audited: feats/epic-07
-baseline_head: 7cb8310642a80876221c015198b3f51d1251af15
+baseline_head: a3cafa39f6b2882b126562e6c8f54eb186887cc2
 epic_06_behavior_candidate: 458a8868ac0024e3b3d1eff64ccc26408a81b2e1
 epic_06_status: DONE_OWNER_ACCEPTED
-implementation_status: US_07_01_DONE_US_07_02_DONE_US_07_03_DONE_US_07_04_AUTOMATED_PASS
+implementation_status: US_07_01_TO_04_DONE_US_07_05_IMPLEMENTED_AWAITING_OWNER_SMOKE
 formal_tester_status: NOT_RUN
-schema_change: NONE_APPROVED_FOR_US_07_02_US_07_03
-next_gate: US_07_04_OWNER_QUICK_UI_SMOKE
+schema_change: NONE_APPROVED_FOR_US_07_01_TO_US_07_05
+next_gate: US_07_05_OWNER_SMOKE_AND_EXACT_SHA_BINDING
 ---
 
 # EPIC-07 — Break Experience và Long Break Cadence
@@ -620,12 +620,13 @@ branch renders RewardSummary/ProgressionSummary. Pet returns Idle after either t
 ### 10.6. DoR, DoD, evidence và next gate
 
 - [x] **DoR:** US-07-03 accepted; confirmations 03/04 and all Story options approved as Option A.
-- [ ] **DoD:** cancel/race/result/recovery matrices pass; report/SHA/guide exist; owner accepts.
+- [x] **DoD:** automated cancel/race/result/recovery matrices pass; report/SHA/guide exist; owner
+  quick UI accepts. Structured/formal matrix remains separately `NOT_RUN`.
 - [x] **Evidence files:** `US-07-04_IMPLEMENTATION_PLAN.md`, `US-07-04_IMPLEMENTATION_REPORT.md`,
   `apps/mobile/test/device/break-cancel-result-smoke.md`.
 - [x] **Automated gate:** no reward/Pet/cadence regression and both race orders proven in SQLite.
-- [ ] **Gate sang US-07-05:** exact implementation SHA đã record; chờ owner quick UI acceptance sau
-  Pet crop fix.
+- [x] **Gate sang US-07-05:** owner quick UI accepted final exact SHA
+  `a3cafa39f6b2882b126562e6c8f54eb186887cc2` ngày 2026-09-10.
 
 ## 11. US-07-05 — Notification, analytics hooks, accessibility và Epic integrity
 
@@ -660,30 +661,31 @@ Reduce Motion preserves textual meaning.
 
 ### 11.3. Acceptance criteria
 
-- [ ] Allowed permission schedules at most one exact-deadline Break completion notification.
-- [ ] Denied/undetermined/preference-off/provider failure never blocks Start/countdown/terminal truth.
-- [ ] Cancel/completion cancels stale schedule best-effort after commit.
-- [ ] Tap reconciles/reads durable exact Break and routes only per approved confirmation.
-- [ ] Early/stale/repeated/malformed tap cannot create terminal status, reward or duplicate navigation.
-- [ ] Notification copy identifies Short/Long completion without implying XP/Coin.
-- [ ] Approved local `break_started/completed` events are deterministic, bounded and privacy-safe; no
+- [x] Allowed permission schedules at most one exact-deadline Break completion notification.
+- [x] Denied/undetermined/preference-off/provider failure never blocks Start/countdown/terminal truth.
+- [x] Cancel/completion cancels stale schedule best-effort after commit.
+- [x] Tap reconciles/reads durable exact Break and routes only per approved confirmation.
+- [x] Early/stale/repeated/malformed tap cannot create terminal status, reward or duplicate navigation.
+- [x] Notification copy identifies Short/Long completion without implying XP/Coin.
+- [x] Approved local `break_started/completed` events are deterministic, bounded and privacy-safe; no
   cancelled event is invented unless Product later approves it.
-- [ ] Production Break routes/screens do not import prototype context/state/control/badge.
-- [ ] Common component regression passes for Trial and Standard Focus consumers.
-- [ ] Screen reader, largest text, Reduce Motion and touch targets pass source/automated audit;
+- [x] Production Break routes/screens do not import prototype context/state/control/badge.
+- [x] Common component regression passes for Trial and Standard Focus consumers.
+- [x] Screen reader, largest text, Reduce Motion and touch targets pass source/automated audit;
   unexecuted device cases remain `NOT_RUN`/`DEFERRED`.
-- [ ] EPIC-07 exit report binds exact behavior SHA and separates automated/owner/formal evidence.
+- [x] EPIC-07 exit report candidate separates automated/owner/formal evidence; exact SHA binding awaits
+  owner smoke/candidate commit.
 
 ### 11.4. Automated test checklist
 
-- [ ] Notification adapter key/input/permission/ensure/cancel/response tests for both Focus and Break.
-- [ ] Side-effect coordinator Start/terminal/startup/reset and failure-isolation tests.
-- [ ] Notification warm/cold/early/stale/repeated tap navigation integration tests.
-- [ ] Analytics deterministic ID/allowlist/opt-out/failure/duplicate tests if confirmation 06 selects A.
-- [ ] Real SQLite full Break journey and no reward/profile delta assertions.
-- [ ] Component/route accessibility and large-text structural tests.
-- [ ] Production prototype integrity, boundary, migration immutability, repository hygiene tests.
-- [ ] Root typecheck, lint, full tests, device-guide validator, boundary validator and both platform JS
+- [x] Notification adapter key/input/permission/ensure/cancel/response tests for both Focus and Break.
+- [x] Side-effect coordinator Start/terminal/startup/reset and failure-isolation tests.
+- [x] Notification warm/cold/early/stale/repeated tap navigation integration tests.
+- [x] Analytics deterministic ID/allowlist/opt-out/failure/duplicate tests if confirmation 06 selects A.
+- [x] Real SQLite full Break journey and no reward/profile delta assertions.
+- [x] Component/route accessibility and large-text structural tests.
+- [x] Production prototype integrity, boundary, migration immutability, repository hygiene tests.
+- [x] Root typecheck, lint, full tests, device-guide validator, boundary validator and both platform JS
   exports pass at frozen candidate.
 
 ### 11.5. Manual UI/device test guide
@@ -717,11 +719,11 @@ Reduce Motion preserves textual meaning.
 
 ### 11.6. DoR, DoD, evidence và Epic gate
 
-- [ ] **DoR:** US-07-04 accepted; confirmations 05/06 approved; dependency/native impact confirmed as
+- [x] **DoR:** US-07-04 accepted; confirmations 05/06 approved; dependency/native impact confirmed as
   reuse-only unless plan proves otherwise.
 - [ ] **DoD:** all automated/exports pass; manual status honest; prototype production path removed;
   exact SHA/report/exit report created; owner accepts Epic closure explicitly.
-- [ ] **Evidence files:** `US-07-05_IMPLEMENTATION_PLAN.md`, `US-07-05_IMPLEMENTATION_REPORT.md`,
+- [x] **Evidence files:** `US-07-05_IMPLEMENTATION_PLAN.md`, `US-07-05_IMPLEMENTATION_REPORT.md`,
   `apps/mobile/test/device/epic-07-exit-smoke.md`, `EPIC-07_EXIT_REPORT.md`.
 - [ ] **Exit gate:** only explicit owner acceptance may set `DONE_OWNER_ACCEPTED` and open EPIC-08
   planning; formal deferred status remains explicit.
@@ -947,7 +949,7 @@ completion; a request captured before deadline remains cancel-eligible while que
   transient route/error flash có thể xuất hiện với stale ID.
 - **Option C:** mọi tap về Home. Impact: an toàn/đơn giản nhưng không đưa user tới exact outcome.
 
-**Status:** `PENDING_OWNER`; blocks US-07-05 notification/navigation plan.
+**Status:** `APPROVED_OPTION_A` — owner confirmed 2026-09-10.
 
 ### US0700-CONFIRM-06 — Break analytics trong EPIC-07
 
@@ -959,7 +961,7 @@ completion; a request captured before deadline remains cancel-eligible while que
 - **Option C:** thêm `break_cancelled`. Impact: mở event taxonomy chưa có trong Product Core; cần Product
   decision/update trước code.
 
-**Status:** `PENDING_OWNER`; blocks analytics scope of US-07-05 only.
+**Status:** `APPROVED_OPTION_A` — owner confirmed 2026-09-10.
 
 ### 19.1. Confirmation approval checklist
 
@@ -967,8 +969,8 @@ completion; a request captured before deadline remains cancel-eligible while que
 - [x] Owner selected Option A for `US0700-CONFIRM-02` on 2026-09-08.
 - [x] Owner selected Option A for `US0700-CONFIRM-03` on 2026-09-10.
 - [x] Owner selected Option A for `US0700-CONFIRM-04` on 2026-09-10.
-- [ ] Owner selects one option for `US0700-CONFIRM-05`.
-- [ ] Owner selects one option for `US0700-CONFIRM-06`.
+- [x] Owner selected Option A for `US0700-CONFIRM-05` on 2026-09-10.
+- [x] Owner selected Option A for `US0700-CONFIRM-06` on 2026-09-10.
 - [x] Document version/status/schema verdict updated for confirmations affecting US-07-02.
 
 ## 20. Known limitations và deferred evidence
@@ -991,6 +993,9 @@ completion; a request captured before deadline remains cancel-eligible while que
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 1.2.0 | 2026-09-10 | Codex | Recorded US-07-05 worktree candidate and automated/platform PASS (`152 files / 817 tests`): shared Focus/Break notification pipeline, exact durable tap, fresh-only bounded analytics, finite fixtures and Epic exit evidence. Owner/formal smoke and final exact SHA remain pending. |
+| 1.1.0 | 2026-09-10 | Codex | Recorded owner approval of all US-07-05 Option A confirmations and Epic `US0700-CONFIRM-05/06`; opened US-07-05 implementation from exact SHA `a3cafa39f6b2882b126562e6c8f54eb186887cc2`. |
+| 1.0.0 | 2026-09-10 | Codex | Recorded owner quick UI PASS and closure of US-07-04 at final exact SHA `a3cafa39f6b2882b126562e6c8f54eb186887cc2`; opened owner-gated US-07-05 planning while structured/formal evidence remains NOT_RUN. |
 | 0.9.1 | 2026-09-10 | Codex | Recorded committed/pushed US-07-04 SHA `7cb8310642a80876221c015198b3f51d1251af15`; fixed owner-reported Break Pet animation top-edge artifact via source-frame crop metadata applied consistently to playback and still fallback. Full suite remains green at 148 files / 800 tests; fix awaits owner retest and commit. |
 | 0.9.0 | 2026-09-10 | Codex | Recorded US-07-04 worktree implementation and automated/platform PASS: exact cancel/completion winner, same-route cancelled Result, zero reward, Long cadence preservation, recovery fixtures and device guide. Owner/formal device evidence and exact commit SHA remain pending. |
 | 0.8.0 | 2026-09-10 | Codex | Recorded owner approval of US-07-04 Option A confirmations and Epic `US0700-CONFIRM-03/04`; opened US-07-04 implementation from exact SHA `b2227cdb7add682f8e49da556f271744da31d62d`. |

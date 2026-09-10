@@ -16,7 +16,12 @@ export type BreakStartReviewScenario =
   | 'break_start_long_due'
   | 'break_start_preview_changes'
   | 'break_start_write_failure_once'
-  | 'break_start_active_conflict';
+  | 'break_start_active_conflict'
+  | 'break_side_effect_fast_notification'
+  | 'break_side_effect_permission_denied'
+  | 'break_side_effect_schedule_failure_once'
+  | 'break_side_effect_cancel_failure_once'
+  | 'break_side_effect_queue_failure_once';
 
 type BreakStartSessions = Pick<SessionRepository,
 'findById' | 'findByIdInTransaction' | 'findActiveInTransaction' |
@@ -38,6 +43,11 @@ const scenarios = new Set<BreakStartReviewScenario>([
   'break_start_preview_changes',
   'break_start_write_failure_once',
   'break_start_active_conflict',
+  'break_side_effect_fast_notification',
+  'break_side_effect_permission_denied',
+  'break_side_effect_schedule_failure_once',
+  'break_side_effect_cancel_failure_once',
+  'break_side_effect_queue_failure_once',
 ]);
 
 export const resolveBreakStartReviewScenario = (
@@ -49,7 +59,7 @@ export const resolveBreakStartReviewScenario = (
     : undefined;
 
 export const breakStartReviewDatabaseName = (scenario: BreakStartReviewScenario): string =>
-  `pixeldoro-us-07-02-${scenario}.db`;
+  `pixeldoro-us-${scenario.startsWith('break_side_effect_') ? '07-05' : '07-02'}-${scenario}.db`;
 
 const focusCountFor = (scenario: BreakStartReviewScenario): number =>
   scenario === 'break_start_long_due' || scenario === 'break_start_preview_changes' ? 4 : 1;

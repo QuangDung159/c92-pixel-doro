@@ -1,6 +1,7 @@
 # US-07-04 — Break cancel và exact terminal Result quick smoke
 
-Status: `OWNER_QUICK_UI_FAIL_PET_CUTOFF_FIX_RETEST_PENDING`. Formal tester: `NOT_RUN`.
+Status: `OWNER_QUICK_UI_SMOKE_REPORTED_PASS`. Owner confirmed 2026-09-10: không crash, hoạt động
+đúng kỳ vọng sau Pet crop fix. Formal tester: `NOT_RUN`.
 
 Ghi `<implementation-sha>`, platform/device/OS, build, fixture, thời gian và PASS/FAIL/BLOCKED/NOT_RUN.
 Fixtures chỉ dùng database disposable prefix `pixeldoro-us-07-04-`; không ghi vào `pixeldoro.db`.
@@ -83,6 +84,7 @@ pnpm start --clear
 
 | Platform/device/OS | Fixture | Scenario | Result | Artifact/notes |
 |---|---|---|---|---|
+| `Owner report; metadata not recorded` | `Quick UI smoke after Pet crop fix` | Stability + expected US-07-04 behavior | `PASS` | 2026-09-10: no crash, works as expected; không thay structured/formal matrix. |
 | `<fill>` | `break_cancel_short` | Modal/dismiss/cancel/exact Result/Back | `NOT_RUN` | `<fill>` |
 | `<fill>` | `break_cancel_long` | Long cancel/cadence | `NOT_RUN` | `<fill>` |
 | `<fill>` | `break_cancel_write_failure_once` | Write failure/Retry | `NOT_RUN` | `<fill>` |

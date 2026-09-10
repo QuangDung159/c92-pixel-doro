@@ -2,9 +2,10 @@ import { describe, expect, it, vi } from 'vitest';
 
 import type {
   AnalyticsQueue,
-  FocusCompletionNotificationInput,
+  BreakCompletionNotificationPort,
   FocusCompletionNotificationPort,
   FocusNotificationResponseSource,
+  SessionCompletionNotificationInput,
   ResetNotificationCleanupPort,
 } from '@/application';
 import { createStandardFocusSideEffectReviewFixture } from './standard-focus-side-effect-review-fixture';
@@ -13,14 +14,15 @@ const notifications = () => ({
   prepare: vi.fn(async () => ({ ok: true as const, value: undefined })),
   readPermission: vi.fn(async () => ({ ok: true as const, value: 'allowed' as const })),
   requestPermission: vi.fn(async () => ({ ok: true as const, value: 'allowed' as const })),
-  ensure: vi.fn(async (_input: FocusCompletionNotificationInput) =>
+  ensure: vi.fn(async (_input: SessionCompletionNotificationInput) =>
     ({ ok: true as const, value: 'scheduled' as const })),
   cancel: vi.fn(async () => ({ ok: true as const, value: 'cancelled' as const })),
   readInitial: vi.fn(async () => null),
   subscribe: vi.fn(async () => () => undefined),
   clearInitial: vi.fn(async () => undefined),
   cancelKnownSession: vi.fn(async () => ({ ok: true as const, value: undefined })),
-}) satisfies FocusCompletionNotificationPort & FocusNotificationResponseSource &
+}) satisfies FocusCompletionNotificationPort & BreakCompletionNotificationPort &
+  FocusNotificationResponseSource &
   ResetNotificationCleanupPort;
 
 const queue = (): AnalyticsQueue => ({
@@ -32,6 +34,26 @@ const queue = (): AnalyticsQueue => ({
 });
 
 describe('standard focus side-effect review fixture', () => {
+  it('accelerates an owned Break notification without changing its typed identity', async () => {
+    const delegate = notifications();
+    const fixture = createStandardFocusSideEffectReviewFixture(
+      'break_side_effect_fast_notification', true, delegate, queue(),
+    );
+    const before = Date.now();
+    await fixture?.notifications.ensure({
+      kind: 'break_completion', operationKey: 'break-complete:break-1',
+      sessionId: 'break-1', endsAt: 9_999_999_999_999, soundEnabled: true,
+      breakType: 'short_break',
+    });
+    expect(delegate.ensure).toHaveBeenCalledWith(expect.objectContaining({
+      kind: 'break_completion', operationKey: 'break-complete:break-1',
+      breakType: 'short_break', endsAt: expect.any(Number),
+    }));
+    const scheduled = vi.mocked(delegate.ensure).mock.calls[0]?.[0];
+    expect(scheduled?.endsAt).toBeGreaterThanOrEqual(before + 30_000);
+    expect(scheduled?.endsAt).toBeLessThanOrEqual(Date.now() + 30_000);
+  });
+
   it('keeps review hooks unavailable outside a development gate', () => {
     expect(createStandardFocusSideEffectReviewFixture(
       'standard_side_effect_fast_notification', false, notifications(), queue(),
@@ -46,6 +68,7 @@ describe('standard focus side-effect review fixture', () => {
     expect(fixture).toBeDefined();
     const before = Date.now();
     await fixture?.notifications.ensure({
+      kind: 'standard_focus_completion',
       operationKey: 'standard-focus-complete:focus-1',
       sessionId: 'focus-1', endsAt: 9_999_999_999_999, soundEnabled: true,
     });
@@ -64,6 +87,7 @@ describe('standard focus side-effect review fixture', () => {
       'standard_side_effect_schedule_failure_once', true, delegate, queue(),
     );
     const input = {
+      kind: 'standard_focus_completion' as const,
       operationKey: 'standard-focus-complete:focus-1',
       sessionId: 'focus-1', endsAt: Date.now() + 60_000, soundEnabled: true,
     };

@@ -11,6 +11,7 @@ export interface BreakLifecycleControllerDependencies {
   readonly outcome: BreakOutcomeController;
   readonly petCompanion: PetCompanionController;
   readonly session: BreakSessionController;
+  readonly onReconciled?: (outcome: ReconcileBreakOutcome) => void;
   reconcile(sessionId?: string): Promise<ApplicationResult<ReconcileBreakOutcome, ReconcileBreakError>>;
 }
 
@@ -46,6 +47,9 @@ export class BreakLifecycleController {
     }
     if (this.disposed) return;
     const value = result.value;
+    try { this.dependencies.onReconciled?.(value); } catch {
+      // Best-effort side effects cannot change durable reconciliation truth.
+    }
     if (value.outcome === 'completed') {
       this.dependencies.outcome.publishCompleted(value.sessionId, value.resolvedAt);
       await Promise.all([

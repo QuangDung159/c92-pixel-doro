@@ -29,6 +29,7 @@ import {
   type PetVisualDiagnosticsPort,
   type RecoveryDiagnosticsPort,
   type ResetNotificationCleanupPort,
+  type BreakCompletionNotificationPort,
   type FocusCompletionNotificationPort,
   type FocusNotificationResponseSource,
   type StandardFocusNotificationNavigationController,
@@ -42,6 +43,7 @@ import {
   CompleteOnboardingTrialUseCase,
   LoadOnboardingTrialResultUseCase,
   LoadStandardFocusResultUseCase,
+  LoadBreakSessionUseCase,
   SessionCommandCoordinator,
   RecordStrictBackgroundUseCase,
   ReconcileStandardFocusUseCase,
@@ -107,6 +109,7 @@ import { ActiveSessionStartupReconciliationAdapter } from './startup/active-sess
 import { createStandardFocusSlice } from './standard-focus/create-standard-focus-slice';
 import { createBreakRecommendationSlice } from './break/create-break-recommendation-slice';
 import { createBreakStartSlice } from './break/create-break-start-slice';
+import { createBreakSideEffects } from './break/create-break-side-effects';
 import { createStandardFocusSideEffects } from './standard-focus/create-standard-focus-side-effects';
 
 const PIXELDORO_DATABASE_NAME = 'pixeldoro.db';
@@ -127,6 +130,7 @@ export interface CreateMobileApplicationOptions {
   readonly firstUseInstallation?: FirstUseInstallationReader;
   readonly firstUseSessions?: FirstUseSessionReader;
   readonly focusNotifications?: FocusCompletionNotificationPort &
+    BreakCompletionNotificationPort &
     FocusNotificationResponseSource & ResetNotificationCleanupPort;
   readonly petCompanionSessions?: PetCompanionSessionReader;
   readonly petVisualDiagnostics?: PetVisualDiagnosticsPort;
@@ -201,7 +205,8 @@ export const createMobileApplication = (
   });
   const standardFocusSideEffectReviewFixture =
     createStandardFocusSideEffectReviewFixture(
-      process.env.EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE,
+      process.env.EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE ??
+        process.env.EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE,
       reviewFixturesEnabled,
       baseFocusNotifications,
       persistence.analyticsQueue,
@@ -233,6 +238,9 @@ export const createMobileApplication = (
   const breakLifecycleRef: { current?: BreakLifecycleController } = {};
   const standardFocusSideEffectsRef: {
     current?: ReturnType<typeof createStandardFocusSideEffects>['coordinator'];
+  } = {};
+  const breakSideEffectsRef: {
+    current?: ReturnType<typeof createBreakSideEffects>['coordinator'];
   } = {};
   const notificationNavigationRef: {
     current?: StandardFocusNotificationNavigationController;
@@ -284,6 +292,7 @@ export const createMobileApplication = (
     sessions: breakRunningReviewFixture?.sessions ?? persistence.sessions,
     transaction,
   });
+  const breakSessions = breakRunningReviewFixture?.sessions ?? persistence.sessions;
   const startOnboardingTrialUseCase = new StartOnboardingTrialUseCase({
     calendar: localCalendar,
     clock,
@@ -401,6 +410,9 @@ export const createMobileApplication = (
           reconcile: () => startupBreakReconciliation.execute(),
           publishCompleted: (sessionId, resolvedAt) =>
             breakOutcome.publishCompleted(sessionId, resolvedAt),
+          ensureRunning: (session) => breakSideEffectsRef.current?.ensureRunning(session),
+          afterTerminal: (sessionId, status, freshness) =>
+            breakSideEffectsRef.current?.afterTerminal(sessionId, status, freshness),
         },
       ),
   });
@@ -449,6 +461,13 @@ export const createMobileApplication = (
     scheduler: petFeedbackScheduler,
   });
   const petVisual = new PetVisualController(petCompanion, petTerminalFeedback);
+  const breakSideEffects = createBreakSideEffects({
+    analyticsQueue: coordinatedSideEffectAnalyticsQueue,
+    notifications: focusNotifications,
+    readBootstrap: bootstrap.getSnapshot,
+    sessions: breakSessions,
+  });
+  breakSideEffectsRef.current = breakSideEffects.coordinator;
   const breakStart = createBreakStartSlice({
     appInitiallyVisible: appLifecycle.getCurrentState() === 'active',
     calendar: localCalendar,
@@ -466,7 +485,13 @@ export const createMobileApplication = (
     onDeadlineReached: (sessionId) => {
       void breakLifecycleRef.current?.reconcileNow(sessionId);
     },
-    onStarted: () => breakOutcome.reset(),
+    onStarted: (session) => {
+      breakOutcome.reset();
+      breakSideEffects.coordinator.afterStarted(session);
+    },
+    onTerminal: (outcome) => breakSideEffects.coordinator.afterTerminal(
+      outcome.sessionId, outcome.outcome, outcome.freshness,
+    ),
   });
   const breakLifecycle = new BreakLifecycleController({
     criticalRecovery: bootstrap,
@@ -474,6 +499,17 @@ export const createMobileApplication = (
     petCompanion,
     session: breakStart.session,
     reconcile: (sessionId) => startupBreakReconciliation.execute(sessionId),
+    onReconciled: (outcome) => {
+      if (outcome.outcome === 'completed') {
+        breakSideEffects.coordinator.afterTerminal(
+          outcome.sessionId, 'completed', outcome.freshness,
+        );
+      } else if (outcome.outcome === 'terminal_winner') {
+        breakSideEffects.coordinator.afterTerminal(
+          outcome.sessionId, 'cancelled', 'existing_terminal',
+        );
+      }
+    },
   }, appLifecycle.getCurrentState());
   breakLifecycleRef.current = breakLifecycle;
   const requestStandardOutcomeFeedback = (): void => {
@@ -506,6 +542,32 @@ export const createMobileApplication = (
         notificationNavigationRef.current?.publish('running', sessionId);
       } else {
         notificationNavigationRef.current?.publish('home', sessionId);
+      }
+    },
+    onBreakNotificationSession: async (sessionId) => {
+      await bootstrap.boot();
+      if (bootstrap.getSnapshot().status !== 'ready') return;
+      const reconciled = await startupBreakReconciliation.execute(sessionId);
+      if (!reconciled.ok) {
+        notificationNavigationRef.current?.publish('home', sessionId, 'break');
+        return;
+      }
+      if (reconciled.value.outcome === 'completed') {
+        breakSideEffects.coordinator.afterTerminal(
+          sessionId, 'completed', reconciled.value.freshness,
+        );
+      } else if (reconciled.value.outcome === 'terminal_winner') {
+        breakSideEffects.coordinator.afterTerminal(
+          sessionId, 'cancelled', 'existing_terminal',
+        );
+      }
+      const loaded = await new LoadBreakSessionUseCase(breakSessions).execute(sessionId);
+      if (loaded.ok) {
+        notificationNavigationRef.current?.publish(
+          loaded.value.status === 'running' ? 'running' : 'result', sessionId, 'break',
+        );
+      } else {
+        notificationNavigationRef.current?.publish('home', sessionId, 'break');
       }
     },
   });
@@ -1065,6 +1127,7 @@ export const createMobileApplication = (
         standardFocusLifecycle?.dispose();
         standardFocusOutcome.dispose();
         standardFocusSideEffects.coordinator.dispose();
+        breakSideEffects.coordinator.dispose();
         standardFocusSideEffects.navigation.dispose();
         onboardingTrialRunning.dispose();
         onboardingTrialHandoff.dispose();

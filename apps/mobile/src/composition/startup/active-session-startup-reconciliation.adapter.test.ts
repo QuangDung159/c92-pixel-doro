@@ -65,6 +65,7 @@ describe('ActiveSessionStartupReconciliationAdapter', () => {
 
   it('accepts a running Break and publishes a fresh completed Break identity', async () => {
     const publishCompleted = vi.fn();
+    const afterTerminal = vi.fn();
     let active: RunningSessionRecord | null = runningBreak();
     const adapter = new ActiveSessionStartupReconciliationAdapter(
       { reconcileAtStartup: async () => ({ ok: true, value: { durableDataChanged: false } }) },
@@ -77,11 +78,31 @@ describe('ActiveSessionStartupReconciliationAdapter', () => {
             resolvedAt: 301_000, freshness: 'fresh_commit' as const } };
         },
         publishCompleted,
+        afterTerminal,
       },
     );
     expect(await adapter.reconcileAtStartup()).toEqual({
       ok: true, value: { durableDataChanged: true },
     });
     expect(publishCompleted).toHaveBeenCalledWith('break-1', 301_000);
+    expect(afterTerminal).toHaveBeenCalledWith('break-1', 'completed', 'fresh_commit');
+  });
+
+  it('ensures a running Break notification at startup without creating terminal work', async () => {
+    const ensureRunning = vi.fn();
+    const active = runningBreak();
+    const adapter = new ActiveSessionStartupReconciliationAdapter(
+      { reconcileAtStartup: async () => ({ ok: true, value: { durableDataChanged: false } }) },
+      { findActive: async () => ({ ok: true, value: active }) },
+      undefined,
+      {
+        reconcile: async () => ({ ok: true, value: {
+          outcome: 'running' as const, sessionId: 'break-1',
+        } }),
+        publishCompleted: vi.fn(), ensureRunning,
+      },
+    );
+    expect(await adapter.reconcileAtStartup()).toMatchObject({ ok: true });
+    expect(ensureRunning).toHaveBeenCalledWith(active);
   });
 });

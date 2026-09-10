@@ -12,7 +12,7 @@ export type BreakCancelResult =
 
 export interface BreakCancelControllerDependencies {
   cancel(sessionId: string): Promise<ApplicationResult<CancelBreakOutcome, CancelBreakError>>;
-  afterCommitted(sessionId: string): Promise<void>;
+  afterCommitted(outcome: CancelBreakOutcome): Promise<void>;
 }
 
 export class BreakCancelController {
@@ -56,7 +56,7 @@ export class BreakCancelController {
           ? 'STATE_INVALID' : 'CANCEL_UNAVAILABLE' });
         return { ok: false };
       }
-      await this.dependencies.afterCommitted(result.value.sessionId).catch(() => undefined);
+      await this.dependencies.afterCommitted(result.value).catch(() => undefined);
       if (!this.disposed) this.publish({ status: 'idle' });
       return { ok: true, sessionId: result.value.sessionId,
         terminalStatus: result.value.outcome };

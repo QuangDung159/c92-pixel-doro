@@ -28,3 +28,13 @@ export {
   type BreakCancelProjection,
   type BreakCancelResult,
 } from './break-cancel.controller';
+export {
+  BreakAnalyticsRecorder,
+  type BreakAnalyticsRecorderDependencies,
+  type BreakAnalyticsRecorderPort,
+} from './break-analytics.recorder';
+export {
+  BreakSideEffectCoordinator,
+  type BreakSideEffectCoordinatorDependencies,
+  type BreakSideEffectSettings,
+} from './break-side-effect.coordinator';

@@ -3,8 +3,10 @@ import {
   LoadBreakSessionUseCase,
   StartBreakUseCase,
   type ClockPort,
+  type CancelBreakOutcome,
   type IdPort,
   type LocalCalendarPort,
+  type RunningSessionRecord,
   type PetCompanionController,
   type PetTerminalFeedbackController,
   type SessionCommandCoordinatorPort,
@@ -38,7 +40,8 @@ export interface CreateBreakStartSliceDependencies {
   readonly scheduler: TickScheduler;
   readonly appInitiallyVisible: boolean;
   readonly onDeadlineReached?: (sessionId: string) => void;
-  readonly onStarted?: () => void;
+  readonly onStarted?: (session: RunningSessionRecord) => void;
+  readonly onTerminal?: (outcome: CancelBreakOutcome) => void;
 }
 
 const mapError = (code: string): BreakStartUiErrorCode => {
@@ -67,8 +70,8 @@ export const createBreakStartSlice = (dependencies: CreateBreakStartSliceDepende
         ? { ok: true, session: result.value.session }
         : { ok: false, error: { code: mapError(result.error.code) } };
     },
-    afterCommitted: async () => {
-      dependencies.onStarted?.();
+    afterCommitted: async (session) => {
+      dependencies.onStarted?.(session);
       dependencies.petTerminalFeedback.discardActive();
       await dependencies.petCompanion.refresh();
     },
@@ -94,10 +97,11 @@ export const createBreakStartSlice = (dependencies: CreateBreakStartSliceDepende
         kind: 'cancel_break_error' as const, code: 'BREAK_CANCEL_TRANSACTION_FAILED' as const,
       } };
     },
-    afterCommitted: async (sessionId) => {
+    afterCommitted: async (outcome) => {
+      dependencies.onTerminal?.(outcome);
       dependencies.petTerminalFeedback.discardActive();
       await Promise.all([
-        session.refresh(sessionId),
+        session.refresh(outcome.sessionId),
         dependencies.petCompanion.refresh().catch(() => undefined),
       ]);
     },

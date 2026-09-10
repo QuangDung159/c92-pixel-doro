@@ -34,6 +34,20 @@ const breakRunningCompletionFlow = await readFile(
 const breakCancelResultFlow = await readFile(
   `${deviceDirectory}break-cancel-result-smoke.md`, 'utf8',
 );
+const epic07ExitFlow = await readFile(`${deviceDirectory}epic-07-exit-smoke.md`, 'utf8');
+for (const evidence of [
+  'break_side_effect_fast_notification', 'break_side_effect_permission_denied',
+  'break_side_effect_schedule_failure_once', 'break_side_effect_cancel_failure_once',
+  'break_side_effect_queue_failure_once', 'pixeldoro-us-07-05-',
+  'Phiên nghỉ đã kết thúc', 'Nghỉ ngắn đã xong. Mèo Dev đang chờ bạn quay lại.',
+  'break-complete:<sessionId>', 'break-completion', 'VoiceOver', 'TalkBack',
+  'Reduce Motion', 'Airplane mode', '<implementation-sha>', 'NOT_RUN',
+  'unset EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE',
+]) {
+  if (!epic07ExitFlow.includes(evidence)) {
+    throw new Error(`EPIC-07 exit flow is missing: ${evidence}`);
+  }
+}
 for (const evidence of [
   'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_cancel_short',
   'EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_cancel_long',

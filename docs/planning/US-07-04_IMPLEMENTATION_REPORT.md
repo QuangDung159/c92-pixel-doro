@@ -1,18 +1,18 @@
 ---
 document_id: PIXELDORO_US_07_04_IMPLEMENTATION_REPORT
 title: PixelDoro Mobile MVP — US-07-04 Implementation Report
-version: 0.1.1
-status: IMPLEMENTED_COMMITTED_UI_FIX_RETEST_PENDING
-implementation_status: IMPLEMENTED_COMMITTED_WITH_WORKTREE_UI_FIX
+version: 0.2.0
+status: DONE_OWNER_ACCEPTED_QUICK_UI
+implementation_status: COMMITTED
 date: 2026-09-10
 owner: Dũng Lư
 language: vi
 branch: feats/epic-07
 implementation_start_sha: b2227cdb7add682f8e49da556f271744da31d62d
-exact_implementation_sha: 7cb8310642a80876221c015198b3f51d1251af15
-ui_fix_candidate: WORKTREE_NOT_COMMITTED
-manual_device_status: OWNER_QUICK_UI_FAIL_PET_CUTOFF_FIX_RETEST_PENDING
-owner_quick_ui_status: FAIL_PET_CUTOFF_FIX_RETEST_PENDING
+exact_implementation_sha: a3cafa39f6b2882b126562e6c8f54eb186887cc2
+ui_fix_sha: a3cafa39f6b2882b126562e6c8f54eb186887cc2
+manual_device_status: OWNER_QUICK_UI_SMOKE_REPORTED_PASS
+owner_quick_ui_status: PASS_NO_CRASH_WORKS_AS_EXPECTED
 formal_tester_status: NOT_RUN
 schema_change: NONE
 dependency_change: NONE
@@ -37,9 +37,10 @@ US-07-04 đã được triển khai theo toàn bộ Option A owner duyệt:
 - `breaking` sprite mask loại top-edge artifact trên cả playback và Reduce Motion still;
 - không schema, dependency, native, notification hoặc analytics change.
 
-Implementation đã commit/push tại exact SHA `7cb8310642a80876221c015198b3f51d1251af15`.
-Owner-reported Pet top-edge fix hiện ở worktree, chưa commit; automated/full quality và iOS/Android
-exports PASS. Owner retest, structured accessibility/platform matrix và formal tester vẫn `NOT_RUN`.
+Final implementation gồm Pet top-edge fix đã commit/push tại exact SHA
+`a3cafa39f6b2882b126562e6c8f54eb186887cc2`. Automated/full quality và iOS/Android exports PASS.
+Owner xác nhận quick UI không crash và hoạt động đúng kỳ vọng ngày 2026-09-10; structured
+accessibility/platform matrix và formal tester vẫn `NOT_RUN`.
 
 ## 1. Delivered architecture
 
@@ -88,7 +89,7 @@ Guide: `apps/mobile/test/device/break-cancel-result-smoke.md`.
 | Evidence class | Status |
 |---|---|
 | Automated | PASS |
-| Owner quick UI | `FAIL` — top-edge Pet artifact reported; fix ready, retest pending |
+| Owner quick UI | `PASS` — no crash, works as expected after Pet crop fix, 2026-09-10 |
 | iOS device/simulator matrix | `NOT_RUN` |
 | Android device/emulator matrix | `NOT_RUN` |
 | VoiceOver/TalkBack/largest text/Reduce Motion | `NOT_RUN` |
@@ -100,12 +101,13 @@ Không migration/schema/package/lockfile/native/generated artifact thay đổi. 
 không import prototype, reward/profile/notification/analytics port. US-07-05 vẫn sở hữu notification,
 analytics và Epic exit accessibility matrix.
 
-Gate tiếp theo: owner chạy lại quick UI smoke Short cancel tối thiểu và báo PASS/FAIL cho Pet crop;
-sau PASS mới cập nhật acceptance và commit fix candidate.
+US-07-04 closure gate đã đạt ở mức owner quick UI acceptance. US-07-05 planning được mở; production
+coding vẫn chờ owner duyệt plan/confirmations.
 
 ## 5. Change log
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.2.0 | 2026-09-10 | Codex | Recorded final exact SHA `a3cafa39f6b2882b126562e6c8f54eb186887cc2`, owner quick UI PASS after Pet crop fix and US-07-04 acceptance; opened US-07-05 planning while formal/structured evidence remains NOT_RUN. |
 | 0.1.1 | 2026-09-10 | Codex | Fixed owner-reported top-edge pixels in the breaking animation using manifest crop metadata shared by playback/still; full quality now passes 148 files / 800 tests. |
 | 0.1.0 | 2026-09-10 | Codex | Recorded approved Option A implementation, automated/full quality, both platform exports, unchanged 19/21 Doctor baseline and honest owner/formal NOT_RUN status. |

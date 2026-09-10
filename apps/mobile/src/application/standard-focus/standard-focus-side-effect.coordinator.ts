@@ -7,10 +7,13 @@ import type {
 
 import type {
   FocusCompletionNotificationPort,
-  FocusNotificationResponse,
   FocusNotificationResponseSource,
+  SessionNotificationResponse,
 } from '../notifications';
 import {
+  BREAK_NOTIFICATION_KIND,
+  STANDARD_FOCUS_NOTIFICATION_KIND,
+  breakNotificationKey,
   isValidStandardFocusNotificationSession,
   standardFocusNotificationKey,
 } from '../notifications';
@@ -31,6 +34,7 @@ export interface StandardFocusSideEffectCoordinatorDependencies {
     sessionId: string,
   ) => Promise<ApplicationResult<LoadStandardFocusResultOutcome, LoadStandardFocusResultError>>;
   readonly onNotificationSession: (sessionId: string) => Promise<void>;
+  readonly onBreakNotificationSession?: (sessionId: string) => Promise<void>;
 }
 
 export class StandardFocusSideEffectCoordinator {
@@ -110,6 +114,7 @@ export class StandardFocusSideEffectCoordinator {
     }
     if (!permission.ok || permission.value !== 'allowed' || this.disposed) return;
     await this.dependencies.notifications.ensure({
+      kind: STANDARD_FOCUS_NOTIFICATION_KIND,
       operationKey: standardFocusNotificationKey(session.id),
       sessionId: session.id,
       endsAt: session.endsAt,
@@ -135,12 +140,15 @@ export class StandardFocusSideEffectCoordinator {
     }
   }
 
-  private async handleResponse(response: FocusNotificationResponse): Promise<void> {
+  private async handleResponse(response: SessionNotificationResponse): Promise<void> {
     if (
       this.disposed ||
       response.responseId.trim().length === 0 ||
       response.sessionId.trim().length === 0 ||
-      response.operationKey !== standardFocusNotificationKey(response.sessionId) ||
+      (response.kind === STANDARD_FOCUS_NOTIFICATION_KIND &&
+        response.operationKey !== standardFocusNotificationKey(response.sessionId)) ||
+      (response.kind === BREAK_NOTIFICATION_KIND &&
+        response.operationKey !== breakNotificationKey(response.sessionId)) ||
       this.handledResponseIds.has(response.responseId)
     ) return;
     this.handledResponseIds.add(response.responseId);
@@ -149,7 +157,11 @@ export class StandardFocusSideEffectCoordinator {
       if (typeof oldest === 'string') this.handledResponseIds.delete(oldest);
     }
     try {
-      await this.dependencies.onNotificationSession(response.sessionId);
+      if (response.kind === STANDARD_FOCUS_NOTIFICATION_KIND) {
+        await this.dependencies.onNotificationSession(response.sessionId);
+      } else {
+        await this.dependencies.onBreakNotificationSession?.(response.sessionId);
+      }
       await this.dependencies.responses.clearInitial();
     } catch {
       // A later tap/relaunch may retry through durable reconciliation.

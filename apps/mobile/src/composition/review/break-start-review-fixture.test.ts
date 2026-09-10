@@ -15,6 +15,10 @@ describe('Break start review fixture', () => {
       .toBe('break_start_long_due');
     expect(breakStartReviewDatabaseName('break_start_short'))
       .toBe('pixeldoro-us-07-02-break_start_short.db');
+    expect(resolveBreakStartReviewScenario('break_side_effect_fast_notification', true))
+      .toBe('break_side_effect_fast_notification');
+    expect(breakStartReviewDatabaseName('break_side_effect_fast_notification'))
+      .toBe('pixeldoro-us-07-05-break_side_effect_fast_notification.db');
   });
 
   it('fails only the first Break insert then delegates', async () => {
