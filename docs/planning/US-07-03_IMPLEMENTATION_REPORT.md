@@ -1,18 +1,18 @@
 ---
 document_id: PIXELDORO_US_07_03_IMPLEMENTATION_REPORT
 title: PixelDoro Mobile MVP — US-07-03 Implementation Report
-version: 0.1.1
-status: IMPLEMENTED_AUTOMATED_PASS_OWNER_REVIEW_PENDING
-implementation_status: IMPLEMENTED_AUTOMATED_PASS
+version: 0.2.0
+status: DONE_OWNER_ACCEPTED_QUICK_UI
+implementation_status: DONE_OWNER_ACCEPTED
 date: 2026-09-09
 owner: Dũng Lư
 language: vi
 branch: feats/epic-07
 planning_baseline_sha: fc322028281cbca1ca0ec48772c195548201217a
 implementation_start_sha: b6339899003f88e7554b6ea301229af3950d3493
-exact_implementation_sha: WORKTREE_CANDIDATE_NOT_COMMITTED
-manual_device_status: NOT_RUN
-owner_quick_ui_status: NOT_RUN
+exact_implementation_sha: d51e1c23683c770dba5f4a0791d29167cb84bd96
+manual_device_status: OWNER_QUICK_UI_SMOKE_REPORTED
+owner_quick_ui_status: PASS_NO_CRASH_WORKS_AS_EXPECTED
 formal_tester_status: NOT_RUN
 schema_change: NONE
 dependency_change: NONE
@@ -37,8 +37,9 @@ US-07-03 đã được triển khai theo toàn bộ Option A owner duyệt ngày
 - read/write/corrupt failure đi qua retry/recovery mà không dựng terminal state giả;
 - không thêm Cancel, Pause, Strict, notification, analytics, schema, dependency hoặc native change.
 
-Candidate hiện ở worktree, chưa commit. Automated/full quality và iOS/Android JS export PASS; owner
-quick UI, structured device/accessibility và formal tester vẫn `NOT_RUN`.
+Candidate đã commit/push tại exact SHA `d51e1c23683c770dba5f4a0791d29167cb84bd96`.
+Automated/full quality và iOS/Android JS export PASS. Owner xác nhận quick UI không crash, hoạt động
+đúng kỳ vọng ngày 2026-09-09; structured device/accessibility và formal tester vẫn `NOT_RUN`.
 
 ## 1. Delivered architecture
 
@@ -109,7 +110,7 @@ Guide: `apps/mobile/test/device/break-running-completion-smoke.md`.
 | Evidence class | Status |
 |---|---|
 | Automated | PASS |
-| Owner quick UI | `NOT_RUN` |
+| Owner quick UI | `PASS` — no crash, works as expected, 2026-09-09 |
 | iOS device/simulator matrix | `NOT_RUN` |
 | Android device/emulator matrix | `NOT_RUN` |
 | VoiceOver/TalkBack/largest text/Reduce Motion | `NOT_RUN` |
@@ -136,19 +137,20 @@ Exports/component tests không được dùng thay manual/device accessibility e
 - [x] Read/write/corrupt recovery has no guessed terminal state.
 - [x] No Cancel/Pause/Strict/notification/analytics/schema/dependency/native expansion.
 - [x] Full quality and both platform exports pass.
-- [ ] Owner quick UI smoke completed.
-- [ ] Exact implementation commit SHA recorded.
-- [ ] Owner accepts US-07-03 and authorizes US-07-04 planning.
+- [x] Owner quick UI smoke completed: no crash, works as expected.
+- [x] Exact implementation commit SHA recorded.
+- [x] Owner accepts US-07-03 and authorizes US-07-04 planning.
 
 ## 6. Next gate
 
-Owner chạy quick UI theo device guide và phản hồi PASS/FAIL. Chỉ sau explicit owner acceptance mới
-đổi Story sang done, ghi exact committed SHA và mở US-07-04 planning. Structured platform/accessibility
-matrix và formal tester tiếp tục được theo dõi riêng.
+US-07-03 closure gate đã đạt ở mức owner quick UI acceptance. US-07-04 owner-gated planning được mở;
+production coding vẫn chờ owner duyệt plan/confirmations. Structured platform/accessibility matrix và
+formal tester tiếp tục được theo dõi riêng.
 
 ## 7. Change log
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.2.0 | 2026-09-09 | Codex | Recorded committed/pushed exact SHA, owner quick UI PASS (no crash, works as expected), Story acceptance and authorization to open US-07-04 planning; formal/structured evidence remain NOT_RUN. |
 | 0.1.1 | 2026-09-09 | Codex | Corrected accelerated fixture startup clock after owner smoke exposed `STARTUP_RECONCILIATION_FAILED` on rapid restart; added existing-database startup reconciliation and acceleration continuity regression evidence. Full quality remains 772/772 PASS. |
 | 0.1.0 | 2026-09-09 | Codex | Recorded Option A implementation, 772-test quality pass, both platform exports, unchanged 19/21 Doctor baseline and honest owner/formal NOT_RUN status. |

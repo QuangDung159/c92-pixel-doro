@@ -1,22 +1,25 @@
 ---
 document_id: PIXELDORO_US_07_03_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-07-03 Break Timestamp Countdown, Relaunch và Completion Plan
-version: 0.3.1
-status: IMPLEMENTED_AUTOMATED_PASS_OWNER_REVIEW_PENDING
-implementation_status: IMPLEMENTED_AUTOMATED_PASS
+version: 0.4.0
+status: DONE_OWNER_ACCEPTED_QUICK_UI
+implementation_status: DONE_OWNER_ACCEPTED
 date: 2026-09-09
 last_updated: 2026-09-09
 owner: Dũng Lư
 reviewer: Dũng Lư
 reviewer_role: Tech Lead/Product Owner
+approved_by: Dũng Lư
+approved_at: 2026-09-09
 language: vi
 branch: feats/epic-07
 planning_baseline_sha: fc322028281cbca1ca0ec48772c195548201217a
 implementation_start_sha: b6339899003f88e7554b6ea301229af3950d3493
-exact_implementation_sha: WORKTREE_CANDIDATE_NOT_COMMITTED
+exact_implementation_sha: d51e1c23683c770dba5f4a0791d29167cb84bd96
 previous_story_sha: fc322028281cbca1ca0ec48772c195548201217a
 previous_story_acceptance: DONE_OWNER_ACCEPTED_QUICK_UI
-manual_device_status: NOT_RUN
+manual_device_status: OWNER_QUICK_UI_SMOKE_REPORTED
+owner_acceptance_status: ACCEPTED_TO_OPEN_US_07_04_PLANNING
 formal_tester_status: NOT_RUN
 schema_change: NONE_APPROVED
 dependency_change: NONE_APPROVED
@@ -67,11 +70,12 @@ deadline, Break commit `completed` đúng một lần, Pet trở về `idle`, XP
 **Dependency:** US-07-02 đã commit/push tại
 `fc322028281cbca1ca0ec48772c195548201217a` và được owner quick UI accepted ngày 2026-09-09.
 
-**Planning status:** `APPROVED_READY_FOR_IMPLEMENTATION`.
+**Planning status:** `DONE_OWNER_ACCEPTED_QUICK_UI`.
 
-**Implementation status:** `IMPLEMENTED_AUTOMATED_PASS`. Owner duyệt toàn bộ Option A cho
-`US0703-CONFIRM-01→10` ngày 2026-09-09; implementation hiện là worktree candidate chưa commit từ
-exact start SHA `b6339899003f88e7554b6ea301229af3950d3493`. Owner quick UI và formal test vẫn `NOT_RUN`.
+**Implementation status:** `DONE_OWNER_ACCEPTED`. Owner duyệt toàn bộ Option A cho
+`US0703-CONFIRM-01→10`, candidate đã commit/push tại exact SHA
+`d51e1c23683c770dba5f4a0791d29167cb84bd96`, và owner xác nhận quick UI không crash, hoạt động đúng
+kỳ vọng ngày 2026-09-09. Structured device/accessibility và formal test vẫn `NOT_RUN`.
 
 ### 0.1. Gate từ US-07-02
 
@@ -519,7 +523,7 @@ formal tester status remain separate.
 - [x] Corrupt/read/write/commit failure is recoverable without guessed state or fallback identity.
 - [x] No Cancel/notification/analytics/Pause/Strict behavior leaks into Story scope.
 - [x] No schema/dependency/native change.
-- [x] Full automated/platform/static gates pass; owner quick UI remains honestly `NOT_RUN`.
+- [x] Full automated/platform/static gates pass; owner quick UI PASS được ghi riêng với formal test.
 
 ## 12. Risks and controls
 
@@ -566,9 +570,9 @@ formal tester status remain separate.
 - [x] Both platform exports pass; Doctor warnings recorded truthfully.
 - [x] Exact running/completed Break route contains no prototype/fallback authority.
 - [x] No reward/profile/notification/analytics/Break-background write is reachable.
-- [x] Report/device guide/worktree candidate identity exist.
-- [x] Owner quick UI `NOT_RUN` is recorded separately from structured/formal evidence.
-- [ ] Owner explicitly accepts US-07-03 and authorizes US-07-04 planning.
+- [x] Report/device guide/exact committed SHA exist.
+- [x] Owner quick UI PASS is recorded separately from structured/formal evidence.
+- [x] Owner explicitly accepts US-07-03 and authorizes US-07-04 planning.
 
 ## 15. Owner confirmation gate — APPROVED
 
@@ -690,6 +694,7 @@ formal tester status remain separate.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.4.0 | 2026-09-09 | Codex | Recorded exact committed/pushed SHA `d51e1c23683c770dba5f4a0791d29167cb84bd96`, owner quick UI PASS (no crash, works as expected), US-07-03 closure and authorization to open owner-gated US-07-04 planning; structured/formal evidence remains NOT_RUN. |
 | 0.3.1 | 2026-09-09 | Codex | Fixed owner-smoke startup recovery on an existing accelerated fixture database: pre-prepare reconciliation now uses wall clock, virtual time starts only during seed/after prepare, and restart continuity has regression coverage. |
 | 0.3.0 | 2026-09-09 | Codex | Implemented all approved Option A decisions; recorded 772-test full-quality pass, iOS/Android exports, unchanged 19/21 Doctor baseline, isolated review fixtures/device guide and worktree candidate status. Owner quick UI/formal test remain NOT_RUN. |
 | 0.2.0 | 2026-09-09 | Codex | Recorded owner approval of Option A for confirmations 01–10; locked same-route completion, exact startup navigation, controller split, captured-now timestamps, no Break background write, one-second accessible ticks, recovery/freshness/fixture boundaries and no-schema/no-side-effect scope; opened implementation at exact SHA. |
@@ -703,5 +708,6 @@ Validation required for this planning turn:
 - [x] Only planning/evidence documents changed.
 - [x] No unrun automated/manual/formal evidence is marked PASS.
 
-**US-07-03 is implemented as an uncommitted worktree candidate with automated/platform gates PASS;
-owner quick UI and formal tester evidence remain `NOT_RUN`.**
+**US-07-03 is committed/pushed and owner accepted through quick UI at exact SHA
+`d51e1c23683c770dba5f4a0791d29167cb84bd96`; structured accessibility and formal tester evidence
+remain `NOT_RUN`.**

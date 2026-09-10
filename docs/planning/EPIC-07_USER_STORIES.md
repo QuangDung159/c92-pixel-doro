@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_07_USER_STORIES
 title: PixelDoro EPIC-07 — Break Experience và Long Break Cadence User Stories
-version: 0.6.0
+version: 0.7.0
 status: IN_PROGRESS
 date: 2026-09-08
 last_updated: 2026-09-09
@@ -15,13 +15,13 @@ authority: PLANNING
 product_truth: ../PIXELDORO_CORE_TRUTH.md
 epic_baseline: ./MVP_EPICS.md
 branch_audited: feats/epic-07
-baseline_head: fc322028281cbca1ca0ec48772c195548201217a
+baseline_head: d51e1c23683c770dba5f4a0791d29167cb84bd96
 epic_06_behavior_candidate: 458a8868ac0024e3b3d1eff64ccc26408a81b2e1
 epic_06_status: DONE_OWNER_ACCEPTED
-implementation_status: US_07_01_DONE_US_07_02_DONE_US_07_03_AUTOMATED_PASS_OWNER_REVIEW_PENDING
+implementation_status: US_07_01_DONE_US_07_02_DONE_US_07_03_DONE_US_07_04_PLANNING_OWNER_REVIEW
 formal_tester_status: NOT_RUN
 schema_change: NONE_APPROVED_FOR_US_07_02_US_07_03
-next_gate: US_07_03_OWNER_QUICK_UI_REVIEW
+next_gate: US_07_04_PLAN_AND_CONFIRMATIONS_OWNER_APPROVAL
 ---
 
 # EPIC-07 — Break Experience và Long Break Cadence
@@ -527,15 +527,19 @@ has no receipt/profile delta and cannot emit Celebrate/Bugged.
 - [ ] **Platforms/cleanup/evidence:** normal + accelerated path on iOS/Android; unset fixture; record
   status `NOT_RUN`/`PASS` per evidence class without upgrading simulator results to formal tester.
 
+Owner evidence recorded 2026-09-09: quick UI smoke `PASS` — no crash, works as expected. Platform,
+device/OS, accessibility and formal tester metadata were not supplied, so the detailed matrix above
+remains unchecked/`NOT_RUN` rather than being inferred from the owner smoke.
+
 ### 9.6. DoR, DoD, evidence và next gate
 
 - [x] **DoR:** US-07-02 accepted; startup ownership and recovery route documented in the owner-gated
   US-07-03 implementation plan.
-- [ ] **DoD:** automated timestamp/background/relaunch/completion/no-reward evidence passes and
-  report/guide exist; owner quick UI acceptance and exact committed SHA remain pending.
+- [x] **DoD:** automated timestamp/background/relaunch/completion/no-reward evidence passes;
+  report/guide/exact SHA exist; owner quick UI accepted.
 - [x] **Evidence files:** `US-07-03_IMPLEMENTATION_PLAN.md`, `US-07-03_IMPLEMENTATION_REPORT.md`,
   `apps/mobile/test/device/break-running-completion-smoke.md`.
-- [ ] **Gate sang US-07-04:** both Break types complete/reopen with zero reward and Standard/Trial
+- [x] **Gate sang US-07-04:** both Break types complete/reopen with zero reward and Standard/Trial
   lifecycle regressions pass.
 
 ## 10. US-07-04 — Cancel, terminal recovery và race-safe Break Result
@@ -615,7 +619,8 @@ branch renders RewardSummary/ProgressionSummary. Pet returns Idle after either t
 
 ### 10.6. DoR, DoD, evidence và next gate
 
-- [ ] **DoR:** US-07-03 accepted; confirmations 03/04 approved; exact terminal navigation planned.
+- [ ] **DoR:** US-07-03 accepted; confirmations 03/04 remain pending; exact terminal navigation is
+  proposed in `US-07-04_IMPLEMENTATION_PLAN.md` for owner approval.
 - [ ] **DoD:** cancel/race/result/recovery matrices pass; report/SHA/guide exist; owner accepts.
 - [ ] **Evidence files:** `US-07-04_IMPLEMENTATION_PLAN.md`, `US-07-04_IMPLEMENTATION_REPORT.md`,
   `apps/mobile/test/device/break-cancel-result-smoke.md`.
@@ -983,6 +988,7 @@ one-active invariant được enforce nhưng không claim durable one-Break-per-
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.7.0 | 2026-09-09 | Codex | Recorded US-07-03 exact committed SHA and owner quick UI PASS; closed Story 03 and opened owner-gated US-07-04 planning while preserving structured/formal evidence as NOT_RUN. |
 | 0.6.0 | 2026-09-09 | Codex | Recorded US-07-03 worktree implementation and automated/platform PASS; owner quick UI, exact committed SHA and US-07-04 gate remain pending. |
 | 0.5.0 | 2026-09-09 | Codex | Recorded owner approval of all US0703 Option A confirmations and opened US-07-03 implementation from exact SHA `b6339899003f88e7554b6ea301229af3950d3493`; no-schema/dependency/native scope remains locked. |
 | 0.4.0 | 2026-09-09 | Codex | Recorded US-07-02 exact committed SHA and owner quick UI PASS; closed Story 02, opened owner-gated US-07-03 planning, and preserved structured accessibility/formal evidence as NOT_RUN. |

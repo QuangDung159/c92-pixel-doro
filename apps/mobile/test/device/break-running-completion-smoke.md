@@ -1,6 +1,7 @@
 # US-07-03 — Break countdown, relaunch và completion quick smoke
 
-Status: `OWNER_REVIEW_PENDING`. Formal tester: `NOT_RUN`.
+Status: `OWNER_QUICK_UI_SMOKE_REPORTED` — owner confirmed PASS ngày 2026-09-09: không crash, hoạt
+động đúng kỳ vọng. Formal tester: `NOT_RUN`.
 
 Ghi `<implementation-sha>`, platform/device/OS, build, fixture, thời gian và PASS/FAIL/BLOCKED/NOT_RUN.
 Fixtures chỉ dùng database disposable prefix `pixeldoro-us-07-03-`; không ghi vào `pixeldoro.db`.
@@ -73,10 +74,11 @@ pnpm start --clear
 
 | Platform/device/OS | Fixture | Scenario | Result | Artifact/notes |
 |---|---|---|---|---|
+| `Owner report; metadata not recorded` | `Quick UI smoke` | Stability + expected US-07-03 behavior | `PASS` | 2026-09-09: no crash, works as expected; không thay structured/formal matrix. |
 | `<fill>` | `break_running_short_fast_clock` | Short/countdown/completion | `NOT_RUN` | `<fill>` |
 | `<fill>` | `break_running_long_fast_clock` | Long/countdown/completion | `NOT_RUN` | `<fill>` |
 | `<fill>` | `break_running_relaunch_before_deadline` | Background/relaunch | `NOT_RUN` | `<fill>` |
 | `<fill>` | `break_completion_write_failure_once` | Write recovery | `NOT_RUN` | `<fill>` |
 | `<fill>` | `break_completion_read_failure_once` | Read-after-commit recovery | `NOT_RUN` | `<fill>` |
 
-Owner quick smoke và formal matrix phải ghi riêng; case chưa chạy giữ `NOT_RUN`.
+Owner quick smoke đã PASS nhưng formal/structured matrix vẫn ghi riêng; case chưa chạy giữ `NOT_RUN`.
