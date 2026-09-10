@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_07_04_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-07-04 Cancel, Terminal Recovery và Race-safe Break Result Plan
-version: 0.3.0
-status: IMPLEMENTED_AUTOMATED_PASS_OWNER_REVIEW_PENDING
-implementation_status: IMPLEMENTED_WORKTREE_CANDIDATE
+version: 0.3.1
+status: IMPLEMENTED_COMMITTED_UI_FIX_RETEST_PENDING
+implementation_status: IMPLEMENTED_COMMITTED_WITH_WORKTREE_UI_FIX
 date: 2026-09-09
 last_updated: 2026-09-10
 owner: Dũng Lư
@@ -13,10 +13,11 @@ language: vi
 branch: feats/epic-07
 planning_baseline_sha: d51e1c23683c770dba5f4a0791d29167cb84bd96
 implementation_start_sha: b2227cdb7add682f8e49da556f271744da31d62d
-exact_implementation_sha: WORKTREE_CANDIDATE_NOT_COMMITTED
+exact_implementation_sha: 7cb8310642a80876221c015198b3f51d1251af15
+ui_fix_candidate: WORKTREE_NOT_COMMITTED
 previous_story_sha: d51e1c23683c770dba5f4a0791d29167cb84bd96
 previous_story_acceptance: DONE_OWNER_ACCEPTED_QUICK_UI
-manual_device_status: NOT_RUN
+manual_device_status: OWNER_QUICK_UI_FAIL_PET_CUTOFF_FIX_RETEST_PENDING
 formal_tester_status: NOT_RUN
 schema_change: NONE_PROPOSED
 dependency_change: NONE_PROPOSED
@@ -69,13 +70,13 @@ owner-confirmed precedence; exact Result phản ánh committed `completed` hoặ
 **Dependency:** US-07-03 đã commit/push và owner accepted quick UI tại exact SHA
 `d51e1c23683c770dba5f4a0791d29167cb84bd96` ngày 2026-09-09.
 
-**Planning status:** `IMPLEMENTED_AUTOMATED_PASS_OWNER_REVIEW_PENDING`.
+**Planning status:** `IMPLEMENTED_COMMITTED_UI_FIX_RETEST_PENDING`.
 
-**Implementation status:** `IMPLEMENTED_WORKTREE_CANDIDATE`. Owner duyệt toàn bộ Option A cho confirmations
+**Implementation status:** `IMPLEMENTED_COMMITTED_WITH_WORKTREE_UI_FIX`. Owner duyệt toàn bộ Option A cho confirmations
 `US0704-CONFIRM-01→10` ngày 2026-09-10; confirmations 01/02 đồng thời resolve Epic-level
 `US0700-CONFIRM-03/04`. Exact implementation-start SHA là
-`b2227cdb7add682f8e49da556f271744da31d62d`; candidate chưa được commit nên exact implementation
-SHA vẫn là `WORKTREE_CANDIDATE_NOT_COMMITTED`.
+`b2227cdb7add682f8e49da556f271744da31d62d`; implementation đã commit/push tại
+`7cb8310642a80876221c015198b3f51d1251af15`. Pet top-edge fix hiện là worktree candidate chưa commit.
 
 ### 0.1. Gate từ US-07-03
 
@@ -467,7 +468,7 @@ formal tester remain separate.
 - [x] Both platform exports pass; Doctor warnings recorded truthfully.
 - [x] Exact running/completed/cancelled route contains no prototype/fallback authority.
 - [x] No reward/profile/notification/analytics write is reachable.
-- [ ] Report/device guide exist; exact implementation SHA waits for commit.
+- [x] Report/device guide và exact implementation SHA tồn tại.
 - [ ] Owner quick UI output is recorded separately from structured/formal evidence.
 - [ ] Owner explicitly accepts US-07-04 and authorizes US-07-05 planning.
 
@@ -592,7 +593,8 @@ formal tester remain separate.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
-| 0.3.0 | 2026-09-10 | Codex | Implemented all approved Option A behavior in the worktree: cancellation decision/use case, conditional terminal winner, exact cancelled Result, modal/back lifecycle, narrow recovery, Long cadence preservation, review fixtures and device guide. Focused 9-file/42-test suite, full 148-file/798-test quality, iOS/Android exports pass; Doctor remains baseline 19/21; owner/formal smoke remains NOT_RUN. |
+| 0.3.1 | 2026-09-10 | Codex | Recorded committed/pushed implementation SHA `7cb8310642a80876221c015198b3f51d1251af15`; fixed owner-reported `breaking` sprite top-edge artifact with manifest-owned 20 px source crop applied to playback and Reduce Motion still. Shared Pet regressions, full 148-file/800-test quality and platform exports pass; fix remains uncommitted pending owner retest. |
+| 0.3.0 | 2026-09-10 | Codex | Implemented all approved Option A behavior in the worktree: cancellation decision/use case, conditional terminal winner, exact cancelled Result, modal/back lifecycle, narrow recovery, Long cadence preservation, review fixtures and device guide. Focused 9-file/42-test suite, full quality and iOS/Android exports pass; Doctor remains baseline 19/21; owner/formal smoke remains NOT_RUN. |
 | 0.2.0 | 2026-09-10 | Codex | Recorded owner approval of all Option A confirmations 01–10, resolved Epic confirmations 03/04, locked same-route exact Result, deadline completion precedence, modal/relaunch/recovery/fixture/no-schema boundaries and opened implementation at exact SHA `b2227cdb7add682f8e49da556f271744da31d62d`. |
 | 0.1.0 | 2026-09-09 | Codex | Created owner-gated US-07-04 plan from accepted US-07-03 exact SHA; defined cancel/deadline decision, shared conditional race, exact terminal Result, recovery, common reuse, fixtures/tests and ten pending confirmations. No production code changed. |
 
@@ -600,10 +602,10 @@ Validation for this implementation candidate:
 
 - [x] `git diff --check` passes.
 - [x] Focused US-07-04 tests pass: 9 files / 42 tests.
-- [x] Full quality pass: 148 files / 798 tests.
+- [x] Full quality pass after Pet crop fix: 148 files / 800 tests.
 - [x] iOS/Android JS exports pass.
 - [x] Expo Doctor reports unchanged baseline `19/21`; no opportunistic upgrade.
 - [x] No unrun automated/manual/formal evidence is marked PASS.
 
-**US-07-04 implementation is an automated-pass worktree candidate awaiting owner quick UI smoke and
-an exact commit SHA.**
+**US-07-04 is committed at exact SHA `7cb8310642a80876221c015198b3f51d1251af15`; the automated-pass
+Pet crop fix remains a worktree candidate awaiting owner UI retest.**

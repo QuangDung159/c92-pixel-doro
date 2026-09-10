@@ -1,17 +1,18 @@
 ---
 document_id: PIXELDORO_US_07_04_IMPLEMENTATION_REPORT
 title: PixelDoro Mobile MVP — US-07-04 Implementation Report
-version: 0.1.0
-status: IMPLEMENTED_AUTOMATED_PASS_OWNER_REVIEW_PENDING
-implementation_status: IMPLEMENTED_WORKTREE_CANDIDATE
+version: 0.1.1
+status: IMPLEMENTED_COMMITTED_UI_FIX_RETEST_PENDING
+implementation_status: IMPLEMENTED_COMMITTED_WITH_WORKTREE_UI_FIX
 date: 2026-09-10
 owner: Dũng Lư
 language: vi
 branch: feats/epic-07
 implementation_start_sha: b2227cdb7add682f8e49da556f271744da31d62d
-exact_implementation_sha: WORKTREE_CANDIDATE_NOT_COMMITTED
-manual_device_status: NOT_RUN
-owner_quick_ui_status: NOT_RUN
+exact_implementation_sha: 7cb8310642a80876221c015198b3f51d1251af15
+ui_fix_candidate: WORKTREE_NOT_COMMITTED
+manual_device_status: OWNER_QUICK_UI_FAIL_PET_CUTOFF_FIX_RETEST_PENDING
+owner_quick_ui_status: FAIL_PET_CUTOFF_FIX_RETEST_PENDING
 formal_tester_status: NOT_RUN
 schema_change: NONE
 dependency_change: NONE
@@ -33,10 +34,12 @@ US-07-04 đã được triển khai theo toàn bộ Option A owner duyệt:
 - cancelled Result có Pet Idle, zero reward và Home, không reward/progression/Claim;
 - cancelled Long không reset cadence; narrow corrupt-running recovery không raw repair/delete;
 - post-commit read/Pet retry không biến thành cancel intent mới;
+- `breaking` sprite mask loại top-edge artifact trên cả playback và Reduce Motion still;
 - không schema, dependency, native, notification hoặc analytics change.
 
-Candidate hiện ở worktree, chưa commit. Automated/full quality và iOS/Android exports PASS. Owner
-quick UI, structured accessibility/platform matrix và formal tester vẫn `NOT_RUN`.
+Implementation đã commit/push tại exact SHA `7cb8310642a80876221c015198b3f51d1251af15`.
+Owner-reported Pet top-edge fix hiện ở worktree, chưa commit; automated/full quality và iOS/Android
+exports PASS. Owner retest, structured accessibility/platform matrix và formal tester vẫn `NOT_RUN`.
 
 ## 1. Delivered architecture
 
@@ -60,7 +63,7 @@ Chạy với Node `22.23.2`:
 Focused US-07-04: PASS — 9 files, 42 tests
 Typecheck: PASS — domain, application, mobile
 Lint: PASS
-Vitest full suite: PASS — 148 files, 798 tests
+Vitest full suite: PASS — 148 files, 800 tests
 Device guide validator: PASS
 Boundary validator: PASS — 12 forbidden rejected, 4 valid accepted
 Repository hygiene: PASS — one lockfile, one immutable migration
@@ -85,7 +88,7 @@ Guide: `apps/mobile/test/device/break-cancel-result-smoke.md`.
 | Evidence class | Status |
 |---|---|
 | Automated | PASS |
-| Owner quick UI | `NOT_RUN` |
+| Owner quick UI | `FAIL` — top-edge Pet artifact reported; fix ready, retest pending |
 | iOS device/simulator matrix | `NOT_RUN` |
 | Android device/emulator matrix | `NOT_RUN` |
 | VoiceOver/TalkBack/largest text/Reduce Motion | `NOT_RUN` |
@@ -97,11 +100,12 @@ Không migration/schema/package/lockfile/native/generated artifact thay đổi. 
 không import prototype, reward/profile/notification/analytics port. US-07-05 vẫn sở hữu notification,
 analytics và Epic exit accessibility matrix.
 
-Gate tiếp theo: owner chạy quick UI smoke Short cancel tối thiểu, báo PASS/FAIL; sau PASS mới cập nhật
-acceptance và exact implementation SHA khi candidate được commit.
+Gate tiếp theo: owner chạy lại quick UI smoke Short cancel tối thiểu và báo PASS/FAIL cho Pet crop;
+sau PASS mới cập nhật acceptance và commit fix candidate.
 
 ## 5. Change log
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.1.1 | 2026-09-10 | Codex | Fixed owner-reported top-edge pixels in the breaking animation using manifest crop metadata shared by playback/still; full quality now passes 148 files / 800 tests. |
 | 0.1.0 | 2026-09-10 | Codex | Recorded approved Option A implementation, automated/full quality, both platform exports, unchanged 19/21 Doctor baseline and honest owner/formal NOT_RUN status. |

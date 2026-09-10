@@ -13,6 +13,8 @@ export const PET_SPRITE_DISPLAY_SIZE = 154;
 
 export const PetPortrait = ({ state }: { readonly state: CompanionState }) => {
   const entry = petAnimationManifest[state];
+  const clipTop = entry.source.artifactClipTop * PET_SPRITE_DISPLAY_SIZE /
+    entry.source.frameHeight;
 
   return (
     <View
@@ -22,11 +24,18 @@ export const PetPortrait = ({ state }: { readonly state: CompanionState }) => {
       style={styles.frame}
       testID={`pet-sprite-${state}-still`}
     >
-      <Image
-        resizeMode="stretch"
-        source={entry.source.image}
-        style={styles.sheet}
-      />
+      <View style={clipTop === 0 ? styles.fullFrame : {
+        height: PET_SPRITE_DISPLAY_SIZE - clipTop,
+        overflow: 'hidden',
+        top: clipTop,
+        width: PET_SPRITE_DISPLAY_SIZE,
+      }}>
+        <Image
+          resizeMode="stretch"
+          source={entry.source.image}
+          style={[styles.sheet, clipTop === 0 ? undefined : { top: -clipTop }]}
+        />
+      </View>
     </View>
   );
 };
@@ -40,5 +49,9 @@ const styles = StyleSheet.create({
   sheet: {
     height: PET_SPRITE_DISPLAY_SIZE,
     width: PET_SPRITE_DISPLAY_SIZE * 6,
+  },
+  fullFrame: {
+    height: PET_SPRITE_DISPLAY_SIZE,
+    width: PET_SPRITE_DISPLAY_SIZE,
   },
 });

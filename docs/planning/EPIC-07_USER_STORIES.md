@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_07_USER_STORIES
 title: PixelDoro EPIC-07 — Break Experience và Long Break Cadence User Stories
-version: 0.9.0
+version: 0.9.1
 status: IN_PROGRESS
 date: 2026-09-08
 last_updated: 2026-09-10
@@ -15,7 +15,7 @@ authority: PLANNING
 product_truth: ../PIXELDORO_CORE_TRUTH.md
 epic_baseline: ./MVP_EPICS.md
 branch_audited: feats/epic-07
-baseline_head: b2227cdb7add682f8e49da556f271744da31d62d
+baseline_head: 7cb8310642a80876221c015198b3f51d1251af15
 epic_06_behavior_candidate: 458a8868ac0024e3b3d1eff64ccc26408a81b2e1
 epic_06_status: DONE_OWNER_ACCEPTED
 implementation_status: US_07_01_DONE_US_07_02_DONE_US_07_03_DONE_US_07_04_AUTOMATED_PASS
@@ -624,7 +624,8 @@ branch renders RewardSummary/ProgressionSummary. Pet returns Idle after either t
 - [x] **Evidence files:** `US-07-04_IMPLEMENTATION_PLAN.md`, `US-07-04_IMPLEMENTATION_REPORT.md`,
   `apps/mobile/test/device/break-cancel-result-smoke.md`.
 - [x] **Automated gate:** no reward/Pet/cadence regression and both race orders proven in SQLite.
-- [ ] **Gate sang US-07-05:** owner quick UI acceptance and exact implementation SHA recorded.
+- [ ] **Gate sang US-07-05:** exact implementation SHA đã record; chờ owner quick UI acceptance sau
+  Pet crop fix.
 
 ## 11. US-07-05 — Notification, analytics hooks, accessibility và Epic integrity
 
@@ -990,6 +991,7 @@ completion; a request captured before deadline remains cancel-eligible while que
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.9.1 | 2026-09-10 | Codex | Recorded committed/pushed US-07-04 SHA `7cb8310642a80876221c015198b3f51d1251af15`; fixed owner-reported Break Pet animation top-edge artifact via source-frame crop metadata applied consistently to playback and still fallback. Full suite remains green at 148 files / 800 tests; fix awaits owner retest and commit. |
 | 0.9.0 | 2026-09-10 | Codex | Recorded US-07-04 worktree implementation and automated/platform PASS: exact cancel/completion winner, same-route cancelled Result, zero reward, Long cadence preservation, recovery fixtures and device guide. Owner/formal device evidence and exact commit SHA remain pending. |
 | 0.8.0 | 2026-09-10 | Codex | Recorded owner approval of US-07-04 Option A confirmations and Epic `US0700-CONFIRM-03/04`; opened US-07-04 implementation from exact SHA `b2227cdb7add682f8e49da556f271744da31d62d`. |
 | 0.7.0 | 2026-09-09 | Codex | Recorded US-07-03 exact committed SHA and owner quick UI PASS; closed Story 03 and opened owner-gated US-07-04 planning while preserving structured/formal evidence as NOT_RUN. |

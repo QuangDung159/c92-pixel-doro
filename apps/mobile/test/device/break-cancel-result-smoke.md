@@ -1,6 +1,6 @@
 # US-07-04 — Break cancel và exact terminal Result quick smoke
 
-Status: `NOT_RUN`. Formal tester: `NOT_RUN`.
+Status: `OWNER_QUICK_UI_FAIL_PET_CUTOFF_FIX_RETEST_PENDING`. Formal tester: `NOT_RUN`.
 
 Ghi `<implementation-sha>`, platform/device/OS, build, fixture, thời gian và PASS/FAIL/BLOCKED/NOT_RUN.
 Fixtures chỉ dùng database disposable prefix `pixeldoro-us-07-04-`; không ghi vào `pixeldoro.db`.
@@ -23,6 +23,7 @@ EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE=break_cancel_short pnpm start --clear
 ```
 
 - [ ] Màn hình hiện `Nghỉ ngắn · 5 phút`, countdown đang chạy và nút **Dừng phiên**.
+- [ ] Animation mèo nghỉ hiển thị trọn vẹn; không có dải pixel rời/cutoff ở mép trên khung Pet.
 - [ ] Nhấn **Dừng phiên**: modal xác nhận mở; nhấn **Tiếp tục nghỉ** chỉ đóng modal, countdown tiếp tục
   và không reset thời gian.
 - [ ] Mở lại modal rồi nhấn **Dừng phiên nghỉ**: chỉ commit một lần và hiện exact Result `CANCELLED`.

@@ -22,6 +22,7 @@ export interface PetSpriteSheetSource {
   readonly frameWidth: 229;
   readonly frameHeight: 229;
   readonly fallbackFrame: 0;
+  readonly artifactClipTop: number;
 }
 
 export interface PetAnimationManifestEntry {
@@ -41,6 +42,7 @@ const entry = (
   playback: PetAnimationManifestEntry['playback'],
   cycleDurationMs: number,
   motion: PetMotionProfile,
+  artifactClipTop = 0,
 ): PetAnimationManifestEntry => Object.freeze({
   assetId: `cat-dev--${state}--sheet-v1`,
   petId: 'cat-dev',
@@ -56,6 +58,7 @@ const entry = (
     frameWidth: 229,
     frameHeight: 229,
     fallbackFrame: 0,
+    artifactClipTop,
   }),
   motion: Object.freeze(motion),
 });
@@ -80,6 +83,7 @@ export const petAnimationManifest: Readonly<
     'edce5ac5f22fd0a4bb43c4757daa04baeaff9bb7d995f678b6340f23d76d5c94',
     'loop', 2_200,
     { translateY: 2, scaleDelta: 0.02, rotateDegrees: 0 },
+    20,
   ),
   celebrating: entry(
     'celebrating', celebratingSheet,

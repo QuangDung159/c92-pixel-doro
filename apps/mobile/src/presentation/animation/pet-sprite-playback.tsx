@@ -18,6 +18,8 @@ import { petAnimationManifest } from './pet-animation-manifest';
 
 export const PetSpritePlayback = ({ state }: { readonly state: CompanionState }) => {
   const entry = petAnimationManifest[state];
+  const clipTop = entry.source.artifactClipTop * PET_SPRITE_DISPLAY_SIZE /
+    entry.source.frameHeight;
   const frame = useSharedValue<number>(entry.source.fallbackFrame);
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{
@@ -49,11 +51,18 @@ export const PetSpritePlayback = ({ state }: { readonly state: CompanionState })
       style={styles.frame}
       testID={`pet-sprite-${state}-playback`}
     >
-      <Animated.Image
+      <View style={clipTop === 0 ? styles.fullFrame : {
+        height: PET_SPRITE_DISPLAY_SIZE - clipTop,
+        overflow: 'hidden',
+        top: clipTop,
+        width: PET_SPRITE_DISPLAY_SIZE,
+      }}>
+        <Animated.Image
         resizeMode="stretch"
         source={entry.source.image}
-        style={[styles.sheet, animatedStyle]}
-      />
+        style={[styles.sheet, clipTop === 0 ? undefined : { top: -clipTop }, animatedStyle]}
+        />
+      </View>
     </View>
   );
 };
@@ -67,5 +76,9 @@ const styles = StyleSheet.create({
   sheet: {
     height: PET_SPRITE_DISPLAY_SIZE,
     width: PET_SPRITE_DISPLAY_SIZE * 6,
+  },
+  fullFrame: {
+    height: PET_SPRITE_DISPLAY_SIZE,
+    width: PET_SPRITE_DISPLAY_SIZE,
   },
 });

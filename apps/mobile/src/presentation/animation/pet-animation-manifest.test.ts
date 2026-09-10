@@ -46,4 +46,11 @@ describe('petAnimationManifest', () => {
     expect(petAnimationManifest.celebrating.playback).toBe('one-shot');
     expect(petAnimationManifest.bugged.playback).toBe('one-shot');
   });
+
+  it('clips only the known top-edge artifact from the breaking sheet', () => {
+    expect(petAnimationManifest.breaking.source.artifactClipTop).toBe(20);
+    expect(Object.values(petAnimationManifest)
+      .filter((entry) => entry.state !== 'breaking')
+      .every((entry) => entry.source.artifactClipTop === 0)).toBe(true);
+  });
 });
