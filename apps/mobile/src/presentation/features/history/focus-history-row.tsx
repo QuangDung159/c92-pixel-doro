@@ -45,12 +45,13 @@ export const FocusHistoryRow = ({
 
 const styles = StyleSheet.create({
   row: {
+    alignContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 12,
     justifyContent: 'space-between',
-    minHeight: 72,
+    paddingVertical: 12,
   },
   copy: { flex: 1, gap: 5, minWidth: 160 },
   title: {

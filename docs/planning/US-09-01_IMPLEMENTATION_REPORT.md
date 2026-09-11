@@ -70,7 +70,7 @@ component hoặc production durable-write change.
 
 | Gate | Result |
 |---|---|
-| `pnpm quality` | PASS — 188 test files, 968 tests; typecheck, lint, device-guide validator, boundaries và repository hygiene đều pass |
+| `pnpm quality` | PASS — 188 test files, 969 tests; typecheck, lint, device-guide validator, boundaries và repository hygiene đều pass |
 | iOS Expo export | PASS — final candidate bundle export tới disposable `/tmp/pixeldoro-us0901-ios-final-20260911` |
 | Android Expo export | PASS — final candidate bundle export tới disposable `/tmp/pixeldoro-us0901-android-final-20260911` |
 | Expo Doctor online | 20/21 — chỉ còn known patch-version drift của 9 Expo packages; không đổi dependency ngoài scope |
@@ -79,7 +79,7 @@ component hoặc production durable-write change.
 | Manual UI/device/accessibility | `NOT_RUN` |
 
 Một lần full suite đầu tiên bắt assertion EPIC-08 cũ yêu cầu History vẫn là prototype. Assertion đó đã
-được cập nhật theo authority mới của US-09-01; final full suite pass 968/968. Một lần Expo Doctor
+được cập nhật theo authority mới của US-09-01; final full suite pass 969/969. Một lần Expo Doctor
 trong sandbox không truy cập được online checks; lần chạy được cấp network đã hoàn tất và trả kết quả
 20/21 nêu trên.
 

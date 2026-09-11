@@ -21,5 +21,6 @@ describe('HistoryStatusBadge', () => {
       accessibilityElementsHidden: true,
       importantForAccessibility: 'no-hide-descendants',
     });
+    expect(tree.props.style[0]).toMatchObject({ alignSelf: 'center' });
   });
 });

@@ -39,4 +39,22 @@ describe('FocusHistoryRow', () => {
   it('formats the persisted local-day string without timezone conversion', () => {
     expect(formatHistoryLocalDate('2024-02-29')).toBe('29/02/2024');
   });
+
+  it('uses symmetric row padding and centers wrapped row content vertically', () => {
+    const tree = FocusHistoryRow({
+      item: {
+        id: 'centered-row',
+        status: 'completed',
+        workTag: 'coding',
+        configuredDurationMinutes: 25,
+        endsAt: 1_000,
+        scheduledEndLocalDate: '2026-09-11',
+      },
+    });
+    expect(tree.props.style).toMatchObject({
+      alignContent: 'center',
+      alignItems: 'center',
+      paddingVertical: 12,
+    });
+  });
 });

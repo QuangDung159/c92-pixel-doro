@@ -33,7 +33,7 @@ export const HistoryStatusBadge = ({ status }: { readonly status: HistoryStatus 
 
 const styles = StyleSheet.create({
   badge: {
-    alignSelf: 'flex-start',
+    alignSelf: 'center',
     borderColor: palette.border,
     borderRadius: 4,
     borderWidth: 2,
