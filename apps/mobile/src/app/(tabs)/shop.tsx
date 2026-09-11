@@ -13,10 +13,14 @@ export default function ShopRoute() {
     activate,
     confirmPurchase,
     deactivate,
+    dismissEquipNotice,
     dismissPurchase,
     requestPurchase,
     retry,
     retryPurchaseRefresh,
+    retryEquipRefresh,
+    setItemEquipped,
+    setViewMode,
   } = useShopActions();
 
   useFocusEffect(
@@ -30,9 +34,13 @@ export default function ShopRoute() {
     <ShopScreen
       onConfirmPurchase={() => void confirmPurchase()}
       onDismissPurchase={dismissPurchase}
+      onDismissEquipNotice={dismissEquipNotice}
       onRequestPurchase={requestPurchase}
       onRetry={() => void retry()}
       onRetryPurchaseRefresh={() => void retryPurchaseRefresh()}
+      onRetryEquipRefresh={() => void retryEquipRefresh()}
+      onSetItemEquipped={(itemId, isEquipped) => void setItemEquipped(itemId, isEquipped)}
+      onSetViewMode={setViewMode}
       projection={projection}
     />
   );

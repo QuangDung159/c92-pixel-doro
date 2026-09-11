@@ -1,4 +1,11 @@
 export {
+  ItemEquippedAnalyticsRecorder,
+  type ItemEquippedAnalyticsError,
+  type ItemEquippedAnalyticsOutcome,
+  type ItemEquippedAnalyticsRecorderDependencies,
+  type ItemEquippedAnalyticsRecorderPort,
+} from './item-equipped-analytics.recorder';
+export {
   ItemUnlockedAnalyticsRecorder,
   type ItemUnlockedAnalyticsError,
   type ItemUnlockedAnalyticsOutcome,
@@ -16,5 +23,7 @@ export {
   ShopController,
   type ShopControllerDependencies,
   type ShopControllerProjection,
+  type ShopEquipProjection,
   type ShopPurchaseProjection,
+  type ShopViewMode,
 } from './shop.controller';

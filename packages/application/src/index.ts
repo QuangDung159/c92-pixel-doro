@@ -26,6 +26,14 @@ export {
   type PurchaseItemOutcome,
 } from './shop/purchase-item.use-case';
 export {
+  SetItemEquippedUseCase,
+  type SetItemEquippedDependencies,
+  type SetItemEquippedError,
+  type SetItemEquippedErrorCode,
+  type SetItemEquippedInput,
+  type SetItemEquippedOutcome,
+} from './shop/set-item-equipped.use-case';
+export {
   loadPetCompanionProjection,
   type PetCompanionProjection,
   type PetCompanionSessionReader,

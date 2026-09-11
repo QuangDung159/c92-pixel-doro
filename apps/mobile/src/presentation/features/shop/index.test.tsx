@@ -1,6 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 
+import { ItemGrid } from '@/presentation/components';
 import { ShopScreen } from './index';
+import { ShopEquipNotice } from './shop-equip-notice';
 
 vi.mock('react-native', () => ({
   ScrollView: 'ScrollView',
@@ -14,6 +16,8 @@ const ready = {
   status: 'ready' as const,
   refresh: 'idle' as const,
   purchase: { status: 'idle' as const },
+  equip: { status: 'idle' as const },
+  mode: 'catalog' as const,
   shop: {
     profile: {
       level: 1,
@@ -38,6 +42,26 @@ const actions = {
   onConfirmPurchase: vi.fn(),
   onDismissPurchase: vi.fn(),
   onRetryPurchaseRefresh: vi.fn(),
+  onSetViewMode: vi.fn(),
+  onSetItemEquipped: vi.fn(),
+  onRetryEquipRefresh: vi.fn(),
+  onDismissEquipNotice: vi.fn(),
+};
+
+const findElement = (
+  node: unknown,
+  type: unknown,
+): { readonly props: Record<string, unknown> } | undefined => {
+  if (node === null || typeof node !== 'object') return undefined;
+  const element = node as { readonly type?: unknown; readonly props?: Record<string, unknown> };
+  if (element.type === type && element.props !== undefined) return { props: element.props };
+  const children = element.props?.children;
+  const candidates = Array.isArray(children) ? children : [children];
+  for (const child of candidates) {
+    const match = findElement(child, type);
+    if (match !== undefined) return match;
+  }
+  return undefined;
 };
 
 describe('ShopScreen', () => {
@@ -45,7 +69,7 @@ describe('ShopScreen', () => {
     const tree = ShopScreen({ projection: ready, ...actions });
     const serialized = JSON.stringify(tree);
     expect(serialized).toContain('ĐỒ TRANG TRÍ');
-    expect(serialized.match(/"displayName":"Item /g)).toHaveLength(12);
+    expect(findElement(tree, ItemGrid)?.props.items).toHaveLength(12);
     expect(serialized).not.toMatch(/MOCK|Prototype|XEM TRƯỚC|TRANG BỊ ·/);
   });
 
@@ -77,5 +101,61 @@ describe('ShopScreen', () => {
       },
       ...actions,
     }))).toContain('Đã ghi nhận giao dịch');
+  });
+
+  it('filters Inventory, exposes direct equip actions, and renders its empty state', () => {
+    const mixed = {
+      ...ready,
+      mode: 'inventory' as const,
+      shop: {
+        ...ready.shop,
+        items: [
+          { ...ready.shop.items[0]!, state: 'available' as const },
+          { ...ready.shop.items[1]!, state: 'owned' as const },
+          { ...ready.shop.items[2]!, state: 'equipped' as const },
+        ],
+      },
+    };
+    const tree = ShopScreen({ projection: mixed, ...actions });
+    const grid = findElement(tree, ItemGrid)?.props;
+    expect(grid?.items).toEqual(mixed.shop.items.slice(1));
+    const actionForItem = grid?.actionForItem as
+      ((item: (typeof mixed.shop.items)[number]) => { accessibilityLabel?: string });
+    expect(actionForItem(mixed.shop.items[1]!).accessibilityLabel).toBe('Trang bị Item 1');
+    expect(actionForItem(mixed.shop.items[2]!).accessibilityLabel).toBe('Tháo Item 2');
+
+    const empty = JSON.stringify(ShopScreen({
+      projection: { ...ready, mode: 'inventory' },
+      ...actions,
+    }));
+    expect(empty).toContain('Chưa có vật phẩm đã sở hữu');
+    expect(empty).toContain('Xem cửa hàng');
+  });
+
+  it('renders equipment success and committed refresh-only recovery copy', () => {
+    const ownedShop = {
+      ...ready.shop,
+      items: [{ ...ready.shop.items[0]!, state: 'equipped' as const }],
+    };
+    const successProjection = {
+      ...ready,
+      shop: ownedShop,
+      equip: { status: 'success' as const, itemId: 'item-0', equipped: true },
+    };
+    expect(JSON.stringify(ShopEquipNotice({
+      projection: successProjection,
+      onDismiss: actions.onDismissEquipNotice,
+      onRetryRefresh: actions.onRetryEquipRefresh,
+    }))).toContain('Đã trang bị Item 0');
+    expect(JSON.stringify(ShopEquipNotice({
+      projection: {
+        ...successProjection,
+        equip: {
+          status: 'committed_refresh_pending', itemId: 'item-0', equipped: true,
+        },
+      },
+      onDismiss: actions.onDismissEquipNotice,
+      onRetryRefresh: actions.onRetryEquipRefresh,
+    }))).toContain('Đã lưu thay đổi trang bị');
   });
 });

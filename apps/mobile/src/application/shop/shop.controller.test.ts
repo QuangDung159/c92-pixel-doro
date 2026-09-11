@@ -23,6 +23,16 @@ const purchasedShop: ShopProjection = {
   items: [{ ...shop.items[0]!, state: 'owned' }],
 };
 
+const equippedShop: ShopProjection = {
+  ...purchasedShop,
+  items: [{ ...purchasedShop.items[0]!, state: 'equipped' }],
+};
+
+const ownership = {
+  profileId: 1, itemId: 'desk-mug', purchaseTransactionId: 'receipt-1',
+  unlockedAt: 1_000, isEquipped: true, equippedAt: 2_000, updatedAt: 2_000,
+};
+
 const receipt = {
   id: 'receipt-1', profileId: 1, itemId: 'desk-mug', pricePaidCoins: 5,
   coinDelta: -5, reason: 'item_purchase' as const, createdAt: 1_000,
@@ -40,6 +50,10 @@ const createDependencies = () => ({
     ok: true as const,
     value: { outcome: 'enqueued' as const, eventId: 'item_unlocked:receipt-1' },
   })) },
+  itemEquippedAnalytics: { recordEquipped: vi.fn(async () => ({
+    ok: true as const,
+    value: { outcome: 'enqueued' as const, eventId: 'item_equipped:desk-mug:2000' },
+  })) },
   loader: { execute: vi.fn(async () => ({ ok: true as const, value: shop })) },
   purchaseItem: { execute: vi.fn(async () => ({
     ok: true as const,
@@ -53,9 +67,20 @@ const createDependencies = () => ({
       coinBalance: 4,
     },
   })) },
+  setItemEquipped: { execute: vi.fn(async () => ({
+    ok: true as const,
+    value: {
+      outcome: 'fresh_commit' as const,
+      transition: 'equipped' as const,
+      ownership,
+    },
+  })) },
 });
 
-const idleReady = { status: 'ready', shop, refresh: 'idle', purchase: { status: 'idle' } };
+const idleReady = {
+  status: 'ready', shop, refresh: 'idle', purchase: { status: 'idle' },
+  mode: 'catalog', equip: { status: 'idle' },
+};
 
 describe('ShopController', () => {
   it('loads and records once per focus episode, not per retry', async () => {
@@ -86,6 +111,7 @@ describe('ShopController', () => {
     await controller.activate();
     expect(controller.getSnapshot()).toEqual({
       status: 'ready', shop, refresh: 'error', purchase: { status: 'idle' },
+      mode: 'catalog', equip: { status: 'idle' },
     });
     expect(dependencies.criticalRecovery.enterRecovery).not.toHaveBeenCalled();
   });
@@ -154,6 +180,7 @@ describe('ShopController', () => {
     expect(controller.getSnapshot()).toEqual({
       status: 'ready', shop: purchasedShop, refresh: 'idle',
       purchase: { status: 'success', itemId: 'desk-mug' },
+      mode: 'catalog', equip: { status: 'idle' },
     });
   });
 
@@ -222,6 +249,108 @@ describe('ShopController', () => {
     expect(dependencies.itemUnlockedAnalytics.recordUnlocked).not.toHaveBeenCalled();
     expect(controller.getSnapshot()).toMatchObject({
       purchase: { status: 'already_owned', itemId: 'desk-mug' },
+    });
+  });
+
+  it('preserves Inventory mode across tab refocus without persisting it', async () => {
+    const dependencies = createDependencies();
+    dependencies.loader.execute
+      .mockResolvedValueOnce({ ok: true, value: shop })
+      .mockResolvedValueOnce({ ok: true, value: shop });
+    const controller = new ShopController(dependencies);
+
+    await controller.activate();
+    controller.setViewMode('inventory');
+    expect(controller.getSnapshot()).toMatchObject({ mode: 'inventory' });
+    controller.deactivate();
+    await controller.activate();
+
+    expect(controller.getSnapshot()).toMatchObject({ mode: 'inventory' });
+  });
+
+  it('equips directly, records analytics once, and refreshes committed truth', async () => {
+    const dependencies = createDependencies();
+    dependencies.loader.execute
+      .mockResolvedValueOnce({ ok: true, value: purchasedShop })
+      .mockResolvedValueOnce({ ok: true, value: equippedShop });
+    const controller = new ShopController(dependencies);
+    await controller.activate();
+
+    const attempts = [
+      controller.setItemEquipped('desk-mug', true),
+      controller.setItemEquipped('desk-mug', true),
+    ];
+    await Promise.all(attempts);
+
+    expect(dependencies.setItemEquipped.execute).toHaveBeenCalledOnce();
+    expect(dependencies.itemEquippedAnalytics.recordEquipped).toHaveBeenCalledOnce();
+    expect(controller.getSnapshot()).toMatchObject({
+      shop: equippedShop,
+      equip: { status: 'success', itemId: 'desk-mug', equipped: true },
+    });
+  });
+
+  it('does not emit item-equipped when unequipping', async () => {
+    const dependencies = createDependencies();
+    dependencies.setItemEquipped.execute.mockResolvedValueOnce({
+      ok: true,
+      value: {
+        outcome: 'fresh_commit', transition: 'unequipped',
+        ownership: { ...ownership, isEquipped: false, equippedAt: null },
+      },
+    } as never);
+    dependencies.loader.execute
+      .mockResolvedValueOnce({ ok: true, value: equippedShop })
+      .mockResolvedValueOnce({ ok: true, value: purchasedShop });
+    const controller = new ShopController(dependencies);
+    await controller.activate();
+    await controller.setItemEquipped('desk-mug', false);
+
+    expect(dependencies.itemEquippedAnalytics.recordEquipped).not.toHaveBeenCalled();
+    expect(controller.getSnapshot()).toMatchObject({
+      equip: { status: 'success', equipped: false },
+    });
+  });
+
+  it('retries only the loader after an equipment commit refresh failure', async () => {
+    const dependencies = createDependencies();
+    dependencies.loader.execute
+      .mockResolvedValueOnce({ ok: true, value: purchasedShop })
+      .mockResolvedValueOnce({
+        ok: false,
+        error: { kind: 'load_shop_projection_error', code: 'SHOP_READ_FAILED' },
+      } as never)
+      .mockResolvedValueOnce({ ok: true, value: equippedShop });
+    const controller = new ShopController(dependencies);
+    await controller.activate();
+    await controller.setItemEquipped('desk-mug', true);
+
+    expect(controller.getSnapshot()).toMatchObject({
+      equip: { status: 'committed_refresh_pending', itemId: 'desk-mug' },
+    });
+    await controller.retryEquipRefresh();
+
+    expect(dependencies.setItemEquipped.execute).toHaveBeenCalledOnce();
+    expect(dependencies.loader.execute).toHaveBeenCalledTimes(3);
+    expect(controller.getSnapshot()).toMatchObject({
+      shop: equippedShop, equip: { status: 'success', equipped: true },
+    });
+  });
+
+  it('reports not-owned locally without analytics or an extra read', async () => {
+    const dependencies = createDependencies();
+    dependencies.setItemEquipped.execute.mockResolvedValueOnce({
+      ok: true, value: { outcome: 'not_owned', itemId: 'desk-mug' },
+    } as never);
+    dependencies.loader.execute.mockResolvedValueOnce({ ok: true, value: purchasedShop });
+    const controller = new ShopController(dependencies);
+    await controller.activate();
+    await controller.setItemEquipped('desk-mug', true);
+
+    expect(dependencies.loader.execute).toHaveBeenCalledOnce();
+    expect(dependencies.itemEquippedAnalytics.recordEquipped).not.toHaveBeenCalled();
+    expect(controller.getSnapshot()).toMatchObject({
+      equip: { status: 'not_owned', itemId: 'desk-mug' },
     });
   });
 });

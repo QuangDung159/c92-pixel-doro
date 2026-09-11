@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_08_03_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-08-03 Implementation Plan
-version: 0.1.0
-status: AWAITING_OWNER_CONFIRMATION
-implementation_status: NOT_STARTED
+version: 0.3.0
+status: IMPLEMENTED_AWAITING_OWNER_SMOKE
+implementation_status: WORKTREE_CANDIDATE_VALIDATED
 date: 2026-09-11
 last_updated: 2026-09-11
 owner: Dũng Lư
@@ -12,12 +12,13 @@ reviewer_role: Tech Lead/Product Owner
 language: vi
 branch: feats/epic-08
 planning_baseline_sha: 5c6791dbec982d7f522e4113180458daf2e9ce95
-implementation_start_sha: null
+implementation_start_sha: 5c6791dbec982d7f522e4113180458daf2e9ce95
+current_worktree_base_sha: bac86727588ed39e5224ba0df6472142bc086bdd
 exact_implementation_sha: null
 previous_story: US-08-02
 previous_story_status: DONE_OWNER_ACCEPTED
 previous_story_implementation_sha: 5c6791dbec982d7f522e4113180458daf2e9ce95
-manual_device_status: NOT_RUN
+manual_device_status: NOT_RUN_AWAITING_OWNER
 formal_tester_status: NOT_RUN_DEFERRED_TO_EPIC_12_UNLESS_EXECUTED
 schema_change: NONE_PROPOSED
 dependency_change: NONE_PROPOSED
@@ -47,12 +48,13 @@ adr_analytics: ../architecture/decisions/ADR-008-posthog-analytics-and-cost-guar
 đã commit, rồi trang bị/tháo từng decoration miễn phí. Nhiều item có thể cùng equipped; trạng thái
 cuối giữ đúng sau refocus hoặc relaunch và không bao giờ làm đổi Coin/XP/receipt/ownership.
 
-**Planning status:** `AWAITING_OWNER_CONFIRMATION` cho `US0803-CONFIRM-01→06`.
-**Implementation status:** `NOT_STARTED` từ exact accepted baseline `5c6791d...`.
+**Planning status:** `APPROVED_OPTION_A_01_TO_06`.
+**Implementation status:** `WORKTREE_CANDIDATE_VALIDATED`; đang chờ owner smoke và chưa có exact
+committed implementation SHA.
 
-Owner đã quick-smoke accept US-08-02 tại exact committed/pushed SHA `5c6791d...`. Lượt này cập nhật
-acceptance docs và lập plan US-08-03; chưa sửa production code, migration, dependency/native, chưa
-commit và chưa push. Coding chỉ mở sau khi owner duyệt mục 13.
+Owner đã quick-smoke accept US-08-02 tại exact committed/pushed SHA `5c6791d...` và duyệt
+`US0803-CONFIRM-01→06` theo Option A. Worktree đã implement/validate US-08-03, không đổi migration,
+dependency hoặc native config; chưa commit/push và manual device vẫn `NOT_RUN`.
 
 ### 0.1. In scope
 
@@ -412,18 +414,18 @@ orphan ownership, edits profile balance directly or touches `pixeldoro.db`.
 - [x] US-08-02 accepted at exact SHA `5c6791d...`.
 - [x] EPIC-level confirmations 05/06/08/09 are approved Option A.
 - [x] Schema/repository/projection/UI/analytics baseline audited; no migration gap found.
-- [ ] Owner approves `US0803-CONFIRM-01→06`.
-- [ ] Exact implementation start SHA recorded before production edits.
+- [x] Owner approved `US0803-CONFIRM-01→06 theo Option A` on 2026-09-11.
+- [x] Exact implementation start SHA `5c6791dbec982d7f522e4113180458daf2e9ce95` recorded before production edits.
 
 ### 12.2. Definition of Done
 
-- [ ] Equip/unequip is free, owned-only, idempotent, multi-item and durable after relaunch.
-- [ ] No sibling state, Coin, XP, receipt, ownership count or session/reward truth changes.
-- [ ] Every failure proves rollback, no-write or exact recovered commit; UI is never optimistic.
-- [ ] Purchase flow and all common-component consumers regress cleanly.
-- [ ] Deterministic fresh-equip analytics is isolated from durable truth.
-- [ ] Safe fixtures/device guide exist; owner/formal evidence recorded honestly.
-- [ ] Typecheck/lint/tests/boundaries/hygiene/device validator/platform exports pass.
+- [x] Equip/unequip is free, owned-only, idempotent, multi-item and durable after relaunch.
+- [x] No sibling state, Coin, XP, receipt, ownership count or session/reward truth changes.
+- [x] Every failure proves rollback, no-write or exact recovered commit; UI is never optimistic.
+- [x] Purchase flow and all common-component consumers regress cleanly.
+- [x] Deterministic fresh-equip analytics is isolated from durable truth.
+- [x] Safe fixtures/device guide exist; owner/formal evidence recorded honestly as `NOT_RUN`.
+- [x] Typecheck/lint/tests/boundaries/hygiene/device validator/platform exports pass.
 - [ ] Implementation report binds exact SHA; owner acceptance opens US-08-04 art gate.
 
 ## 13. Open questions cần owner confirm
@@ -434,7 +436,7 @@ orphan ownership, edits profile balance directly or touches `pixeldoro.db`.
   items. Keep selected mode in memory across tab refocus, cold relaunch defaults `Cửa hàng`; no DB field.
 - **Option B:** create a separate Inventory query/controller or persist last mode.
 - **Impact:** A avoids duplicate truth/read races and adds no route/schema.
-- **Status:** `PENDING_OWNER_CONFIRMATION`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-11.
 
 ### US0803-CONFIRM-02 — Equip interaction
 
@@ -442,7 +444,7 @@ orphan ownership, edits profile balance directly or touches `pixeldoro.db`.
   free and reversible; busy disables mutation controls.
 - **Option B:** reuse confirmation dialog for every equip/unequip.
 - **Impact:** A keeps the common spend confirmation specific to irreversible Coin debit.
-- **Status:** `PENDING_OWNER_CONFIRMATION`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-11.
 
 ### US0803-CONFIRM-03 — Rapid UI actions
 
@@ -450,7 +452,7 @@ orphan ownership, edits profile balance directly or touches `pixeldoro.db`.
   until committed refresh; Application still serializes/revalidates concurrent direct calls.
 - **Option B:** queue every rapid/opposite UI tap.
 - **Impact:** A prevents hidden intent queues and stale opposite labels without optimistic state.
-- **Status:** `PENDING_OWNER_CONFIRMATION`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-11.
 
 ### US0803-CONFIRM-04 — Timestamp/idempotency/readback
 
@@ -458,7 +460,7 @@ orphan ownership, edits profile balance directly or touches `pixeldoro.db`.
   `updatedAt` and equipped `equippedAt`; ambiguous recovery requires that exact attempt timestamp.
 - **Option B:** rewrite timestamps on same-state and accept desired state alone as commit proof.
 - **Impact:** A gives meaningful idempotency and deterministic ambiguous-result proof.
-- **Status:** `PENDING_OWNER_CONFIRMATION`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-11.
 
 ### US0803-CONFIRM-05 — Commit then refresh failure
 
@@ -466,7 +468,7 @@ orphan ownership, edits profile balance directly or touches `pixeldoro.db`.
   inverses equip, matching purchase safety.
 - **Option B:** show generic error and let the action execute again.
 - **Impact:** A preserves known durable truth and prevents accidental toggles.
-- **Status:** `PENDING_OWNER_CONFIRMATION`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-11.
 
 ### US0803-CONFIRM-06 — Recovered equip analytics
 
@@ -474,7 +476,7 @@ orphan ownership, edits profile balance directly or touches `pixeldoro.db`.
   current-attempt recovered false→true commit; never for unequip/pre-existing/same-state.
 - **Option B:** emit only for direct fresh commit.
 - **Impact:** A avoids lost analytics while receipt-free timestamp identity keeps dedupe deterministic.
-- **Status:** `PENDING_OWNER_CONFIRMATION`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-11.
 
 Owner có thể duyệt gọn bằng: `Duyệt US0803-CONFIRM-01→06 theo Option A`. Approval sẽ authorize coding
 US-08-03 nhưng không tự authorize commit/push.
@@ -492,4 +494,6 @@ US-08-03 nhưng không tự authorize commit/push.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.3.0 | 2026-09-11 | Codex | Recorded validated uncommitted US-08-03 candidate: durable multi-equip, same-route inventory modes, deterministic analytics, SQLite fixtures/round-trip, guide, full quality and platform exports PASS. Manual smoke remains NOT_RUN; exact SHA remains null. |
+| 0.2.0 | 2026-09-11 | Codex | Recorded owner approval of Option A for confirmations 01–06 and coding authorization. Implementation starts from exact SHA `5c6791d...`; commit/push remain unauthorized. |
 | 0.1.0 | 2026-09-11 | Codex | Initial US-08-03 plan after owner acceptance of US-08-02 at exact SHA `5c6791d...`. Audited existing multi-equip schema/repository/projection/UI/analytics, proposed owned-only free atomic transition/readback, same Shop route modes, tests/fixtures/device gates and six owner confirmations. No production code changed. |

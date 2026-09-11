@@ -41,6 +41,23 @@ const progressionCatalogFlow = await readFile(
 const shopPurchaseFlow = await readFile(
   `${deviceDirectory}shop-purchase-smoke.md`, 'utf8',
 );
+const inventoryEquipFlow = await readFile(
+  `${deviceDirectory}inventory-equip-smoke.md`, 'utf8',
+);
+for (const evidence of [
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=inventory_mixed',
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=inventory_empty',
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=inventory_multi_equipped',
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=equip_read_failure_once',
+  'pixeldoro-us-08-03-', 'Cửa hàng', 'Đã sở hữu', 'Trang bị', 'Tháo',
+  'Đang trang bị…', 'Thử đọc lại dữ liệu', 'VoiceOver/TalkBack', 'Reduce Motion',
+  'Airplane mode', 'NOT_RUN', '<implementation-sha>',
+  'unset EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE',
+]) {
+  if (!inventoryEquipFlow.includes(evidence)) {
+    throw new Error(`Inventory equip device guide is missing: ${evidence}`);
+  }
+}
 for (const evidence of [
   'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=purchase_exact_balance',
   'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=purchase_insufficient',

@@ -1,7 +1,10 @@
 import type { ShopControllerProjection } from '@/application';
+import { StyleSheet, View } from 'react-native';
 
 import {
+  ChoiceChip,
   ConfirmationDialog,
+  EmptyState,
   ErrorState,
   InlineNotice,
   ItemGrid,
@@ -13,6 +16,7 @@ import {
   type ItemTileAction,
   type ItemTileModel,
 } from '@/presentation/components';
+import { ShopEquipNotice } from './shop-equip-notice';
 
 export interface ShopScreenProps {
   readonly projection: ShopControllerProjection;
@@ -21,6 +25,10 @@ export interface ShopScreenProps {
   readonly onConfirmPurchase: () => void;
   readonly onDismissPurchase: () => void;
   readonly onRetryPurchaseRefresh: () => void;
+  readonly onSetViewMode: (mode: 'catalog' | 'inventory') => void;
+  readonly onSetItemEquipped: (itemId: string, isEquipped: boolean) => void;
+  readonly onRetryEquipRefresh: () => void;
+  readonly onDismissEquipNotice: () => void;
 }
 
 const itemForPurchase = (projection: ShopControllerProjection) => {
@@ -37,22 +45,44 @@ export const ShopScreen = ({
   onConfirmPurchase,
   onDismissPurchase,
   onRetryPurchaseRefresh,
+  onSetViewMode,
+  onSetItemEquipped,
+  onRetryEquipRefresh,
+  onDismissEquipNotice,
 }: ShopScreenProps) => {
   const selectedItem = itemForPurchase(projection);
   const purchase = projection.status === 'ready' ? projection.purchase : { status: 'idle' as const };
   const purchasePending = purchase.status === 'submitting' ||
     purchase.status === 'committed_refresh_pending';
+  const equip = projection.status === 'ready' ? projection.equip : { status: 'idle' as const };
+  const equipPending = equip.status === 'submitting' ||
+    equip.status === 'committed_refresh_pending';
   const actionForItem = (item: ItemTileModel): ItemTileAction | undefined => {
-    if (projection.status !== 'ready' || item.state !== 'available') return undefined;
-    const shortfall = Math.max(0, item.priceCoins - projection.shop.profile.coinBalance);
+    if (projection.status !== 'ready') return undefined;
+    if (item.state === 'available') {
+      const shortfall = Math.max(0, item.priceCoins - projection.shop.profile.coinBalance);
+      return {
+        label: shortfall > 0 ? `Chưa đủ Coin · thiếu ${shortfall}` : 'Mua',
+        accessibilityLabel: shortfall > 0
+          ? `Chưa đủ Coin để mua ${item.displayName}, thiếu ${shortfall} Coin`
+          : `Mua ${item.displayName} với ${item.priceCoins} Coin`,
+        disabled: shortfall > 0 || purchasePending || equipPending ||
+          projection.refresh !== 'idle',
+        busy: purchase.status === 'submitting' && purchase.itemId === item.id,
+        onPress: () => onRequestPurchase(item.id),
+      };
+    }
+    const shouldEquip = item.state === 'owned';
+    const busy = equip.status === 'submitting' && equip.itemId === item.id;
     return {
-      label: shortfall > 0 ? `Chưa đủ Coin · thiếu ${shortfall}` : 'Mua',
-      accessibilityLabel: shortfall > 0
-        ? `Chưa đủ Coin để mua ${item.displayName}, thiếu ${shortfall} Coin`
-        : `Mua ${item.displayName} với ${item.priceCoins} Coin`,
-      disabled: shortfall > 0 || purchasePending || projection.refresh !== 'idle',
-      busy: purchase.status === 'submitting' && purchase.itemId === item.id,
-      onPress: () => onRequestPurchase(item.id),
+      label: busy ? (shouldEquip ? 'Đang trang bị…' : 'Đang tháo…')
+        : (shouldEquip ? 'Trang bị' : 'Tháo'),
+      accessibilityLabel: shouldEquip
+        ? `Trang bị ${item.displayName}`
+        : `Tháo ${item.displayName}`,
+      disabled: purchasePending || equipPending || projection.refresh !== 'idle',
+      busy,
+      onPress: () => onSetItemEquipped(item.id, shouldEquip),
     };
   };
 
@@ -78,6 +108,20 @@ export const ShopScreen = ({
       {projection.status === 'ready' ? (
         <>
           <ProgressionSummary progression={projection.shop.profile} variant="compact" />
+          <View accessibilityRole="radiogroup" style={styles.modeSelector}>
+            <ChoiceChip
+              disabled={purchasePending || equipPending}
+              label="Cửa hàng"
+              onPress={() => onSetViewMode('catalog')}
+              selected={projection.mode === 'catalog'}
+            />
+            <ChoiceChip
+              disabled={purchasePending || equipPending}
+              label="Đã sở hữu"
+              onPress={() => onSetViewMode('inventory')}
+              selected={projection.mode === 'inventory'}
+            />
+          </View>
           {projection.refresh === 'refreshing' ? (
             <InlineNotice>Đang cập nhật dữ liệu đã lưu trên thiết bị…</InlineNotice>
           ) : null}
@@ -132,7 +176,28 @@ export const ShopScreen = ({
               />
             </>
           ) : null}
-          <ItemGrid actionForItem={actionForItem} items={projection.shop.items} />
+          <ShopEquipNotice
+            onDismiss={onDismissEquipNotice}
+            onRetryRefresh={onRetryEquipRefresh}
+            projection={projection}
+          />
+          {projection.mode === 'inventory' &&
+          projection.shop.items.every(({ state }) => state === 'available') ? (
+              <>
+                <EmptyState
+                  body="Mua một món trong Cửa hàng để bắt đầu bộ sưu tập của bạn."
+                  title="Chưa có vật phẩm đã sở hữu"
+                />
+                <SecondaryButton label="Xem cửa hàng" onPress={() => onSetViewMode('catalog')} />
+              </>
+            ) : (
+              <ItemGrid
+                actionForItem={actionForItem}
+                items={projection.mode === 'inventory'
+                  ? projection.shop.items.filter(({ state }) => state !== 'available')
+                  : projection.shop.items}
+              />
+            )}
           <ConfirmationDialog
             body={selectedItem === undefined
               ? ''
@@ -154,3 +219,7 @@ export const ShopScreen = ({
     </ScreenShell>
   );
 };
+
+const styles = StyleSheet.create({
+  modeSelector: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+});

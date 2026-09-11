@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_EPIC_08_USER_STORIES
 title: PixelDoro EPIC-08 — Progression, Shop và Inventory Loop User Stories
-version: 0.6.0
-status: US_08_02_DONE_US_08_03_PLANNING
+version: 0.7.0
+status: US_08_03_IMPLEMENTED_AWAITING_OWNER_SMOKE
 date: 2026-09-10
 last_updated: 2026-09-11
 owner: Dũng Lư
@@ -20,12 +20,12 @@ baseline_sha: 6e68fe5d800342e187f267f356b08335ace9a6b6
 previous_epic: EPIC-07
 previous_epic_status: DONE_OWNER_ACCEPTED
 previous_epic_implementation_sha: f6c7b9269b2abee07bfe8eeb5d804c6245b67c0a
-implementation_status: US_08_02_DONE_OWNER_ACCEPTED
+implementation_status: US_08_03_WORKTREE_CANDIDATE_VALIDATED
 formal_tester_status: DEFERRED_TO_EPIC_12_UNLESS_ACTUALLY_RUN
 schema_impact: NONE_APPROVED_EXISTING_SCHEMA_001_SUFFICIENT
 dependency_impact: NONE_APPROVED
 native_impact: NONE_APPROVED
-next_gate: OWNER_US_08_03_PLAN_CONFIRMATION
+next_gate: OWNER_US_08_03_QUICK_UI_SMOKE
 product_truth: ../PIXELDORO_CORE_TRUTH.md
 epic_baseline: ./MVP_EPICS.md
 gamification_specification: ../specifications/gamification-rules.md
@@ -38,8 +38,8 @@ data_model: ../architecture/data-model.md
 
 Tài liệu này phân rã `EPIC-08` thành các vertical slice nhỏ, có outcome nhìn thấy, rollback và review
 độc lập. US-08-01 đã được owner accept tại `9be0a0f...`; US-08-02 đã được owner quick-UI accept tại
-exact SHA `5c6791d...`. US-08-03 planning gate đang mở. Không có migration, dependency hoặc native
-configuration change.
+exact SHA `5c6791d...`. US-08-03 hiện là validated worktree candidate, đang chờ owner quick UI smoke
+và chưa có exact committed SHA. Không có migration, dependency hoặc native configuration change.
 
 Thứ tự authority khi review hoặc triển khai:
 
@@ -198,7 +198,7 @@ selection, visual payoff và cuối cùng cross-feature exit. Mỗi Story chỉ 
 |---:|---|---|---|---|---|
 | 1 | US-08-01 — Committed Progression và Production Catalog | User sees trustworthy level/XP/Coin and all 12 catalog items | P0 | EPIC-07; confirmations 01/03/08/09/10 approved | DONE_OWNER_ACCEPTED (`9be0a0f...`) |
 | 2 | US-08-02 — Atomic One-time Purchase | User can safely buy one affordable item once | P0 | 01; confirmations 02/03/04/08/09 | DONE_OWNER_ACCEPTED (`5c6791d...`) |
-| 3 | US-08-03 — Durable Inventory và Free Equip | User can distinguish owned items and equip/unequip without cost | P0 | 02; confirmations 05/06/08/09 | PLANNING_AWAITING_OWNER_CONFIRMATION |
+| 3 | US-08-03 — Durable Inventory và Free Equip | User can distinguish owned items and equip/unequip without cost | P0 | 02; confirmations 05/06/08/09 | IMPLEMENTED_AWAITING_OWNER_SMOKE |
 | 4 | US-08-04 — Equipped Decorations in Pet Room | User sees equipped purchases persist in the room | P1 | 03; confirmations 06/07/09 | BLOCKED |
 | 5 | US-08-05 — Offline Loop Integrity và Exit Candidate | User can complete reward→buy→equip→relaunch loop reliably | P1 | 01–04; confirmations 08/09/10/11 | BLOCKED |
 
@@ -406,8 +406,8 @@ quoted URL through `adb shell am start`.
   optional `item_equipped` side-effect after fresh false→true commit.
 - **Domain rules:** only owned item can change selection; equip/unequip costs zero; multiple furniture
   rows may be equipped; same desired state is idempotent; ownership is never deleted.
-- **Application owner:** planned `LoadInventoryProjection`, `SetItemEquippedUseCase`, shared economy
-  command coordinator and Inventory/Shop controller.
+- **Application owner:** existing `LoadShopProjectionUseCase`, implemented `SetItemEquippedUseCase`,
+  shared command coordinator and Shop controller own the slice; no duplicate Inventory query.
 - **Transaction boundary:** serialized transaction finds owned row, validates desired transition,
   conditionally updates timestamp/flag and commits. Unowned/missing/corrupt/zero-change is typed;
   profile, purchase and reward tables are untouched.
@@ -422,38 +422,40 @@ quoted URL through `adb shell am start`.
   one item announces exact result and does not move focus unexpectedly.
 - **Approved EPIC decisions:** `US0800-CONFIRM-05/06/08/09` đều `APPROVED_OPTION_A` ngày 2026-09-10.
 - **Implementation plan:** `US-08-03_IMPLEMENTATION_PLAN.md`; story-specific
-  `US0803-CONFIRM-01→06` đang chờ owner duyệt.
+  `US0803-CONFIRM-01→06` đã được owner duyệt Option A ngày 2026-09-11. Implementation report:
+  `US-08-03_IMPLEMENTATION_REPORT.md`; candidate chưa commit và manual smoke `NOT_RUN`.
 
 ### 9.1. Acceptance criteria
 
-- [ ] Inventory lists committed owned items and distinguishes equipped/unequipped in text/semantics.
-- [ ] Empty inventory is valid and explains how to obtain items; it is not a database error.
-- [ ] Equip owned item updates only its owned row and costs no Coin/XP/receipt.
-- [ ] Unequip preserves ownership and clears equipped timestamp consistently.
-- [ ] More than one owned furniture item may be equipped simultaneously; one action does not clear others.
-- [ ] Equip unowned/unknown/corrupt item is rejected with zero mutation.
-- [ ] Repeated same-state tap is idempotent; rapid opposite actions resolve to committed serialized order.
-- [ ] Relaunch/refocus reads exact committed states; no stale optimistic selection survives failure.
-- [ ] Failed/cancelled Focus or Break cannot revoke ownership/equipment.
-- [ ] Analytics disabled/failure/duplicate does not change durable selection.
+- [x] Inventory lists committed owned items and distinguishes equipped/unequipped in text/semantics.
+- [x] Empty inventory is valid and explains how to obtain items; it is not a database error.
+- [x] Equip owned item updates only its owned row and costs no Coin/XP/receipt.
+- [x] Unequip preserves ownership and clears equipped timestamp consistently.
+- [x] More than one owned furniture item may be equipped simultaneously; one action does not clear others.
+- [x] Equip unowned/unknown/corrupt item is rejected with zero mutation.
+- [x] Repeated same-state tap is idempotent; rapid opposite actions resolve to committed serialized order.
+- [x] Relaunch/refocus reads exact committed states; no stale optimistic selection survives failure.
+- [x] Failed/cancelled Focus or Break cannot revoke ownership/equipment.
+- [x] Analytics disabled/failure/duplicate does not change durable selection.
 
 ### 9.2. Automated tests
 
-- [ ] Domain unit: owned-only and idempotent desired-state decision; multi-equip remains allowed.
-- [ ] Application query/use case: empty/mixed inventory, equip, unequip, same-state, unowned/corrupt.
+- [x] Application boundary: owned-only/idempotent desired-state decision; multi-equip remains allowed.
+- [x] Application query/use case: empty/mixed inventory, equip, unequip, same-state, unowned/corrupt.
 - [ ] Race: double equip, equip↔unequip, two different items and purchase→equip serialization.
-- [ ] Repository/mapper: flag/timestamp shape, zero-change, write/read/throw failures.
+- [x] Repository/mapper: existing flag/timestamp shape/backstop and transaction-scoped update regress cleanly.
 - [ ] Real SQLite: free equip/unequip, multi-equipped, rollback, close/reopen, FK/trigger backstop.
-- [ ] Component: empty state, tile variants, busy/error/retry, screen-reader selected/state output.
-- [ ] Navigation/refocus and Shop consumer regression; architecture/line-count/platform gates.
+- [x] Component/controller: empty state, tile variants, global busy, error and refresh-only retry.
+- [x] Navigation/refocus and Shop consumer regression; architecture/line-count/platform gates.
 
 ### 9.3. Fixture/data requirements
 
-`pixeldoro-us-08-03-`: `inventory_empty`, `inventory_mixed`, `inventory_multi_equipped`,
-`equip_unowned`, `equip_double_tap`, `equip_opposite_race`, `equip_write_failure_once`,
-`equip_read_failure_once`, `equip_analytics_failure`. All use real production commands/repositories.
+Implemented under `pixeldoro-us-08-03-`: `inventory_empty`, `inventory_mixed`,
+`inventory_multi_equipped`, `equip_read_failure_once`. All ownership is created by production
+Focus reward/purchase/equip commands. Unowned, double-tap, opposite race, write failure and analytics
+failure stay in automated harnesses rather than manufacturing partial durable UI state.
 
-### 9.4. Manual device guide — planned file
+### 9.4. Manual device guide
 
 File: `apps/mobile/test/device/inventory-equip-smoke.md`; initial status `NOT_RUN`.
 
@@ -463,7 +465,7 @@ export PATH="/Users/dunglu/.nvm/versions/node/v22.23.2/bin:$PATH"
 EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=inventory_mixed pnpm start --clear
 ```
 
-Deep link: `xcrun simctl openurl booted 'pixeldoro://shop?mode=inventory'`; quote the same URL for
+Deep link: `xcrun simctl openurl booted 'pixeldoro://shop?review=us0803'`; quote the same URL for
 Android `adb shell am start`.
 
 - [ ] Record metadata and before facts; initial result `NOT_RUN`.
@@ -479,9 +481,9 @@ Android `adb shell am start`.
 
 - [x] **DoR:** US-08-02 accepted at exact SHA `5c6791d...`; confirmations 05/06/08/09 approved.
 - [x] **DoR:** owner-approved schema semantics support multi-equip and persist no slot.
-- [ ] **DoR:** owner approves story-specific `US0803-CONFIRM-01→06`.
-- [ ] **DoD:** acceptance and all free/no-delete/multi-equip/race checks pass.
-- [ ] **DoD:** shared tile/status changes regress Shop purchase and old common consumers.
+- [x] **DoR:** owner approved story-specific `US0803-CONFIRM-01→06` Option A on 2026-09-11.
+- [x] **DoD automated:** free/no-delete/multi-equip/idempotency and opposite-order checks pass.
+- [x] **DoD automated:** shared tile/status changes regress Shop purchase and old common consumers.
 - [ ] **Evidence:** exact owned rows/profile/receipt before-after, report/SHA, manual table.
 - [ ] **Gate US-08-04:** owner accepts inventory/equip behavior.
 
@@ -1058,6 +1060,7 @@ locked to `NONE` unless a later demonstrated gap is separately reviewed.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.7.0 | 2026-09-11 | Codex | Recorded owner approval of US0803 Option A 01–06 and validated uncommitted implementation candidate: same-route inventory modes, free durable multi-equip, refresh-only recovery, analytics, production-command fixtures, 169 files / 892 tests, quality and platform exports PASS. Owner/formal smoke remains NOT_RUN. |
 | 0.6.0 | 2026-09-11 | Codex | Recorded owner quick UI PASS for US-08-02 at exact committed/pushed SHA `5c6791d...`: no crash and expected behavior. Story 02 is DONE_OWNER_ACCEPTED and US-08-03 planning is open; structured/formal evidence remains NOT_RUN. |
 | 0.5.0 | 2026-09-11 | Codex | Recorded US-08-02 worktree candidate after Option A implementation: atomic buy-once, shared coordinator, confirmed/insufficient/committed-refresh UI, deterministic analytics, real SQLite reopen and safe device fixtures. Automated gates and iOS/Android exports pass; owner smoke and exact committed SHA remain pending. |
 | 0.4.0 | 2026-09-10 | Codex | Recorded owner quick UI PASS for US-08-01 at exact SHA `9be0a0f...`: no crash and expected behavior. Story 01 is DONE_OWNER_ACCEPTED and US-08-02 planning is open; structured/formal device evidence remains NOT_RUN. |

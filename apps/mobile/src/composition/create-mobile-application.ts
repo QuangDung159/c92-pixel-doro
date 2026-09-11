@@ -122,6 +122,11 @@ import {
   resolveShopPurchaseReviewScenario,
   shopPurchaseReviewDatabaseName,
 } from './review/shop-purchase-review-fixture';
+import {
+  createInventoryEquipReviewFixture,
+  inventoryEquipReviewDatabaseName,
+  resolveInventoryEquipReviewScenario,
+} from './review/inventory-equip-review-fixture';
 
 const PIXELDORO_DATABASE_NAME = 'pixeldoro.db';
 
@@ -180,6 +185,10 @@ export const createMobileApplication = (
     process.env.EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE,
     reviewFixturesEnabled,
   );
+  const inventoryEquipReviewScenario = resolveInventoryEquipReviewScenario(
+    process.env.EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE,
+    reviewFixturesEnabled,
+  );
   const breakCadenceReviewScenario = resolveBreakCadenceReviewScenario(
     process.env.EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE,
     reviewFixturesEnabled,
@@ -193,7 +202,9 @@ export const createMobileApplication = (
     reviewFixturesEnabled,
   );
   const databaseOwner = new SQLiteDatabaseOwner(
-    options.databaseName ?? (shopPurchaseReviewScenario !== undefined
+    options.databaseName ?? (inventoryEquipReviewScenario !== undefined
+      ? inventoryEquipReviewDatabaseName(inventoryEquipReviewScenario)
+      : shopPurchaseReviewScenario !== undefined
       ? shopPurchaseReviewDatabaseName(shopPurchaseReviewScenario)
       : shopReviewScenario !== undefined
         ? shopReviewDatabaseName(shopReviewScenario)
@@ -214,6 +225,10 @@ export const createMobileApplication = (
   );
   const shopPurchaseReviewFixture = createShopPurchaseReviewFixture(
     shopPurchaseReviewScenario,
+    persistence.catalog,
+  );
+  const inventoryEquipReviewFixture = createInventoryEquipReviewFixture(
+    inventoryEquipReviewScenario,
     persistence.catalog,
   );
   const breakCadenceReviewFixture = createBreakCadenceReviewFixture(
@@ -460,7 +475,9 @@ export const createMobileApplication = (
   const shop = createShopSlice({
     analyticsQueue: coordinatedSideEffectAnalyticsQueue,
     catalog: persistence.catalog,
-    ...(shopPurchaseReviewFixture !== undefined
+    ...(inventoryEquipReviewFixture !== undefined
+      ? { catalogList: inventoryEquipReviewFixture.catalog }
+      : shopPurchaseReviewFixture !== undefined
       ? { catalogList: shopPurchaseReviewFixture.catalog }
       : shopReviewFixture === undefined ? {} : { catalogList: shopReviewFixture.catalog }),
     clock,
@@ -996,6 +1013,26 @@ export const createMobileApplication = (
     boot: async () => {
       await runProbeIfEnabled();
       await bootstrap.boot();
+      if (
+        bootstrap.getSnapshot().status === 'ready' &&
+        inventoryEquipReviewFixture !== undefined
+      ) {
+        const changed = await inventoryEquipReviewFixture.prepare({
+          catalog: persistence.catalog,
+          coordinator: sessionCommands,
+          economy: persistence.economyConsistency,
+          ownedItems: persistence.ownedItems,
+          profile: persistence.profile,
+          purchases: persistence.purchases,
+          rewards: persistence.rewards,
+          sessions: persistence.sessions,
+          transaction,
+        });
+        if (changed) {
+          const refreshed = await bootstrap.refreshReadySnapshot();
+          if (!refreshed.ok) bootstrap.enterRecovery('DATABASE_READ_FAILED');
+        }
+      }
       if (
         bootstrap.getSnapshot().status === 'ready' &&
         shopReviewFixture !== undefined

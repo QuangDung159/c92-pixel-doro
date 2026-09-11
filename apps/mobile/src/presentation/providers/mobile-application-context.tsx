@@ -168,10 +168,14 @@ export const useShopActions = () => {
     activate: shop.activate,
     confirmPurchase: shop.confirmPurchase,
     deactivate: shop.deactivate,
+    dismissEquipNotice: shop.dismissEquipNotice,
     dismissPurchase: shop.dismissPurchase,
     requestPurchase: shop.requestPurchase,
     retry: shop.retry,
     retryPurchaseRefresh: shop.retryPurchaseRefresh,
+    retryEquipRefresh: shop.retryEquipRefresh,
+    setItemEquipped: shop.setItemEquipped,
+    setViewMode: shop.setViewMode,
   };
 };
 

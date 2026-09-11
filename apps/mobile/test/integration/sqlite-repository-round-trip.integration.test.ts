@@ -14,7 +14,11 @@ import type {
   PersistenceError,
   RunningSessionRecord,
 } from '@pixeldoro/application';
-import { PurchaseItemUseCase, SessionCommandCoordinator } from '@pixeldoro/application';
+import {
+  PurchaseItemUseCase,
+  SessionCommandCoordinator,
+  SetItemEquippedUseCase,
+} from '@pixeldoro/application';
 import { MigrationRunner } from '@/infrastructure/database/migration-runner';
 import { productionMigrationRegistry } from '@/infrastructure/database/migrations/migration-registry';
 import {
@@ -30,6 +34,7 @@ import type {
   SQLiteWriteResult,
 } from '@/infrastructure/database/sqlite-driver';
 import { SQLiteTransaction } from '@/infrastructure/database/sqlite-transaction';
+import { createInventoryEquipReviewFixture } from '@/composition/review/inventory-equip-review-fixture';
 
 const timestamp = 1_787_836_800_000;
 const temporaryDirectories: string[] = [];
@@ -124,6 +129,53 @@ afterEach(async () => {
 });
 
 describe('SQLite repository durable round trip', () => {
+  it('seeds the multi-equipped review fixture through production commands', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'pixeldoro-us0803-fixture-'));
+    temporaryDirectories.push(directory);
+    const driver = new HostSQLiteDriver(directory);
+    const database = await createDatabase(driver, 'inventory-fixture.db');
+    const fixture = createInventoryEquipReviewFixture(
+      'inventory_multi_equipped',
+      database.graph.catalog,
+    );
+    expect(await fixture?.prepare({
+      catalog: database.graph.catalog,
+      coordinator: new SessionCommandCoordinator(),
+      economy: database.graph.economyConsistency,
+      ownedItems: database.graph.ownedItems,
+      profile: database.graph.profile,
+      purchases: database.graph.purchases,
+      rewards: database.graph.rewards,
+      sessions: database.graph.sessions,
+      transaction: database.transaction,
+    })).toBe(true);
+
+    expect(await database.graph.profile.find()).toMatchObject({
+      ok: true, value: { totalXp: 150, coinBalance: 0 },
+    });
+    expect(await database.graph.ownedItems.find(1, 'desk-mug')).toMatchObject({
+      ok: true, value: { isEquipped: true },
+    });
+    expect(await database.graph.ownedItems.find(1, 'tiny-plant')).toMatchObject({
+      ok: true, value: { isEquipped: true },
+    });
+    expect(await database.graph.ownedItems.find(1, 'book-stack')).toMatchObject({
+      ok: true, value: { isEquipped: false },
+    });
+    expect(await fixture?.prepare({
+      catalog: database.graph.catalog,
+      coordinator: new SessionCommandCoordinator(),
+      economy: database.graph.economyConsistency,
+      ownedItems: database.graph.ownedItems,
+      profile: database.graph.profile,
+      purchases: database.graph.purchases,
+      rewards: database.graph.rewards,
+      sessions: database.graph.sessions,
+      transaction: database.transaction,
+    })).toBe(false);
+    await database.owner.close();
+  });
+
   it('commits one atomic purchase and reopens the debited unequipped ownership', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'pixeldoro-us0802-'));
     temporaryDirectories.push(directory);
@@ -206,7 +258,54 @@ describe('SQLite repository durable round trip', () => {
     expect(await reopenedPurchase.execute({ itemId: 'desk-mug' })).toMatchObject({
       ok: true, value: { outcome: 'already_owned', coinBalance: 0 },
     });
+    const equip = new SetItemEquippedUseCase({
+      approvedCatalog,
+      catalog: reopened.graph.catalog,
+      clock: { nowMs: () => session.endsAt + 3 },
+      coordinator: new SessionCommandCoordinator(),
+      ownedItems: reopened.graph.ownedItems,
+      purchases: reopened.graph.purchases,
+      transaction: reopened.transaction,
+    });
+    expect(await equip.execute({ itemId: 'desk-mug', isEquipped: true })).toMatchObject({
+      ok: true,
+      value: {
+        outcome: 'fresh_commit', transition: 'equipped',
+        ownership: { isEquipped: true, equippedAt: session.endsAt + 3 },
+      },
+    });
+    expect(await reopened.graph.economyConsistency.verify(1)).toMatchObject({
+      ok: true, value: { totalXp: 25, coinBalance: 0 },
+    });
+    expect(await reopened.graph.purchases.findByProfileAndItem(1, 'desk-mug'))
+      .toMatchObject({ ok: true, value: { id: 'purchase-receipt-1', coinDelta: -5 } });
     await reopened.owner.close();
+
+    const equippedReopen = await createDatabase(driver, databaseName);
+    expect(await equippedReopen.graph.ownedItems.find(1, 'desk-mug')).toMatchObject({
+      ok: true,
+      value: { isEquipped: true, equippedAt: session.endsAt + 3 },
+    });
+    const unequip = new SetItemEquippedUseCase({
+      approvedCatalog,
+      catalog: equippedReopen.graph.catalog,
+      clock: { nowMs: () => session.endsAt + 4 },
+      coordinator: new SessionCommandCoordinator(),
+      ownedItems: equippedReopen.graph.ownedItems,
+      purchases: equippedReopen.graph.purchases,
+      transaction: equippedReopen.transaction,
+    });
+    expect(await unequip.execute({ itemId: 'desk-mug', isEquipped: false })).toMatchObject({
+      ok: true,
+      value: {
+        outcome: 'fresh_commit', transition: 'unequipped',
+        ownership: { isEquipped: false, equippedAt: null, updatedAt: session.endsAt + 4 },
+      },
+    });
+    expect(await equippedReopen.graph.economyConsistency.verify(1)).toMatchObject({
+      ok: true, value: { totalXp: 25, coinBalance: 0 },
+    });
+    await equippedReopen.owner.close();
   });
 
   it('selects the latest onboarding trial deterministically and excludes Standard Focus', async () => {

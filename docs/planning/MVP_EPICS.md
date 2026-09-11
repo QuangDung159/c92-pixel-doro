@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_MVP_EPIC_BREAKDOWN
 title: PixelDoro Mobile MVP — Epic Breakdown
-version: 1.9.0
+version: 2.0.0
 status: EPIC_01_TO_07_DONE_EPIC_08_IN_PROGRESS
 last_updated: 2026-09-11
 owner: Dũng Lư
@@ -145,7 +145,7 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 | `EPIC-05` | `DONE_OWNER_ACCEPTED` | Exact implementation SHA `580f559`; root `82/391`, SQLite exclusions và owner quick UI smoke pass. Formal tester matrix deferred. |
 | `EPIC-06` | `DONE_OWNER_ACCEPTED` | Exact candidate `458a886`; Standard Relax/Strict end-to-end, notification/analytics/a11y hooks, owner iOS/Android quick smoke. Formal tester deferred. |
 | `EPIC-07` | `DONE_OWNER_ACCEPTED` | Exact candidate `f6c7b92`; Break/cadence lifecycle, notification/analytics and owner quick UI pass. Formal device/accessibility matrix deferred. |
-| `EPIC-08` | `IN_PROGRESS` | US-08-01 accepted tại `9be0a0f`; US-08-02 `DONE_OWNER_ACCEPTED` tại `5c6791d`; US-08-03 đang chờ owner duyệt plan. |
+| `EPIC-08` | `IN_PROGRESS` | US-08-01 accepted tại `9be0a0f`; US-08-02 accepted tại `5c6791d`; US-08-03 là validated uncommitted candidate đang chờ owner UI smoke. |
 
 Bảy Epic đầu và US-08-01 hoàn thành không đồng nghĩa Mobile MVP hoàn tất. EPIC-08 vẫn `IN_PROGRESS`;
 EPIC-09–12 giữ nguyên execution order. Không được dùng progress này để nhận purchase/equip/room,
@@ -868,6 +868,14 @@ Story hoặc implementation tương lai.
 - [x] Không estimate deadline trước khi Story refinement hoàn tất.
 
 ## 10. Change log
+
+### 2.0.0 — 2026-09-11
+
+- Ghi US-08-03 validated uncommitted candidate sau khi owner duyệt Option A 01→06: durable
+  Inventory, free multi-equip, refresh-only recovery, deterministic analytics và dev fixtures đã
+  implement; full quality 169 files / 892 tests cùng Android/iOS JS exports PASS.
+- Giữ EPIC-08 `IN_PROGRESS`; owner/formal device smoke vẫn `NOT_RUN`, exact implementation SHA chưa
+  có và US-08-04 art gate chưa mở.
 
 ### 1.9.0 — 2026-09-11
 

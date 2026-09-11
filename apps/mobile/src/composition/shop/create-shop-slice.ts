@@ -1,6 +1,7 @@
 import {
   LoadShopProjectionUseCase,
   PurchaseItemUseCase,
+  SetItemEquippedUseCase,
   type CatalogRepository,
   type ClockPort,
   type EconomyConsistencyQuery,
@@ -13,6 +14,7 @@ import {
 } from '@pixeldoro/application';
 
 import {
+  ItemEquippedAnalyticsRecorder,
   ItemUnlockedAnalyticsRecorder,
   ShopAnalyticsRecorder,
   ShopController,
@@ -77,6 +79,14 @@ export const createShopSlice = (dependencies: CreateShopSliceDependencies) => {
     },
     queue: dependencies.analyticsQueue,
   });
+  const itemEquippedAnalytics = new ItemEquippedAnalyticsRecorder({
+    isCaptureEnabled: () => {
+      const projection = dependencies.readBootstrap();
+      return projection.status === 'ready' &&
+        projection.snapshot.settings.analyticsEnabled;
+    },
+    queue: dependencies.analyticsQueue,
+  });
   const purchaseUseCase = new PurchaseItemUseCase({
     approvedCatalog,
     catalog: dependencies.catalog,
@@ -103,14 +113,39 @@ export const createShopSlice = (dependencies: CreateShopSliceDependencies) => {
         });
     },
   };
+  const equipUseCase = new SetItemEquippedUseCase({
+    approvedCatalog,
+    catalog: dependencies.catalog,
+    clock: dependencies.clock,
+    coordinator: dependencies.coordinator,
+    ownedItems: dependencies.ownedItems,
+    purchases: dependencies.purchases,
+    transaction: dependencies.transaction,
+  });
+  const setItemEquipped = {
+    execute: (input: { readonly itemId: string; readonly isEquipped: boolean }) => {
+      const gated = dependencies.readiness.run(() => equipUseCase.execute(input));
+      return gated.ok
+        ? gated.value
+        : Promise.resolve({
+          ok: false as const,
+          error: {
+            kind: 'set_item_equipped_error' as const,
+            code: 'SET_EQUIPPED_TRANSACTION_FAILED' as const,
+          },
+        });
+    },
+  };
   const shop = new ShopController({
     analytics,
     clock: dependencies.clock,
     criticalRecovery: dependencies.criticalRecovery,
     id: dependencies.id,
+    itemEquippedAnalytics,
     itemUnlockedAnalytics,
     loader,
     purchaseItem,
+    setItemEquipped,
   });
   return Object.freeze({
     shop,
