@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_08_04_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-08-04 Implementation Plan
-version: 0.3.0
-status: IMPLEMENTATION_CANDIDATE_AWAITING_OWNER_SMOKE
-implementation_status: VALIDATED_UNCOMMITTED_CANDIDATE
+version: 0.5.0
+status: DONE_OWNER_ACCEPTED
+implementation_status: DONE_OWNER_ACCEPTED
 date: 2026-09-11
 last_updated: 2026-09-11
 owner: Dũng Lư
@@ -13,11 +13,12 @@ language: vi
 branch: feats/epic-08
 planning_baseline_sha: d6399dd7590852c051f671757c3200c8d70b8bc8
 implementation_start_sha: 4b1dee1a3f56a5d9022da9f4a22160368391c6fc
-exact_implementation_sha: null
+current_worktree_base_sha: 94a0b24ac0bb62854d02754c90a94f415e0edbec
+exact_implementation_sha: 94a0b24ac0bb62854d02754c90a94f415e0edbec
 previous_story: US-08-03
 previous_story_status: DONE_OWNER_ACCEPTED
 previous_story_implementation_sha: d6399dd7590852c051f671757c3200c8d70b8bc8
-manual_device_status: NOT_RUN_OWNER_SMOKE_REQUESTED
+manual_device_status: PASS_OWNER_QUICK_UI
 formal_tester_status: NOT_RUN_DEFERRED_TO_EPIC_12_UNLESS_EXECUTED
 art_candidate_status: APPROVED_AND_PROMOTED
 art_candidate_approval: US0804_ART_01_APPROVED_OWNER_2026_09_11
@@ -63,7 +64,9 @@ US-08-04 có hai gate tách biệt; gate thứ nhất đã được owner duyệ
    2026-09-11 trước khi asset được đưa vào production manifest và production code bắt đầu.
 
 Candidate package `us0804-room-art-candidate-v1` đã được owner duyệt. Backdrop và transparent item
-atlas đã được promote vào runtime cùng typed manifest; implementation candidate đang chờ owner smoke.
+atlas đã được promote vào runtime cùng typed manifest. Sau các vòng hiệu chỉnh room scaling, visible
+bounds, depth của desk item và Cat room scale, owner quick-smoke xác nhận không crash và behavior đúng
+kỳ vọng tại exact committed/pushed SHA `94a0b24...` ngày 2026-09-11.
 
 ### 0.1. In scope
 
@@ -419,14 +422,15 @@ All ownership fixtures use production Focus reward/purchase/equip commands; no d
 
 ### Definition of Done
 
-- [ ] Only committed equipped known items render at approved stable anchors; empty/many/reopen work.
-- [ ] Room read/art failure never blocks Pet/profile/Start Focus or changes durable data.
-- [ ] All five Pet states and Shop→Home handoff regress without optimistic state.
-- [ ] Approved assets have typed manifest, matching hashes and attribution/source record.
-- [ ] Accessibility summary/fallback and decorative-node hiding pass automated/manual evidence.
-- [ ] Fixtures/device guide/report exist with manual/formal status recorded honestly.
-- [ ] Quality/boundaries/hygiene/device validator and Android/iOS exports pass.
-- [ ] Exact committed SHA and owner smoke are bound before opening US-08-05.
+- [x] Only committed equipped known items render at approved stable anchors; empty/many/reopen work.
+- [x] Room read/art failure never blocks Pet/profile/Start Focus or changes durable data.
+- [x] All five Pet states and Shop→Home handoff regress without optimistic state.
+- [x] Approved assets have typed manifest, matching hashes and attribution/source record.
+- [x] Accessibility summary/fallback and decorative-node hiding pass automated evidence; formal manual
+  accessibility breadth remains explicitly deferred/`NOT_RUN`.
+- [x] Fixtures/device guide/report exist with owner quick UI and formal status recorded separately.
+- [x] Quality/boundaries/hygiene/device validator and Android/iOS exports pass.
+- [x] Exact committed SHA `94a0b24...` and owner smoke are bound; US-08-05 planning is open.
 
 ## 11. Open questions cần owner confirm
 
@@ -472,8 +476,8 @@ All ownership fixtures use production Focus reward/purchase/equip commands; no d
 - **Option B:** Shop push projection trực tiếp sang Home và đồng thời đổi thumbnail Shop.
 - **Status:** `APPROVED_OPTION_A` — owner 2026-09-11.
 
-Plan confirmations và exact `US0804-ART-01 candidate v1` đã được duyệt. Gate kế tiếp là owner quick
-UI smoke trên implementation candidate; chưa được ghi PASS cho đến khi owner xác nhận.
+Plan confirmations, exact `US0804-ART-01 candidate v1` và implementation đã được owner accept.
+Gate kế tiếp là review/confirm implementation plan US-08-05; không tự mở production coding.
 
 ## 12. Impact verdict and change log
 
@@ -489,6 +493,7 @@ UI smoke trên implementation candidate; chưa được ghi PASS cho đến khi 
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.5.0 | 2026-09-11 | Codex | Bound owner quick UI PASS (no crash, expected behavior) to exact committed/pushed SHA `94a0b24...` after room composition, item depth and Cat-scale calibration. US-08-04 is DONE_OWNER_ACCEPTED; structured/formal device and accessibility breadth remains NOT_RUN/deferred. Opened only US-08-05 planning. |
 | 0.4.0 | 2026-09-11 | Codex | Post-smoke visual calibration: replaced padded-cell anchors with primary-subject source crops mapped to normalized visible target bounds from the approved composition. The crop removes isolated atlas noise; both axes share the room-width scale used to derive the taller empty backdrop. Added geometry invariants and narrow/wide portrait full-room checks; rejected an alternate generated backdrop that incorrectly baked the window. |
 | 0.3.0 | 2026-09-11 | Codex | Recorded exact `US0804-ART-01 candidate v1` approval and implementation start SHA `4b1dee1...`. Promoted backdrop and transparent 12-item atlas; added immutable equipped-room projection, isolated controller, Home focus lifecycle, deterministic layered rendering, explicit `room`/`focus` scene modes, accessibility summary, tests and smoke guide. Owner screenshot review refined desk anchors, removed normal-state Pet/item copy and added dev-only `room_full_equipped` visual projection without SQLite writes. All item frames scale from measured room dimensions. Full quality 176 files / 908 tests and Android/iOS exports PASS; owner/manual smoke remains NOT_RUN. |
 | 0.2.0 | 2026-09-11 | Codex | Recorded owner approval of confirmations 01–06 Option A. Generated review-only `us0804-room-art-candidate-v1` package with the built-in ImageGen tool: 12-item room/contact sheet (`ccb8d071...`) and separate empty backdrop (`d22ae4d...`). Production code remains NOT_STARTED pending `US0804-ART-01`. |

@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_MVP_EPIC_BREAKDOWN
 title: PixelDoro Mobile MVP — Epic Breakdown
-version: 2.3.0
+version: 2.4.0
 status: EPIC_01_TO_07_DONE_EPIC_08_IN_PROGRESS
 last_updated: 2026-09-11
 owner: Dũng Lư
@@ -145,7 +145,7 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 | `EPIC-05` | `DONE_OWNER_ACCEPTED` | Exact implementation SHA `580f559`; root `82/391`, SQLite exclusions và owner quick UI smoke pass. Formal tester matrix deferred. |
 | `EPIC-06` | `DONE_OWNER_ACCEPTED` | Exact candidate `458a886`; Standard Relax/Strict end-to-end, notification/analytics/a11y hooks, owner iOS/Android quick smoke. Formal tester deferred. |
 | `EPIC-07` | `DONE_OWNER_ACCEPTED` | Exact candidate `f6c7b92`; Break/cadence lifecycle, notification/analytics and owner quick UI pass. Formal device/accessibility matrix deferred. |
-| `EPIC-08` | `IN_PROGRESS` | US-08-01/02/03 accepted; US-08-04 art approved and validated implementation candidate awaits owner quick UI smoke. |
+| `EPIC-08` | `IN_PROGRESS` | US-08-01→04 owner accepted; US-08-05 implementation planning is the next gate. |
 
 Bảy Epic đầu và US-08-01→03 hoàn thành không đồng nghĩa Mobile MVP hoàn tất. EPIC-08 vẫn `IN_PROGRESS`;
 EPIC-09–12 giữ nguyên execution order. Không được dùng progress này để nhận purchase/equip/room,
@@ -590,6 +590,7 @@ matrix tiếp tục `DEFERRED_TO_LATER_PHASE` và được carry sang later vali
 - [x] Equip chỉ áp dụng owned item và không tốn Coin.
 - [x] Item không tạo multiplier, protection hoặc gameplay advantage.
 - [x] Inventory/equipped state sống qua app restart.
+- [x] Equipped cosmetics render at approved fixed room positions without changing Pet/session/economy truth.
 
 **Out of scope:** Dynamic pricing, sale, refund, sell-back, consumable, duplicate, rarity, crafting, gifting, trade, premium currency và monetization.
 
@@ -868,6 +869,12 @@ Story hoặc implementation tương lai.
 - [x] Không estimate deadline trước khi Story refinement hoàn tất.
 
 ## 10. Change log
+
+### 2.4.0 — 2026-09-11
+
+- Ghi US-08-04 `DONE_OWNER_ACCEPTED` tại exact committed/pushed SHA `94a0b24...` sau owner quick UI
+  PASS: không crash và behavior đúng kỳ vọng; formal device/accessibility breadth vẫn `NOT_RUN`.
+- Giữ EPIC-08 `IN_PROGRESS`; mở duy nhất US-08-05 implementation planning, chưa đóng Epic hoặc mở EPIC-09.
 
 ### 2.3.0 — 2026-09-11
 

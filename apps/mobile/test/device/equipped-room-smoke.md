@@ -1,6 +1,6 @@
 # US-08-04 — Equipped Pet Room quick UI smoke
 
-Status: `IMPLEMENTATION_CANDIDATE`; owner/manual evidence remains `NOT_RUN`.
+Status: `PASS_OWNER_QUICK_UI` at `94a0b24...`; structured/formal breadth remains `NOT_RUN`.
 
 ## Setup nhanh
 
@@ -61,5 +61,6 @@ pnpm start --clear
 
 | Platform/device/OS | Fixture | Result | Artifact/notes |
 |---|---|---|---|
+| Owner available UI environment; metadata not recorded | full equipped room and iterative visual review | `PASS_OWNER_QUICK_UI` | `94a0b24...`; owner reports no crash and expected behavior, 2026-09-11 |
 | `<fill>` | `inventory_multi_equipped` | `NOT_RUN` | `<implementation-sha>` |
 | `<fill>` | `inventory_empty` | `NOT_RUN` | `<fill>` |

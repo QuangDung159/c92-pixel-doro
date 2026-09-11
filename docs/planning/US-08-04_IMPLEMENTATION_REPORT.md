@@ -1,14 +1,15 @@
 ---
 document_id: PIXELDORO_US_08_04_IMPLEMENTATION_REPORT
 title: PixelDoro Mobile MVP — US-08-04 Implementation Report
-version: 0.1.0
-status: IMPLEMENTATION_CANDIDATE_AWAITING_OWNER_SMOKE
+version: 0.2.0
+status: DONE_OWNER_ACCEPTED
 date: 2026-09-11
 owner: Dũng Lư
 branch: feats/epic-08
 implementation_start_sha: 4b1dee1a3f56a5d9022da9f4a22160368391c6fc
-exact_implementation_sha: null
-manual_device_status: NOT_RUN_OWNER_SMOKE_REQUESTED
+current_worktree_base_sha: 94a0b24ac0bb62854d02754c90a94f415e0edbec
+exact_implementation_sha: 94a0b24ac0bb62854d02754c90a94f415e0edbec
+manual_device_status: PASS_OWNER_QUICK_UI
 formal_tester_status: NOT_RUN_DEFERRED_TO_EPIC_12_UNLESS_EXECUTED
 schema_change: NONE
 dependency_change: NONE
@@ -71,8 +72,17 @@ The query is read-only and decoration failures remain local: Pet, profile and St
 - iOS export: PASS — 1,830 modules; approved atlas/backdrop bundled.
 - `git diff --check`: PASS.
 
-## Truthfulness and remaining gate
+## Owner acceptance and residual evidence
 
 No migration, dependency, native/prebuild, permission, economy/session command or analytics taxonomy
-changed. The candidate is uncommitted, so `exact_implementation_sha` remains null. Owner quick UI and
-formal device/accessibility evidence remain `NOT_RUN`; use `apps/mobile/test/device/equipped-room-smoke.md`.
+changed. Owner quick UI is `PASS` on 2026-09-11 at exact committed/pushed SHA `94a0b24...`: no crash
+and behavior worked as expected after the final Cat room-scale calibration. Structured physical-device,
+VoiceOver/TalkBack, largest-text, Reduce Motion and full failure breadth remain `NOT_RUN` and deferred
+to EPIC-12 unless actually executed earlier.
+
+## Change log
+
+| Version | Date | Author | Change |
+|---|---|---|---|
+| 0.2.0 | 2026-09-11 | Codex | Bound owner quick UI PASS to exact committed/pushed SHA `94a0b24...`; US-08-04 is DONE_OWNER_ACCEPTED and US-08-05 planning is open. Formal breadth remains NOT_RUN/deferred. |
+| 0.1.0 | 2026-09-11 | Codex | Recorded the validated implementation candidate, automated evidence and pending owner smoke gate. |
