@@ -22,6 +22,8 @@ import type {
   OnboardingTrialHandoffProjection,
   OnboardingTrialResultProjection,
   PetVisualDiagnostic,
+  ShopControllerProjection,
+  RoomDecorationsControllerProjection,
 } from '@/application';
 
 const MobileApplicationContext = createContext<MobileApplicationFacade | undefined>(undefined);
@@ -150,6 +152,50 @@ export const useHomeProfileProjection = (): HomeProfileProjection | null => {
   const projection = useBootstrapProjection();
   if (projection.status !== 'ready') return null;
   return createHomeProfileProjection(projection.snapshot.profile);
+};
+
+export const useShopProjection = (): ShopControllerProjection => {
+  const { shop } = useMobileApplication();
+  return useSyncExternalStore(
+    shop.subscribe,
+    shop.getSnapshot,
+    shop.getSnapshot,
+  );
+};
+
+export const useShopActions = () => {
+  const { shop } = useMobileApplication();
+  return {
+    activate: shop.activate,
+    confirmPurchase: shop.confirmPurchase,
+    deactivate: shop.deactivate,
+    dismissEquipNotice: shop.dismissEquipNotice,
+    dismissPurchase: shop.dismissPurchase,
+    requestPurchase: shop.requestPurchase,
+    retry: shop.retry,
+    retryPurchaseRefresh: shop.retryPurchaseRefresh,
+    retryEquipRefresh: shop.retryEquipRefresh,
+    setItemEquipped: shop.setItemEquipped,
+    setViewMode: shop.setViewMode,
+  };
+};
+
+export const useRoomDecorationsProjection = (): RoomDecorationsControllerProjection => {
+  const { roomDecorations } = useMobileApplication();
+  return useSyncExternalStore(
+    roomDecorations.subscribe,
+    roomDecorations.getSnapshot,
+    roomDecorations.getSnapshot,
+  );
+};
+
+export const useRoomDecorationsActions = () => {
+  const { roomDecorations } = useMobileApplication();
+  return {
+    activate: roomDecorations.activate,
+    deactivate: roomDecorations.deactivate,
+    retry: roomDecorations.retry,
+  };
 };
 
 export const usePetCompanionProjection = (): PetCompanionProjection => {

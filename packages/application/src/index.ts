@@ -8,6 +8,41 @@ export {
   type HomeProfileProjection,
 } from './home/create-home-profile.projection';
 export {
+  LoadEquippedRoomProjectionUseCase,
+  type ApprovedRoomCatalogItem,
+  type EquippedRoomItem,
+  type EquippedRoomProjection,
+  type LoadEquippedRoomProjectionDependencies,
+  type LoadEquippedRoomProjectionError,
+  type LoadEquippedRoomProjectionErrorCode,
+} from './room/load-equipped-room-projection.use-case';
+export {
+  LoadShopProjectionUseCase,
+  type ApprovedShopCatalogItem,
+  type LoadShopProjectionDependencies,
+  type LoadShopProjectionError,
+  type LoadShopProjectionErrorCode,
+  type ShopItemProjection,
+  type ShopItemState,
+  type ShopProjection,
+} from './shop/load-shop-projection.use-case';
+export {
+  PurchaseItemUseCase,
+  type PurchaseItemDependencies,
+  type PurchaseItemError,
+  type PurchaseItemErrorCode,
+  type PurchaseItemInput,
+  type PurchaseItemOutcome,
+} from './shop/purchase-item.use-case';
+export {
+  SetItemEquippedUseCase,
+  type SetItemEquippedDependencies,
+  type SetItemEquippedError,
+  type SetItemEquippedErrorCode,
+  type SetItemEquippedInput,
+  type SetItemEquippedOutcome,
+} from './shop/set-item-equipped.use-case';
+export {
   loadPetCompanionProjection,
   type PetCompanionProjection,
   type PetCompanionSessionReader,

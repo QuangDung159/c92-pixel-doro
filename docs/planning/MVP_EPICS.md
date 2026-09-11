@@ -1,16 +1,16 @@
 ---
 document_id: PIXELDORO_MVP_EPIC_BREAKDOWN
 title: PixelDoro Mobile MVP — Epic Breakdown
-version: 1.7.0
-status: EPIC_01_TO_07_DONE_EPIC_08_PLANNING_READY
-last_updated: 2026-09-10
+version: 2.6.0
+status: EPIC_01_TO_08_DONE_EPIC_09_PLANNING_READY
+last_updated: 2026-09-11
 owner: Dũng Lư
 reviewer: Dũng Lư
 reviewer_role: Tech Lead
 approved_by: Dũng Lư
 approver_role: Product Owner
 approved_at: 2026-08-27
-amended_at: 2026-09-10
+amended_at: 2026-09-11
 amendment_approved_by: Dũng Lư
 language: vi
 scope:
@@ -128,13 +128,13 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 - [x] `05 / EPIC-05 / W3` — Onboarding Trial — `DONE_OWNER_ACCEPTED` 2026-09-03.
 - [x] `06 / EPIC-06 / W3` — Standard Focus — `DONE_OWNER_ACCEPTED` 2026-09-07.
 - [x] `07 / EPIC-07 / W3` — Break & Cadence — `DONE_OWNER_ACCEPTED` 2026-09-10.
-- [ ] `08 / EPIC-08 / W3` — Progression & Shop.
+- [x] `08 / EPIC-08 / W3` — Progression & Shop.
 - [ ] `09 / EPIC-09 / W3` — History & Contribution.
 - [ ] `10 / EPIC-10 / W3` — Settings & Data Control.
 - [ ] `11 / EPIC-11 / W3` — Analytics, Feedback & Store Review.
 - [ ] `12 / EPIC-12 / W4` — Beta Readiness.
 
-### 2.4. Trạng thái sau bảy Epic đầu tiên
+### 2.4. Trạng thái hiện tại
 
 | Phạm vi | Trạng thái | Evidence/gate |
 |---|---|---|
@@ -145,11 +145,11 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 | `EPIC-05` | `DONE_OWNER_ACCEPTED` | Exact implementation SHA `580f559`; root `82/391`, SQLite exclusions và owner quick UI smoke pass. Formal tester matrix deferred. |
 | `EPIC-06` | `DONE_OWNER_ACCEPTED` | Exact candidate `458a886`; Standard Relax/Strict end-to-end, notification/analytics/a11y hooks, owner iOS/Android quick smoke. Formal tester deferred. |
 | `EPIC-07` | `DONE_OWNER_ACCEPTED` | Exact candidate `f6c7b92`; Break/cadence lifecycle, notification/analytics and owner quick UI pass. Formal device/accessibility matrix deferred. |
-| `EPIC-08` | `PLANNING_READY` | Start gate đã mở; implementation chưa bắt đầu. |
+| `EPIC-08` | `DONE_OWNER_ACCEPTED` | US-08-01→05 owner accepted; exact candidate `30adc34...`; Exit Report closed by owner authorization. |
 
-Bảy Epic đầu đã hoàn thành không đồng nghĩa Mobile MVP hoàn tất. `EPIC-08`–`12` vẫn là `MUST` và
-giữ nguyên execution order. Không được dùng closure này để nhận là Break, Shop, History, Settings,
-provider analytics hoặc Beta Readiness đã production-ready.
+Tám Epic đầu đã `DONE_OWNER_ACCEPTED`. EPIC-09 dependency gate is open but its planning/coding has not
+started implicitly; EPIC-09–12 retain execution order. Purchase/equip/room của EPIC-08 đã
+production-ready theo accepted scope; History, Settings, provider analytics và Beta Readiness chưa hoàn tất.
 
 ## 3. Critical path và delivery gates
 
@@ -578,18 +578,19 @@ matrix tiếp tục `DEFERRED_TO_LATER_PHASE` và được carry sang later vali
 
 **Epic completion checklist:**
 
-- [ ] Level bắt đầu ở 1 tại 0 XP và derive đúng threshold formula.
-- [ ] XP cumulative, không spend và không level-down ngoài full reset.
-- [ ] Catalog có đúng 12 item với exact ID/name/category/price.
-- [ ] Catalog visible từ đầu và không level gate.
-- [ ] Coin balance bắt đầu từ 0 và không âm.
-- [ ] Purchase dùng catalog price, không tin price từ UI.
-- [ ] Purchase/debit/receipt/ownership commit atomically.
-- [ ] Double tap/retry không debit hoặc unlock hai lần.
-- [ ] Item đã owned không thể mua lại và không mất do unequip/session outcome.
-- [ ] Equip chỉ áp dụng owned item và không tốn Coin.
-- [ ] Item không tạo multiplier, protection hoặc gameplay advantage.
-- [ ] Inventory/equipped state sống qua app restart.
+- [x] Level bắt đầu ở 1 tại 0 XP và derive đúng threshold formula.
+- [x] XP cumulative, không spend và không level-down ngoài full reset.
+- [x] Catalog có đúng 12 item với exact ID/name/category/price.
+- [x] Catalog visible từ đầu và không level gate.
+- [x] Coin balance bắt đầu từ 0 và không âm ở accepted read/reward slice.
+- [x] Purchase dùng catalog price, không tin price từ UI.
+- [x] Purchase/debit/receipt/ownership commit atomically.
+- [x] Double tap/retry không debit hoặc unlock hai lần.
+- [x] Item đã owned không thể mua lại và không mất do unequip/session outcome.
+- [x] Equip chỉ áp dụng owned item và không tốn Coin.
+- [x] Item không tạo multiplier, protection hoặc gameplay advantage.
+- [x] Inventory/equipped state sống qua app restart.
+- [x] Equipped cosmetics render at approved fixed room positions without changing Pet/session/economy truth.
 
 **Out of scope:** Dynamic pricing, sale, refund, sell-back, consumable, duplicate, rarity, crafting, gifting, trade, premium currency và monetization.
 
@@ -868,6 +869,67 @@ Story hoặc implementation tương lai.
 - [x] Không estimate deadline trước khi Story refinement hoàn tất.
 
 ## 10. Change log
+
+### 2.6.0 — 2026-09-11
+
+- Owner explicitly authorized EPIC-08 closure; created `EPIC-08_EXIT_REPORT.md` and marked EPIC-08
+  `DONE_OWNER_ACCEPTED` with exact accepted candidate `30adc34...`.
+- Opened only the EPIC-09 dependency/planning gate; no EPIC-09 plan or code was created implicitly.
+
+### 2.5.0 — 2026-09-11
+
+- Ghi US-08-05 `DONE_OWNER_ACCEPTED` tại exact committed/pushed SHA `30adc34...` sau owner quick UI
+  PASS: không crash và behavior đúng kỳ vọng; formal device/accessibility breadth vẫn `NOT_RUN`.
+- Audit xác nhận 5/5 Story và toàn bộ implementation criteria của EPIC-08 đã đủ; giữ Epic ở
+  `IMPLEMENTATION_COMPLETE_AWAITING_OWNER_CLOSURE`, chưa tạo Exit Report hoặc mở EPIC-09.
+
+### 2.4.0 — 2026-09-11
+
+- Ghi US-08-04 `DONE_OWNER_ACCEPTED` tại exact committed/pushed SHA `94a0b24...` sau owner quick UI
+  PASS: không crash và behavior đúng kỳ vọng; formal device/accessibility breadth vẫn `NOT_RUN`.
+- Giữ EPIC-08 `IN_PROGRESS`; mở duy nhất US-08-05 implementation planning, chưa đóng Epic hoặc mở EPIC-09.
+
+### 2.3.0 — 2026-09-11
+
+- Ghi exact `US0804-ART-01 candidate v1` được owner duyệt và US-08-04 implemented từ SHA `4b1dee1...`.
+- Full quality 176 files / 908 tests và Android/iOS export PASS; owner/manual smoke `NOT_RUN`.
+- Giữ EPIC-08 `IN_PROGRESS`; next gate là owner quick UI smoke US-08-04.
+
+### 2.2.0 — 2026-09-11
+
+- Ghi owner duyệt `US0804-CONFIRM-01→06` Option A và tạo review-only art candidate v1 gồm
+  room/contact sheet (`ccb8d071...`) + empty backdrop (`d22ae4d...`); chưa import runtime hoặc bắt đầu
+  production code.
+- Giữ EPIC-08 `IN_PROGRESS`; next gate là exact `US0804-ART-01` owner approval.
+
+### 2.1.0 — 2026-09-11
+
+- Ghi US-08-03 `DONE_OWNER_ACCEPTED` tại exact committed/pushed SHA `d6399dd` sau owner quick UI
+  PASS: không crash và behavior đúng kỳ vọng; structured/formal breadth vẫn `NOT_RUN`.
+- Tick purchase/inventory/equip durable criteria đã accepted, giữ EPIC-08 `IN_PROGRESS` và mở
+  US-08-04 planning + exact art-candidate gate; chưa nhận room rendering.
+
+### 2.0.0 — 2026-09-11
+
+- Ghi US-08-03 validated uncommitted candidate sau khi owner duyệt Option A 01→06: durable
+  Inventory, free multi-equip, refresh-only recovery, deterministic analytics và dev fixtures đã
+  implement; full quality 169 files / 892 tests cùng Android/iOS JS exports PASS.
+- Giữ EPIC-08 `IN_PROGRESS`; owner/formal device smoke vẫn `NOT_RUN`, exact implementation SHA chưa
+  có và US-08-04 art gate chưa mở.
+
+### 1.9.0 — 2026-09-11
+
+- Ghi US-08-02 `DONE_OWNER_ACCEPTED` tại exact committed/pushed SHA `5c6791d` sau owner quick UI
+  PASS: không crash và behavior đúng kỳ vọng; structured/formal breadth vẫn `NOT_RUN`.
+- Giữ EPIC-08 `IN_PROGRESS` và mở US-08-03 planning gate; equip/inventory/room criteria chưa được
+  đánh dấu hoàn tất.
+
+### 1.8.0 — 2026-09-10
+
+- Ghi US-08-01 `DONE_OWNER_ACCEPTED` tại exact SHA `9be0a0f` sau owner quick UI PASS: không crash,
+  behavior đúng kỳ vọng; structured/formal matrix vẫn `NOT_RUN`.
+- Chuyển EPIC-08 từ `PLANNING_READY` sang `IN_PROGRESS`, tick progression/catalog read criteria đã có
+  evidence và mở US-08-02 planning gate; purchase/equip/room criteria vẫn chưa hoàn tất.
 
 ### 1.7.0 — 2026-09-10
 

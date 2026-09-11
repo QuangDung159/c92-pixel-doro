@@ -3,8 +3,8 @@ import { describe, expect, it, vi } from 'vitest';
 
 import {
   PetVisualStatus,
+  ProgressionSummary,
   ScreenHeader,
-  StatDisplay,
 } from '@/presentation/components';
 
 import { HomeScreen } from './index';
@@ -51,6 +51,8 @@ describe('HomeScreen', () => {
         levelProgressPercent: 60,
         xpToNextLevel: 20,
       },
+      room: { status: 'ready', room: { items: [] }, refresh: 'idle' },
+      onRetryRoom: vi.fn(),
     });
     const nodes = flatten(tree);
     const componentNames = nodes
@@ -59,10 +61,10 @@ describe('HomeScreen', () => {
 
     expect(componentNames).toContain(ScreenHeader.name);
     expect(componentNames).toContain(PetVisualStatus.name);
-    expect(componentNames.filter((name) => name === StatDisplay.name)).toHaveLength(3);
+    expect(componentNames).toContain(ProgressionSummary.name);
     expect(componentNames).not.toContain('PrototypeBadge');
     expect(componentNames).not.toContain('PrototypeControls');
-    expect(JSON.stringify(tree)).toContain('Còn ');
-    expect(JSON.stringify(tree)).toContain('20');
+    expect(JSON.stringify(tree)).toContain('"variant":"full"');
+    expect(JSON.stringify(tree)).toContain('"sceneMode":"room"');
   });
 });

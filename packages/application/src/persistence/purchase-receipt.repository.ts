@@ -19,6 +19,11 @@ export interface PurchaseReceiptRepository {
     profileId: number,
     itemId: string,
   ): Promise<PersistenceResult<PurchaseReceiptRecord | null>>;
+  findByProfileAndItemInTransaction(
+    scope: TransactionScope,
+    profileId: number,
+    itemId: string,
+  ): Promise<PersistenceResult<PurchaseReceiptRecord | null>>;
   insertInTransaction(
     scope: TransactionScope,
     record: PurchaseReceiptRecord,

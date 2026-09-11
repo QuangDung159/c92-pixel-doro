@@ -153,6 +153,28 @@ export class SQLitePurchaseReceiptRepository implements PurchaseReceiptRepositor
         [profileId, itemId], mapPurchaseReceiptRow));
   }
 
+  findByProfileAndItemInTransaction(
+    scope: TransactionScope,
+    profileId: number,
+    itemId: string,
+  ): ReturnType<PurchaseReceiptRepository['findByProfileAndItemInTransaction']> {
+    if (profileId !== 1 || !isNonEmptyString(itemId)) {
+      return invalidQuery('purchase_transactions', 'identity');
+    }
+    return withTransactionExecutor(
+      this.transaction,
+      scope,
+      'purchase_transactions',
+      (executor) => readMappedOne(
+        executor,
+        'purchase_transactions',
+        `${purchaseSelect} WHERE profile_id = ? AND item_id = ?`,
+        [profileId, itemId],
+        mapPurchaseReceiptRow,
+      ),
+    );
+  }
+
   insertInTransaction(
     scope: TransactionScope,
     record: PurchaseReceiptRecord,

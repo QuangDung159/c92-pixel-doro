@@ -7,6 +7,8 @@ import {
   useDismissPetTerminalFeedbackError,
   usePetCompanionRefresh,
   usePetVisualProjection,
+  useRoomDecorationsActions,
+  useRoomDecorationsProjection,
 } from '@/presentation/providers/mobile-application-context';
 
 import { PetRouteVisibility } from '../pet-route-visibility';
@@ -17,11 +19,19 @@ export default function HomeRoute() {
   const pet = usePetVisualProjection();
   const refreshPet = usePetCompanionRefresh();
   const dismissPetFeedbackError = useDismissPetTerminalFeedbackError();
+  const room = useRoomDecorationsProjection();
+  const {
+    activate: activateRoom,
+    deactivate: deactivateRoom,
+    retry: retryRoom,
+  } = useRoomDecorationsActions();
 
   useFocusEffect(
     useCallback(() => {
       void refreshPet();
-    }, [refreshPet]),
+      void activateRoom();
+      return deactivateRoom;
+    }, [activateRoom, deactivateRoom, refreshPet]),
   );
 
   return (
@@ -32,6 +42,8 @@ export default function HomeRoute() {
         onRetryPet={() => void refreshPet()}
         pet={pet}
         profile={profile}
+        room={room}
+        onRetryRoom={() => void retryRoom()}
       />
     </PetRouteVisibility>
   );

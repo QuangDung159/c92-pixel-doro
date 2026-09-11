@@ -35,6 +35,91 @@ const breakCancelResultFlow = await readFile(
   `${deviceDirectory}break-cancel-result-smoke.md`, 'utf8',
 );
 const epic07ExitFlow = await readFile(`${deviceDirectory}epic-07-exit-smoke.md`, 'utf8');
+const progressionCatalogFlow = await readFile(
+  `${deviceDirectory}progression-catalog-smoke.md`, 'utf8',
+);
+const shopPurchaseFlow = await readFile(
+  `${deviceDirectory}shop-purchase-smoke.md`, 'utf8',
+);
+const inventoryEquipFlow = await readFile(
+  `${deviceDirectory}inventory-equip-smoke.md`, 'utf8',
+);
+const equippedRoomFlow = await readFile(
+  `${deviceDirectory}equipped-room-smoke.md`, 'utf8',
+);
+const epic08ExitFlow = await readFile(
+  `${deviceDirectory}epic-08-exit-smoke.md`, 'utf8',
+);
+for (const evidence of [
+  'EXPO_PUBLIC_EPIC_08_EXIT_REVIEW_FIXTURE=epic_08_fresh_reward_to_room',
+  'epic_08_relaunch_committed', 'epic_08_provider_failure',
+  'epic_08_accessibility_matrix', 'standard_completion_fast_clock',
+  '25 XP / 5 Coin', 'Airplane mode', 'VoiceOver/TalkBack', 'Reduce Motion',
+  'pixeldoro.db', 'PASS_OWNER_QUICK_UI',
+  '30adc34be23dca48379b6f2553203fdadb9f9e5b',
+  'unset EXPO_PUBLIC_EPIC_08_EXIT_REVIEW_FIXTURE',
+]) {
+  if (!epic08ExitFlow.includes(evidence)) {
+    throw new Error(`EPIC-08 exit device guide is missing: ${evidence}`);
+  }
+}
+await access(
+  `${mobileDirectory}/src/composition/review/epic-08-exit-review-fixture.ts`,
+);
+for (const evidence of [
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=inventory_multi_equipped',
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=inventory_empty',
+  'EXPO_PUBLIC_EPIC_08_ROOM_REVIEW_FIXTURE=room_full_equipped',
+  'Cốc trên bàn', 'Chậu cây nhỏ', 'Bắt đầu tập trung', 'Airplane mode',
+  'VoiceOver/TalkBack', 'Reduce Motion', 'NOT_RUN', '<implementation-sha>',
+  'unset EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE',
+  'unset EXPO_PUBLIC_EPIC_08_ROOM_REVIEW_FIXTURE',
+]) {
+  if (!equippedRoomFlow.includes(evidence)) {
+    throw new Error(`Equipped room device guide is missing: ${evidence}`);
+  }
+}
+for (const evidence of [
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=inventory_mixed',
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=inventory_empty',
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=inventory_multi_equipped',
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=equip_read_failure_once',
+  'pixeldoro-us-08-03-', 'Cửa hàng', 'Đã sở hữu', 'Trang bị', 'Tháo',
+  'Đang trang bị…', 'Thử đọc lại dữ liệu', 'VoiceOver/TalkBack', 'Reduce Motion',
+  'Airplane mode', 'NOT_RUN', '<implementation-sha>',
+  'unset EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE',
+]) {
+  if (!inventoryEquipFlow.includes(evidence)) {
+    throw new Error(`Inventory equip device guide is missing: ${evidence}`);
+  }
+}
+for (const evidence of [
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=purchase_exact_balance',
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=purchase_insufficient',
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=purchase_owned',
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=purchase_read_failure_once',
+  'pixeldoro-us-08-02-', 'Mua với 5 Coin', 'Để sau', 'Đang mua…',
+  'Thử đọc lại dữ liệu', 'VoiceOver/TalkBack', 'Reduce Motion', 'Airplane mode',
+  'NOT_RUN', 'unset EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE',
+]) {
+  if (!shopPurchaseFlow.includes(evidence)) {
+    throw new Error(`Shop purchase device guide is missing: ${evidence}`);
+  }
+}
+for (const evidence of [
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=shop_fresh_zero',
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=shop_progress_45',
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=shop_progress_50',
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=shop_owned_mixed',
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=shop_read_failure_once',
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=shop_catalog_corrupt',
+  'pixeldoro-us-08-01-', 'Thử lại', 'VoiceOver/TalkBack', 'Reduce Motion',
+  'Airplane mode', 'NOT_RUN', 'unset EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE',
+]) {
+  if (!progressionCatalogFlow.includes(evidence)) {
+    throw new Error(`Progression/catalog device guide is missing: ${evidence}`);
+  }
+}
 for (const evidence of [
   'break_side_effect_fast_notification', 'break_side_effect_permission_denied',
   'break_side_effect_schedule_failure_once', 'break_side_effect_cancel_failure_once',

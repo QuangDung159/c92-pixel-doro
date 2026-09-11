@@ -95,6 +95,8 @@ const isApprovedProperty = (key: string, value: unknown): boolean => {
     case 'coinsEarned':
       return typeof value === 'number' && Number.isSafeInteger(value) &&
         value >= 0 && value <= 24;
+    case 'pricePaidCoins':
+      return typeof value === 'number' && Number.isSafeInteger(value) && value > 0;
     case 'attemptCount':
       return isNonNegativeSafeInteger(value);
     case 'isFirstSession':
