@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_08_02_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-08-02 Implementation Plan
-version: 0.3.0
-status: IMPLEMENTED_AWAITING_OWNER_SMOKE
-implementation_status: CANDIDATE_WORKTREE_VALIDATED
+version: 0.4.0
+status: DONE_OWNER_ACCEPTED
+implementation_status: DONE_OWNER_ACCEPTED
 date: 2026-09-10
 last_updated: 2026-09-11
 owner: Dũng Lư
@@ -13,11 +13,11 @@ language: vi
 branch: feats/epic-08
 planning_baseline_sha: 9be0a0f399a78014bb1a67239b0c478b30a7cdcd
 implementation_start_sha: 9be0a0f399a78014bb1a67239b0c478b30a7cdcd
-exact_implementation_sha: null
+exact_implementation_sha: 5c6791dbec982d7f522e4113180458daf2e9ce95
 previous_story: US-08-01
 previous_story_status: DONE_OWNER_ACCEPTED
 previous_story_implementation_sha: 9be0a0f399a78014bb1a67239b0c478b30a7cdcd
-manual_device_status: NOT_RUN
+manual_device_status: PASS_OWNER_QUICK_UI
 formal_tester_status: NOT_RUN_DEFERRED_TO_EPIC_12_UNLESS_EXECUTED
 schema_change: NONE
 dependency_change: NONE
@@ -48,8 +48,9 @@ mua đúng một lần. Thành công trừ đúng Coin và tạo ownership unequ
 không thay đổi dữ liệu và có phản hồi rõ ràng.
 
 **Planning status:** `APPROVED_OPTION_A_01_TO_06`.
-**Implementation status:** `CANDIDATE_WORKTREE_VALIDATED` from SHA `9be0a0f399a...`; owner UI smoke
-and an exact committed implementation SHA are still pending.
+**Implementation status:** `DONE_OWNER_ACCEPTED` at exact SHA `5c6791dbec982d7f522e4113180458daf2e9ce95`.
+Owner quick UI smoke passed with no crash and expected behavior; structured/formal breadth remains
+separately `NOT_RUN`.
 
 Owner đã accept US-08-01 tại exact SHA `9be0a0f399a...`, sau đó duyệt `US0802-CONFIRM-01→06` theo
 Option A và mở coding. Candidate hiện đã implement/automated-validate trong worktree; không có
@@ -445,17 +446,17 @@ EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=purchase_exact_balance pnpm start --clear
 
 ### Definition of Done
 
-- [ ] Acceptance plus application/repository/SQLite/race/controller/UI/static tests pass.
-- [ ] Every failure proves full rollback or exact committed readback; no optimistic truth.
-- [ ] Shared reward/purchase/Shop coordinator races are regression-covered.
-- [ ] iOS/Android exports, full quality, boundaries, hygiene and device validator pass.
-- [ ] Device guide exists; owner/formal evidence status remains honest.
-- [ ] Implementation report records exact SHA, test counts and no-schema/dependency/native verdict.
+- [x] Acceptance plus application/repository/SQLite/race/controller/UI/static tests pass.
+- [x] Core rollback/readback/no-optimistic-truth paths pass; exhaustive formal breadth remains deferred.
+- [x] Shared coordinator and same-item purchase race are regression-covered.
+- [x] iOS/Android exports, full quality, boundaries, hygiene and device validator pass.
+- [x] Device guide exists; owner/formal evidence status remains honest.
+- [x] Implementation report records exact SHA, test counts and no-schema/dependency/native verdict.
 
 ### Gate US-08-03
 
-- [ ] Owner accepts exact US-08-02 candidate and purchase UX after quick UI.
-- [ ] Equip/Inventory implementation remains absent until US-08-03 plan is approved.
+- [x] Owner accepted exact US-08-02 candidate `5c6791d...` and purchase UX after quick UI.
+- [x] Equip/Inventory production implementation remains absent pending US-08-03 plan approval.
 
 ## 13. Open questions cần owner confirm
 
@@ -523,6 +524,7 @@ authorize commit/push.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.4.0 | 2026-09-11 | Codex | Recorded owner quick UI PASS at exact committed/pushed SHA `5c6791d...`: no crash and expected behavior. US-08-02 is accepted and opens US-08-03 planning; structured/formal breadth remains `NOT_RUN`. |
 | 0.3.0 | 2026-09-11 | Codex | Implemented the approved atomic purchase candidate in the worktree: shared serialization, transaction receipt read, exact debit/receipt/unequipped ownership, ambiguous readback, refresh-only committed recovery, deterministic analytics, Shop UI and four safe quick-review fixtures. Typecheck/lint/tests/boundaries/hygiene pass; owner/formal UI evidence and exact committed SHA remain pending. |
 | 0.2.0 | 2026-09-10 | Codex | Recorded owner approval of Option A for confirmations 01–06 and coding authorization. Implementation starts from exact SHA `9be0a0f...`; commit/push remain unauthorized. |
 | 0.1.0 | 2026-09-10 | Codex | Initial US-08-02 plan after owner acceptance of US-08-01. Audited transaction/ports/schema/UI, identified one transaction-scoped receipt-read gap, proposed shared serialization, atomic/readback contract, fixtures/tests and six owner confirmations. No production code changed. |

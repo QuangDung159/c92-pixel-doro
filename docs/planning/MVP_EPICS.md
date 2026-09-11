@@ -1,16 +1,16 @@
 ---
 document_id: PIXELDORO_MVP_EPIC_BREAKDOWN
 title: PixelDoro Mobile MVP — Epic Breakdown
-version: 1.8.0
+version: 1.9.0
 status: EPIC_01_TO_07_DONE_EPIC_08_IN_PROGRESS
-last_updated: 2026-09-10
+last_updated: 2026-09-11
 owner: Dũng Lư
 reviewer: Dũng Lư
 reviewer_role: Tech Lead
 approved_by: Dũng Lư
 approver_role: Product Owner
 approved_at: 2026-08-27
-amended_at: 2026-09-10
+amended_at: 2026-09-11
 amendment_approved_by: Dũng Lư
 language: vi
 scope:
@@ -145,7 +145,7 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 | `EPIC-05` | `DONE_OWNER_ACCEPTED` | Exact implementation SHA `580f559`; root `82/391`, SQLite exclusions và owner quick UI smoke pass. Formal tester matrix deferred. |
 | `EPIC-06` | `DONE_OWNER_ACCEPTED` | Exact candidate `458a886`; Standard Relax/Strict end-to-end, notification/analytics/a11y hooks, owner iOS/Android quick smoke. Formal tester deferred. |
 | `EPIC-07` | `DONE_OWNER_ACCEPTED` | Exact candidate `f6c7b92`; Break/cadence lifecycle, notification/analytics and owner quick UI pass. Formal device/accessibility matrix deferred. |
-| `EPIC-08` | `IN_PROGRESS` | US-08-01 `DONE_OWNER_ACCEPTED` tại `9be0a0f`; US-08-02 worktree candidate đã qua automated gates, chờ owner quick UI smoke. |
+| `EPIC-08` | `IN_PROGRESS` | US-08-01 accepted tại `9be0a0f`; US-08-02 `DONE_OWNER_ACCEPTED` tại `5c6791d`; US-08-03 đang chờ owner duyệt plan. |
 
 Bảy Epic đầu và US-08-01 hoàn thành không đồng nghĩa Mobile MVP hoàn tất. EPIC-08 vẫn `IN_PROGRESS`;
 EPIC-09–12 giữ nguyên execution order. Không được dùng progress này để nhận purchase/equip/room,
@@ -868,6 +868,13 @@ Story hoặc implementation tương lai.
 - [x] Không estimate deadline trước khi Story refinement hoàn tất.
 
 ## 10. Change log
+
+### 1.9.0 — 2026-09-11
+
+- Ghi US-08-02 `DONE_OWNER_ACCEPTED` tại exact committed/pushed SHA `5c6791d` sau owner quick UI
+  PASS: không crash và behavior đúng kỳ vọng; structured/formal breadth vẫn `NOT_RUN`.
+- Giữ EPIC-08 `IN_PROGRESS` và mở US-08-03 planning gate; equip/inventory/room criteria chưa được
+  đánh dấu hoàn tất.
 
 ### 1.8.0 — 2026-09-10
 

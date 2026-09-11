@@ -1,15 +1,15 @@
 ---
 document_id: PIXELDORO_US_08_02_IMPLEMENTATION_REPORT
 title: PixelDoro Mobile MVP — US-08-02 Implementation Report
-version: 0.1.0
-status: CANDIDATE_AWAITING_OWNER_SMOKE
+version: 0.2.0
+status: DONE_OWNER_ACCEPTED
 date: 2026-09-11
 owner: Dũng Lư
 branch: feats/epic-08
 implementation_start_sha: 9be0a0f399a78014bb1a67239b0c478b30a7cdcd
-exact_implementation_sha: null
-candidate_identity: UNCOMMITTED_VALIDATED_WORKTREE
-owner_smoke_status: NOT_RUN
+exact_implementation_sha: 5c6791dbec982d7f522e4113180458daf2e9ce95
+candidate_identity: EXACT_COMMITTED_OWNER_ACCEPTED_SHA
+owner_smoke_status: PASS_OWNER_QUICK_UI
 formal_tester_status: NOT_RUN_DEFERRED_TO_EPIC_12_UNLESS_EXECUTED
 schema_change: NONE
 dependency_change: NONE
@@ -56,9 +56,17 @@ native_change: NONE
 ## Scope and residual evidence
 
 - Production migration/checksum, packages, dependencies, native config and permissions are unchanged.
-- UI/platform smoke, exact focus restoration behavior with VoiceOver/TalkBack, large text, offline and
-  physical-device breadth remain `NOT_RUN`; this report does not claim them as PASS.
+- Owner quick UI smoke is `PASS` on 2026-09-11 at exact SHA `5c6791d...`: no crash and behavior worked
+  as expected. Structured VoiceOver/TalkBack, large text, offline and physical-device breadth remain
+  `NOT_RUN`; the quick smoke does not replace those evidence rows.
 - Advanced failure/race cases are automated rather than exposed as UI fixtures, preventing the review
   harness from manufacturing partial durable truth.
-- Candidate is an uncommitted validated worktree over `9be0a0f...`; commit/push were not authorized.
-  Owner quick UI acceptance and an exact implementation SHA remain the next gate before US-08-03.
+- Candidate was committed and pushed at exact SHA `5c6791dbec982d7f522e4113180458daf2e9ce95`,
+  then accepted by the owner quick UI smoke. US-08-03 planning is now open.
+
+## Change log
+
+| Version | Date | Author | Change |
+|---|---|---|---|
+| 0.2.0 | 2026-09-11 | Codex | Bound owner quick UI PASS to exact committed/pushed SHA `5c6791d...`: no crash and expected behavior. US-08-02 is `DONE_OWNER_ACCEPTED`; structured/formal evidence remains `NOT_RUN`. |
+| 0.1.0 | 2026-09-11 | Codex | Recorded the validated US-08-02 worktree candidate and automated evidence before owner smoke. |

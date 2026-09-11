@@ -1,7 +1,9 @@
 # US-08-02 — Atomic purchase quick UI smoke
 
-Status: `NOT_RUN`. Các fixture dưới đây dùng database riêng prefix `pixeldoro-us-08-02-` và không
-đụng `pixeldoro.db`.
+Status: `OWNER_QUICK_UI_SMOKE_REPORTED`. Owner quick UI: `PASS` on 2026-09-11 at exact SHA
+`5c6791dbec982d7f522e4113180458daf2e9ce95` — no crash and behavior worked as expected. Structured
+fixture/platform/accessibility rows remain `NOT_RUN`. Các fixture dùng database riêng prefix
+`pixeldoro-us-08-02-` và không đụng `pixeldoro.db`.
 
 ## 1. Setup
 
@@ -60,6 +62,7 @@ pnpm start --clear
 
 | Platform/device/OS | Fixture | Result | Artifact/notes |
 |---|---|---|---|
+| `Owner report; metadata not recorded` | `Quick UI smoke` | `PASS` | 2026-09-11: no crash, worked as expected at `5c6791d...`; not a structured/formal matrix. |
 | `<fill>` | `purchase_exact_balance` | `NOT_RUN` | `<fill>` |
 | `<fill>` | `purchase_insufficient/purchase_owned` | `NOT_RUN` | `<fill>` |
 | `<fill>` | `purchase_read_failure_once` | `NOT_RUN` | `<fill>` |
