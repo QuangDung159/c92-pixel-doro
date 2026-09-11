@@ -26,5 +26,7 @@ describe('US-08-04 equipped room integrity', () => {
     expect(controller).not.toMatch(/criticalRecovery|enterRecovery/);
     expect(layer).toContain('pointerEvents="none"');
     expect(layer).toContain('importantForAccessibility="no-hide-descendants"');
+    expect(layer).toContain('resizeMode="stretch"');
+    expect(layer).toContain("height: '100%', width: '100%'");
   });
 });

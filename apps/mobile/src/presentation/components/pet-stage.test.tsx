@@ -14,7 +14,7 @@ vi.mock('react-native', () => ({
 describe('PetStage', () => {
   it('communicates Idle state without relying on color or artwork', () => {
     const tree = PetStage({ state: 'idle' });
-    const status = tree.props.children.filter(Boolean)[1].props.children;
+    const status = tree.props.children.filter(Boolean)[1];
     expect(status.type).toBe(PetStatusText);
     expect(status.props).toMatchObject({
       label: 'Người bạn đang chờ bạn',
@@ -29,7 +29,7 @@ describe('PetStage', () => {
       expect(children).toHaveLength(2);
       expect(children[0].props.children.type).toBe(PetAnimationRenderer);
       expect(children[0].props.children.props.state).toBe(state);
-      expect(children[1].props.children.type).toBe(PetStatusText);
+      expect(children[1].type).toBe(PetStatusText);
     },
   );
 
@@ -45,7 +45,11 @@ describe('PetStage', () => {
     expect(tree.props.children[0]).toBe(underlay);
     expect(tree.props.children[1].props.children.type).toBe(PetAnimationRenderer);
     expect(tree.props.children[2]).toBe(overlay);
-    expect(tree.props.children[3].props.children.type).toBe(PetStatusText);
+    expect(tree.props.children[3].props).toMatchObject({
+      accessibilityLabel: 'Người bạn đang chờ bạn',
+      accessibilityRole: 'text',
+    });
+    expect(JSON.stringify(tree)).not.toContain('PetStatusText');
   });
 
   it('does not render room art when the scene is in focus mode', () => {

@@ -872,7 +872,7 @@ Story hoặc implementation tương lai.
 ### 2.3.0 — 2026-09-11
 
 - Ghi exact `US0804-ART-01 candidate v1` được owner duyệt và US-08-04 implemented từ SHA `4b1dee1...`.
-- Full quality 174 files / 904 tests và Android/iOS export PASS; owner/manual smoke `NOT_RUN`.
+- Full quality 175 files / 907 tests và Android/iOS export PASS; owner/manual smoke `NOT_RUN`.
 - Giữ EPIC-08 `IN_PROGRESS`; next gate là owner quick UI smoke US-08-04.
 
 ### 2.2.0 — 2026-09-11

@@ -17,14 +17,18 @@ commands. Open Home/Pet Room after boot.
 
 - [ ] Warm empty-room backdrop appears; Cat and its status remain visible and animate normally.
 - [ ] Backdrop fits the full room frame without zoom/crop; Cat is smaller than the standalone Focus view.
-- [ ] `Cốc trên bàn` and `Chậu cây nhỏ` appear together at stable positions; room summary says 2 items.
+- [ ] `Cốc trên bàn` sits at the left edge of the desk and `Chậu cây nhỏ` sits immediately to its
+  right, matching the approved room reference; both remain on the desk surface.
+- [ ] Repeat on one narrow and one wide portrait device: item anchors and sizes retain the same
+  relationship to the desk, floor and walls.
 - [ ] Open Shop → `Đã sở hữu`, unequip `Chậu cây nhỏ`, return Home: only the plant disappears.
 - [ ] Equip it again, return Home, background/foreground and cold relaunch: both items return from SQLite.
 - [ ] `Bắt đầu tập trung` remains tappable; Working/Breaking/Celebrating/Bugged Pet state is unchanged by decor.
 - [ ] Open a Focus or Break screen: only Cat + status is rendered; no room backdrop or decoration layer.
 - [ ] Airplane mode still renders the bundled room; no remote image request or crash.
-- [ ] Largest text keeps summary/notices outside the scene; VoiceOver/TalkBack announces one room summary,
-  not individual decoration images; Reduce Motion does not hide the room.
+- [ ] Normal Pet Room shows no item-list text and no visible `Người bạn đang chờ bạn` label.
+- [ ] VoiceOver/TalkBack can still announce the Pet state and one room summary without focusing
+  individual decoration images; Reduce Motion does not hide the room.
 
 ## Empty và cleanup
 
@@ -34,7 +38,7 @@ unset EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE
 pnpm start --clear
 ```
 
-- [ ] `inventory_empty` shows backdrop + Cat and summary `Phòng chưa có vật phẩm được trang bị.`
+- [ ] `inventory_empty` shows only backdrop + Cat without an empty-state paragraph.
 - [ ] Normal database remains untouched after fixture cleanup.
 
 | Platform/device/OS | Fixture | Result | Artifact/notes |

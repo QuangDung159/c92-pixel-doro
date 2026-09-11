@@ -58,12 +58,19 @@ export const PetStage = ({
         />
       </View>
       {isRoom ? sceneOverlay : null}
-      <View style={isRoom ? styles.roomStatus : undefined}>
+      {isRoom ? (
+        <View
+          accessible
+          accessibilityLabel={label}
+          accessibilityRole="text"
+          style={styles.roomSemanticStatus}
+        />
+      ) : (
         <PetStatusText
           {...(liveRegion === undefined ? {} : { liveRegion })}
           label={label}
         />
-      </View>
+      )}
     </View>
   );
 };
@@ -97,7 +104,5 @@ const styles = StyleSheet.create({
     top: '14%',
     transform: [{ scale: 0.68 }],
   },
-  roomStatus: {
-    zIndex: 3,
-  },
+  roomSemanticStatus: { height: 0, width: 0 },
 });

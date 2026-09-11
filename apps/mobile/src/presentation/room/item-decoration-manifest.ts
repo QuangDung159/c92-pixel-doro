@@ -20,22 +20,37 @@ export interface RoomDecorationManifestEntry {
   readonly source: ImageSourcePropType;
   readonly atlasColumn: 0 | 1 | 2 | 3;
   readonly atlasRow: 0 | 1 | 2;
-  readonly left: `${number}%`;
-  readonly top: `${number}%`;
-  readonly cellSize: number;
+  readonly xRatio: number;
+  readonly yRatio: number;
+  readonly sizeRatio: number;
   readonly layer: 'back' | 'front';
 }
+
+export interface RoomDecorationFrame {
+  readonly left: number;
+  readonly top: number;
+  readonly size: number;
+}
+
+export const resolveRoomDecorationFrame = (
+  item: RoomDecorationManifestEntry,
+  room: { readonly width: number; readonly height: number },
+): RoomDecorationFrame => Object.freeze({
+  left: room.width * item.xRatio,
+  top: room.height * item.yRatio,
+  size: room.width * item.sizeRatio,
+});
 
 const entry = (
   itemId: RoomDecorationItemId,
   atlasColumn: 0 | 1 | 2 | 3,
   atlasRow: 0 | 1 | 2,
-  left: `${number}%`,
-  top: `${number}%`,
-  cellSize: number,
+  xRatio: number,
+  yRatio: number,
+  sizeRatio: number,
   layer: 'back' | 'front',
 ): RoomDecorationManifestEntry => Object.freeze({
-  itemId, source: atlas, atlasColumn, atlasRow, left, top, cellSize, layer,
+  itemId, source: atlas, atlasColumn, atlasRow, xRatio, yRatio, sizeRatio, layer,
 });
 
 export const roomDecorationAtlas = Object.freeze({
@@ -47,18 +62,18 @@ export const roomDecorationAtlas = Object.freeze({
 });
 
 export const roomDecorationManifest = Object.freeze([
-  entry('desk-mug', 0, 0, '25%', '46%', 54, 'front'),
-  entry('tiny-plant', 1, 0, '10%', '35%', 58, 'front'),
-  entry('book-stack', 2, 0, '30%', '57%', 68, 'front'),
-  entry('desk-lamp', 3, 0, '2%', '39%', 66, 'back'),
-  entry('wall-calendar', 0, 1, '38%', '4%', 64, 'back'),
-  entry('floor-cushion', 1, 1, '72%', '61%', 66, 'front'),
-  entry('small-rug', 2, 1, '35%', '62%', 96, 'back'),
-  entry('wall-poster', 3, 1, '73%', '3%', 68, 'back'),
-  entry('bookshelf', 0, 2, '2%', '24%', 98, 'back'),
-  entry('standing-lamp', 1, 2, '76%', '24%', 92, 'back'),
-  entry('armchair', 2, 2, '66%', '42%', 96, 'back'),
-  entry('window-view', 3, 2, '3%', '2%', 88, 'back'),
+  entry('desk-mug', 0, 0, 0.035, 0.33, 0.0931, 'front'),
+  entry('tiny-plant', 1, 0, 0.125, 0.31, 0.10, 'front'),
+  entry('book-stack', 2, 0, 0.30, 0.57, 0.1172, 'front'),
+  entry('desk-lamp', 3, 0, 0.02, 0.39, 0.1138, 'back'),
+  entry('wall-calendar', 0, 1, 0.38, 0.04, 0.1103, 'back'),
+  entry('floor-cushion', 1, 1, 0.72, 0.61, 0.1138, 'front'),
+  entry('small-rug', 2, 1, 0.35, 0.62, 0.1655, 'back'),
+  entry('wall-poster', 3, 1, 0.73, 0.03, 0.1172, 'back'),
+  entry('bookshelf', 0, 2, 0.02, 0.24, 0.1690, 'back'),
+  entry('standing-lamp', 1, 2, 0.76, 0.24, 0.1586, 'back'),
+  entry('armchair', 2, 2, 0.66, 0.42, 0.1655, 'back'),
+  entry('window-view', 3, 2, 0.03, 0.02, 0.1517, 'back'),
 ] as const satisfies readonly RoomDecorationManifestEntry[]);
 
 export const roomDecorationById = new Map(

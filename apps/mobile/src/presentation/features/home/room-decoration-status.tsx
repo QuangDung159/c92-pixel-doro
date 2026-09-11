@@ -11,7 +11,7 @@ export interface RoomDecorationStatusProps {
 
 export const RoomDecorationStatus = ({ projection, onRetry }: RoomDecorationStatusProps) => {
   if (projection.status === 'idle' || projection.status === 'loading') {
-    return <Text style={styles.summary}>Đang sắp xếp căn phòng…</Text>;
+    return null;
   }
   if (projection.status === 'error') {
     return (
@@ -26,13 +26,12 @@ export const RoomDecorationStatus = ({ projection, onRetry }: RoomDecorationStat
     );
   }
   const names = projection.room.items.map(({ displayName }) => displayName);
+  const summary = names.length === 0
+    ? 'Phòng chưa có vật phẩm được trang bị.'
+    : `Phòng có ${names.length} vật phẩm: ${names.join(', ')}.`;
   return (
     <View style={styles.stack}>
-      <Text accessibilityLiveRegion="none" style={styles.summary}>
-        {names.length === 0
-          ? 'Phòng chưa có vật phẩm được trang bị.'
-          : `Phòng có ${names.length} vật phẩm: ${names.join(', ')}.`}
-      </Text>
+      <View accessible accessibilityLabel={summary} accessibilityRole="text" />
       {projection.refresh === 'error' ? (
         <View style={styles.stack}>
           <InlineNotice>Đang giữ bố cục gần nhất vì chưa thể làm mới căn phòng.</InlineNotice>
@@ -45,6 +44,5 @@ export const RoomDecorationStatus = ({ projection, onRetry }: RoomDecorationStat
 
 const styles = StyleSheet.create({
   stack: { gap: 8 },
-  summary: { color: palette.textSecondary, fontSize: 13, lineHeight: 19 },
   retry: { color: palette.accentDark, fontSize: 14, fontWeight: '800' },
 });

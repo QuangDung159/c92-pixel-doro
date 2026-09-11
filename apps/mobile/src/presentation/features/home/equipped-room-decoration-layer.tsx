@@ -1,10 +1,12 @@
 import type { EquippedRoomItem } from '@pixeldoro/application';
+import { useState } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 
 import {
   roomBackdropAsset,
   roomDecorationAtlas,
   roomDecorationById,
+  resolveRoomDecorationFrame,
   type RoomDecorationItemId,
   type RoomDecorationManifestEntry,
 } from '@/presentation/room/item-decoration-manifest';
@@ -14,16 +16,28 @@ export interface EquippedRoomDecorationLayerProps {
   readonly layer: 'back' | 'front';
 }
 
-const AtlasSprite = ({ item }: { readonly item: RoomDecorationManifestEntry }) => {
-  const size = item.cellSize;
+interface RoomLayout {
+  readonly width: number;
+  readonly height: number;
+}
+
+const AtlasSprite = ({
+  item,
+  room,
+}: {
+  readonly item: RoomDecorationManifestEntry;
+  readonly room: RoomLayout;
+}) => {
+  const frame = resolveRoomDecorationFrame(item, room);
+  const size = frame.size;
   return (
     <View
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
       pointerEvents="none"
       style={[styles.spriteWindow, {
-        left: item.left,
-        top: item.top,
+        left: frame.left,
+        top: frame.top,
         width: size,
         height: size,
       }]}
@@ -45,33 +59,50 @@ const AtlasSprite = ({ item }: { readonly item: RoomDecorationManifestEntry }) =
 };
 
 export const RoomBackdropLayer = () => (
-  <Image
-    accessible={false}
-    accessibilityElementsHidden
-    importantForAccessibility="no-hide-descendants"
-    resizeMode="contain"
-    source={roomBackdropAsset.source}
-    style={StyleSheet.absoluteFill}
-  />
-);
-
-export const EquippedRoomDecorationLayer = ({
-  items,
-  layer,
-}: EquippedRoomDecorationLayerProps) => (
   <View
     accessibilityElementsHidden
     importantForAccessibility="no-hide-descendants"
     pointerEvents="none"
     style={StyleSheet.absoluteFill}
   >
-    {items.flatMap((owned) => {
-      const item = roomDecorationById.get(owned.itemId as RoomDecorationItemId);
-      return item?.layer === layer ? [<AtlasSprite item={item} key={item.itemId} />] : [];
-    })}
+    <Image
+      accessible={false}
+      resizeMode="stretch"
+      source={roomBackdropAsset.source}
+      style={styles.backdrop}
+    />
   </View>
 );
 
+export const EquippedRoomDecorationLayer = ({
+  items,
+  layer,
+}: EquippedRoomDecorationLayerProps) => {
+  const [room, setRoom] = useState<RoomLayout | null>(null);
+  return (
+    <View
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+      onLayout={({ nativeEvent }) => {
+        const { width, height } = nativeEvent.layout;
+        setRoom((current) => current?.width === width && current.height === height
+          ? current
+          : { width, height });
+      }}
+      pointerEvents="none"
+      style={StyleSheet.absoluteFill}
+    >
+      {room === null ? null : items.flatMap((owned) => {
+        const item = roomDecorationById.get(owned.itemId as RoomDecorationItemId);
+        return item?.layer === layer
+          ? [<AtlasSprite item={item} key={item.itemId} room={room} />]
+          : [];
+      })}
+    </View>
+  );
+};
+
 const styles = StyleSheet.create({
+  backdrop: { height: '100%', width: '100%' },
   spriteWindow: { overflow: 'hidden', position: 'absolute' },
 });

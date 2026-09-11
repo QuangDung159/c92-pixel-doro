@@ -32,15 +32,27 @@ The query is read-only and decoration failures remain local: Pet, profile and St
 - Home focus lifecycle activates/deactivates the controller independently of Shop and Pet refresh.
 - Pet scenes have explicit modes: `room` fits the full 1672:941 backdrop and scales Cat for the room;
   default `focus` ignores room layers and renders only Cat + semantic status.
+- After owner screenshot review, the backdrop uses an explicit 100%×100% image inside the matching
+  1672:941 canvas so native image sizing cannot select only the upper wall region. This is UI-only;
+  clearing SQLite/equipment state is not required.
+- All 12 decoration frames now use normalized room coordinates and measured-canvas scaling:
+  `left = roomWidth × xRatio`, `top = roomHeight × yRatio`, and
+  `size = roomWidth × sizeRatio`. Portrait device width changes therefore preserve the artwork-relative
+  anchor and item scale instead of mixing percentage positions with fixed pixel sizes.
+- Owner reference comparison corrected the two desk anchors: mug is the leftmost item and the plant
+  sits to its right, matching the approved composition rather than the previously reversed order.
 - Approved backdrop plus transparent 4×3 atlas are bound to typed dimensions, hashes, crop cells,
   deterministic back/front anchors and offline static imports.
 - Decoration pixels are non-interactive and hidden from accessibility; one concise textual room
-  summary owns the semantics. Loading/read/data-invalid/stale-refresh states are isolated below scene.
+  summary owns the semantics without visible normal-state copy. Loading is visually quiet;
+  read/data-invalid/stale-refresh states remain isolated and actionable below the scene.
+- Owner screenshot review moved the mug and plant onto the desk surface and removed the visible
+  item-list and idle-status copy to match the simple classic virtual-pet-machine theme.
 - Device guide and static route/boundary/asset-integrity coverage were added.
 
 ## Automated evidence
 
-- `pnpm quality`: PASS — 174 test files, 904 tests.
+- `pnpm quality`: PASS — 175 test files, 907 tests.
 - Typecheck/lint: PASS.
 - Boundary validator: PASS — 12 forbidden imports rejected, 4 valid imports accepted.
 - Device guide validator and repository hygiene: PASS.
