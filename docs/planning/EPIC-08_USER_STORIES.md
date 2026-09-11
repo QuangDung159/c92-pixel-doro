@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_EPIC_08_USER_STORIES
 title: PixelDoro EPIC-08 — Progression, Shop và Inventory Loop User Stories
-version: 1.2.0
-status: IMPLEMENTATION_COMPLETE_AWAITING_OWNER_EPIC_CLOSURE
+version: 1.3.0
+status: DONE_OWNER_ACCEPTED
 date: 2026-09-10
 last_updated: 2026-09-11
 owner: Dũng Lư
@@ -25,11 +25,12 @@ formal_tester_status: DEFERRED_TO_EPIC_12_UNLESS_ACTUALLY_RUN
 schema_impact: NONE_APPROVED_EXISTING_SCHEMA_001_SUFFICIENT
 dependency_impact: NONE_APPROVED
 native_impact: NONE_APPROVED
-next_gate: OWNER_AUTHORIZATION_EPIC_08_CLOSURE_AND_EPIC_09_PLANNING
+next_gate: EPIC_09_PLANNING_REQUEST
 product_truth: ../PIXELDORO_CORE_TRUTH.md
 epic_baseline: ./MVP_EPICS.md
 gamification_specification: ../specifications/gamification-rules.md
 data_model: ../architecture/data-model.md
+exit_report: ./EPIC-08_EXIT_REPORT.md
 ---
 
 # EPIC-08 — Progression, Shop và Inventory Loop
@@ -41,8 +42,8 @@ Tài liệu này phân rã `EPIC-08` thành các vertical slice nhỏ, có outco
 exact SHA `5c6791d...`; US-08-03 đã được owner quick-UI accept tại exact committed/pushed SHA
 `d6399dd...`; US-08-04 đã được owner quick-UI accept tại exact committed/pushed SHA `94a0b24...`.
 US-08-05 đã được owner quick-UI accept tại exact committed/pushed SHA `30adc34...`. Cả 5/5 Story đã
-implemented và accepted; EPIC-08 đủ implementation nhưng chưa đóng cho đến khi owner authorize riêng.
-Không có migration, dependency hoặc native configuration change.
+implemented và accepted; owner explicitly closed EPIC-08 on 2026-09-11. Không có migration, dependency
+hoặc native configuration change. EPIC-09 dependency gate is open; no planning/coding started implicitly.
 
 Thứ tự authority khi review hoặc triển khai:
 
@@ -671,8 +672,8 @@ EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE=standard_completion_fast_clock pnpm start --c
 - [x] **DoD:** full automated/integration/static/export checks pass at exact SHA `30adc34...`.
 - [x] **DoD:** owner quick UI and formal results are recorded separately; deferred remains unchecked.
 - [x] **Evidence:** 179 files / 918 tests, both exports, device guide, report and exact SHA recorded.
-- [ ] **Gate:** owner explicitly accepts exact candidate, authorizes EPIC-08 Exit Report and opens only
-  EPIC-09 planning.
+- [x] **Gate:** owner accepted exact candidate and explicitly authorized EPIC-08 Exit Report/closure on
+  2026-09-11. EPIC-09 dependency gate is open; later-Epic work awaits a separate request.
 
 ## 12. Common Component Reuse Matrix
 
@@ -865,7 +866,7 @@ Fixture contract:
 - [x] Shop route has no prototype authority; History/Settings prototype remains with later owners.
 - [x] Accessibility, platform exports, static gates and device evidence have honest recorded status.
 - [x] Exact implementation SHA `30adc34...` and owner Story acceptance are bound before Exit Report.
-- [ ] Owner explicitly authorizes EPIC-08 closure and only then opens EPIC-09 planning.
+- [x] Owner explicitly authorized EPIC-08 closure on 2026-09-11; EPIC-09 dependency gate is now open.
 
 ## 20. Owner Confirmation Register
 
@@ -1067,6 +1068,7 @@ locked to `NONE` unless a later demonstrated gap is separately reviewed.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 1.3.0 | 2026-09-11 | Codex | Recorded explicit owner closure: EPIC-08 is DONE_OWNER_ACCEPTED, Exit Report created, all 5/5 Stories remain bound to their exact accepted SHAs, and EPIC-09 dependency gate is open without implicit planning/coding. |
 | 1.2.0 | 2026-09-11 | Codex | Bound US-08-05 owner quick UI PASS to exact committed/pushed SHA `30adc34...`. All 5/5 Stories and every EPIC-08 implementation criterion are complete; formal breadth remains deferred/NOT_RUN. EPIC-08 remains open only for explicit owner closure authorization and EPIC-09 planning gate. |
 | 1.1.0 | 2026-09-11 | Codex | Bound US-08-04 owner quick UI PASS to exact committed/pushed SHA `94a0b24...`: no crash and expected behavior after final room/item/Cat calibration. Story 04 is DONE_OWNER_ACCEPTED; formal breadth remains NOT_RUN/deferred. Opened US-08-05 planning only. |
 | 1.0.0 | 2026-09-11 | Codex | Recorded owner approval of exact US0804 art candidate v1 and implemented the equipped Pet Room candidate from start SHA `4b1dee1...`: read-only committed projection, isolated refresh controller, normalized measured-room atlas rendering, explicit room/focus scene modes, semantic-only normal room copy and bundled offline assets. Owner screenshot review corrected desk anchors and added a non-persistent full-room visual fixture. Full quality 176 files / 908 tests plus Android/iOS exports PASS; owner/manual smoke remains NOT_RUN. |

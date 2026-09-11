@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_US_08_05_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-08-05 Implementation Plan
-version: 0.3.0
+version: 0.4.0
 status: DONE_OWNER_ACCEPTED
 implementation_status: DONE_OWNER_ACCEPTED
 date: 2026-09-11
@@ -22,7 +22,7 @@ formal_tester_status: NOT_RUN_DEFERRED_TO_EPIC_12_UNLESS_EXECUTED
 schema_change: NONE_PROPOSED
 dependency_change: NONE_PROPOSED
 native_change: NONE_PROPOSED
-next_gate: OWNER_AUTHORIZATION_EPIC_08_CLOSURE
+next_gate: EPIC_09_PLANNING_REQUEST
 scope:
   - mobile_mvp
   - epic_08
@@ -431,8 +431,9 @@ pnpm start --clear
 ### 13.3. Exit gate
 
 - [x] Owner accepts exact committed/pushed candidate `30adc34...` after quick UI smoke on 2026-09-11.
-- [ ] Owner separately authorizes `EPIC-08_EXIT_REPORT.md`, EPIC-08 closure and EPIC-09 planning.
-- [ ] Only then update master Epic status to `DONE_OWNER_ACCEPTED` and open EPIC-09.
+- [x] Owner explicitly authorizes `EPIC-08_EXIT_REPORT.md` and EPIC-08 closure on 2026-09-11.
+- [x] Master Epic status is updated to `DONE_OWNER_ACCEPTED`; EPIC-09 dependency gate is open but no
+  EPIC-09 planning/coding was started implicitly.
 
 ## 14. Risks and rollback
 
@@ -506,6 +507,7 @@ tự authorize commit/push hoặc Epic closure.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.4.0 | 2026-09-11 | Codex | Recorded explicit owner authorization to close EPIC-08. Exit Report created, Epic marked DONE_OWNER_ACCEPTED and EPIC-09 dependency gate opened without implicitly starting its planning or coding. |
 | 0.3.0 | 2026-09-11 | Codex | Bound owner quick UI PASS (no crash; behavior as expected) to exact committed/pushed SHA `30adc34...`; US-08-05 is DONE_OWNER_ACCEPTED. Formal breadth remains NOT_RUN/deferred. EPIC-08 implementation is sufficient, but Epic closure/EPIC-09 still require explicit owner authorization. |
 | 0.2.0 | 2026-09-11 | Codex | Recorded owner approval for `US0805-CONFIRM-01→06` Option A and froze implementation start SHA `e46c5e6...`. Delivered the isolated exit fixture, aggregate SQLite/relaunch/race/analytics/static integrity evidence and device guide. Aggregate evidence exposed and fixed the missing `pricePaidCoins` analytics property allowlist entry. Candidate is automated-PASS and awaits owner quick UI; no commit/push or Epic closure was authorized. |
 | 0.1.0 | 2026-09-11 | Codex | Initial plan after US-08-04 owner acceptance at exact SHA `94a0b24...`. Audited the full production reward/progression/purchase/equip/room/analytics/route stack; proposed evidence-first aggregate SQLite loop, deterministic race/failure/analytics proof, dedicated isolated exit fixtures, device guide and six pending confirmations. No production code, schema, dependency or native configuration changed. |

@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_MVP_EPIC_BREAKDOWN
 title: PixelDoro Mobile MVP — Epic Breakdown
-version: 2.5.0
-status: EPIC_01_TO_07_DONE_EPIC_08_IMPLEMENTATION_COMPLETE_AWAITING_OWNER_CLOSURE
+version: 2.6.0
+status: EPIC_01_TO_08_DONE_EPIC_09_PLANNING_READY
 last_updated: 2026-09-11
 owner: Dũng Lư
 reviewer: Dũng Lư
@@ -128,7 +128,7 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 - [x] `05 / EPIC-05 / W3` — Onboarding Trial — `DONE_OWNER_ACCEPTED` 2026-09-03.
 - [x] `06 / EPIC-06 / W3` — Standard Focus — `DONE_OWNER_ACCEPTED` 2026-09-07.
 - [x] `07 / EPIC-07 / W3` — Break & Cadence — `DONE_OWNER_ACCEPTED` 2026-09-10.
-- [ ] `08 / EPIC-08 / W3` — Progression & Shop.
+- [x] `08 / EPIC-08 / W3` — Progression & Shop.
 - [ ] `09 / EPIC-09 / W3` — History & Contribution.
 - [ ] `10 / EPIC-10 / W3` — Settings & Data Control.
 - [ ] `11 / EPIC-11 / W3` — Analytics, Feedback & Store Review.
@@ -145,11 +145,11 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 | `EPIC-05` | `DONE_OWNER_ACCEPTED` | Exact implementation SHA `580f559`; root `82/391`, SQLite exclusions và owner quick UI smoke pass. Formal tester matrix deferred. |
 | `EPIC-06` | `DONE_OWNER_ACCEPTED` | Exact candidate `458a886`; Standard Relax/Strict end-to-end, notification/analytics/a11y hooks, owner iOS/Android quick smoke. Formal tester deferred. |
 | `EPIC-07` | `DONE_OWNER_ACCEPTED` | Exact candidate `f6c7b92`; Break/cadence lifecycle, notification/analytics and owner quick UI pass. Formal device/accessibility matrix deferred. |
-| `EPIC-08` | `IMPLEMENTATION_COMPLETE_AWAITING_OWNER_CLOSURE` | US-08-01→05 owner accepted; latest exact SHA `30adc34...`. Exit Report/EPIC-09 remain unopened pending explicit authorization. |
+| `EPIC-08` | `DONE_OWNER_ACCEPTED` | US-08-01→05 owner accepted; exact candidate `30adc34...`; Exit Report closed by owner authorization. |
 
-Bảy Epic đầu đã đóng và EPIC-08 đã implementation-complete nhưng chưa formally closed. EPIC-09–12 giữ
-nguyên execution order. Purchase/equip/room của EPIC-08 đã production-ready theo accepted scope;
-History, Settings, provider analytics và Beta Readiness chưa được suy diễn là hoàn tất.
+Tám Epic đầu đã `DONE_OWNER_ACCEPTED`. EPIC-09 dependency gate is open but its planning/coding has not
+started implicitly; EPIC-09–12 retain execution order. Purchase/equip/room của EPIC-08 đã
+production-ready theo accepted scope; History, Settings, provider analytics và Beta Readiness chưa hoàn tất.
 
 ## 3. Critical path và delivery gates
 
@@ -869,6 +869,12 @@ Story hoặc implementation tương lai.
 - [x] Không estimate deadline trước khi Story refinement hoàn tất.
 
 ## 10. Change log
+
+### 2.6.0 — 2026-09-11
+
+- Owner explicitly authorized EPIC-08 closure; created `EPIC-08_EXIT_REPORT.md` and marked EPIC-08
+  `DONE_OWNER_ACCEPTED` with exact accepted candidate `30adc34...`.
+- Opened only the EPIC-09 dependency/planning gate; no EPIC-09 plan or code was created implicitly.
 
 ### 2.5.0 — 2026-09-11
 

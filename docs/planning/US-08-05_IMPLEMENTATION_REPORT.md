@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_US_08_05_IMPLEMENTATION_REPORT
 title: PixelDoro Mobile MVP — US-08-05 Implementation Report
-version: 0.2.0
+version: 0.3.0
 status: DONE_OWNER_ACCEPTED
 date: 2026-09-11
 owner: Dũng Lư
@@ -13,6 +13,7 @@ formal_tester_status: NOT_RUN_DEFERRED_TO_EPIC_12_UNLESS_EXECUTED
 schema_change: NONE
 dependency_change: NONE
 native_change: NONE
+epic_exit_report: ./EPIC-08_EXIT_REPORT.md
 ---
 
 # US-08-05 — Offline Loop Integrity và EPIC-08 Exit Candidate
@@ -56,16 +57,18 @@ economy rule, schema, dependency, native configuration or analytics provider.
 - iOS export: PASS — 1,832 modules; room assets bundled.
 - `git diff --check`: PASS before documentation finalization.
 
-## Owner acceptance and remaining Epic gate
+## Owner acceptance and Epic closure
 
 Owner quick UI is `PASS` on 2026-09-11 at exact committed/pushed SHA `30adc34...`: no crash and behavior
 worked as expected. Formal device/accessibility breadth remains
-`NOT_RUN_DEFERRED_TO_EPIC_12_UNLESS_EXECUTED`. All five EPIC-08 Stories are implemented and accepted;
-creating the Epic Exit Report, closing EPIC-08 and opening EPIC-09 remain a separate explicit owner gate.
+`NOT_RUN_DEFERRED_TO_EPIC_12_UNLESS_EXECUTED`. All five EPIC-08 Stories are implemented and accepted.
+Owner explicitly authorized EPIC-08 closure on 2026-09-11; `EPIC-08_EXIT_REPORT.md` now records the
+closed Epic. EPIC-09's dependency gate is open, but its planning/coding has not started implicitly.
 
 ## Change log
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.3.0 | 2026-09-11 | Codex | Recorded explicit owner EPIC-08 closure authorization and linked the Exit Report; EPIC-09 dependency gate is open but no later-Epic work was started. |
 | 0.2.0 | 2026-09-11 | Codex | Bound owner quick UI PASS to exact committed/pushed SHA `30adc34...`; US-08-05 is DONE_OWNER_ACCEPTED and EPIC-08 implementation is complete pending explicit Epic closure authorization. |
 | 0.1.0 | 2026-09-11 | Codex | Recorded validated implementation candidate, automated evidence, narrow analytics validator fix and pending owner smoke gate. |
