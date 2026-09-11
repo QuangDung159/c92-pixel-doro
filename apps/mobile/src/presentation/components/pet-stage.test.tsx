@@ -43,6 +43,10 @@ describe('PetStage', () => {
       sceneOverlay: overlay,
     });
     expect(tree.props.children[0]).toBe(underlay);
+    expect(tree.props.children[1].props.style).toMatchObject({
+      top: '20%',
+      transform: [{ scale: 0.4 }],
+    });
     expect(tree.props.children[1].props.children.type).toBe(PetAnimationRenderer);
     expect(tree.props.children[2]).toBe(overlay);
     expect(tree.props.children[3].props).toMatchObject({

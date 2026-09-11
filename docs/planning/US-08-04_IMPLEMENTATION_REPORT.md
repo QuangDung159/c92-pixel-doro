@@ -58,6 +58,8 @@ The query is read-only and decoration failures remain local: Pet, profile and St
   transform and adds invariant tests for atlas containment, target placement and uniform device scaling.
 - Desk-item depth is explicit: the farther plant renders behind the nearer mug even though catalog order
   remains unchanged.
+- Room-mode Cat scale is calibrated independently from Focus/Relax (`0.4` versus the full-size scene),
+  with its top offset adjusted to preserve the rug baseline. Focus/Relax animation sizing is unchanged.
 
 ## Automated evidence
 

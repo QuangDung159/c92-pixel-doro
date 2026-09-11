@@ -16,7 +16,8 @@ commands. Open Home/Pet Room after boot.
 ## Smoke bắt buộc
 
 - [ ] Warm empty-room backdrop appears; Cat and its status remain visible and animate normally.
-- [ ] Backdrop fits the full room frame without zoom/crop; Cat is smaller than the standalone Focus view.
+- [ ] Backdrop fits the full room frame without zoom/crop; Cat is approximately the same scale as the
+  approved reference, stands above the rug, and is clearly smaller than the standalone Focus view.
 - [ ] `Cốc trên bàn` sits at the left edge of the desk and `Chậu cây nhỏ` sits immediately to its
   right/behind it, matching the approved room perspective; the mug visibly overlaps the plant pot
   where their bounds meet, and both remain on the desk surface.
