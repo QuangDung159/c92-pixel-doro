@@ -55,7 +55,8 @@ for (const evidence of [
   'epic_08_relaunch_committed', 'epic_08_provider_failure',
   'epic_08_accessibility_matrix', 'standard_completion_fast_clock',
   '25 XP / 5 Coin', 'Airplane mode', 'VoiceOver/TalkBack', 'Reduce Motion',
-  'pixeldoro.db', 'NOT_RUN', '<implementation-sha>',
+  'pixeldoro.db', 'PASS_OWNER_QUICK_UI',
+  '30adc34be23dca48379b6f2553203fdadb9f9e5b',
   'unset EXPO_PUBLIC_EPIC_08_EXIT_REVIEW_FIXTURE',
 ]) {
   if (!epic08ExitFlow.includes(evidence)) {

@@ -1,7 +1,10 @@
 # EPIC-08 / US-08-05 quick UI smoke
 
-Status: `NOT_RUN`  
-Implementation SHA: `<implementation-sha>`
+Status: `PASS_OWNER_QUICK_UI`
+Implementation SHA: `30adc34be23dca48379b6f2553203fdadb9f9e5b`
+
+Owner result (2026-09-11): no crash; behavior worked as expected. This records the owner quick UI
+gate only. Unexecuted structured platform/accessibility rows below remain unchecked and are not formal PASS.
 
 ## Main offline loop
 

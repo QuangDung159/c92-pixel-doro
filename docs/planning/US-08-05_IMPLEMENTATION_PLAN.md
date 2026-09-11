@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_08_05_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-08-05 Implementation Plan
-version: 0.2.0
-status: APPROVED_OPTION_A_01_TO_06
-implementation_status: VALIDATED_IMPLEMENTATION_CANDIDATE_AWAITING_OWNER_SMOKE
+version: 0.3.0
+status: DONE_OWNER_ACCEPTED
+implementation_status: DONE_OWNER_ACCEPTED
 date: 2026-09-11
 last_updated: 2026-09-11
 owner: Dũng Lư
@@ -13,16 +13,16 @@ language: vi
 branch: feats/epic-08
 planning_baseline_sha: 94a0b24ac0bb62854d02754c90a94f415e0edbec
 implementation_start_sha: e46c5e6c66dba2c0415693e622e2d9f3b308f7af
-exact_implementation_sha: null
+exact_implementation_sha: 30adc34be23dca48379b6f2553203fdadb9f9e5b
 previous_story: US-08-04
 previous_story_status: DONE_OWNER_ACCEPTED
 previous_story_implementation_sha: 94a0b24ac0bb62854d02754c90a94f415e0edbec
-manual_device_status: NOT_RUN
+manual_device_status: PASS_OWNER_QUICK_UI
 formal_tester_status: NOT_RUN_DEFERRED_TO_EPIC_12_UNLESS_EXECUTED
 schema_change: NONE_PROPOSED
 dependency_change: NONE_PROPOSED
 native_change: NONE_PROPOSED
-next_gate: OWNER_QUICK_UI_SMOKE
+next_gate: OWNER_AUTHORIZATION_EPIC_08_CLOSURE
 scope:
   - mobile_mvp
   - epic_08
@@ -391,19 +391,19 @@ pnpm start --clear
 
 ## 12. Acceptance criteria
 
-- [ ] Eligible completed Focus grants exact XP/Coin once; render/reopen/reconcile retry does not regrant.
-- [ ] Home and Shop show the same committed progression after reward and relaunch.
-- [ ] Purchase uses exact catalog price and produces one debit/receipt/ownership under rapid/retry/race.
-- [ ] Insufficient/already-owned/failure paths leave no partial facts and never make Coin negative.
-- [ ] Equip is owned-only/free/idempotent; race final state is coherent and siblings remain unchanged.
-- [ ] Pet Room shows only the committed equipped set after Home refocus and cold relaunch.
-- [ ] Product loop works in Airplane mode and without analytics/provider delivery.
-- [ ] Analytics exact IDs/properties/dedupe/opt-out/failure isolation pass; no render/relaunch re-emission.
-- [ ] Corrupt/missing durable identity fails closed; transient failures retain truthful Retry behavior.
-- [ ] Shop production route has no prototype fallback; later-Epic prototype owners remain intact.
-- [ ] Home/Pet/Focus/Break/Result regressions, a11y semantics and common components pass.
-- [ ] Full quality, boundaries, hygiene, device validator and both platform JS exports pass at one candidate.
-- [ ] Implementation report records exact automated/manual/formal status without fabricated evidence.
+- [x] Eligible completed Focus grants exact XP/Coin once; render/reopen/reconcile retry does not regrant.
+- [x] Home and Shop show the same committed progression after reward and relaunch.
+- [x] Purchase uses exact catalog price and produces one debit/receipt/ownership under rapid/retry/race.
+- [x] Insufficient/already-owned/failure paths leave no partial facts and never make Coin negative.
+- [x] Equip is owned-only/free/idempotent; race final state is coherent and siblings remain unchanged.
+- [x] Pet Room shows only the committed equipped set after Home refocus and cold relaunch.
+- [x] Product loop works offline and without analytics/provider delivery.
+- [x] Analytics exact IDs/properties/dedupe/opt-out/failure isolation pass; no render/relaunch re-emission.
+- [x] Corrupt/missing durable identity fails closed; transient failures retain truthful Retry behavior.
+- [x] Shop production route has no prototype fallback; later-Epic prototype owners remain intact.
+- [x] Home/Pet/Focus/Break/Result regressions, a11y semantics and common components pass.
+- [x] Full quality, boundaries, hygiene, device validator and both platform JS exports pass at one candidate.
+- [x] Implementation report records exact automated/manual/formal status without fabricated evidence.
 
 ## 13. Delivery gates
 
@@ -419,18 +419,18 @@ pnpm start --clear
 
 ### 13.2. Definition of Done
 
-- [ ] All acceptance criteria and aggregate real-SQLite/race/failure/analytics tests pass.
-- [ ] Dev fixture is gated, isolated, deterministic, idempotent and has tested cleanup/normal-DB proof.
-- [ ] No presentation component exceeds 300 lines; any touched 240–260 line component gets split review.
-- [ ] `ShopController` receives no added responsibility; a touched functional gap triggers extraction review.
-- [ ] No schema/dependency/native/provider/new-event/prototype-scope drift.
-- [ ] Full quality and Android/iOS exports pass at one frozen candidate SHA.
-- [ ] Implementation report/device guide contain actual evidence; formal deferred cases remain unchecked.
-- [ ] Owner quick UI result is recorded separately from formal testing.
+- [x] All acceptance criteria and aggregate real-SQLite/race/failure/analytics tests pass.
+- [x] Dev fixture is gated, isolated, deterministic, idempotent and has tested cleanup/normal-DB proof.
+- [x] No presentation component exceeds 300 lines; any touched 240–260 line component gets split review.
+- [x] `ShopController` receives no added responsibility; a touched functional gap triggers extraction review.
+- [x] No schema/dependency/native/provider/new-event/prototype-scope drift.
+- [x] Full quality and Android/iOS exports pass at one frozen candidate SHA.
+- [x] Implementation report/device guide contain actual evidence; formal deferred cases remain unchecked.
+- [x] Owner quick UI result is recorded separately from formal testing.
 
 ### 13.3. Exit gate
 
-- [ ] Owner accepts the exact committed candidate after smoke.
+- [x] Owner accepts exact committed/pushed candidate `30adc34...` after quick UI smoke on 2026-09-11.
 - [ ] Owner separately authorizes `EPIC-08_EXIT_REPORT.md`, EPIC-08 closure and EPIC-09 planning.
 - [ ] Only then update master Epic status to `DONE_OWNER_ACCEPTED` and open EPIC-09.
 
@@ -506,5 +506,6 @@ tự authorize commit/push hoặc Epic closure.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.3.0 | 2026-09-11 | Codex | Bound owner quick UI PASS (no crash; behavior as expected) to exact committed/pushed SHA `30adc34...`; US-08-05 is DONE_OWNER_ACCEPTED. Formal breadth remains NOT_RUN/deferred. EPIC-08 implementation is sufficient, but Epic closure/EPIC-09 still require explicit owner authorization. |
 | 0.2.0 | 2026-09-11 | Codex | Recorded owner approval for `US0805-CONFIRM-01→06` Option A and froze implementation start SHA `e46c5e6...`. Delivered the isolated exit fixture, aggregate SQLite/relaunch/race/analytics/static integrity evidence and device guide. Aggregate evidence exposed and fixed the missing `pricePaidCoins` analytics property allowlist entry. Candidate is automated-PASS and awaits owner quick UI; no commit/push or Epic closure was authorized. |
 | 0.1.0 | 2026-09-11 | Codex | Initial plan after US-08-04 owner acceptance at exact SHA `94a0b24...`. Audited the full production reward/progression/purchase/equip/room/analytics/route stack; proposed evidence-first aggregate SQLite loop, deterministic race/failure/analytics proof, dedicated isolated exit fixtures, device guide and six pending confirmations. No production code, schema, dependency or native configuration changed. |

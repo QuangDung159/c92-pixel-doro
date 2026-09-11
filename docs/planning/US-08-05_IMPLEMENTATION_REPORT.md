@@ -1,14 +1,14 @@
 ---
 document_id: PIXELDORO_US_08_05_IMPLEMENTATION_REPORT
 title: PixelDoro Mobile MVP — US-08-05 Implementation Report
-version: 0.1.0
-status: VALIDATED_IMPLEMENTATION_CANDIDATE_AWAITING_OWNER_SMOKE
+version: 0.2.0
+status: DONE_OWNER_ACCEPTED
 date: 2026-09-11
 owner: Dũng Lư
 branch: feats/epic-08
 implementation_start_sha: e46c5e6c66dba2c0415693e622e2d9f3b308f7af
-exact_implementation_sha: null
-manual_device_status: NOT_RUN
+exact_implementation_sha: 30adc34be23dca48379b6f2553203fdadb9f9e5b
+manual_device_status: PASS_OWNER_QUICK_UI
 formal_tester_status: NOT_RUN_DEFERRED_TO_EPIC_12_UNLESS_EXECUTED
 schema_change: NONE
 dependency_change: NONE
@@ -56,14 +56,16 @@ economy rule, schema, dependency, native configuration or analytics provider.
 - iOS export: PASS — 1,832 modules; room assets bundled.
 - `git diff --check`: PASS before documentation finalization.
 
-## Remaining gate
+## Owner acceptance and remaining Epic gate
 
-Owner quick UI smoke is `NOT_RUN`; formal device/accessibility breadth remains
-`NOT_RUN_DEFERRED_TO_EPIC_12_UNLESS_EXECUTED`. Exact implementation SHA stays `null` because commit/push was
-not authorized. Owner smoke acceptance, Epic exit closure and EPIC-09 authorization remain separate gates.
+Owner quick UI is `PASS` on 2026-09-11 at exact committed/pushed SHA `30adc34...`: no crash and behavior
+worked as expected. Formal device/accessibility breadth remains
+`NOT_RUN_DEFERRED_TO_EPIC_12_UNLESS_EXECUTED`. All five EPIC-08 Stories are implemented and accepted;
+creating the Epic Exit Report, closing EPIC-08 and opening EPIC-09 remain a separate explicit owner gate.
 
 ## Change log
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.2.0 | 2026-09-11 | Codex | Bound owner quick UI PASS to exact committed/pushed SHA `30adc34...`; US-08-05 is DONE_OWNER_ACCEPTED and EPIC-08 implementation is complete pending explicit Epic closure authorization. |
 | 0.1.0 | 2026-09-11 | Codex | Recorded validated implementation candidate, automated evidence, narrow analytics validator fix and pending owner smoke gate. |

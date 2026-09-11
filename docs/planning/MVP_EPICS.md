@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_MVP_EPIC_BREAKDOWN
 title: PixelDoro Mobile MVP — Epic Breakdown
-version: 2.4.0
-status: EPIC_01_TO_07_DONE_EPIC_08_IN_PROGRESS
+version: 2.5.0
+status: EPIC_01_TO_07_DONE_EPIC_08_IMPLEMENTATION_COMPLETE_AWAITING_OWNER_CLOSURE
 last_updated: 2026-09-11
 owner: Dũng Lư
 reviewer: Dũng Lư
@@ -145,11 +145,11 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 | `EPIC-05` | `DONE_OWNER_ACCEPTED` | Exact implementation SHA `580f559`; root `82/391`, SQLite exclusions và owner quick UI smoke pass. Formal tester matrix deferred. |
 | `EPIC-06` | `DONE_OWNER_ACCEPTED` | Exact candidate `458a886`; Standard Relax/Strict end-to-end, notification/analytics/a11y hooks, owner iOS/Android quick smoke. Formal tester deferred. |
 | `EPIC-07` | `DONE_OWNER_ACCEPTED` | Exact candidate `f6c7b92`; Break/cadence lifecycle, notification/analytics and owner quick UI pass. Formal device/accessibility matrix deferred. |
-| `EPIC-08` | `IN_PROGRESS` | US-08-01→04 owner accepted; US-08-05 automated candidate awaits owner quick UI smoke. |
+| `EPIC-08` | `IMPLEMENTATION_COMPLETE_AWAITING_OWNER_CLOSURE` | US-08-01→05 owner accepted; latest exact SHA `30adc34...`. Exit Report/EPIC-09 remain unopened pending explicit authorization. |
 
-Bảy Epic đầu và US-08-01→03 hoàn thành không đồng nghĩa Mobile MVP hoàn tất. EPIC-08 vẫn `IN_PROGRESS`;
-EPIC-09–12 giữ nguyên execution order. Không được dùng progress này để nhận purchase/equip/room,
-History, Settings, provider analytics hoặc Beta Readiness đã production-ready.
+Bảy Epic đầu đã đóng và EPIC-08 đã implementation-complete nhưng chưa formally closed. EPIC-09–12 giữ
+nguyên execution order. Purchase/equip/room của EPIC-08 đã production-ready theo accepted scope;
+History, Settings, provider analytics và Beta Readiness chưa được suy diễn là hoàn tất.
 
 ## 3. Critical path và delivery gates
 
@@ -869,6 +869,13 @@ Story hoặc implementation tương lai.
 - [x] Không estimate deadline trước khi Story refinement hoàn tất.
 
 ## 10. Change log
+
+### 2.5.0 — 2026-09-11
+
+- Ghi US-08-05 `DONE_OWNER_ACCEPTED` tại exact committed/pushed SHA `30adc34...` sau owner quick UI
+  PASS: không crash và behavior đúng kỳ vọng; formal device/accessibility breadth vẫn `NOT_RUN`.
+- Audit xác nhận 5/5 Story và toàn bộ implementation criteria của EPIC-08 đã đủ; giữ Epic ở
+  `IMPLEMENTATION_COMPLETE_AWAITING_OWNER_CLOSURE`, chưa tạo Exit Report hoặc mở EPIC-09.
 
 ### 2.4.0 — 2026-09-11
 

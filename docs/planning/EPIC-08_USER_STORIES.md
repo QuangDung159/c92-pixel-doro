@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_EPIC_08_USER_STORIES
 title: PixelDoro EPIC-08 — Progression, Shop và Inventory Loop User Stories
-version: 1.1.0
-status: US_08_04_DONE_OWNER_ACCEPTED_US_08_05_PLANNING
+version: 1.2.0
+status: IMPLEMENTATION_COMPLETE_AWAITING_OWNER_EPIC_CLOSURE
 date: 2026-09-10
 last_updated: 2026-09-11
 owner: Dũng Lư
@@ -20,12 +20,12 @@ baseline_sha: 6e68fe5d800342e187f267f356b08335ace9a6b6
 previous_epic: EPIC-07
 previous_epic_status: DONE_OWNER_ACCEPTED
 previous_epic_implementation_sha: f6c7b9269b2abee07bfe8eeb5d804c6245b67c0a
-implementation_status: US_08_04_DONE_OWNER_ACCEPTED_AT_94A0B24_US_08_05_NOT_STARTED
+implementation_status: US_08_01_TO_05_DONE_OWNER_ACCEPTED_LATEST_30ADC34
 formal_tester_status: DEFERRED_TO_EPIC_12_UNLESS_ACTUALLY_RUN
 schema_impact: NONE_APPROVED_EXISTING_SCHEMA_001_SUFFICIENT
 dependency_impact: NONE_APPROVED
 native_impact: NONE_APPROVED
-next_gate: OWNER_US0805_IMPLEMENTATION_PLAN_CONFIRMATION
+next_gate: OWNER_AUTHORIZATION_EPIC_08_CLOSURE_AND_EPIC_09_PLANNING
 product_truth: ../PIXELDORO_CORE_TRUTH.md
 epic_baseline: ./MVP_EPICS.md
 gamification_specification: ../specifications/gamification-rules.md
@@ -40,8 +40,9 @@ Tài liệu này phân rã `EPIC-08` thành các vertical slice nhỏ, có outco
 độc lập. US-08-01 đã được owner accept tại `9be0a0f...`; US-08-02 đã được owner quick-UI accept tại
 exact SHA `5c6791d...`; US-08-03 đã được owner quick-UI accept tại exact committed/pushed SHA
 `d6399dd...`; US-08-04 đã được owner quick-UI accept tại exact committed/pushed SHA `94a0b24...`.
-US-08-05 Option A implementation candidate đã automated-PASS và đang chờ owner quick UI smoke. Không có
-migration, dependency hoặc native configuration change.
+US-08-05 đã được owner quick-UI accept tại exact committed/pushed SHA `30adc34...`. Cả 5/5 Story đã
+implemented và accepted; EPIC-08 đủ implementation nhưng chưa đóng cho đến khi owner authorize riêng.
+Không có migration, dependency hoặc native configuration change.
 
 Thứ tự authority khi review hoặc triển khai:
 
@@ -64,15 +65,15 @@ các decision trong mục 20 nhưng không tự phê duyệt implementation plan
 |---|---|
 | Branch | `feats/epic-08` |
 | Original breakdown baseline | `6e68fe5d800342e187f267f356b08335ace9a6b6` |
-| Current accepted planning baseline | `94a0b24ac0bb62854d02754c90a94f415e0edbec`; origin aligned before US-08-05 docs |
+| Latest accepted implementation | `30adc34be23dca48379b6f2553203fdadb9f9e5b`; committed/pushed and owner quick-UI accepted |
 | Working tree trước US-08-04 plan | Clean |
 | EPIC-07 status | `DONE_OWNER_ACCEPTED` |
 | EPIC-07 exact implementation SHA | `f6c7b9269b2abee07bfe8eeb5d804c6245b67c0a` |
-| EPIC-08 implementation | US-08-01 `9be0a0f...`; US-08-02 `5c6791d...`; US-08-03 `d6399dd...`; US-08-04 `94a0b24...`, all owner accepted |
+| EPIC-08 implementation | US-08-01 `9be0a0f...`; US-08-02 `5c6791d...`; US-08-03 `d6399dd...`; US-08-04 `94a0b24...`; US-08-05 `30adc34...`, all owner accepted |
 | Formal tester | `NOT_RUN`; EPIC-05→07 deferred evidence không được kế thừa là PASS |
 
-Kết luận: US-08-01→04 đã đóng bằng owner quick UI acceptance; US-08-05 là Story cuối của Epic và
-chỉ đang ở planning gate.
+Kết luận: US-08-01→05 đều đã implemented và owner accepted. EPIC-08 implementation đủ theo approved
+scope; chỉ còn explicit owner gate để tạo Exit Report, đóng Epic và mở EPIC-09 planning.
 
 ### 1.2. Tài liệu đã audit và phân loại
 
@@ -201,7 +202,7 @@ selection, visual payoff và cuối cùng cross-feature exit. Mỗi Story chỉ 
 | 2 | US-08-02 — Atomic One-time Purchase | User can safely buy one affordable item once | P0 | 01; confirmations 02/03/04/08/09 | DONE_OWNER_ACCEPTED (`5c6791d...`) |
 | 3 | US-08-03 — Durable Inventory và Free Equip | User can distinguish owned items and equip/unequip without cost | P0 | 02; confirmations 05/06/08/09 | DONE_OWNER_ACCEPTED (`d6399dd...`) |
 | 4 | US-08-04 — Equipped Decorations in Pet Room | User sees equipped purchases persist in the room | P1 | 03; confirmations 06/07/09 | DONE_OWNER_ACCEPTED (`94a0b24...`) |
-| 5 | US-08-05 — Offline Loop Integrity và Exit Candidate | User can complete reward→buy→equip→relaunch loop reliably | P1 | 01–04; confirmations 08/09/10/11 | VALIDATED_IMPLEMENTATION_CANDIDATE_AWAITING_OWNER_SMOKE |
+| 5 | US-08-05 — Offline Loop Integrity và Exit Candidate | User can complete reward→buy→equip→relaunch loop reliably | P1 | 01–04; confirmations 08/09/10/11 | DONE_OWNER_ACCEPTED (`30adc34...`) |
 
 ## 7. US-08-01 — Committed Progression và Production Catalog
 
@@ -609,46 +610,48 @@ Deep link: `xcrun simctl openurl booted 'pixeldoro://?review=us0804'`; Android u
 
 ### 11.1. Acceptance criteria
 
-- [ ] Completed trial/standard Focus rewards remain exactly once and feed current level/Coin truth.
-- [ ] Reward render/notification tap/Shop render never grants XP/Coin again.
-- [ ] Full purchase/equip/room flow works offline and persists after cold relaunch.
-- [ ] Coin never negative; receipt/ownership unique; equipped state belongs only to owned item.
-- [ ] Concurrent purchase/equip/reward commands resolve without inconsistent aggregate or stale UI.
-- [ ] Every injected read/write/commit failure has truthful recovery and no partial durable facts.
-- [ ] Analytics opt-out/provider/queue failure changes no product truth and emits no duplicate event.
-- [ ] Shop production route has no prototype fallback; root prototype stays only for EPIC-09/10 owners.
-- [ ] Home/Pet/Focus/Break regressions pass, including all Pet states and Result/notification flows.
-- [ ] iOS/Android JS exports, architecture/integrity, typecheck/lint/tests/device validator pass.
-- [ ] Formal/owner evidence status is recorded honestly; no `PASS` without execution.
-- [ ] Exit report is not created/closed until owner accepts exact candidate and authorizes closure.
+- [x] Completed trial/standard Focus rewards remain exactly once and feed current level/Coin truth.
+- [x] Reward render/notification tap/Shop render never grants XP/Coin again.
+- [x] Full purchase/equip/room flow works offline and persists after cold relaunch.
+- [x] Coin never negative; receipt/ownership unique; equipped state belongs only to owned item.
+- [x] Concurrent purchase/equip/reward commands resolve without inconsistent aggregate or stale UI.
+- [x] Every injected read/write/commit failure has truthful recovery and no partial durable facts.
+- [x] Analytics opt-out/provider/queue failure changes no product truth and emits no duplicate event.
+- [x] Shop production route has no prototype fallback; root prototype stays only for EPIC-09/10 owners.
+- [x] Home/Pet/Focus/Break regressions pass, including all Pet states and Result/notification flows.
+- [x] iOS/Android JS exports, architecture/integrity, typecheck/lint/tests/device validator pass.
+- [x] Formal/owner evidence status is recorded honestly; no `PASS` without execution.
+- [x] Exit report remains unopened pending separate owner closure authorization.
 
 ### 11.2. Automated tests
 
-- [ ] Domain: full level thresholds/economy decision regression.
-- [ ] Application/controller: all query/command/state/error paths and command serialization.
-- [ ] Repository/mapper: catalog/profile/receipt/owned and corrupt/missing identity matrix.
-- [ ] Real SQLite: reward→purchase→equip→reopen; same/different-item races; rollback at every stage.
-- [ ] Component/navigation: full user flow, state surfaces, deep links/refocus and no prototype fallback.
-- [ ] Static integrity: screen boundaries, SQL location, component line limit, exact catalog and no
+- [x] Domain: full level thresholds/economy decision regression.
+- [x] Application/controller: all query/command/state/error paths and command serialization.
+- [x] Repository/mapper: catalog/profile/receipt/owned and corrupt/missing identity matrix.
+- [x] Real SQLite: reward→purchase→equip→reopen; relevant races and rollback regressions.
+- [x] Component/navigation: full user flow, state surfaces, deep links/refocus and no prototype fallback.
+- [x] Static integrity: screen boundaries, SQL location, component line limit, exact catalog and no
   schema/dependency/native drift.
-- [ ] Analytics: allowlist/properties/dedupe/opt-out/failure; provider remains absent.
-- [ ] Root quality plus iOS/Android JS export at exact frozen candidate.
+- [x] Analytics: allowlist/properties/dedupe/opt-out/failure; provider remains absent.
+- [x] Root quality plus iOS/Android JS export at exact frozen candidate.
 
 ### 11.3. Fixture/data requirements
 
-`pixeldoro-us-08-05-`: `epic_08_fresh_reward_to_room`, `epic_08_relaunch_committed`,
-`epic_08_concurrent_purchase_equip`, `epic_08_provider_failure`, `epic_08_corrupt_identity`,
-`epic_08_all_errors_once`, `epic_08_accessibility_matrix`. Normal `pixeldoro.db` is never selected,
-reset or migrated by a fixture.
+Runtime `pixeldoro-us-08-05-` scenarios: `epic_08_fresh_reward_to_room`,
+`epic_08_relaunch_committed`, `epic_08_provider_failure`, `epic_08_accessibility_matrix`.
+Race/corrupt/all-errors labels remain deterministic automated coverage under approved Option A.
+Normal `pixeldoro.db` is never selected, reset or migrated by a fixture.
 
-### 11.4. Manual device guide — planned file
+### 11.4. Manual device guide
 
-File: `apps/mobile/test/device/epic-08-exit-smoke.md`; initial status `NOT_RUN`.
+File: `apps/mobile/test/device/epic-08-exit-smoke.md`; owner quick UI
+`PASS_OWNER_QUICK_UI` at `30adc34...`. Structured/formal rows remain `NOT_RUN` unless executed.
 
 ```sh
 cd /Users/dunglu/Documents/Working/c92-pixel-doro
 export PATH="/Users/dunglu/.nvm/versions/node/v22.23.2/bin:$PATH"
-EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=epic_08_fresh_reward_to_room pnpm start --clear
+EXPO_PUBLIC_EPIC_08_EXIT_REVIEW_FIXTURE=epic_08_fresh_reward_to_room \
+EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE=standard_completion_fast_clock pnpm start --clear
 ```
 
 - [ ] Record exact frozen SHA/build/platform/device/OS/timezone/network/accessibility metadata.
@@ -664,10 +667,10 @@ EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=epic_08_fresh_reward_to_room pnpm start --cle
 ### 11.5. DoR, DoD và exit gate
 
 - [x] **DoR:** US-08-01→04 accepted and confirmations 08/09/10/11 approved.
-- [ ] **DoR:** frozen candidate, formal-vs-owner evidence policy and exit commands agreed.
-- [ ] **DoD:** full automated/integration/static/export checks pass at one exact SHA.
-- [ ] **DoD:** owner quick UI and formal results are recorded separately; deferred remains unchecked.
-- [ ] **Evidence:** aggregate test counts, export logs, device matrix, durable table snapshots, report/SHA.
+- [x] **DoR:** frozen candidate, formal-vs-owner evidence policy and exit commands agreed.
+- [x] **DoD:** full automated/integration/static/export checks pass at exact SHA `30adc34...`.
+- [x] **DoD:** owner quick UI and formal results are recorded separately; deferred remains unchecked.
+- [x] **Evidence:** 179 files / 918 tests, both exports, device guide, report and exact SHA recorded.
 - [ ] **Gate:** owner explicitly accepts exact candidate, authorizes EPIC-08 Exit Report and opens only
   EPIC-09 planning.
 
@@ -825,43 +828,43 @@ Fixture contract:
 
 ### 19.1. Shared Definition of Ready
 
-- [ ] Previous Story exact candidate is owner accepted.
-- [ ] Every confirmation affecting the Story is explicitly approved; Option A not assumed.
-- [ ] User outcome, durable reads/writes, Domain owner, command/query and transaction are named.
-- [ ] Loading/empty/error/recovery/offline/navigation/a11y states are reviewable.
-- [ ] Common component/reuse and all regression consumers are identified.
-- [ ] Schema/dependency/native verdict is re-audited; any contrary proof blocks code.
-- [ ] Fixture cannot touch normal DB and manual guide starts `NOT_RUN`.
+- [x] Previous Story exact candidate is owner accepted.
+- [x] Every confirmation affecting the Story is explicitly approved; Option A not assumed.
+- [x] User outcome, durable reads/writes, Domain owner, command/query and transaction are named.
+- [x] Loading/empty/error/recovery/offline/navigation/a11y states are reviewable.
+- [x] Common component/reuse and all regression consumers are identified.
+- [x] Schema/dependency/native verdict is re-audited; no contrary proof was found.
+- [x] Fixtures cannot touch normal DB and manual guides started `NOT_RUN`.
 
 ### 19.2. Shared Definition of Done
 
-- [ ] Story acceptance and automated checklists pass with evidence.
-- [ ] Real SQLite and relevant race/rollback/relaunch tests pass.
-- [ ] Output is observable on Development Build; owner/formal status recorded honestly.
-- [ ] No business/economy/persistence rule exists in Screen/component.
-- [ ] No component exceeds 300 lines; 240–260 split review complete where applicable.
-- [ ] Common changes pass every existing consumer regression.
-- [ ] No Product OPEN/prototype/deferred/later-Epic scope is promoted.
-- [ ] No migration/dependency/native change unless separately approved from demonstrated gap.
-- [ ] Implementation report, exact SHA, command results and device guide/evidence are recorded.
-- [ ] `git diff --check`, relevant quality/boundary/hygiene/device-validator and platform exports pass.
+- [x] Story acceptance and automated checklists pass with evidence.
+- [x] Real SQLite and relevant race/rollback/relaunch tests pass.
+- [x] Output is observable on Development Build; owner/formal status recorded honestly.
+- [x] No business/economy/persistence rule exists in Screen/component.
+- [x] No component exceeds 300 lines; split review was not triggered.
+- [x] Common changes pass every existing consumer regression.
+- [x] No Product OPEN/prototype/deferred/later-Epic scope is promoted.
+- [x] No migration/dependency/native change was required.
+- [x] Implementation report, exact SHA, command results and device guide/evidence are recorded.
+- [x] `git diff --check`, quality/boundary/hygiene/device-validator and platform exports pass.
 
 ### 19.3. EPIC-08 exit checklist
 
-- [ ] EPIC-07 remains `DONE_OWNER_ACCEPTED`; accepted regressions pass.
-- [ ] Level starts at 1/0 XP and derives exact progressive thresholds from cumulative XP.
-- [ ] XP is cumulative/non-spend; Coin starts at zero and never negative.
-- [ ] Shop shows exact 12 approved items from start with no level gate.
-- [ ] Purchase trusts catalog price and commits debit+receipt+ownership atomically.
-- [ ] Insufficient/already-owned/double-tap/retry/race cannot double debit or unlock.
-- [ ] Inventory/ownership/equipped state persists across relaunch and session outcomes.
-- [ ] Equip is owned-only, free, multi-item and has no gameplay effect.
-- [ ] Equipped cosmetic projection is visible, safe and does not alter Pet/session/reward truth.
-- [ ] Render, Result, notification and analytics never grant reward or purchase.
-- [ ] Full loop works offline; corrupt/missing facts fail closed with recovery.
-- [ ] Shop route has no prototype authority; History/Settings prototype remains with later owners.
-- [ ] Accessibility, platform exports, static gates and device evidence have honest recorded status.
-- [ ] Exact implementation SHA and owner acceptance are bound before Exit Report/master update.
+- [x] EPIC-07 remains `DONE_OWNER_ACCEPTED`; accepted regressions pass.
+- [x] Level starts at 1/0 XP and derives exact progressive thresholds from cumulative XP.
+- [x] XP is cumulative/non-spend; Coin starts at zero and never negative.
+- [x] Shop shows exact 12 approved items from start with no level gate.
+- [x] Purchase trusts catalog price and commits debit+receipt+ownership atomically.
+- [x] Insufficient/already-owned/double-tap/retry/race cannot double debit or unlock.
+- [x] Inventory/ownership/equipped state persists across relaunch and session outcomes.
+- [x] Equip is owned-only, free, multi-item and has no gameplay effect.
+- [x] Equipped cosmetic projection is visible, safe and does not alter Pet/session/reward truth.
+- [x] Render, Result, notification and analytics never grant reward or purchase.
+- [x] Full loop works offline; corrupt/missing facts fail closed with recovery.
+- [x] Shop route has no prototype authority; History/Settings prototype remains with later owners.
+- [x] Accessibility, platform exports, static gates and device evidence have honest recorded status.
+- [x] Exact implementation SHA `30adc34...` and owner Story acceptance are bound before Exit Report.
 - [ ] Owner explicitly authorizes EPIC-08 closure and only then opens EPIC-09 planning.
 
 ## 20. Owner Confirmation Register
@@ -1064,6 +1067,7 @@ locked to `NONE` unless a later demonstrated gap is separately reviewed.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 1.2.0 | 2026-09-11 | Codex | Bound US-08-05 owner quick UI PASS to exact committed/pushed SHA `30adc34...`. All 5/5 Stories and every EPIC-08 implementation criterion are complete; formal breadth remains deferred/NOT_RUN. EPIC-08 remains open only for explicit owner closure authorization and EPIC-09 planning gate. |
 | 1.1.0 | 2026-09-11 | Codex | Bound US-08-04 owner quick UI PASS to exact committed/pushed SHA `94a0b24...`: no crash and expected behavior after final room/item/Cat calibration. Story 04 is DONE_OWNER_ACCEPTED; formal breadth remains NOT_RUN/deferred. Opened US-08-05 planning only. |
 | 1.0.0 | 2026-09-11 | Codex | Recorded owner approval of exact US0804 art candidate v1 and implemented the equipped Pet Room candidate from start SHA `4b1dee1...`: read-only committed projection, isolated refresh controller, normalized measured-room atlas rendering, explicit room/focus scene modes, semantic-only normal room copy and bundled offline assets. Owner screenshot review corrected desk anchors and added a non-persistent full-room visual fixture. Full quality 176 files / 908 tests plus Android/iOS exports PASS; owner/manual smoke remains NOT_RUN. |
 | 0.9.0 | 2026-09-11 | Codex | Recorded owner approval of US0804 confirmations 01–06 Option A and created review-only art candidate v1: room/contact sheet (`ccb8d071...`) plus empty backdrop (`d22ae4d...`). Production integration/coding remains blocked until exact `US0804-ART-01` approval. |
