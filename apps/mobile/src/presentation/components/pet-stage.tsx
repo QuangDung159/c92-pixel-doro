@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { palette } from '@/presentation/theme/palette';
@@ -24,6 +25,9 @@ export interface PetStageProps {
   readonly visualMode?: 'loop' | 'one-shot' | 'still';
   readonly onPlaybackComplete?: () => void;
   readonly onPlaybackFailure?: () => void;
+  readonly sceneUnderlay?: ReactNode;
+  readonly sceneOverlay?: ReactNode;
+  readonly sceneMode?: 'focus' | 'room';
 }
 
 export const PetStage = ({
@@ -34,24 +38,32 @@ export const PetStage = ({
   visualMode = petAnimationManifest[state].playback,
   onPlaybackComplete,
   onPlaybackFailure,
+  sceneUnderlay,
+  sceneOverlay,
+  sceneMode = 'focus',
 }: PetStageProps) => {
   const label = statusLabel ?? defaultStatusLabels[state];
+  const isRoom = sceneMode === 'room';
 
-  // TODO(room-decor): Restore room decoration with the future pegboard-style
-  // feature. Keep the standalone placeholder shelf hidden until it is ready.
   return (
-    <View style={styles.scene}>
-      <PetAnimationRenderer
-        {...(onPlaybackComplete === undefined ? {} : { onPlaybackComplete })}
-        {...(onPlaybackFailure === undefined ? {} : { onPlaybackFailure })}
-        playbackId={playbackId}
-        state={state}
-        visualMode={visualMode}
-      />
-      <PetStatusText
-        {...(liveRegion === undefined ? {} : { liveRegion })}
-        label={label}
-      />
+    <View style={[styles.scene, isRoom ? styles.roomScene : styles.focusScene]}>
+      {isRoom ? sceneUnderlay : null}
+      <View style={isRoom ? styles.roomPet : undefined}>
+        <PetAnimationRenderer
+          {...(onPlaybackComplete === undefined ? {} : { onPlaybackComplete })}
+          {...(onPlaybackFailure === undefined ? {} : { onPlaybackFailure })}
+          playbackId={playbackId}
+          state={state}
+          visualMode={visualMode}
+        />
+      </View>
+      {isRoom ? sceneOverlay : null}
+      <View style={isRoom ? styles.roomStatus : undefined}>
+        <PetStatusText
+          {...(liveRegion === undefined ? {} : { liveRegion })}
+          label={label}
+        />
+      </View>
     </View>
   );
 };
@@ -65,8 +77,27 @@ const styles = StyleSheet.create({
     borderColor: palette.border,
     borderRadius: 8,
     borderWidth: 3,
-    minHeight: 230,
     overflow: 'hidden',
+  },
+  focusScene: {
+    minHeight: 230,
     paddingTop: 30,
+  },
+  roomScene: {
+    aspectRatio: 1672 / 941,
+    justifyContent: 'flex-end',
+    minHeight: 0,
+    paddingBottom: 8,
+  },
+  roomPet: {
+    alignItems: 'center',
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    top: '14%',
+    transform: [{ scale: 0.68 }],
+  },
+  roomStatus: {
+    zIndex: 3,
   },
 });

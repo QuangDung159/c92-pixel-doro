@@ -2,6 +2,7 @@ import type {
   HomeProfileProjection,
   PetVisualProjection,
 } from '@pixeldoro/application';
+import type { RoomDecorationsControllerProjection } from '@/application';
 import { StyleSheet, Text } from 'react-native';
 
 import {
@@ -15,12 +16,20 @@ import {
 } from '@/presentation/components';
 import { palette } from '@/presentation/theme/palette';
 
+import {
+  EquippedRoomDecorationLayer,
+  RoomBackdropLayer,
+} from './equipped-room-decoration-layer';
+import { RoomDecorationStatus } from './room-decoration-status';
+
 export interface HomeScreenProps {
   readonly profile: HomeProfileProjection | null;
   readonly pet: PetVisualProjection;
   readonly onDismissPetFeedbackError: () => void;
   readonly onRetryPet: () => void;
   readonly onStartFocus: () => void;
+  readonly room: RoomDecorationsControllerProjection;
+  readonly onRetryRoom: () => void;
 }
 
 export const HomeScreen = ({
@@ -29,7 +38,10 @@ export const HomeScreen = ({
   onRetryPet,
   onDismissPetFeedbackError,
   onStartFocus,
+  room,
+  onRetryRoom,
 }: HomeScreenProps) => {
+  const roomItems = room.status === 'ready' ? room.room.items : [];
   return (
     <ScreenShell>
       <ScreenHeader
@@ -46,7 +58,16 @@ export const HomeScreen = ({
             onDismissTerminalError={onDismissPetFeedbackError}
             onRetryBase={onRetryPet}
             projection={pet}
+            sceneMode="room"
+            sceneUnderlay={(
+              <>
+                <RoomBackdropLayer />
+                <EquippedRoomDecorationLayer items={roomItems} layer="back" />
+              </>
+            )}
+            sceneOverlay={<EquippedRoomDecorationLayer items={roomItems} layer="front" />}
           />
+          <RoomDecorationStatus onRetry={onRetryRoom} projection={room} />
           <ProgressionSummary progression={profile} variant="full" />
           <Panel tone="strong">
             <Text style={styles.cardEyebrow}>TIẾP THEO</Text>

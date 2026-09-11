@@ -51,6 +51,8 @@ describe('HomeScreen', () => {
         levelProgressPercent: 60,
         xpToNextLevel: 20,
       },
+      room: { status: 'ready', room: { items: [] }, refresh: 'idle' },
+      onRetryRoom: vi.fn(),
     });
     const nodes = flatten(tree);
     const componentNames = nodes
@@ -63,5 +65,6 @@ describe('HomeScreen', () => {
     expect(componentNames).not.toContain('PrototypeBadge');
     expect(componentNames).not.toContain('PrototypeControls');
     expect(JSON.stringify(tree)).toContain('"variant":"full"');
+    expect(JSON.stringify(tree)).toContain('"sceneMode":"room"');
   });
 });

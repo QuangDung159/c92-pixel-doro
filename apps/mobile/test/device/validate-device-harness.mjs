@@ -44,6 +44,20 @@ const shopPurchaseFlow = await readFile(
 const inventoryEquipFlow = await readFile(
   `${deviceDirectory}inventory-equip-smoke.md`, 'utf8',
 );
+const equippedRoomFlow = await readFile(
+  `${deviceDirectory}equipped-room-smoke.md`, 'utf8',
+);
+for (const evidence of [
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=inventory_multi_equipped',
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=inventory_empty',
+  'Cốc trên bàn', 'Chậu cây nhỏ', 'Bắt đầu tập trung', 'Airplane mode',
+  'VoiceOver/TalkBack', 'Reduce Motion', 'NOT_RUN', '<implementation-sha>',
+  'unset EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE',
+]) {
+  if (!equippedRoomFlow.includes(evidence)) {
+    throw new Error(`Equipped room device guide is missing: ${evidence}`);
+  }
+}
 for (const evidence of [
   'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=inventory_mixed',
   'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=inventory_empty',

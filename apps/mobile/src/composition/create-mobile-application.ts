@@ -112,6 +112,7 @@ import { createBreakStartSlice } from './break/create-break-start-slice';
 import { createBreakSideEffects } from './break/create-break-side-effects';
 import { createStandardFocusSideEffects } from './standard-focus/create-standard-focus-side-effects';
 import { createShopSlice } from './shop/create-shop-slice';
+import { createRoomDecorationsSlice } from './room/create-room-decorations-slice';
 import {
   createShopReviewFixture,
   resolveShopReviewScenario,
@@ -491,6 +492,11 @@ export const createMobileApplication = (
     readiness,
     readBootstrap: bootstrap.getSnapshot,
     transaction,
+  });
+  const roomDecorations = createRoomDecorationsSlice({
+    catalog: persistence.catalog,
+    coordinator: sessionCommands,
+    ownedItems: persistence.ownedItems,
   });
   const confirmedReset = new ConfirmedLocalDataReset({
     activeSessions: persistence.sessions,
@@ -995,6 +1001,7 @@ export const createMobileApplication = (
     requestStandardFocusOutcomeFeedback: requestStandardOutcomeFeedback,
     standardFocusNotificationNavigation: standardFocusSideEffects.navigation,
     shop: shop.shop,
+    roomDecorations: roomDecorations.controller,
     standardFocusReviewResetAvailable: reviewFixturesEnabled,
     onboardingTrialRunning,
     onboardingTrialCompletion,
@@ -1256,6 +1263,7 @@ export const createMobileApplication = (
         breakSideEffects.coordinator.dispose();
         standardFocusSideEffects.navigation.dispose();
         shop.dispose();
+        roomDecorations.dispose();
         onboardingTrialRunning.dispose();
         onboardingTrialHandoff.dispose();
         onboardingTrialPetFeedback.dispose();

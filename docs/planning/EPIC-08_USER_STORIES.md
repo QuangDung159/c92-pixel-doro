@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_EPIC_08_USER_STORIES
 title: PixelDoro EPIC-08 — Progression, Shop và Inventory Loop User Stories
-version: 0.9.0
-status: US_08_04_ART_CANDIDATE_REVIEW
+version: 1.0.0
+status: US_08_04_IMPLEMENTATION_CANDIDATE_OWNER_SMOKE
 date: 2026-09-10
 last_updated: 2026-09-11
 owner: Dũng Lư
@@ -20,12 +20,12 @@ baseline_sha: 6e68fe5d800342e187f267f356b08335ace9a6b6
 previous_epic: EPIC-07
 previous_epic_status: DONE_OWNER_ACCEPTED
 previous_epic_implementation_sha: f6c7b9269b2abee07bfe8eeb5d804c6245b67c0a
-implementation_status: US_08_03_DONE_OWNER_ACCEPTED
+implementation_status: US_08_04_VALIDATED_UNCOMMITTED_CANDIDATE
 formal_tester_status: DEFERRED_TO_EPIC_12_UNLESS_ACTUALLY_RUN
 schema_impact: NONE_APPROVED_EXISTING_SCHEMA_001_SUFFICIENT
 dependency_impact: NONE_APPROVED
 native_impact: NONE_APPROVED
-next_gate: OWNER_US0804_ART_01_APPROVAL
+next_gate: OWNER_US0804_QUICK_UI_SMOKE
 product_truth: ../PIXELDORO_CORE_TRUTH.md
 epic_baseline: ./MVP_EPICS.md
 gamification_specification: ../specifications/gamification-rules.md
@@ -70,8 +70,8 @@ các decision trong mục 20 nhưng không tự phê duyệt implementation plan
 | EPIC-08 implementation | US-08-01 accepted `9be0a0f...`; US-08-02 `5c6791d...`; US-08-03 `d6399dd...` |
 | Formal tester | `NOT_RUN`; EPIC-05→07 deferred evidence không được kế thừa là PASS |
 
-Kết luận: US-08-03 đã đóng bằng owner quick UI acceptance; US-08-04 đủ upstream behavior để lập
-plan nhưng production coding còn chờ story confirmations và exact art candidate approval.
+Kết luận tại implementation candidate: US-08-03 đã đóng bằng owner quick UI acceptance;
+US-08-04 đã được duyệt confirmations/art, implemented và validated tự động, đang chờ owner smoke.
 
 ### 1.2. Tài liệu đã audit và phân loại
 
@@ -513,11 +513,10 @@ Android `adb shell am start`.
 - **Analytics:** none on render; equipment event belongs to US-08-03.
 - **Accessibility:** decorative pixels hidden from screen reader; one concise room summary lists
   equipped names; Pet status remains semantic owner; largest text does not overlap actions.
-- **Open questions/Option A:** `US0800-CONFIRM-06/07/09` đều `APPROVED_OPTION_A` ngày 2026-09-10;
-  story-specific `US0804-CONFIRM-01→06` đã được duyệt Option A; exact `US0804-ART-01` vẫn chờ owner.
-- **Implementation plan:** `US-08-04_IMPLEMENTATION_PLAN.md`; plan approval chỉ mở Phase A tạo
-  review-only art package (room/contact sheet + empty backdrop), production coding chờ exact
-  candidate được owner duyệt.
+- **Open questions/Option A:** `US0800-CONFIRM-06/07/09`, story confirmations 01→06 và exact
+  `US0804-ART-01 candidate v1` đều đã được owner duyệt.
+- **Implementation:** `US-08-04_IMPLEMENTATION_PLAN.md` và `US-08-04_IMPLEMENTATION_REPORT.md`;
+  validated uncommitted candidate đang chờ owner quick UI smoke.
 
 ### 10.1. Acceptance criteria
 
@@ -572,9 +571,9 @@ Deep link: `xcrun simctl openurl booted 'pixeldoro://?review=us0804'`; Android u
 
 ### 10.5. DoR, DoD và next gate
 
-- [ ] **DoR:** US-08-03 accepted at `d6399dd...`; confirmations 06/07/09 approved; exact
-  art-placement evidence vẫn chờ `US0804-ART-01`.
-- [ ] **DoR:** every item ID has an explicit presentation/fallback mapping and license/source record.
+- [x] **DoR:** US-08-03 accepted at `d6399dd...`; confirmations 06/07/09 and exact
+  `US0804-ART-01 candidate v1` approved.
+- [x] **DoR:** every item ID has an explicit presentation/fallback mapping and license/source record.
 - [ ] **DoD:** acceptance, Home/Pet regression, offline/relaunch and fallback tests pass.
 - [ ] **DoD:** no component >300 lines; any 240–260 line component received split review.
 - [ ] **Evidence:** approved visual reference, asset manifest, screenshots, report/SHA/test results.
@@ -1057,13 +1056,14 @@ locked to `NONE` unless a later demonstrated gap is separately reviewed.
   monetization remain deferred.
 - [ ] Existing wall-clock/offline limitations of completed Focus remain unchanged; EPIC-08 does not
   add backend authority or anti-cheat.
-- [ ] Exact production decoration artwork/placement remains pending `US0804-ART-01`; confirmation 07
-  approved the gate process only and a generated candidate must not be treated as accepted implicitly.
+- [x] Exact production decoration artwork/placement approved by owner through
+  `US0804-ART-01 candidate v1` on 2026-09-11; confirmation 07 alone was not treated as art approval.
 
 ## 22. Change Log
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 1.0.0 | 2026-09-11 | Codex | Recorded owner approval of exact US0804 art candidate v1 and implemented the equipped Pet Room candidate from start SHA `4b1dee1...`: read-only committed projection, isolated refresh controller, fixed layered atlas rendering, explicit room/focus scene modes, accessibility summary and bundled offline assets. Full quality 174 files / 904 tests plus Android/iOS exports PASS; owner/manual smoke remains NOT_RUN. |
 | 0.9.0 | 2026-09-11 | Codex | Recorded owner approval of US0804 confirmations 01–06 Option A and created review-only art candidate v1: room/contact sheet (`ccb8d071...`) plus empty backdrop (`d22ae4d...`). Production integration/coding remains blocked until exact `US0804-ART-01` approval. |
 | 0.8.0 | 2026-09-11 | Codex | Bound US-08-03 owner quick UI PASS to exact committed/pushed SHA `d6399dd...`: no crash and expected behavior. Story 03 is DONE_OWNER_ACCEPTED; opened US-08-04 planning and exact art-candidate gate while structured/formal evidence remains NOT_RUN. |
 | 0.7.0 | 2026-09-11 | Codex | Recorded owner approval of US0803 Option A 01–06 and validated uncommitted implementation candidate: same-route inventory modes, free durable multi-equip, refresh-only recovery, analytics, production-command fixtures, 169 files / 892 tests, quality and platform exports PASS. Owner/formal smoke remains NOT_RUN. |

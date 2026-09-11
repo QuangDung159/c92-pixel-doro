@@ -8,6 +8,15 @@ export {
   type HomeProfileProjection,
 } from './home/create-home-profile.projection';
 export {
+  LoadEquippedRoomProjectionUseCase,
+  type ApprovedRoomCatalogItem,
+  type EquippedRoomItem,
+  type EquippedRoomProjection,
+  type LoadEquippedRoomProjectionDependencies,
+  type LoadEquippedRoomProjectionError,
+  type LoadEquippedRoomProjectionErrorCode,
+} from './room/load-equipped-room-projection.use-case';
+export {
   LoadShopProjectionUseCase,
   type ApprovedShopCatalogItem,
   type LoadShopProjectionDependencies,

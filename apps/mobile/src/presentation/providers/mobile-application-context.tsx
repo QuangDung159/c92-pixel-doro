@@ -23,6 +23,7 @@ import type {
   OnboardingTrialResultProjection,
   PetVisualDiagnostic,
   ShopControllerProjection,
+  RoomDecorationsControllerProjection,
 } from '@/application';
 
 const MobileApplicationContext = createContext<MobileApplicationFacade | undefined>(undefined);
@@ -176,6 +177,24 @@ export const useShopActions = () => {
     retryEquipRefresh: shop.retryEquipRefresh,
     setItemEquipped: shop.setItemEquipped,
     setViewMode: shop.setViewMode,
+  };
+};
+
+export const useRoomDecorationsProjection = (): RoomDecorationsControllerProjection => {
+  const { roomDecorations } = useMobileApplication();
+  return useSyncExternalStore(
+    roomDecorations.subscribe,
+    roomDecorations.getSnapshot,
+    roomDecorations.getSnapshot,
+  );
+};
+
+export const useRoomDecorationsActions = () => {
+  const { roomDecorations } = useMobileApplication();
+  return {
+    activate: roomDecorations.activate,
+    deactivate: roomDecorations.deactivate,
+    retry: roomDecorations.retry,
   };
 };
 

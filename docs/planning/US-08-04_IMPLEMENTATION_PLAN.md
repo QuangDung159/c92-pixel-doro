@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_08_04_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-08-04 Implementation Plan
-version: 0.2.0
-status: ART_CANDIDATE_AWAITING_OWNER_APPROVAL
-implementation_status: PHASE_A_COMPLETE_PRODUCTION_NOT_STARTED
+version: 0.3.0
+status: IMPLEMENTATION_CANDIDATE_AWAITING_OWNER_SMOKE
+implementation_status: VALIDATED_UNCOMMITTED_CANDIDATE
 date: 2026-09-11
 last_updated: 2026-09-11
 owner: Dũng Lư
@@ -12,15 +12,15 @@ reviewer_role: Tech Lead/Product Owner
 language: vi
 branch: feats/epic-08
 planning_baseline_sha: d6399dd7590852c051f671757c3200c8d70b8bc8
-implementation_start_sha: null
+implementation_start_sha: 4b1dee1a3f56a5d9022da9f4a22160368391c6fc
 exact_implementation_sha: null
 previous_story: US-08-03
 previous_story_status: DONE_OWNER_ACCEPTED
 previous_story_implementation_sha: d6399dd7590852c051f671757c3200c8d70b8bc8
-manual_device_status: NOT_RUN
+manual_device_status: NOT_RUN_OWNER_SMOKE_REQUESTED
 formal_tester_status: NOT_RUN_DEFERRED_TO_EPIC_12_UNLESS_EXECUTED
-art_candidate_status: READY_FOR_OWNER_REVIEW
-art_candidate_approval: REQUIRED_BEFORE_PRODUCTION_INTEGRATION
+art_candidate_status: APPROVED_AND_PROMOTED
+art_candidate_approval: US0804_ART_01_APPROVED_OWNER_2026_09_11
 art_candidate_id: us0804-room-art-candidate-v1
 art_candidate_sha256: ccb8d07187456131505ca8f71051783647b2aaca7f5b869f416649cfe957bcf9
 art_backdrop_sha256: d22ae4d4198a8aa15a50ef442eff337f83db6c7d9af50f9b235fe8e5a9ed06c5
@@ -59,12 +59,11 @@ US-08-04 có hai gate tách biệt; gate thứ nhất đã được owner duyệ
 
 1. Owner duyệt `US0804-CONFIRM-01→06` để khóa architecture/UX và cho phép tạo exact art candidate —
    `APPROVED_OPTION_A`.
-2. Codex trình contact sheet/room preview; owner duyệt exact candidate bằng `US0804-ART-01` trước khi
-   asset được đưa vào production manifest hoặc production code bắt đầu.
+2. Codex trình contact sheet/room preview; owner đã duyệt exact candidate bằng `US0804-ART-01` ngày
+   2026-09-11 trước khi asset được đưa vào production manifest và production code bắt đầu.
 
-Candidate package `us0804-room-art-candidate-v1` (room/contact sheet + empty backdrop) hiện đã sẵn
-sàng review; production runtime vẫn
-chưa import candidate. Không suy diễn duyệt artwork từ việc duyệt plan.
+Candidate package `us0804-room-art-candidate-v1` đã được owner duyệt. Backdrop và transparent item
+atlas đã được promote vào runtime cùng typed manifest; implementation candidate đang chờ owner smoke.
 
 ### 0.1. In scope
 
@@ -415,8 +414,8 @@ All ownership fixtures use production Focus reward/purchase/equip commands; no d
 - [x] EPIC confirmations 06/07/09 approve fixed anchors, explicit art gate and manual truthfulness.
 - [x] Schema/repository/Home/Pet/assets baseline audited; no migration capability gap.
 - [x] Owner approved `US0804-CONFIRM-01→06` Option A on 2026-09-11.
-- [ ] Exact `US0804-ART-01` candidate/placement preview approved.
-- [ ] Exact implementation start SHA recorded after both approvals.
+- [x] Exact `US0804-ART-01` candidate/placement preview approved on 2026-09-11.
+- [x] Exact implementation start SHA recorded after both approvals: `4b1dee1...`.
 
 ### Definition of Done
 
@@ -473,8 +472,8 @@ All ownership fixtures use production Focus reward/purchase/equip commands; no d
 - **Option B:** Shop push projection trực tiếp sang Home và đồng thời đổi thumbnail Shop.
 - **Status:** `APPROVED_OPTION_A` — owner 2026-09-11.
 
-Plan confirmations đã được duyệt. Gate kế tiếp: `Duyệt US0804-ART-01 candidate v1` để chấp nhận exact
-room/contact sheet + empty backdrop và cho phép promote/clean production assets rồi bắt đầu coding.
+Plan confirmations và exact `US0804-ART-01 candidate v1` đã được duyệt. Gate kế tiếp là owner quick
+UI smoke trên implementation candidate; chưa được ghi PASS cho đến khi owner xác nhận.
 
 ## 12. Impact verdict and change log
 
@@ -490,5 +489,6 @@ room/contact sheet + empty backdrop và cho phép promote/clean production asset
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.3.0 | 2026-09-11 | Codex | Recorded exact `US0804-ART-01 candidate v1` approval and implementation start SHA `4b1dee1...`. Promoted backdrop and transparent 12-item atlas; added immutable equipped-room projection, isolated controller, Home focus lifecycle, deterministic layered rendering, explicit `room`/`focus` scene modes, accessibility summary, tests and smoke guide. Room mode fits the full backdrop and scales Cat down; focus mode renders Cat only. Full quality 174 files / 904 tests and Android/iOS exports PASS; owner/manual smoke remains NOT_RUN. |
 | 0.2.0 | 2026-09-11 | Codex | Recorded owner approval of confirmations 01–06 Option A. Generated review-only `us0804-room-art-candidate-v1` package with the built-in ImageGen tool: 12-item room/contact sheet (`ccb8d071...`) and separate empty backdrop (`d22ae4d...`). Production code remains NOT_STARTED pending `US0804-ART-01`. |
 | 0.1.0 | 2026-09-11 | Codex | Initial plan after US-08-03 owner acceptance at exact SHA `d6399dd...`. Audited clean baseline, missing art hard gate, read-only room projection, layered Pet/Home composition, fixed anchors, failure isolation, accessibility, fixtures/tests and six pending confirmations. No art or production code changed. |

@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { View } from 'react-native';
 
 import { PetAnimationRenderer } from '@/presentation/animation/pet-animation-renderer';
 import { PetStage } from './pet-stage';
@@ -13,7 +14,7 @@ vi.mock('react-native', () => ({
 describe('PetStage', () => {
   it('communicates Idle state without relying on color or artwork', () => {
     const tree = PetStage({ state: 'idle' });
-    const status = tree.props.children[1];
+    const status = tree.props.children.filter(Boolean)[1].props.children;
     expect(status.type).toBe(PetStatusText);
     expect(status.props).toMatchObject({
       label: 'Người bạn đang chờ bạn',
@@ -22,14 +23,41 @@ describe('PetStage', () => {
   });
 
   it.each(['idle', 'working', 'breaking', 'celebrating', 'bugged'] as const)(
-    'keeps placeholder room decor hidden in %s without removing Pet or status', (state) => {
+    'keeps optional room layers backward-compatible in %s without removing Pet or status', (state) => {
       const tree = PetStage({ state });
-      expect(tree.props.children).toHaveLength(2);
-      expect(tree.props.children[0].type).toBe(PetAnimationRenderer);
-      expect(tree.props.children[0].props.state).toBe(state);
-      expect(tree.props.children[1].type).toBe(PetStatusText);
+      const children = tree.props.children.filter(Boolean);
+      expect(children).toHaveLength(2);
+      expect(children[0].props.children.type).toBe(PetAnimationRenderer);
+      expect(children[0].props.children.props.state).toBe(state);
+      expect(children[1].props.children.type).toBe(PetStatusText);
     },
   );
+
+  it('places approved scene nodes around the Pet while retaining the semantic status last', () => {
+    const underlay = <View testID="room-underlay" />;
+    const overlay = <View testID="room-overlay" />;
+    const tree = PetStage({
+      state: 'idle',
+      sceneMode: 'room',
+      sceneUnderlay: underlay,
+      sceneOverlay: overlay,
+    });
+    expect(tree.props.children[0]).toBe(underlay);
+    expect(tree.props.children[1].props.children.type).toBe(PetAnimationRenderer);
+    expect(tree.props.children[2]).toBe(overlay);
+    expect(tree.props.children[3].props.children.type).toBe(PetStatusText);
+  });
+
+  it('does not render room art when the scene is in focus mode', () => {
+    const tree = PetStage({
+      state: 'working',
+      sceneMode: 'focus',
+      sceneUnderlay: <View testID="room-underlay" />,
+      sceneOverlay: <View testID="room-overlay" />,
+    });
+    expect(JSON.stringify(tree)).not.toContain('room-underlay');
+    expect(JSON.stringify(tree)).not.toContain('room-overlay');
+  });
 
   it('keeps one semantic status owner outside the decorative animation', () => {
     const status = PetStatusText({

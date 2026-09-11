@@ -1,0 +1,55 @@
+---
+document_id: PIXELDORO_US_08_04_IMPLEMENTATION_REPORT
+title: PixelDoro Mobile MVP — US-08-04 Implementation Report
+version: 0.1.0
+status: IMPLEMENTATION_CANDIDATE_AWAITING_OWNER_SMOKE
+date: 2026-09-11
+owner: Dũng Lư
+branch: feats/epic-08
+implementation_start_sha: 4b1dee1a3f56a5d9022da9f4a22160368391c6fc
+exact_implementation_sha: null
+manual_device_status: NOT_RUN_OWNER_SMOKE_REQUESTED
+formal_tester_status: NOT_RUN_DEFERRED_TO_EPIC_12_UNLESS_EXECUTED
+schema_change: NONE
+dependency_change: NONE
+native_change: NONE
+---
+
+# US-08-04 — Equipped Decorations in Pet Room
+
+## Outcome
+
+Home/Pet Room now reads the committed equipped set from SQLite on every focus episode and renders the
+approved bundled room/art at fixed layered anchors. Empty and multi-equipped states are supported.
+The query is read-only and decoration failures remain local: Pet, profile and Start Focus stay usable.
+
+## Delivered
+
+- Immutable application projection validates the exact 12-item catalog and ownership rows, filters
+  equipped records and preserves catalog order without write capabilities.
+- Feature-owned controller coalesces loads, drops stale completion, preserves the last committed room
+  on refresh failure and never enters global recovery.
+- Home focus lifecycle activates/deactivates the controller independently of Shop and Pet refresh.
+- Pet scenes have explicit modes: `room` fits the full 1672:941 backdrop and scales Cat for the room;
+  default `focus` ignores room layers and renders only Cat + semantic status.
+- Approved backdrop plus transparent 4×3 atlas are bound to typed dimensions, hashes, crop cells,
+  deterministic back/front anchors and offline static imports.
+- Decoration pixels are non-interactive and hidden from accessibility; one concise textual room
+  summary owns the semantics. Loading/read/data-invalid/stale-refresh states are isolated below scene.
+- Device guide and static route/boundary/asset-integrity coverage were added.
+
+## Automated evidence
+
+- `pnpm quality`: PASS — 174 test files, 904 tests.
+- Typecheck/lint: PASS.
+- Boundary validator: PASS — 12 forbidden imports rejected, 4 valid imports accepted.
+- Device guide validator and repository hygiene: PASS.
+- Android export: PASS — 1,925 modules; approved atlas/backdrop bundled.
+- iOS export: PASS — 1,830 modules; approved atlas/backdrop bundled.
+- `git diff --check`: PASS.
+
+## Truthfulness and remaining gate
+
+No migration, dependency, native/prebuild, permission, economy/session command or analytics taxonomy
+changed. The candidate is uncommitted, so `exact_implementation_sha` remains null. Owner quick UI and
+formal device/accessibility evidence remain `NOT_RUN`; use `apps/mobile/test/device/equipped-room-smoke.md`.

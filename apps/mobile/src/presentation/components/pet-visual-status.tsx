@@ -1,4 +1,5 @@
 import type { PetVisualProjection } from '@pixeldoro/application';
+import type { ReactNode } from 'react';
 
 import { PetStage } from './pet-stage';
 import { ErrorState, LoadingState } from './status-surface';
@@ -8,12 +9,18 @@ export interface PetVisualStatusProps {
   readonly projection: PetVisualProjection;
   readonly onRetryBase: () => void;
   readonly onDismissTerminalError: () => void;
+  readonly sceneUnderlay?: ReactNode;
+  readonly sceneOverlay?: ReactNode;
+  readonly sceneMode?: 'focus' | 'room';
 }
 
 export const PetVisualStatus = ({
   projection,
   onRetryBase,
   onDismissTerminalError,
+  sceneUnderlay,
+  sceneOverlay,
+  sceneMode = 'focus',
 }: PetVisualStatusProps) => {
   const playbackCallbacks = usePetVisualPlaybackCallbacks();
   if (projection.status === 'loading') {
@@ -42,6 +49,9 @@ export const PetVisualStatus = ({
       playbackId={projection.announcementId}
       state={projection.state}
       visualMode={projection.visualMode}
+      sceneMode={sceneMode}
+      {...(sceneUnderlay === undefined ? {} : { sceneUnderlay })}
+      {...(sceneOverlay === undefined ? {} : { sceneOverlay })}
       {...(projection.source === 'terminal'
         ? {
             onPlaybackComplete: () =>
