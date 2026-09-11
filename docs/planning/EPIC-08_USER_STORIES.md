@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_EPIC_08_USER_STORIES
 title: PixelDoro EPIC-08 — Progression, Shop và Inventory Loop User Stories
-version: 0.8.0
-status: US_08_03_DONE_US_08_04_PLANNING
+version: 0.9.0
+status: US_08_04_ART_CANDIDATE_REVIEW
 date: 2026-09-10
 last_updated: 2026-09-11
 owner: Dũng Lư
@@ -25,7 +25,7 @@ formal_tester_status: DEFERRED_TO_EPIC_12_UNLESS_ACTUALLY_RUN
 schema_impact: NONE_APPROVED_EXISTING_SCHEMA_001_SUFFICIENT
 dependency_impact: NONE_APPROVED
 native_impact: NONE_APPROVED
-next_gate: OWNER_US_08_04_PLAN_CONFIRMATION_AND_ART_CANDIDATE
+next_gate: OWNER_US0804_ART_01_APPROVAL
 product_truth: ../PIXELDORO_CORE_TRUTH.md
 epic_baseline: ./MVP_EPICS.md
 gamification_specification: ../specifications/gamification-rules.md
@@ -199,7 +199,7 @@ selection, visual payoff và cuối cùng cross-feature exit. Mỗi Story chỉ 
 | 1 | US-08-01 — Committed Progression và Production Catalog | User sees trustworthy level/XP/Coin and all 12 catalog items | P0 | EPIC-07; confirmations 01/03/08/09/10 approved | DONE_OWNER_ACCEPTED (`9be0a0f...`) |
 | 2 | US-08-02 — Atomic One-time Purchase | User can safely buy one affordable item once | P0 | 01; confirmations 02/03/04/08/09 | DONE_OWNER_ACCEPTED (`5c6791d...`) |
 | 3 | US-08-03 — Durable Inventory và Free Equip | User can distinguish owned items and equip/unequip without cost | P0 | 02; confirmations 05/06/08/09 | DONE_OWNER_ACCEPTED (`d6399dd...`) |
-| 4 | US-08-04 — Equipped Decorations in Pet Room | User sees equipped purchases persist in the room | P1 | 03; confirmations 06/07/09 | PLANNING_AWAITING_OWNER_CONFIRMATION_AND_ART_CANDIDATE |
+| 4 | US-08-04 — Equipped Decorations in Pet Room | User sees equipped purchases persist in the room | P1 | 03; confirmations 06/07/09 | ART_CANDIDATE_AWAITING_OWNER_APPROVAL |
 | 5 | US-08-05 — Offline Loop Integrity và Exit Candidate | User can complete reward→buy→equip→relaunch loop reliably | P1 | 01–04; confirmations 08/09/10/11 | BLOCKED |
 
 ## 7. US-08-01 — Committed Progression và Production Catalog
@@ -514,9 +514,10 @@ Android `adb shell am start`.
 - **Accessibility:** decorative pixels hidden from screen reader; one concise room summary lists
   equipped names; Pet status remains semantic owner; largest text does not overlap actions.
 - **Open questions/Option A:** `US0800-CONFIRM-06/07/09` đều `APPROVED_OPTION_A` ngày 2026-09-10;
-  story-specific `US0804-CONFIRM-01→06` và exact `US0804-ART-01` vẫn chờ owner.
+  story-specific `US0804-CONFIRM-01→06` đã được duyệt Option A; exact `US0804-ART-01` vẫn chờ owner.
 - **Implementation plan:** `US-08-04_IMPLEMENTATION_PLAN.md`; plan approval chỉ mở Phase A tạo
-  review-only art package, production coding chờ exact candidate được owner duyệt.
+  review-only art package (room/contact sheet + empty backdrop), production coding chờ exact
+  candidate được owner duyệt.
 
 ### 10.1. Acceptance criteria
 
@@ -1063,6 +1064,7 @@ locked to `NONE` unless a later demonstrated gap is separately reviewed.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.9.0 | 2026-09-11 | Codex | Recorded owner approval of US0804 confirmations 01–06 Option A and created review-only art candidate v1: room/contact sheet (`ccb8d071...`) plus empty backdrop (`d22ae4d...`). Production integration/coding remains blocked until exact `US0804-ART-01` approval. |
 | 0.8.0 | 2026-09-11 | Codex | Bound US-08-03 owner quick UI PASS to exact committed/pushed SHA `d6399dd...`: no crash and expected behavior. Story 03 is DONE_OWNER_ACCEPTED; opened US-08-04 planning and exact art-candidate gate while structured/formal evidence remains NOT_RUN. |
 | 0.7.0 | 2026-09-11 | Codex | Recorded owner approval of US0803 Option A 01–06 and validated uncommitted implementation candidate: same-route inventory modes, free durable multi-equip, refresh-only recovery, analytics, production-command fixtures, 169 files / 892 tests, quality and platform exports PASS. Owner/formal smoke remains NOT_RUN. |
 | 0.6.0 | 2026-09-11 | Codex | Recorded owner quick UI PASS for US-08-02 at exact committed/pushed SHA `5c6791d...`: no crash and expected behavior. Story 02 is DONE_OWNER_ACCEPTED and US-08-03 planning is open; structured/formal evidence remains NOT_RUN. |

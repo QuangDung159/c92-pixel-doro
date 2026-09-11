@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_08_04_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-08-04 Implementation Plan
-version: 0.1.0
-status: DRAFT_AWAITING_OWNER_CONFIRMATION_AND_ART_CANDIDATE
-implementation_status: NOT_STARTED
+version: 0.2.0
+status: ART_CANDIDATE_AWAITING_OWNER_APPROVAL
+implementation_status: PHASE_A_COMPLETE_PRODUCTION_NOT_STARTED
 date: 2026-09-11
 last_updated: 2026-09-11
 owner: Dũng Lư
@@ -19,8 +19,11 @@ previous_story_status: DONE_OWNER_ACCEPTED
 previous_story_implementation_sha: d6399dd7590852c051f671757c3200c8d70b8bc8
 manual_device_status: NOT_RUN
 formal_tester_status: NOT_RUN_DEFERRED_TO_EPIC_12_UNLESS_EXECUTED
-art_candidate_status: NOT_CREATED
+art_candidate_status: READY_FOR_OWNER_REVIEW
 art_candidate_approval: REQUIRED_BEFORE_PRODUCTION_INTEGRATION
+art_candidate_id: us0804-room-art-candidate-v1
+art_candidate_sha256: ccb8d07187456131505ca8f71051783647b2aaca7f5b869f416649cfe957bcf9
+art_backdrop_sha256: d22ae4d4198a8aa15a50ef442eff337f83db6c7d9af50f9b235fe8e5a9ed06c5
 schema_change: NONE_PROPOSED
 dependency_change: NONE_PROPOSED
 native_change: NONE_PROPOSED
@@ -48,17 +51,20 @@ adr_domain_platform_boundary: ../architecture/decisions/ADR-004-domain-and-platf
 one và many-equipped đều an toàn; đổi trạng thái tại Shop rồi quay về Home hoặc relaunch sẽ dựng lại
 đúng room từ SQLite. Decoration chỉ là cosmetic và không can thiệp Pet/session/economy truth.
 
-US-08-03 đã được owner quick-smoke accept tại exact committed/pushed SHA `d6399dd...`. Plan này chỉ
-đề xuất US-08-04; chưa tạo art, chưa sửa production code, migration, dependency/native và chưa
-commit/push.
+US-08-03 đã được owner quick-smoke accept tại exact committed/pushed SHA `d6399dd...`. Plan US-08-04
+đã được owner duyệt Option A và review-only art package đã được tạo; chưa sửa production code,
+migration, dependency/native hoặc import candidate vào runtime.
 
-US-08-04 có hai gate tách biệt:
+US-08-04 có hai gate tách biệt; gate thứ nhất đã được owner duyệt Option A ngày 2026-09-11:
 
-1. Owner duyệt `US0804-CONFIRM-01→06` để khóa architecture/UX và cho phép tạo exact art candidate.
+1. Owner duyệt `US0804-CONFIRM-01→06` để khóa architecture/UX và cho phép tạo exact art candidate —
+   `APPROVED_OPTION_A`.
 2. Codex trình contact sheet/room preview; owner duyệt exact candidate bằng `US0804-ART-01` trước khi
    asset được đưa vào production manifest hoặc production code bắt đầu.
 
-Không suy diễn duyệt artwork chưa nhìn thấy từ việc duyệt plan.
+Candidate package `us0804-room-art-candidate-v1` (room/contact sheet + empty backdrop) hiện đã sẵn
+sàng review; production runtime vẫn
+chưa import candidate. Không suy diễn duyệt artwork từ việc duyệt plan.
 
 ### 0.1. In scope
 
@@ -408,7 +414,7 @@ All ownership fixtures use production Focus reward/purchase/equip commands; no d
 - [x] US-08-03 accepted at exact SHA `d6399dd...`.
 - [x] EPIC confirmations 06/07/09 approve fixed anchors, explicit art gate and manual truthfulness.
 - [x] Schema/repository/Home/Pet/assets baseline audited; no migration capability gap.
-- [ ] Owner approves `US0804-CONFIRM-01→06` Option A.
+- [x] Owner approved `US0804-CONFIRM-01→06` Option A on 2026-09-11.
 - [ ] Exact `US0804-ART-01` candidate/placement preview approved.
 - [ ] Exact implementation start SHA recorded after both approvals.
 
@@ -430,45 +436,45 @@ All ownership fixtures use production Focus reward/purchase/equip commands; no d
 - **Option A — đề xuất:** duyệt plan cho phép tạo review-only art package; Codex phải trình preview và
   dừng chờ `US0804-ART-01` trước khi promote asset/code production.
 - **Option B:** plan approval đồng thời chấp nhận artwork chưa nhìn thấy.
-- **Status:** `PENDING_OWNER_CONFIRMATION`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-11.
 
 ### US0804-CONFIRM-02 — Default room backdrop
 
 - **Option A — đề xuất:** candidate gồm một warm pixel-art backdrop luôn có, không thuộc catalog, để
   empty room vẫn hoàn chỉnh và 12 fixed anchors có ngữ cảnh.
 - **Option B:** giữ nền phẳng hiện tại và chỉ thêm item sprites.
-- **Status:** `PENDING_OWNER_CONFIRMATION`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-11.
 
 ### US0804-CONFIRM-03 — Projection/error isolation
 
 - **Option A — đề xuất:** dedicated read-only room projection/controller; lỗi decoration fail-closed
   trong room layer nhưng Pet/profile/Start Focus vẫn dùng được, không global Recovery.
 - **Option B:** filter Shop projection hoặc đưa mọi room corruption vào global Recovery.
-- **Status:** `PENDING_OWNER_CONFIRMATION`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-11.
 
 ### US0804-CONFIRM-04 — Placement model
 
 - **Option A — đề xuất:** 12 manifest-defined normalized anchors + back/front layers; không slot UI,
   không persist position, không đổi vị trí theo equip time.
 - **Option B:** auto-flow/grid hoặc single visible decoration.
-- **Status:** `PENDING_OWNER_CONFIRMATION`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-11.
 
 ### US0804-CONFIRM-05 — Missing asset và accessibility
 
 - **Option A — đề xuất:** omit đúng broken image, giữ committed name trong một room summary, hiện một
   inline notice; toàn bộ decoration image bị ẩn khỏi screen reader.
 - **Option B:** render icon thay thế cho từng item và cho từng image thành focus target.
-- **Status:** `PENDING_OWNER_CONFIRMATION`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-11.
 
 ### US0804-CONFIRM-06 — Refresh và scope
 
 - **Option A — đề xuất:** Home focus tự đọc lại qua shared coordinator; refresh failure retry loader
   room only. Asset chỉ dùng trong Pet Room ở Story này, không redesign Shop tile.
 - **Option B:** Shop push projection trực tiếp sang Home và đồng thời đổi thumbnail Shop.
-- **Status:** `PENDING_OWNER_CONFIRMATION`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-11.
 
-Owner có thể duyệt plan gọn bằng: `Duyệt US0804-CONFIRM-01→06 theo Option A`. Approval này cho phép
-Phase A tạo exact art candidate; production coding vẫn chờ owner duyệt preview `US0804-ART-01`.
+Plan confirmations đã được duyệt. Gate kế tiếp: `Duyệt US0804-ART-01 candidate v1` để chấp nhận exact
+room/contact sheet + empty backdrop và cho phép promote/clean production assets rồi bắt đầu coding.
 
 ## 12. Impact verdict and change log
 
@@ -484,4 +490,5 @@ Phase A tạo exact art candidate; production coding vẫn chờ owner duyệt p
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.2.0 | 2026-09-11 | Codex | Recorded owner approval of confirmations 01–06 Option A. Generated review-only `us0804-room-art-candidate-v1` package with the built-in ImageGen tool: 12-item room/contact sheet (`ccb8d071...`) and separate empty backdrop (`d22ae4d...`). Production code remains NOT_STARTED pending `US0804-ART-01`. |
 | 0.1.0 | 2026-09-11 | Codex | Initial plan after US-08-03 owner acceptance at exact SHA `d6399dd...`. Audited clean baseline, missing art hard gate, read-only room projection, layered Pet/Home composition, fixed anchors, failure isolation, accessibility, fixtures/tests and six pending confirmations. No art or production code changed. |

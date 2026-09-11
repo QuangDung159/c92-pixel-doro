@@ -1,0 +1,49 @@
+{
+  "candidateId": "us0804-room-art-candidate-v1",
+  "status": "AWAITING_OWNER_ART_APPROVAL",
+  "approvalGate": "US0804-ART-01",
+  "createdAt": "2026-09-11",
+  "generationMode": "openai-built-in-imagegen",
+  "styleReference": "sprites/pets/cat-dev/candidates/cat-dev-atlas-candidate-v1.png",
+  "files": [
+    {
+      "role": "room-composition-and-twelve-item-contact-sheet",
+      "file": "us0804-room-contact-sheet-candidate-v1.png",
+      "width": 1254,
+      "height": 1254,
+      "hasAlpha": false,
+      "sha256": "ccb8d07187456131505ca8f71051783647b2aaca7f5b869f416649cfe957bcf9"
+    },
+    {
+      "role": "empty-default-room-backdrop",
+      "file": "us0804-empty-room-backdrop-candidate-v1.png",
+      "width": 1672,
+      "height": 941,
+      "hasAlpha": false,
+      "sha256": "d22ae4d4198a8aa15a50ef442eff337f83db6c7d9af50f9b235fe8e5a9ed06c5"
+    }
+  ],
+  "catalogItemIds": [
+    "desk-mug",
+    "tiny-plant",
+    "book-stack",
+    "desk-lamp",
+    "wall-calendar",
+    "floor-cushion",
+    "small-rug",
+    "wall-poster",
+    "bookshelf",
+    "standing-lamp",
+    "armchair",
+    "window-view"
+  ],
+  "reviewNotes": [
+    "Upper half is the proposed warm pixel-art room composition.",
+    "Lower half is the coherent twelve-item sprite contact sheet.",
+    "The separate landscape image is the proposed empty non-catalog room backdrop.",
+    "Contact-sheet objects remain review art; transparent production sprites will be extracted and cleaned only after approval.",
+    "The Cat is composition reference only; production keeps the existing approved Cat Dev sheets.",
+    "No candidate asset is imported by runtime code before owner approval."
+  ],
+  "promptSummary": "Warm home-office pixel-art room matching Cat Dev, exact twelve catalog decorations, blue/gold accents, no text/logo/currency/timer, fixed wall/floor/work-surface composition. Targeted edit removed the extra desk chair and standalone plants from the room preview. A separate landscape pass derived an empty non-catalog backdrop with no Pet or catalog decoration."
+}
