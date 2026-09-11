@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_08_03_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-08-03 Implementation Plan
-version: 0.3.0
-status: IMPLEMENTED_AWAITING_OWNER_SMOKE
-implementation_status: WORKTREE_CANDIDATE_VALIDATED
+version: 0.4.0
+status: DONE_OWNER_ACCEPTED
+implementation_status: DONE_OWNER_ACCEPTED
 date: 2026-09-11
 last_updated: 2026-09-11
 owner: Dũng Lư
@@ -13,12 +13,12 @@ language: vi
 branch: feats/epic-08
 planning_baseline_sha: 5c6791dbec982d7f522e4113180458daf2e9ce95
 implementation_start_sha: 5c6791dbec982d7f522e4113180458daf2e9ce95
-current_worktree_base_sha: bac86727588ed39e5224ba0df6472142bc086bdd
-exact_implementation_sha: null
+current_worktree_base_sha: d6399dd7590852c051f671757c3200c8d70b8bc8
+exact_implementation_sha: d6399dd7590852c051f671757c3200c8d70b8bc8
 previous_story: US-08-02
 previous_story_status: DONE_OWNER_ACCEPTED
 previous_story_implementation_sha: 5c6791dbec982d7f522e4113180458daf2e9ce95
-manual_device_status: NOT_RUN_AWAITING_OWNER
+manual_device_status: PASS_OWNER_QUICK_UI
 formal_tester_status: NOT_RUN_DEFERRED_TO_EPIC_12_UNLESS_EXECUTED
 schema_change: NONE_PROPOSED
 dependency_change: NONE_PROPOSED
@@ -49,12 +49,12 @@ adr_analytics: ../architecture/decisions/ADR-008-posthog-analytics-and-cost-guar
 cuối giữ đúng sau refocus hoặc relaunch và không bao giờ làm đổi Coin/XP/receipt/ownership.
 
 **Planning status:** `APPROVED_OPTION_A_01_TO_06`.
-**Implementation status:** `WORKTREE_CANDIDATE_VALIDATED`; đang chờ owner smoke và chưa có exact
-committed implementation SHA.
+**Implementation status:** `DONE_OWNER_ACCEPTED` tại exact committed/pushed SHA `d6399dd...`.
 
 Owner đã quick-smoke accept US-08-02 tại exact committed/pushed SHA `5c6791d...` và duyệt
-`US0803-CONFIRM-01→06` theo Option A. Worktree đã implement/validate US-08-03, không đổi migration,
-dependency hoặc native config; chưa commit/push và manual device vẫn `NOT_RUN`.
+`US0803-CONFIRM-01→06` theo Option A. Candidate đã được commit/push và owner quick-smoke PASS:
+không crash, behavior đúng kỳ vọng. Không đổi migration, dependency hoặc native config; structured/
+formal device breadth vẫn `NOT_RUN`.
 
 ### 0.1. In scope
 
@@ -426,7 +426,7 @@ orphan ownership, edits profile balance directly or touches `pixeldoro.db`.
 - [x] Deterministic fresh-equip analytics is isolated from durable truth.
 - [x] Safe fixtures/device guide exist; owner/formal evidence recorded honestly as `NOT_RUN`.
 - [x] Typecheck/lint/tests/boundaries/hygiene/device validator/platform exports pass.
-- [ ] Implementation report binds exact SHA; owner acceptance opens US-08-04 art gate.
+- [x] Implementation report binds exact SHA; owner acceptance opens US-08-04 art gate.
 
 ## 13. Open questions cần owner confirm
 
@@ -494,6 +494,7 @@ US-08-03 nhưng không tự authorize commit/push.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.4.0 | 2026-09-11 | Codex | Bound owner quick UI PASS to exact committed/pushed SHA `d6399dd...`; story is DONE_OWNER_ACCEPTED and US-08-04 planning/art-candidate gate is open. Structured/formal evidence remains NOT_RUN. |
 | 0.3.0 | 2026-09-11 | Codex | Recorded validated uncommitted US-08-03 candidate: durable multi-equip, same-route inventory modes, deterministic analytics, SQLite fixtures/round-trip, guide, full quality and platform exports PASS. Manual smoke remains NOT_RUN; exact SHA remains null. |
 | 0.2.0 | 2026-09-11 | Codex | Recorded owner approval of Option A for confirmations 01–06 and coding authorization. Implementation starts from exact SHA `5c6791d...`; commit/push remain unauthorized. |
 | 0.1.0 | 2026-09-11 | Codex | Initial US-08-03 plan after owner acceptance of US-08-02 at exact SHA `5c6791d...`. Audited existing multi-equip schema/repository/projection/UI/analytics, proposed owned-only free atomic transition/readback, same Shop route modes, tests/fixtures/device gates and six owner confirmations. No production code changed. |

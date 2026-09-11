@@ -1,7 +1,9 @@
 # US-08-03 — Inventory equip/unequip quick UI smoke
 
-Status: `NOT_RUN`. Các fixture chỉ bật trong dev, dùng database riêng prefix
-`pixeldoro-us-08-03-` và không đụng `pixeldoro.db`.
+Status: `OWNER_QUICK_UI_SMOKE_REPORTED`. Owner quick UI: `PASS` on 2026-09-11 at exact SHA
+`d6399dd7590852c051f671757c3200c8d70b8bc8` — no crash and behavior worked as expected. Structured
+fixture/platform/accessibility rows remain `NOT_RUN`. Các fixture chỉ bật trong dev, dùng database
+riêng prefix `pixeldoro-us-08-03-` và không đụng `pixeldoro.db`.
 
 ## 1. Setup nhanh
 
@@ -61,6 +63,7 @@ giữ `NOT_RUN`.
 
 | Platform/device/OS | Fixture | Result | Artifact/notes |
 |---|---|---|---|
+| `Owner report; metadata not recorded` | `Quick UI smoke` | `PASS` | 2026-09-11: no crash, worked as expected at `d6399dd...`; not a structured/formal matrix. |
 | `<fill>` | `inventory_mixed` | `NOT_RUN` | `<implementation-sha>` |
 | `<fill>` | `inventory_empty/inventory_multi_equipped` | `NOT_RUN` | `<fill>` |
 | `<fill>` | `equip_read_failure_once` | `NOT_RUN` | `<fill>` |

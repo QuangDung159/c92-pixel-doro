@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_EPIC_08_USER_STORIES
 title: PixelDoro EPIC-08 — Progression, Shop và Inventory Loop User Stories
-version: 0.7.0
-status: US_08_03_IMPLEMENTED_AWAITING_OWNER_SMOKE
+version: 0.8.0
+status: US_08_03_DONE_US_08_04_PLANNING
 date: 2026-09-10
 last_updated: 2026-09-11
 owner: Dũng Lư
@@ -20,12 +20,12 @@ baseline_sha: 6e68fe5d800342e187f267f356b08335ace9a6b6
 previous_epic: EPIC-07
 previous_epic_status: DONE_OWNER_ACCEPTED
 previous_epic_implementation_sha: f6c7b9269b2abee07bfe8eeb5d804c6245b67c0a
-implementation_status: US_08_03_WORKTREE_CANDIDATE_VALIDATED
+implementation_status: US_08_03_DONE_OWNER_ACCEPTED
 formal_tester_status: DEFERRED_TO_EPIC_12_UNLESS_ACTUALLY_RUN
 schema_impact: NONE_APPROVED_EXISTING_SCHEMA_001_SUFFICIENT
 dependency_impact: NONE_APPROVED
 native_impact: NONE_APPROVED
-next_gate: OWNER_US_08_03_QUICK_UI_SMOKE
+next_gate: OWNER_US_08_04_PLAN_CONFIRMATION_AND_ART_CANDIDATE
 product_truth: ../PIXELDORO_CORE_TRUTH.md
 epic_baseline: ./MVP_EPICS.md
 gamification_specification: ../specifications/gamification-rules.md
@@ -38,8 +38,9 @@ data_model: ../architecture/data-model.md
 
 Tài liệu này phân rã `EPIC-08` thành các vertical slice nhỏ, có outcome nhìn thấy, rollback và review
 độc lập. US-08-01 đã được owner accept tại `9be0a0f...`; US-08-02 đã được owner quick-UI accept tại
-exact SHA `5c6791d...`. US-08-03 hiện là validated worktree candidate, đang chờ owner quick UI smoke
-và chưa có exact committed SHA. Không có migration, dependency hoặc native configuration change.
+exact SHA `5c6791d...`; US-08-03 đã được owner quick-UI accept tại exact committed/pushed SHA
+`d6399dd...`. US-08-04 planning và exact art-candidate gate đang mở. Không có migration, dependency
+hoặc native configuration change.
 
 Thứ tự authority khi review hoặc triển khai:
 
@@ -61,17 +62,16 @@ các decision trong mục 20 nhưng không tự phê duyệt implementation plan
 | Fact | Kết quả audit |
 |---|---|
 | Branch | `feats/epic-08` |
-| Planning baseline HEAD | `6e68fe5d800342e187f267f356b08335ace9a6b6` |
-| Working tree trước tài liệu | Clean |
-| Commit gần nhất | `6e68fe5 Feats/epic 07 (#10)` |
+| Original breakdown baseline | `6e68fe5d800342e187f267f356b08335ace9a6b6` |
+| Current accepted planning baseline | `d6399dd7590852c051f671757c3200c8d70b8bc8`; origin aligned before docs |
+| Working tree trước US-08-04 plan | Clean |
 | EPIC-07 status | `DONE_OWNER_ACCEPTED` |
 | EPIC-07 exact implementation SHA | `f6c7b9269b2abee07bfe8eeb5d804c6245b67c0a` |
-| Accepted candidate → planning baseline | Chỉ closure/master/device-documentation changes; không đổi production behavior |
-| EPIC-08 implementation | `US_08_01_DONE_OWNER_ACCEPTED` at `9be0a0f399a...` |
+| EPIC-08 implementation | US-08-01 accepted `9be0a0f...`; US-08-02 `5c6791d...`; US-08-03 `d6399dd...` |
 | Formal tester | `NOT_RUN`; EPIC-05→07 deferred evidence không được kế thừa là PASS |
 
-Kết luận: gate lập Story EPIC-08 đã mở, toàn bộ confirmation đã được duyệt Option A và owner đã
-authorize coding US-08-01. Candidate hiện chờ owner quick UI acceptance.
+Kết luận: US-08-03 đã đóng bằng owner quick UI acceptance; US-08-04 đủ upstream behavior để lập
+plan nhưng production coding còn chờ story confirmations và exact art candidate approval.
 
 ### 1.2. Tài liệu đã audit và phân loại
 
@@ -198,8 +198,8 @@ selection, visual payoff và cuối cùng cross-feature exit. Mỗi Story chỉ 
 |---:|---|---|---|---|---|
 | 1 | US-08-01 — Committed Progression và Production Catalog | User sees trustworthy level/XP/Coin and all 12 catalog items | P0 | EPIC-07; confirmations 01/03/08/09/10 approved | DONE_OWNER_ACCEPTED (`9be0a0f...`) |
 | 2 | US-08-02 — Atomic One-time Purchase | User can safely buy one affordable item once | P0 | 01; confirmations 02/03/04/08/09 | DONE_OWNER_ACCEPTED (`5c6791d...`) |
-| 3 | US-08-03 — Durable Inventory và Free Equip | User can distinguish owned items and equip/unequip without cost | P0 | 02; confirmations 05/06/08/09 | IMPLEMENTED_AWAITING_OWNER_SMOKE |
-| 4 | US-08-04 — Equipped Decorations in Pet Room | User sees equipped purchases persist in the room | P1 | 03; confirmations 06/07/09 | BLOCKED |
+| 3 | US-08-03 — Durable Inventory và Free Equip | User can distinguish owned items and equip/unequip without cost | P0 | 02; confirmations 05/06/08/09 | DONE_OWNER_ACCEPTED (`d6399dd...`) |
+| 4 | US-08-04 — Equipped Decorations in Pet Room | User sees equipped purchases persist in the room | P1 | 03; confirmations 06/07/09 | PLANNING_AWAITING_OWNER_CONFIRMATION_AND_ART_CANDIDATE |
 | 5 | US-08-05 — Offline Loop Integrity và Exit Candidate | User can complete reward→buy→equip→relaunch loop reliably | P1 | 01–04; confirmations 08/09/10/11 | BLOCKED |
 
 ## 7. US-08-01 — Committed Progression và Production Catalog
@@ -484,8 +484,8 @@ Android `adb shell am start`.
 - [x] **DoR:** owner approved story-specific `US0803-CONFIRM-01→06` Option A on 2026-09-11.
 - [x] **DoD automated:** free/no-delete/multi-equip/idempotency and opposite-order checks pass.
 - [x] **DoD automated:** shared tile/status changes regress Shop purchase and old common consumers.
-- [ ] **Evidence:** exact owned rows/profile/receipt before-after, report/SHA, manual table.
-- [ ] **Gate US-08-04:** owner accepts inventory/equip behavior.
+- [x] **Evidence:** implementation report binds exact SHA `d6399dd...`; owner quick UI PASS recorded.
+- [x] **Gate US-08-04:** owner accepts inventory/equip behavior; structured breadth remains `NOT_RUN`.
 
 ## 10. US-08-04 — Equipped Decorations in Pet Room
 
@@ -514,7 +514,9 @@ Android `adb shell am start`.
 - **Accessibility:** decorative pixels hidden from screen reader; one concise room summary lists
   equipped names; Pet status remains semantic owner; largest text does not overlap actions.
 - **Open questions/Option A:** `US0800-CONFIRM-06/07/09` đều `APPROVED_OPTION_A` ngày 2026-09-10;
-  approved art candidate vẫn là execution evidence riêng trước khi US-08-04 code.
+  story-specific `US0804-CONFIRM-01→06` và exact `US0804-ART-01` vẫn chờ owner.
+- **Implementation plan:** `US-08-04_IMPLEMENTATION_PLAN.md`; plan approval chỉ mở Phase A tạo
+  review-only art package, production coding chờ exact candidate được owner duyệt.
 
 ### 10.1. Acceptance criteria
 
@@ -569,7 +571,8 @@ Deep link: `xcrun simctl openurl booted 'pixeldoro://?review=us0804'`; Android u
 
 ### 10.5. DoR, DoD và next gate
 
-- [ ] **DoR:** US-08-03 accepted and confirmations 06/07/09 plus art-placement evidence approved.
+- [ ] **DoR:** US-08-03 accepted at `d6399dd...`; confirmations 06/07/09 approved; exact
+  art-placement evidence vẫn chờ `US0804-ART-01`.
 - [ ] **DoR:** every item ID has an explicit presentation/fallback mapping and license/source record.
 - [ ] **DoD:** acceptance, Home/Pet regression, offline/relaunch and fallback tests pass.
 - [ ] **DoD:** no component >300 lines; any 240–260 line component received split review.
@@ -1053,13 +1056,14 @@ locked to `NONE` unless a later demonstrated gap is separately reviewed.
   monetization remain deferred.
 - [ ] Existing wall-clock/offline limitations of completed Focus remain unchanged; EPIC-08 does not
   add backend authority or anti-cheat.
-- [ ] Exact production decoration artwork/placement remains blocked by confirmation 07 and must not be
-  marked approved merely because a mock glyph or generated candidate exists.
+- [ ] Exact production decoration artwork/placement remains pending `US0804-ART-01`; confirmation 07
+  approved the gate process only and a generated candidate must not be treated as accepted implicitly.
 
 ## 22. Change Log
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.8.0 | 2026-09-11 | Codex | Bound US-08-03 owner quick UI PASS to exact committed/pushed SHA `d6399dd...`: no crash and expected behavior. Story 03 is DONE_OWNER_ACCEPTED; opened US-08-04 planning and exact art-candidate gate while structured/formal evidence remains NOT_RUN. |
 | 0.7.0 | 2026-09-11 | Codex | Recorded owner approval of US0803 Option A 01–06 and validated uncommitted implementation candidate: same-route inventory modes, free durable multi-equip, refresh-only recovery, analytics, production-command fixtures, 169 files / 892 tests, quality and platform exports PASS. Owner/formal smoke remains NOT_RUN. |
 | 0.6.0 | 2026-09-11 | Codex | Recorded owner quick UI PASS for US-08-02 at exact committed/pushed SHA `5c6791d...`: no crash and expected behavior. Story 02 is DONE_OWNER_ACCEPTED and US-08-03 planning is open; structured/formal evidence remains NOT_RUN. |
 | 0.5.0 | 2026-09-11 | Codex | Recorded US-08-02 worktree candidate after Option A implementation: atomic buy-once, shared coordinator, confirmed/insufficient/committed-refresh UI, deterministic analytics, real SQLite reopen and safe device fixtures. Automated gates and iOS/Android exports pass; owner smoke and exact committed SHA remain pending. |

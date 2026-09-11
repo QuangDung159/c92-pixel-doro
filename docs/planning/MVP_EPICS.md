@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_MVP_EPIC_BREAKDOWN
 title: PixelDoro Mobile MVP — Epic Breakdown
-version: 2.0.0
+version: 2.1.0
 status: EPIC_01_TO_07_DONE_EPIC_08_IN_PROGRESS
 last_updated: 2026-09-11
 owner: Dũng Lư
@@ -145,9 +145,9 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 | `EPIC-05` | `DONE_OWNER_ACCEPTED` | Exact implementation SHA `580f559`; root `82/391`, SQLite exclusions và owner quick UI smoke pass. Formal tester matrix deferred. |
 | `EPIC-06` | `DONE_OWNER_ACCEPTED` | Exact candidate `458a886`; Standard Relax/Strict end-to-end, notification/analytics/a11y hooks, owner iOS/Android quick smoke. Formal tester deferred. |
 | `EPIC-07` | `DONE_OWNER_ACCEPTED` | Exact candidate `f6c7b92`; Break/cadence lifecycle, notification/analytics and owner quick UI pass. Formal device/accessibility matrix deferred. |
-| `EPIC-08` | `IN_PROGRESS` | US-08-01 accepted tại `9be0a0f`; US-08-02 accepted tại `5c6791d`; US-08-03 là validated uncommitted candidate đang chờ owner UI smoke. |
+| `EPIC-08` | `IN_PROGRESS` | US-08-01 accepted tại `9be0a0f`; US-08-02 tại `5c6791d`; US-08-03 tại `d6399dd`; US-08-04 đang ở planning/art gate. |
 
-Bảy Epic đầu và US-08-01 hoàn thành không đồng nghĩa Mobile MVP hoàn tất. EPIC-08 vẫn `IN_PROGRESS`;
+Bảy Epic đầu và US-08-01→03 hoàn thành không đồng nghĩa Mobile MVP hoàn tất. EPIC-08 vẫn `IN_PROGRESS`;
 EPIC-09–12 giữ nguyên execution order. Không được dùng progress này để nhận purchase/equip/room,
 History, Settings, provider analytics hoặc Beta Readiness đã production-ready.
 
@@ -583,13 +583,13 @@ matrix tiếp tục `DEFERRED_TO_LATER_PHASE` và được carry sang later vali
 - [x] Catalog có đúng 12 item với exact ID/name/category/price.
 - [x] Catalog visible từ đầu và không level gate.
 - [x] Coin balance bắt đầu từ 0 và không âm ở accepted read/reward slice.
-- [ ] Purchase dùng catalog price, không tin price từ UI.
-- [ ] Purchase/debit/receipt/ownership commit atomically.
-- [ ] Double tap/retry không debit hoặc unlock hai lần.
-- [ ] Item đã owned không thể mua lại và không mất do unequip/session outcome.
-- [ ] Equip chỉ áp dụng owned item và không tốn Coin.
-- [ ] Item không tạo multiplier, protection hoặc gameplay advantage.
-- [ ] Inventory/equipped state sống qua app restart.
+- [x] Purchase dùng catalog price, không tin price từ UI.
+- [x] Purchase/debit/receipt/ownership commit atomically.
+- [x] Double tap/retry không debit hoặc unlock hai lần.
+- [x] Item đã owned không thể mua lại và không mất do unequip/session outcome.
+- [x] Equip chỉ áp dụng owned item và không tốn Coin.
+- [x] Item không tạo multiplier, protection hoặc gameplay advantage.
+- [x] Inventory/equipped state sống qua app restart.
 
 **Out of scope:** Dynamic pricing, sale, refund, sell-back, consumable, duplicate, rarity, crafting, gifting, trade, premium currency và monetization.
 
@@ -868,6 +868,13 @@ Story hoặc implementation tương lai.
 - [x] Không estimate deadline trước khi Story refinement hoàn tất.
 
 ## 10. Change log
+
+### 2.1.0 — 2026-09-11
+
+- Ghi US-08-03 `DONE_OWNER_ACCEPTED` tại exact committed/pushed SHA `d6399dd` sau owner quick UI
+  PASS: không crash và behavior đúng kỳ vọng; structured/formal breadth vẫn `NOT_RUN`.
+- Tick purchase/inventory/equip durable criteria đã accepted, giữ EPIC-08 `IN_PROGRESS` và mở
+  US-08-04 planning + exact art-candidate gate; chưa nhận room rendering.
 
 ### 2.0.0 — 2026-09-11
 
