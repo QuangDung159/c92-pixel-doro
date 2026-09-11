@@ -34,6 +34,7 @@ export interface RoomDecorationManifestEntry {
     readonly heightRatio: number;
   };
   readonly layer: 'back' | 'front';
+  readonly zOrder: number;
 }
 
 export interface RoomDecorationFrame {
@@ -68,8 +69,9 @@ const entry = (
   sourceBounds: RoomDecorationManifestEntry['sourceBounds'],
   target: RoomDecorationManifestEntry['target'],
   layer: 'back' | 'front',
+  zOrder = 0,
 ): RoomDecorationManifestEntry => Object.freeze({
-  itemId, source: atlas, atlasColumn, atlasRow, sourceBounds, target, layer,
+  itemId, source: atlas, atlasColumn, atlasRow, sourceBounds, target, layer, zOrder,
 });
 
 export const roomDecorationAtlas = Object.freeze({
@@ -82,9 +84,9 @@ export const roomDecorationAtlas = Object.freeze({
 
 export const roomDecorationManifest = Object.freeze([
   entry('desk-mug', 0, 0, { x: 93, y: 147, width: 199, height: 162 },
-    { leftRatio: 0.020, topRatio: 0.227, widthRatio: 0.064, heightRatio: 0.046 }, 'front'),
+    { leftRatio: 0.020, topRatio: 0.227, widthRatio: 0.064, heightRatio: 0.046 }, 'front', 20),
   entry('tiny-plant', 1, 0, { x: 70, y: 99, width: 198, height: 226 },
-    { leftRatio: 0.043, topRatio: 0.187, widthRatio: 0.064, heightRatio: 0.078 }, 'front'),
+    { leftRatio: 0.043, topRatio: 0.187, widthRatio: 0.064, heightRatio: 0.078 }, 'front', 10),
   entry('book-stack', 2, 0, { x: 30, y: 146, width: 277, height: 176 },
     { leftRatio: 0.109, topRatio: 0.212, widthRatio: 0.097, heightRatio: 0.048 }, 'front'),
   entry('desk-lamp', 3, 0, { x: 55, y: 94, width: 246, height: 232 },

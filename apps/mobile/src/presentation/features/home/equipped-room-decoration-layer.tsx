@@ -43,6 +43,7 @@ const AtlasSprite = ({
         top: frame.top,
         width: frame.width,
         height: frame.height,
+        zIndex: item.zOrder,
       }]}
     >
       <Image

@@ -28,12 +28,14 @@ describe('roomDecorationManifest', () => {
         sourceBounds: { x: 93, y: 147, width: 199, height: 162 },
         target: { leftRatio: 0.020, topRatio: 0.227, widthRatio: 0.064, heightRatio: 0.046 },
         layer: 'front',
+        zOrder: 20,
       });
     expect(roomDecorationManifest.find(({ itemId }) => itemId === 'tiny-plant'))
       .toMatchObject({
         sourceBounds: { x: 70, y: 99, width: 198, height: 226 },
         target: { leftRatio: 0.043, topRatio: 0.187, widthRatio: 0.064, heightRatio: 0.078 },
         layer: 'front',
+        zOrder: 10,
       });
     expect(roomDecorationManifest.find(({ itemId }) => itemId === 'book-stack'))
       .toMatchObject({
@@ -43,6 +45,7 @@ describe('roomDecorationManifest', () => {
       });
     const mug = roomDecorationManifest.find(({ itemId }) => itemId === 'desk-mug')!;
     const plant = roomDecorationManifest.find(({ itemId }) => itemId === 'tiny-plant')!;
+    expect(plant.zOrder).toBeLessThan(mug.zOrder);
     expect(mug.target.leftRatio).toBeLessThan(plant.target.leftRatio);
     expect(plant.target.leftRatio).toBeLessThan(
       roomDecorationManifest.find(({ itemId }) => itemId === 'book-stack')!.target.leftRatio,

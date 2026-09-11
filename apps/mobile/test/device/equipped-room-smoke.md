@@ -18,7 +18,8 @@ commands. Open Home/Pet Room after boot.
 - [ ] Warm empty-room backdrop appears; Cat and its status remain visible and animate normally.
 - [ ] Backdrop fits the full room frame without zoom/crop; Cat is smaller than the standalone Focus view.
 - [ ] `Cốc trên bàn` sits at the left edge of the desk and `Chậu cây nhỏ` sits immediately to its
-  right, matching the approved room reference; both remain on the desk surface.
+  right/behind it, matching the approved room perspective; the mug visibly overlaps the plant pot
+  where their bounds meet, and both remain on the desk surface.
 - [ ] Repeat on one narrow and one wide portrait device: item anchors and sizes retain the same
   relationship to the desk, floor and walls.
 - [ ] Open Shop → `Đã sở hữu`, unequip `Chậu cây nhỏ`, return Home: only the plant disappears.

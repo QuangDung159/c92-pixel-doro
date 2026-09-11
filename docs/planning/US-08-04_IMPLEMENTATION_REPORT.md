@@ -56,6 +56,8 @@ The query is read-only and decoration failures remain local: Pet, profile and St
 - Device guide and static route/boundary/asset-integrity coverage were added.
 - The post-smoke full-room calibration replaces per-item guessed anchors with the source-bound/target-bound
   transform and adds invariant tests for atlas containment, target placement and uniform device scaling.
+- Desk-item depth is explicit: the farther plant renders behind the nearer mug even though catalog order
+  remains unchanged.
 
 ## Automated evidence
 
