@@ -64,7 +64,7 @@ export const roomDecorationAtlas = Object.freeze({
 export const roomDecorationManifest = Object.freeze([
   entry('desk-mug', 0, 0, 0.035, 0.33, 0.0931, 'front'),
   entry('tiny-plant', 1, 0, 0.125, 0.31, 0.10, 'front'),
-  entry('book-stack', 2, 0, 0.30, 0.57, 0.1172, 'front'),
+  entry('book-stack', 2, 0, 0.19, 0.325, 0.1172, 'front'),
   entry('desk-lamp', 3, 0, 0.02, 0.39, 0.1138, 'back'),
   entry('wall-calendar', 0, 1, 0.38, 0.04, 0.1103, 'back'),
   entry('floor-cushion', 1, 1, 0.72, 0.61, 0.1138, 'front'),

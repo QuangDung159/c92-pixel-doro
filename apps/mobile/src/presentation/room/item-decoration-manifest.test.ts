@@ -27,9 +27,14 @@ describe('roomDecorationManifest', () => {
       .toMatchObject({ xRatio: 0.035, yRatio: 0.33, sizeRatio: 0.0931, layer: 'front' });
     expect(roomDecorationManifest.find(({ itemId }) => itemId === 'tiny-plant'))
       .toMatchObject({ xRatio: 0.125, yRatio: 0.31, sizeRatio: 0.10, layer: 'front' });
+    expect(roomDecorationManifest.find(({ itemId }) => itemId === 'book-stack'))
+      .toMatchObject({ xRatio: 0.19, yRatio: 0.325, sizeRatio: 0.1172, layer: 'front' });
     const mug = roomDecorationManifest.find(({ itemId }) => itemId === 'desk-mug')!;
     const plant = roomDecorationManifest.find(({ itemId }) => itemId === 'tiny-plant')!;
     expect(mug.xRatio).toBeLessThan(plant.xRatio);
+    expect(plant.xRatio).toBeLessThan(
+      roomDecorationManifest.find(({ itemId }) => itemId === 'book-stack')!.xRatio,
+    );
     expect(roomDecorationManifest.every(({ xRatio, yRatio, sizeRatio }) =>
       xRatio >= 0 && xRatio < 1 && yRatio >= 0 && yRatio < 1 &&
       sizeRatio > 0 && sizeRatio < 0.2)).toBe(true);

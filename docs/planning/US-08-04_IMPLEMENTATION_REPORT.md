@@ -41,6 +41,8 @@ The query is read-only and decoration failures remain local: Pet, profile and St
   anchor and item scale instead of mixing percentage positions with fixed pixel sizes.
 - Owner reference comparison corrected the two desk anchors: mug is the leftmost item and the plant
   sits to its right, matching the approved composition rather than the previously reversed order.
+- The book stack is now on the desk after the plant. Dev-only `room_full_equipped` renders all 12
+  catalog items through a read projection for one-pass visual review and never writes SQLite state.
 - Approved backdrop plus transparent 4×3 atlas are bound to typed dimensions, hashes, crop cells,
   deterministic back/front anchors and offline static imports.
 - Decoration pixels are non-interactive and hidden from accessibility; one concise textual room
@@ -52,7 +54,7 @@ The query is read-only and decoration failures remain local: Pet, profile and St
 
 ## Automated evidence
 
-- `pnpm quality`: PASS — 175 test files, 907 tests.
+- `pnpm quality`: PASS — 176 test files, 908 tests.
 - Typecheck/lint: PASS.
 - Boundary validator: PASS — 12 forbidden imports rejected, 4 valid imports accepted.
 - Device guide validator and repository hygiene: PASS.

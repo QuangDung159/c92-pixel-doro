@@ -128,6 +128,10 @@ import {
   inventoryEquipReviewDatabaseName,
   resolveInventoryEquipReviewScenario,
 } from './review/inventory-equip-review-fixture';
+import {
+  createRoomDecorationReviewProjection,
+  resolveRoomDecorationReviewScenario,
+} from './review/room-decoration-review-fixture';
 
 const PIXELDORO_DATABASE_NAME = 'pixeldoro.db';
 
@@ -188,6 +192,10 @@ export const createMobileApplication = (
   );
   const inventoryEquipReviewScenario = resolveInventoryEquipReviewScenario(
     process.env.EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE,
+    reviewFixturesEnabled,
+  );
+  const roomDecorationReviewScenario = resolveRoomDecorationReviewScenario(
+    process.env.EXPO_PUBLIC_EPIC_08_ROOM_REVIEW_FIXTURE,
     reviewFixturesEnabled,
   );
   const breakCadenceReviewScenario = resolveBreakCadenceReviewScenario(
@@ -497,6 +505,9 @@ export const createMobileApplication = (
     catalog: persistence.catalog,
     coordinator: sessionCommands,
     ownedItems: persistence.ownedItems,
+    ...(roomDecorationReviewScenario === undefined ? {} : {
+      reviewProjection: createRoomDecorationReviewProjection(roomDecorationReviewScenario)!,
+    }),
   });
   const confirmedReset = new ConfirmedLocalDataReset({
     activeSessions: persistence.sessions,

@@ -30,11 +30,22 @@ commands. Open Home/Pet Room after boot.
 - [ ] VoiceOver/TalkBack can still announce the Pet state and one room summary without focusing
   individual decoration images; Reduce Motion does not hide the room.
 
+## Full-room visual pass
+
+```sh
+EXPO_PUBLIC_EPIC_08_ROOM_REVIEW_FIXTURE=room_full_equipped pnpm start --clear
+```
+
+- [ ] All 12 approved decorations render together without changing SQLite ownership/equipment.
+- [ ] Desk order matches the approved reference: mug, plant, book stack, then desk lamp.
+- [ ] Wall/floor objects stay in their intended zones and do not cover Cat or navigation.
+
 ## Empty và cleanup
 
 ```sh
 EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=inventory_empty pnpm start --clear
 unset EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE
+unset EXPO_PUBLIC_EPIC_08_ROOM_REVIEW_FIXTURE
 pnpm start --clear
 ```
 

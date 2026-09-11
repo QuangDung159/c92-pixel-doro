@@ -1,5 +1,6 @@
 import {
   LoadEquippedRoomProjectionUseCase,
+  type EquippedRoomProjection,
   type CatalogRepository,
   type OwnedItemRepository,
   type SessionCommandCoordinatorPort,
@@ -12,6 +13,7 @@ export interface CreateRoomDecorationsSliceDependencies {
   readonly catalog: Pick<CatalogRepository, 'list'>;
   readonly coordinator: SessionCommandCoordinatorPort;
   readonly ownedItems: Pick<OwnedItemRepository, 'listByProfile'>;
+  readonly reviewProjection?: EquippedRoomProjection;
 }
 
 export const createRoomDecorationsSlice = (dependencies: CreateRoomDecorationsSliceDependencies) => {
@@ -26,7 +28,9 @@ export const createRoomDecorationsSlice = (dependencies: CreateRoomDecorationsSl
     ownedItems: dependencies.ownedItems,
   });
   const controller = new RoomDecorationsController({
-    execute: () => dependencies.coordinator.run(() => useCase.execute()),
+    execute: () => dependencies.coordinator.run(() => dependencies.reviewProjection === undefined
+      ? useCase.execute()
+      : Promise.resolve({ ok: true as const, value: dependencies.reviewProjection })),
   });
   return Object.freeze({ controller, dispose: () => controller.dispose() });
 };

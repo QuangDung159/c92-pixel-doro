@@ -50,9 +50,11 @@ const equippedRoomFlow = await readFile(
 for (const evidence of [
   'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=inventory_multi_equipped',
   'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=inventory_empty',
+  'EXPO_PUBLIC_EPIC_08_ROOM_REVIEW_FIXTURE=room_full_equipped',
   'Cốc trên bàn', 'Chậu cây nhỏ', 'Bắt đầu tập trung', 'Airplane mode',
   'VoiceOver/TalkBack', 'Reduce Motion', 'NOT_RUN', '<implementation-sha>',
   'unset EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE',
+  'unset EXPO_PUBLIC_EPIC_08_ROOM_REVIEW_FIXTURE',
 ]) {
   if (!equippedRoomFlow.includes(evidence)) {
     throw new Error(`Equipped room device guide is missing: ${evidence}`);
