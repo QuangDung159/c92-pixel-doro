@@ -1,8 +1,10 @@
 # US-09-01 — Focus history first-page UI smoke
 
-Status: `NOT_RUN`. Chỉ ghi `PASS` sau khi chạy trên thiết bị/simulator tại đúng
-`<implementation-sha>`. Các fixture chỉ bật trong dev, dùng database riêng prefix
-`pixeldoro-us-09-01-` và không đụng database thật `pixeldoro.db`.
+Status: `OWNER_QUICK_UI_SMOKE_REPORTED_PASS`. Owner xác nhận ngày 2026-09-11 tại exact committed/
+pushed SHA `18057fafe478ea95969c43c11b1ad72d9a7faed4`: không crash và behavior hoạt động như kỳ vọng.
+Đây là quick UI acceptance; structured fixture/platform/accessibility rows vẫn `NOT_RUN`. Các fixture
+chỉ bật trong dev, dùng database riêng prefix `pixeldoro-us-09-01-` và không đụng database thật
+`pixeldoro.db`.
 
 ## 1. Setup
 
@@ -66,6 +68,7 @@ bị/OS, timezone, PASS/FAIL/BLOCKED và screenshot/recording; case chưa chạy
 
 | Platform/device/OS | Fixture | Network/a11y | Result | Artifact/notes |
 |---|---|---|---|---|
+| `Owner available UI environment; metadata not recorded` | `Quick UI smoke` | `Not recorded` | `PASS_OWNER_QUICK_UI` | 2026-09-11 at `18057faf...`: no crash, behavior worked as expected |
 | `<fill>` | `history_first_page_mixed` | `<fill>` | `NOT_RUN` | `<implementation-sha>` |
 | `<fill>` | `history_first_page_empty` | `<fill>` | `NOT_RUN` | `<fill>` |
 | `<fill>` | `history_first_page_read_failure_once` | `<fill>` | `NOT_RUN` | `<fill>` |

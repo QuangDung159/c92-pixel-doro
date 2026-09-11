@@ -1,18 +1,19 @@
 ---
 document_id: PIXELDORO_US_09_01_IMPLEMENTATION_REPORT
 title: PixelDoro Mobile MVP — US-09-01 Implementation Report
-version: 0.1.0
-status: CANDIDATE_AWAITING_OWNER_UI_ACCEPTANCE
+version: 0.2.0
+status: DONE_OWNER_ACCEPTED
 date: 2026-09-11
 owner: Dũng Lư
 branch: feats/epic-09
 implementation_start_sha: 950cd90c2eae3ae4e6abe99f5e1ea42e207a9f55
-current_candidate_base_sha: f1213e4429ee3ec55c490eccd459ab611af0c202
-exact_implementation_sha: null
-candidate_identity: uncommitted_worktree_on_f1213e4429ee3ec55c490eccd459ab611af0c202
+current_candidate_base_sha: 18057fafe478ea95969c43c11b1ad72d9a7faed4
+exact_implementation_sha: 18057fafe478ea95969c43c11b1ad72d9a7faed4
+candidate_identity: EXACT_COMMITTED_OWNER_ACCEPTED_SHA
 automated_status: PASS
-manual_device_status: NOT_RUN
-formal_tester_status: NOT_RUN
+owner_smoke_status: PASS_OWNER_QUICK_UI
+manual_device_status: OWNER_QUICK_UI_SMOKE_REPORTED
+formal_tester_status: NOT_RUN_DEFERRED_UNLESS_EXECUTED
 ---
 
 # US-09-01 — Implementation Report
@@ -24,8 +25,8 @@ page tối đa 20 phiên Standard Focus terminal từ SQLite và hiển thị da
 tag cùng explicit status. History prototype/sample/contribution preview đã được gỡ riêng khỏi feature
 này; Settings và root prototype authority vẫn được giữ.
 
-Candidate hiện là uncommitted worktree trên base SHA `f1213e44...`; chưa có exact commit SHA và không
-có commit/push nào được thực hiện.
+Owner đã xác nhận quick UI smoke ngày 2026-09-11 trên exact committed/pushed SHA `18057faf...`: app
+không crash và behavior hoạt động như kỳ vọng. Story là `DONE_OWNER_ACCEPTED`.
 
 ## 2. Implemented behavior
 
@@ -76,7 +77,8 @@ component hoặc production durable-write change.
 | Expo Doctor online | 20/21 — chỉ còn known patch-version drift của 9 Expo packages; không đổi dependency ngoài scope |
 | Real SQLite focused suite | PASS — 5/5, gồm impossible date và reopen/read-only evidence |
 | History route static integrity | PASS — 4/4 |
-| Manual UI/device/accessibility | `NOT_RUN` |
+| Owner quick UI smoke | PASS — no crash, behavior worked as expected tại `18057faf...` |
+| Structured device/accessibility matrix | `NOT_RUN` |
 
 Một lần full suite đầu tiên bắt assertion EPIC-08 cũ yêu cầu History vẫn là prototype. Assertion đó đã
 được cập nhật theo authority mới của US-09-01; final full suite pass 969/969. Một lần Expo Doctor
@@ -88,8 +90,16 @@ trong sandbox không truy cập được online checks; lần chạy được c�
 - Story 01 chưa có date grouping, pagination/load-more, refocus/foreground refresh, contribution graph
   hoặc `history_viewed`; các phần này vẫn thuộc các story sau.
 - Same-runtime return giữ ready/empty/error cache theo Option A; cold relaunch đọc lại SQLite.
-- Manual smoke, large text, VoiceOver/TalkBack, grayscale và Reduce Motion chưa được claim.
-- Owner cần chạy smoke guide trên exact candidate rồi xác nhận PASS/FAIL. Sau acceptance mới được mở
-  gate US-09-02; commit/push cần authority riêng nếu owner muốn.
+- Owner quick UI smoke đã PASS; platform/device metadata chi tiết, large text, VoiceOver/TalkBack,
+  grayscale và Reduce Motion vẫn chưa được claim.
+- US-09-02 implementation planning gate đã mở. Coding Story 02 vẫn cần owner duyệt các confirmation
+  riêng trong plan Story 02.
 
 Smoke guide: `apps/mobile/test/device/focus-history-first-page-smoke.md`.
+
+## 6. Change log
+
+| Version | Date | Author | Change |
+|---|---|---|---|
+| 0.2.0 | 2026-09-11 | Codex | Bound owner quick UI PASS to exact committed/pushed SHA `18057faf...`: no crash and expected behavior. US-09-01 is `DONE_OWNER_ACCEPTED`; structured/formal breadth remains `NOT_RUN`; US-09-02 planning is open. |
+| 0.1.0 | 2026-09-11 | Codex | Recorded implemented US-09-01 candidate, automated gates, exports, Doctor drift and honest pre-smoke status. |

@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_EPIC_09_USER_STORIES
 title: PixelDoro EPIC-09 — Focus History và Contribution Graph User Stories
-version: 0.1.0
-status: PENDING_OWNER_CONFIRMATION
+version: 0.2.0
+status: IMPLEMENTATION_IN_PROGRESS_OWNER_GATED
 date: 2026-09-11
 last_updated: 2026-09-11
 owner: Dũng Lư
@@ -19,13 +19,13 @@ previous_epic: EPIC-08
 previous_epic_status: DONE_OWNER_ACCEPTED
 previous_epic_accepted_sha: 30adc34be23dca48379b6f2553203fdadb9f9e5b
 previous_epic_closure_commit: 05e3e883e0c6dc3292b3707fd5fe5af65032dc75
-implementation_status: NOT_STARTED
+implementation_status: US_09_01_DONE_OWNER_ACCEPTED_US_09_02_PLANNING
 formal_tester_status: NOT_RUN
 schema_impact: NONE_PROPOSED_EXISTING_SCHEMA_001_SUFFICIENT
 dependency_impact: NONE_PROPOSED
 native_impact: NONE_PROPOSED
 product_gate: OPEN_006_PENDING_OWNER
-next_gate: OWNER_CONFIRM_BREAKDOWN_AND_US0900_CONFIRM_01_TO_10
+next_gate: OWNER_CONFIRM_US0902_IMPLEMENTATION_PLAN
 product_truth: ../PIXELDORO_CORE_TRUTH.md
 epic_baseline: ./MVP_EPICS.md
 data_model: ../architecture/data-model.md
@@ -38,9 +38,10 @@ previous_epic_exit: ./EPIC-08_EXIT_REPORT.md
 
 ## 0. Mục đích và authority
 
-Tài liệu này audit baseline hiện tại và phân rã `EPIC-09` thành các vertical slice nhỏ, có output
-quan sát được, dependency, test, device guide, rollback và owner gate riêng. Đây là planning artifact;
-nó không cấp quyền coding, tạo implementation plan, commit hoặc push.
+Tài liệu này audit baseline và theo dõi các vertical slice của `EPIC-09`, với output quan sát được,
+dependency, test, device guide, rollback và owner gate riêng. US-09-01 đã owner accepted; mọi Story
+tiếp theo vẫn cần implementation-plan confirmation riêng. Tài liệu không tự cấp quyền coding, commit
+hoặc push.
 
 Thứ tự authority khi review hoặc triển khai:
 
@@ -361,8 +362,8 @@ horizontal “backend-only” slice; Story 03 có neutral semantic day panel tr�
 
 | Order | Story | User outcome | Priority | Dependencies | Initial status |
 |---:|---|---|---|---|---|
-| 1 | US-09-01 — Truthful Standard Focus History First Page | History tab đọc và hiển thị first page terminal Standard Focus thật từ SQLite | P0 | EPIC-08; confirmations 05/08/10 | NOT_STARTED |
-| 2 | US-09-02 — Date-grouped Pagination và Resilient Refresh | User xem thêm history theo ngày mà không duplicate/mất dữ liệu khi refresh lỗi | P0 | 01; confirmations 01/02/06 | NOT_STARTED |
+| 1 | US-09-01 — Truthful Standard Focus History First Page | History tab đọc và hiển thị first page terminal Standard Focus thật từ SQLite | P0 | EPIC-08; confirmations 05/08/10 | DONE_OWNER_ACCEPTED — `18057faf...` |
+| 2 | US-09-02 — Date-grouped Pagination và Resilient Refresh | User xem thêm history theo ngày mà không duplicate/mất dữ liệu khi refresh lỗi | P0 | 01; confirmations 01/02/06 | IMPLEMENTATION_PLAN_PENDING_OWNER_CONFIRMATION |
 | 3 | US-09-03 — Stable Daily Contribution Projection | User thấy đủ các ngày trong range và đúng completed minutes/intensity semantics | P0 | 01; confirmations 03/04 | NOT_STARTED |
 | 4 | US-09-04 — Production Contribution Graph và Accessibility | User đọc graph rõ trên small screen, screen reader, largest text và grayscale | P1 | 02/03; `OPEN-006` confirmation 04 | BLOCKED_BY_OWNER_COLOR_GATE |
 | 5 | US-09-05 — Offline Lifecycle, Analytics, Prototype Integrity và Epic Exit | History ổn định qua refocus/relaunch/offline và sẵn sàng exit evidence | P1 | 01→04; confirmations 06/07/09/10 | NOT_STARTED |
@@ -397,27 +398,27 @@ horizontal “backend-only” slice; Story 03 có neutral semantic day panel tr�
 
 ### 9.1. Acceptance criteria
 
-- [ ] Route renders production projection and has no hard-coded history data, `PrototypeBadge` or review controls.
-- [ ] Only terminal Standard Focus appears; running/trial/Short Break/Long Break is absent.
-- [ ] Completed, failed and cancelled rows preserve exact status, configured duration and work tag.
-- [ ] Order is `endsAt DESC, id ASC`; stable IDs are React keys.
-- [ ] Failed/cancelled copy cannot imply completed minutes or reward.
-- [ ] Empty database renders approved empty state and no fake row/graph.
-- [ ] Read failure renders Retry; corrupt date/timestamp/status/duration fails closed without clamp/repair.
-- [ ] Initial retry coalesces; result after deactivate/unmount is dropped.
-- [ ] Render/query/retry produces identical sessions/profile/reward database fingerprint.
-- [ ] Screen/route imports no SQLite repository, SQL, provider or domain business rule.
+- [x] Route renders production projection and has no hard-coded history data, `PrototypeBadge` or review controls.
+- [x] Only terminal Standard Focus appears; running/trial/Short Break/Long Break is absent.
+- [x] Completed, failed and cancelled rows preserve exact status, configured duration and work tag.
+- [x] Order is `endsAt DESC, id ASC`; stable IDs are React keys.
+- [x] Failed/cancelled copy cannot imply completed minutes or reward.
+- [x] Empty database renders approved empty state and no fake row/graph.
+- [x] Read failure renders Retry; corrupt date/timestamp/status/duration fails closed without clamp/repair.
+- [x] Initial retry coalesces; result after deactivate/unmount is dropped.
+- [x] Render/query/retry produces identical sessions/profile/reward database fingerprint.
+- [x] Screen/route imports no SQLite repository, SQL, provider or domain business rule.
 
 ### 9.2. Automated tests
 
-- [ ] Domain/Application: full included/excluded status/type/variant table.
-- [ ] Projection: completed/failed/cancelled labels; Vietnamese tag labels; immutable output.
-- [ ] Canonical date/timestamp/duration safe-integer and corrupt/overflow rejection.
-- [ ] Controller: idle/loading/ready/empty/error/retry, coalesced load, deactivate/unmount stale drop.
-- [ ] SQLite: fresh DB, mixed terminal/running/trial/Break, equal `endsAt` tie order, reopen.
-- [ ] Read-only fingerprint before/after initial load and retry.
-- [ ] Component: three statuses, long Vietnamese text, semantic grouping, stable keys.
-- [ ] Static: thin route, no prototype/mock/SQL/repository import, files below size limits.
+- [x] Domain/Application: full included/excluded status/type/variant table.
+- [x] Projection: completed/failed/cancelled labels; Vietnamese tag labels; immutable output.
+- [x] Canonical date/timestamp/duration safe-integer and corrupt/overflow rejection.
+- [x] Controller: idle/loading/ready/empty/error/retry, coalesced load, deactivate/unmount stale drop.
+- [x] SQLite: fresh DB, mixed terminal/running/trial/Break, equal `endsAt` tie order, reopen.
+- [x] Read-only fingerprint before/after initial load and retry.
+- [x] Component: three statuses, long Vietnamese text, semantic grouping, stable keys.
+- [x] Static: thin route, no prototype/mock/SQL/repository import, files below size limits.
 
 ### 9.3. Fixture/data requirements
 
@@ -444,11 +445,11 @@ Proposed file: `apps/mobile/test/device/focus-history-first-page-smoke.md`; init
 
 ### 9.5. DoR / DoD
 
-- [ ] **DoR:** breakdown and confirmations 05/08/10 approved; projection/error API reviewed.
-- [ ] **DoR:** exact page size from confirmation 01 is available even if pagination UI is Story 02.
-- [ ] **DoD:** acceptance/automated/static tests pass; guide exists and remains honest.
-- [ ] **DoD:** output visible on Development Build; exact SHA/report/evidence status recorded.
-- [ ] **Next gate:** owner accepts Story 01 before Story 02 planning/coding.
+- [x] **DoR:** breakdown and confirmations 05/08/10 approved; projection/error API reviewed.
+- [x] **DoR:** exact page size from confirmation 01 is available even if pagination UI is Story 02.
+- [x] **DoD:** acceptance/automated/static tests pass; guide exists and remains honest.
+- [x] **DoD:** output visible on Development Build; exact SHA/report/evidence status recorded.
+- [x] **Next gate:** owner accepts Story 01 before Story 02 planning/coding.
 
 ## 10. US-09-02 — Date-grouped Pagination và Resilient Refresh
 
@@ -911,7 +912,7 @@ settings, fixture env, dedicated isolated database, cleanup/reset and env-unset 
 
 | Story | Proposed guide | Primary manual evidence | Initial status |
 |---|---|---|---|
-| US-09-01 | `apps/mobile/test/device/focus-history-first-page-smoke.md` | empty/mixed/exclusions/error/Retry/relaunch/a11y | NOT_RUN |
+| US-09-01 | `apps/mobile/test/device/focus-history-first-page-smoke.md` | empty/mixed/exclusions/error/Retry/relaunch/a11y | PASS_OWNER_QUICK_UI at `18057faf...`; structured breadth NOT_RUN |
 | US-09-02 | `apps/mobile/test/device/focus-history-pagination-lifecycle-smoke.md` | group/page/append failure/refocus/small screen | NOT_RUN |
 | US-09-03 | `apps/mobile/test/device/contribution-projection-smoke.md` | zero/mixed/range/local-day/timezone/error | NOT_RUN |
 | US-09-04 | `apps/mobile/test/device/contribution-graph-accessibility-smoke.md` | final colors, VoiceOver/TalkBack, largest text, grayscale, Reduce Motion | NOT_RUN |
@@ -1106,4 +1107,5 @@ không tạo implementation plan Story 01 trong cùng bước này.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.2.0 | 2026-09-11 | Codex | Recorded US-09-01 automated PASS and owner quick UI acceptance at exact SHA `18057faf...`; structured/formal breadth remains `NOT_RUN`; opened owner-gated US-09-02 implementation planning. |
 | 0.1.0 | 2026-09-11 | Codex | Audited clean `feats/epic-09` baseline `05e3e883...`, confirmed EPIC-08 `DONE_OWNER_ACCEPTED`, classified production/prototype/missing capabilities, proposed no schema/dependency/native change, created five risk-ordered Stories with complete matrices/guides/DoR/DoD/rollback, and opened ten owner confirmations. No EPIC-09 code, implementation plan, commit or push. |

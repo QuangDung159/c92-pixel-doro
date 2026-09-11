@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_09_01_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-09-01 Implementation Plan
-version: 0.3.0
-status: IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE
-implementation_status: AUTOMATED_GATES_PASSED
+version: 0.4.0
+status: DONE_OWNER_ACCEPTED
+implementation_status: DONE_OWNER_ACCEPTED
 date: 2026-09-11
 last_updated: 2026-09-11
 owner: Dũng Lư
@@ -13,18 +13,18 @@ language: vi
 branch: feats/epic-09
 planning_baseline_sha: 950cd90c2eae3ae4e6abe99f5e1ea42e207a9f55
 implementation_start_sha: 950cd90c2eae3ae4e6abe99f5e1ea42e207a9f55
-current_candidate_base_sha: f1213e4429ee3ec55c490eccd459ab611af0c202
-exact_implementation_sha: null
+current_candidate_base_sha: 18057fafe478ea95969c43c11b1ad72d9a7faed4
+exact_implementation_sha: 18057fafe478ea95969c43c11b1ad72d9a7faed4
 previous_epic: EPIC-08
 previous_epic_status: DONE_OWNER_ACCEPTED
 previous_epic_implementation_sha: 30adc34be23dca48379b6f2553203fdadb9f9e5b
-manual_device_status: NOT_RUN
-formal_tester_status: NOT_RUN
+manual_device_status: OWNER_QUICK_UI_SMOKE_REPORTED_PASS
+formal_tester_status: NOT_RUN_DEFERRED_UNLESS_EXECUTED
 schema_change: NONE_PROPOSED
 dependency_change: NONE_PROPOSED
 native_change: NONE_PROPOSED
 analytics_change: NONE_PROPOSED_IN_THIS_STORY
-next_gate: RUN_OWNER_QUICK_UI_SMOKE_AND_CONFIRM
+next_gate: US_09_02_IMPLEMENTATION_PLAN_OWNER_CONFIRMATION
 scope:
   - mobile_mvp
   - epic_09
@@ -54,8 +54,8 @@ previous_epic_exit: ./EPIC-08_EXIT_REPORT.md
 ## 0. Mục đích, outcome và gate
 
 Tài liệu này chuyển `US-09-01` trong breakdown EPIC-09 thành một implementation plan reviewable.
-Plan đã được owner duyệt và implementation candidate đã hoàn tất automated gates. Manual device/UI
-evidence vẫn `NOT_RUN`; candidate chưa commit hoặc push.
+Plan đã được owner duyệt, implementation hoàn tất automated gates và owner quick UI smoke đã PASS
+trên exact committed/pushed SHA `18057faf...`. Structured/formal device breadth vẫn `NOT_RUN`.
 
 **User outcome:** khi mở tab Lịch sử, user thấy tối đa 20 phiên Standard Focus terminal gần nhất từ
 SQLite theo stable order, với ngày, configured duration, work tag và explicit status; hoặc thấy
@@ -770,9 +770,9 @@ is always the primary navigation entry.
 
 ### 13.3. Gate mở US-09-02
 
-- [ ] Owner reviews the exact US-09-01 candidate and device evidence status.
-- [ ] Owner explicitly accepts US-09-01 and authorizes US-09-02 planning.
-- [ ] Story 02 must replace or extend the documented cache-only refocus limitation with approved
+- [x] Owner reviews the exact US-09-01 candidate and device evidence status.
+- [x] Owner explicitly accepts US-09-01 and authorizes US-09-02 planning.
+- [x] Story 02 must replace or extend the documented cache-only refocus limitation with approved
   date-group/pagination/stale-refresh behavior; it cannot infer acceptance from Story 01 completion.
 
 ## 14. Owner Confirmation Register
@@ -881,6 +881,7 @@ durable fact.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.4.0 | 2026-09-11 | Codex | Bound owner quick UI PASS to exact committed/pushed SHA `18057faf...`: no crash and expected behavior. Closed US-09-01 as `DONE_OWNER_ACCEPTED`; structured/formal breadth remains `NOT_RUN`; opened US-09-02 planning. |
 | 0.3.0 | 2026-09-11 | Codex | Completed US-09-01 candidate; recorded automated quality/export/SQLite/static evidence, honest Doctor drift and `NOT_RUN` manual status; opened owner UI smoke gate. No commit or push. |
 | 0.2.0 | 2026-09-11 | Codex | Recorded owner approval for `US0901-CONFIRM-01→06` Option A and coding authorization; locked implementation start SHA `950cd90c...`. |
 | 0.1.0 | 2026-09-11 | Codex | Audited committed EPIC-09 breakdown and production query/UI/composition/test baseline; proposed a read-only 20-row first-page slice, canonical date hardening, typed use case/controller, History-only prototype retirement, isolated fixtures and six owner confirmations. No coding, test claim, commit or push. |
