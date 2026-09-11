@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_08_05_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-08-05 Implementation Plan
-version: 0.1.0
-status: DRAFT_AWAITING_OWNER_CONFIRMATION
-implementation_status: NOT_STARTED
+version: 0.2.0
+status: APPROVED_OPTION_A_01_TO_06
+implementation_status: VALIDATED_IMPLEMENTATION_CANDIDATE_AWAITING_OWNER_SMOKE
 date: 2026-09-11
 last_updated: 2026-09-11
 owner: Dũng Lư
@@ -12,7 +12,7 @@ reviewer_role: Tech Lead/Product Owner
 language: vi
 branch: feats/epic-08
 planning_baseline_sha: 94a0b24ac0bb62854d02754c90a94f415e0edbec
-implementation_start_sha: null
+implementation_start_sha: e46c5e6c66dba2c0415693e622e2d9f3b308f7af
 exact_implementation_sha: null
 previous_story: US-08-04
 previous_story_status: DONE_OWNER_ACCEPTED
@@ -22,7 +22,7 @@ formal_tester_status: NOT_RUN_DEFERRED_TO_EPIC_12_UNLESS_EXECUTED
 schema_change: NONE_PROPOSED
 dependency_change: NONE_PROPOSED
 native_change: NONE_PROPOSED
-next_gate: OWNER_APPROVAL_US0805_CONFIRM_01_TO_06
+next_gate: OWNER_QUICK_UI_SMOKE
 scope:
   - mobile_mvp
   - epic_08
@@ -53,9 +53,9 @@ stale equip hay làm hỏng room.
 **Priority/order:** `P1 / 5`, Story cuối của EPIC-08.
 
 US-08-01→04 đã `DONE_OWNER_ACCEPTED`; exact upstream mới nhất là US-08-04 tại
-`94a0b24ac0bb62854d02754c90a94f415e0edbec`. US-08-05 chưa được phép code. Plan này cần owner duyệt
-`US0805-CONFIRM-01→06`; approval chỉ authorize implementation candidate, không tự authorize commit,
-push, EPIC-08 Exit Report hoặc mở EPIC-09.
+`94a0b24ac0bb62854d02754c90a94f415e0edbec`. Owner duyệt `US0805-CONFIRM-01→06` theo Option A ngày
+2026-09-11; implementation bắt đầu từ SHA `e46c5e6...`. Approval authorize implementation candidate,
+không tự authorize commit, push, EPIC-08 Exit Report hoặc mở EPIC-09.
 
 ### 0.1. In scope
 
@@ -414,8 +414,8 @@ pnpm start --clear
   and formal evidence deferral policy.
 - [x] Schema/repositories/transactions/routes/analytics/components/fixtures were audited.
 - [x] No schema/dependency/native or new Product capability is required by the current plan.
-- [ ] Owner approves `US0805-CONFIRM-01→06` Option A or records replacements.
-- [ ] Implementation start SHA is frozen after approval and worktree overlap is rechecked.
+- [x] Owner approves `US0805-CONFIRM-01→06` Option A.
+- [x] Implementation start SHA is frozen at `e46c5e6...` and worktree overlap was rechecked.
 
 ### 13.2. Definition of Done
 
@@ -452,44 +452,44 @@ pnpm start --clear
 - **Option A — đề xuất:** evidence-first integration/exit slice; không thêm Product behavior/UI. Chỉ sửa
   narrow accepted-behavior gap nếu aggregate test chứng minh.
 - **Option B:** đồng thời refactor/redesign Shop/Room trước Epic exit.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — owner confirmed 2026-09-11.
 
 ### US0805-CONFIRM-02 — Fixture surface
 
 - **Option A — đề xuất:** dedicated exit env/database; 4 runtime UI scenarios ở mục 10, còn race/corrupt/
   all-errors là deterministic automated harness, không tạo diagnostic UI lớn.
 - **Option B:** expose toàn bộ 7 scenario trên Development Build UI.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — owner confirmed 2026-09-11.
 
 ### US0805-CONFIRM-03 — Race và failure evidence
 
 - **Option A — đề xuất:** exhaustive race/rollback/corrupt proof bằng real SQLite automated tests; owner
   smoke chỉ chạy representative rapid-tap, provider failure, offline và relaunch.
 - **Option B:** bắt owner chạy thủ công toàn bộ failure/race matrix trước candidate.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — owner confirmed 2026-09-11.
 
 ### US0805-CONFIRM-04 — Analytics boundary
 
 - **Option A — đề xuất:** verify ba event đã duyệt và local queue; không thêm provider, event hoặc UI.
 - **Option B:** đưa provider delivery/worker vào US-08-05.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — owner confirmed 2026-09-11.
 
 ### US0805-CONFIRM-05 — Prototype retirement
 
 - **Option A — đề xuất:** enforce Shop/Home/room production boundary, giữ root/History/Settings prototype
   cho Epic owner kế tiếp.
 - **Option B:** xóa toàn bộ prototype scaffolding trong EPIC-08.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — owner confirmed 2026-09-11.
 
 ### US0805-CONFIRM-06 — Acceptance và Epic closure
 
 - **Option A — đề xuất:** automated gates + owner quick UI đủ accept US-08-05; formal breadth tiếp tục
   `DEFERRED_TO_EPIC_12`. Epic exit/EPIC-09 cần một xác nhận riêng sau exact candidate.
 - **Option B:** bắt buộc full formal iOS/Android accessibility/device matrix và tự đóng Epic cùng Story.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — owner confirmed 2026-09-11.
 
-Owner có thể duyệt gọn bằng: `Duyệt US0805-CONFIRM-01→06 theo Option A`. Approval sẽ authorize coding
-US-08-05 nhưng không tự authorize commit/push hoặc Epic closure.
+Approval Option A đã được ghi nhận; implementation candidate hiện chờ owner quick UI. Approval này không
+tự authorize commit/push hoặc Epic closure.
 
 ## 16. Impact verdict and change log
 
@@ -506,4 +506,5 @@ US-08-05 nhưng không tự authorize commit/push hoặc Epic closure.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.2.0 | 2026-09-11 | Codex | Recorded owner approval for `US0805-CONFIRM-01→06` Option A and froze implementation start SHA `e46c5e6...`. Delivered the isolated exit fixture, aggregate SQLite/relaunch/race/analytics/static integrity evidence and device guide. Aggregate evidence exposed and fixed the missing `pricePaidCoins` analytics property allowlist entry. Candidate is automated-PASS and awaits owner quick UI; no commit/push or Epic closure was authorized. |
 | 0.1.0 | 2026-09-11 | Codex | Initial plan after US-08-04 owner acceptance at exact SHA `94a0b24...`. Audited the full production reward/progression/purchase/equip/room/analytics/route stack; proposed evidence-first aggregate SQLite loop, deterministic race/failure/analytics proof, dedicated isolated exit fixtures, device guide and six pending confirmations. No production code, schema, dependency or native configuration changed. |

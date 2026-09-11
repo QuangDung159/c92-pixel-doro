@@ -47,6 +47,24 @@ const inventoryEquipFlow = await readFile(
 const equippedRoomFlow = await readFile(
   `${deviceDirectory}equipped-room-smoke.md`, 'utf8',
 );
+const epic08ExitFlow = await readFile(
+  `${deviceDirectory}epic-08-exit-smoke.md`, 'utf8',
+);
+for (const evidence of [
+  'EXPO_PUBLIC_EPIC_08_EXIT_REVIEW_FIXTURE=epic_08_fresh_reward_to_room',
+  'epic_08_relaunch_committed', 'epic_08_provider_failure',
+  'epic_08_accessibility_matrix', 'standard_completion_fast_clock',
+  '25 XP / 5 Coin', 'Airplane mode', 'VoiceOver/TalkBack', 'Reduce Motion',
+  'pixeldoro.db', 'NOT_RUN', '<implementation-sha>',
+  'unset EXPO_PUBLIC_EPIC_08_EXIT_REVIEW_FIXTURE',
+]) {
+  if (!epic08ExitFlow.includes(evidence)) {
+    throw new Error(`EPIC-08 exit device guide is missing: ${evidence}`);
+  }
+}
+await access(
+  `${mobileDirectory}/src/composition/review/epic-08-exit-review-fixture.ts`,
+);
 for (const evidence of [
   'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=inventory_multi_equipped',
   'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=inventory_empty',

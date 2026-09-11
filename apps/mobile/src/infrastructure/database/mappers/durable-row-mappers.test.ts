@@ -192,6 +192,13 @@ describe('durable row mappers', () => {
       isFirstSession: true,
       durationMinutes: 25,
     })).toMatchObject({ ok: true });
+    expect(serializeAnalyticsProperties({
+      itemId: 'desk-mug',
+      pricePaidCoins: 5,
+    })).toEqual({
+      ok: true,
+      value: '{"itemId":"desk-mug","pricePaidCoins":5}',
+    });
     expect(mapAnalyticsEventRow({
       event_id: 'event-retry', event_name: 'history_viewed', properties_json: '{}',
       occurred_at: timestamp, expires_at: timestamp + 604_800_000,

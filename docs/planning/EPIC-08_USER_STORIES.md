@@ -40,7 +40,8 @@ Tài liệu này phân rã `EPIC-08` thành các vertical slice nhỏ, có outco
 độc lập. US-08-01 đã được owner accept tại `9be0a0f...`; US-08-02 đã được owner quick-UI accept tại
 exact SHA `5c6791d...`; US-08-03 đã được owner quick-UI accept tại exact committed/pushed SHA
 `d6399dd...`; US-08-04 đã được owner quick-UI accept tại exact committed/pushed SHA `94a0b24...`.
-US-08-05 planning đang mở. Không có migration, dependency hoặc native configuration change.
+US-08-05 Option A implementation candidate đã automated-PASS và đang chờ owner quick UI smoke. Không có
+migration, dependency hoặc native configuration change.
 
 Thứ tự authority khi review hoặc triển khai:
 
@@ -200,7 +201,7 @@ selection, visual payoff và cuối cùng cross-feature exit. Mỗi Story chỉ 
 | 2 | US-08-02 — Atomic One-time Purchase | User can safely buy one affordable item once | P0 | 01; confirmations 02/03/04/08/09 | DONE_OWNER_ACCEPTED (`5c6791d...`) |
 | 3 | US-08-03 — Durable Inventory và Free Equip | User can distinguish owned items and equip/unequip without cost | P0 | 02; confirmations 05/06/08/09 | DONE_OWNER_ACCEPTED (`d6399dd...`) |
 | 4 | US-08-04 — Equipped Decorations in Pet Room | User sees equipped purchases persist in the room | P1 | 03; confirmations 06/07/09 | DONE_OWNER_ACCEPTED (`94a0b24...`) |
-| 5 | US-08-05 — Offline Loop Integrity và Exit Candidate | User can complete reward→buy→equip→relaunch loop reliably | P1 | 01–04; confirmations 08/09/10/11 | PLANNING_AWAITING_OWNER_CONFIRMATION |
+| 5 | US-08-05 — Offline Loop Integrity và Exit Candidate | User can complete reward→buy→equip→relaunch loop reliably | P1 | 01–04; confirmations 08/09/10/11 | VALIDATED_IMPLEMENTATION_CANDIDATE_AWAITING_OWNER_SMOKE |
 
 ## 7. US-08-01 — Committed Progression và Production Catalog
 

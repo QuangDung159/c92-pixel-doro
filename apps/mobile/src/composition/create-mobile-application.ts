@@ -132,6 +132,11 @@ import {
   createRoomDecorationReviewProjection,
   resolveRoomDecorationReviewScenario,
 } from './review/room-decoration-review-fixture';
+import {
+  createEpic08ExitReviewFixture,
+  epic08ExitReviewDatabaseName,
+  resolveEpic08ExitReviewScenario,
+} from './review/epic-08-exit-review-fixture';
 
 const PIXELDORO_DATABASE_NAME = 'pixeldoro.db';
 
@@ -198,6 +203,10 @@ export const createMobileApplication = (
     process.env.EXPO_PUBLIC_EPIC_08_ROOM_REVIEW_FIXTURE,
     reviewFixturesEnabled,
   );
+  const epic08ExitReviewScenario = resolveEpic08ExitReviewScenario(
+    process.env.EXPO_PUBLIC_EPIC_08_EXIT_REVIEW_FIXTURE,
+    reviewFixturesEnabled,
+  );
   const breakCadenceReviewScenario = resolveBreakCadenceReviewScenario(
     process.env.EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE,
     reviewFixturesEnabled,
@@ -211,7 +220,9 @@ export const createMobileApplication = (
     reviewFixturesEnabled,
   );
   const databaseOwner = new SQLiteDatabaseOwner(
-    options.databaseName ?? (inventoryEquipReviewScenario !== undefined
+    options.databaseName ?? (epic08ExitReviewScenario !== undefined
+      ? epic08ExitReviewDatabaseName(epic08ExitReviewScenario)
+      : inventoryEquipReviewScenario !== undefined
       ? inventoryEquipReviewDatabaseName(inventoryEquipReviewScenario)
       : shopPurchaseReviewScenario !== undefined
       ? shopPurchaseReviewDatabaseName(shopPurchaseReviewScenario)
@@ -228,6 +239,10 @@ export const createMobileApplication = (
   );
   const transaction = new SQLiteTransaction(databaseOwner);
   const persistence = createSQLitePersistenceGraph(databaseOwner, transaction);
+  const epic08ExitReviewFixture = createEpic08ExitReviewFixture(
+    epic08ExitReviewScenario,
+    persistence.analyticsQueue,
+  );
   const shopReviewFixture = createShopReviewFixture(
     shopReviewScenario,
     persistence.catalog,
@@ -328,6 +343,7 @@ export const createMobileApplication = (
     ),
   };
   const sideEffectAnalyticsQueue =
+    epic08ExitReviewFixture?.analyticsQueue ??
     standardFocusSideEffectReviewFixture?.analyticsQueue ?? persistence.analyticsQueue;
   const coordinatedSideEffectAnalyticsQueue = {
     enqueueBounded: (
@@ -1031,6 +1047,26 @@ export const createMobileApplication = (
     boot: async () => {
       await runProbeIfEnabled();
       await bootstrap.boot();
+      if (
+        bootstrap.getSnapshot().status === 'ready' &&
+        epic08ExitReviewFixture !== undefined
+      ) {
+        const changed = await epic08ExitReviewFixture.prepare({
+          catalog: persistence.catalog,
+          coordinator: sessionCommands,
+          economy: persistence.economyConsistency,
+          ownedItems: persistence.ownedItems,
+          profile: persistence.profile,
+          purchases: persistence.purchases,
+          rewards: persistence.rewards,
+          sessions: persistence.sessions,
+          transaction,
+        });
+        if (changed) {
+          const refreshed = await bootstrap.refreshReadySnapshot();
+          if (!refreshed.ok) bootstrap.enterRecovery('DATABASE_READ_FAILED');
+        }
+      }
       if (
         bootstrap.getSnapshot().status === 'ready' &&
         inventoryEquipReviewFixture !== undefined
