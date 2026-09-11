@@ -12,6 +12,11 @@ import { afterEach, describe, expect, it } from 'vitest';
 import type {
   AnalyticsEventRecord,
 } from '@/application';
+import {
+  LoadFocusHistoryPageUseCase,
+  SessionCommandCoordinator,
+} from '@pixeldoro/application';
+import { createHistoryFirstPageReviewFixture } from '@/composition/review/history-first-page-review-fixture';
 import { MigrationRunner } from '@/infrastructure/database/migration-runner';
 import { productionMigrationRegistry } from '@/infrastructure/database/migrations/migration-registry';
 import { createSQLitePersistenceGraph } from '@/infrastructure/database/persistence-graph';
@@ -346,6 +351,44 @@ describe('US-02-06 derived durable queries', () => {
       database.owner, 'attempt-future', '0.3.0', REVIEW_NOW + 1,
     );
 
+    const historyFingerprint = (): Promise<string> =>
+      database.owner.withConnection(async (connection) => JSON.stringify({
+        sessions: await connection.getAllAsync<unknown>(
+          'SELECT * FROM sessions ORDER BY id',
+          [],
+        ),
+        rewards: await connection.getAllAsync<unknown>(
+          'SELECT * FROM reward_transactions ORDER BY id',
+          [],
+        ),
+        profile: await connection.getAllAsync<unknown>(
+          'SELECT * FROM pet_profiles ORDER BY id',
+          [],
+        ),
+        settings: await connection.getAllAsync<unknown>(
+          'SELECT * FROM app_settings ORDER BY id',
+          [],
+        ),
+      }));
+    const beforeHistoryRead = await historyFingerprint();
+    const projection = await new LoadFocusHistoryPageUseCase({
+      history: database.graph.standardFocusHistory,
+    }).execute();
+    expect(projection).toMatchObject({
+      ok: true,
+      value: {
+        items: [
+          { id: 'standard-after' },
+          { id: 'cancelled-b' },
+          { id: 'failed-a' },
+          { id: 'standard-same-day' },
+          { id: 'standard-before' },
+        ],
+        nextCursor: null,
+      },
+    });
+    expect(await historyFingerprint()).toBe(beforeHistoryRead);
+
     const firstHistoryPage = await database.graph.standardFocusHistory.list({
       profileId: 1,
       limit: 2,
@@ -469,6 +512,103 @@ describe('US-02-06 derived durable queries', () => {
       ok: true,
       value: [{ scheduledEndLocalDate: '2026-08-29', totalCompletedMinutes: 50 }],
     });
+    await reopened.owner.close();
+  });
+
+  it('fails closed when a shape-valid history local date is not a real calendar date', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'pixeldoro-us0901-history-date-'));
+    temporaryDirectories.push(directory);
+    const driver = new HostSQLiteDriver(directory);
+    const database = await createDatabase(driver, 'invalid-history-date.db');
+
+    await insertSession(database.owner, {
+      id: 'invalid-local-date',
+      sessionType: 'focus',
+      focusVariant: 'standard',
+      mode: 'relax',
+      status: 'cancelled',
+      workTag: 'coding',
+      durationMinutes: 25,
+      startedAt: BASE_TIMESTAMP,
+      resolvedAt: BASE_TIMESTAMP + 1_000,
+      localDate: '2026-02-30',
+    });
+
+    expect(await database.graph.standardFocusHistory.list({
+      profileId: 1,
+      limit: 20,
+      cursor: null,
+    })).toEqual({
+      ok: false,
+      error: {
+        kind: 'persistence_error',
+        code: 'PERSISTENCE_CORRUPT_DATA',
+        entity: 'sessions',
+        field: 'history_identity',
+      },
+    });
+    await database.owner.close();
+  });
+
+  it('prepares the isolated mixed History fixture through production boundaries', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'pixeldoro-us0901-history-fixture-'));
+    temporaryDirectories.push(directory);
+    const driver = new HostSQLiteDriver(directory);
+    const databaseName = 'history-fixture.db';
+    const database = await createDatabase(driver, databaseName);
+    const fixture = createHistoryFirstPageReviewFixture(
+      'history_first_page_mixed',
+      database.graph.standardFocusHistory,
+    );
+    if (fixture === undefined) throw new Error('history fixture missing');
+    const coordinator = new SessionCommandCoordinator();
+    expect(await fixture.prepare({
+      coordinator,
+      history: database.graph.standardFocusHistory,
+      installation: database.graph.installation,
+      longBreakCadence: database.graph.longBreakCadence,
+      profile: database.graph.profile,
+      rewards: database.graph.rewards,
+      sessions: database.graph.sessions,
+      transaction: database.transaction,
+    })).toBe(true);
+    expect(await fixture.prepare({
+      coordinator,
+      history: database.graph.standardFocusHistory,
+      installation: database.graph.installation,
+      longBreakCadence: database.graph.longBreakCadence,
+      profile: database.graph.profile,
+      rewards: database.graph.rewards,
+      sessions: database.graph.sessions,
+      transaction: database.transaction,
+    })).toBe(false);
+
+    expect(await new LoadFocusHistoryPageUseCase({
+      history: fixture.history,
+    }).execute()).toMatchObject({
+      ok: true,
+      value: {
+        items: [
+          { id: 'us0901-standard-cancelled', status: 'cancelled', workTag: 'writing' },
+          { id: 'us0901-standard-failed', status: 'failed', workTag: 'study' },
+          { id: 'us0901-standard-completed', status: 'completed', workTag: 'coding' },
+        ],
+        nextCursor: null,
+      },
+    });
+    await database.owner.close();
+
+    const reopened = await createDatabase(driver, databaseName);
+    const reopenedProjection = await new LoadFocusHistoryPageUseCase({
+      history: reopened.graph.standardFocusHistory,
+    }).execute();
+    expect(reopenedProjection.ok).toBe(true);
+    if (!reopenedProjection.ok) throw new Error('reopened history failed');
+    expect(reopenedProjection.value.items.map(({ id }) => id)).toEqual([
+      'us0901-standard-cancelled',
+      'us0901-standard-failed',
+      'us0901-standard-completed',
+    ]);
     await reopened.owner.close();
   });
 

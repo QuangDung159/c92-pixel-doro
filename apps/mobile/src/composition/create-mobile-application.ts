@@ -113,6 +113,7 @@ import { createBreakSideEffects } from './break/create-break-side-effects';
 import { createStandardFocusSideEffects } from './standard-focus/create-standard-focus-side-effects';
 import { createShopSlice } from './shop/create-shop-slice';
 import { createRoomDecorationsSlice } from './room/create-room-decorations-slice';
+import { createHistorySlice } from './history/create-history-slice';
 import {
   createShopReviewFixture,
   resolveShopReviewScenario,
@@ -137,6 +138,11 @@ import {
   epic08ExitReviewDatabaseName,
   resolveEpic08ExitReviewScenario,
 } from './review/epic-08-exit-review-fixture';
+import {
+  createHistoryFirstPageReviewFixture,
+  historyFirstPageReviewDatabaseName,
+  resolveHistoryFirstPageReviewScenario,
+} from './review/history-first-page-review-fixture';
 
 const PIXELDORO_DATABASE_NAME = 'pixeldoro.db';
 
@@ -187,6 +193,10 @@ export const createMobileApplication = (
     options.diagnosticsEnabled !== false &&
     typeof __DEV__ !== 'undefined' &&
     __DEV__;
+  const historyFirstPageReviewScenario = resolveHistoryFirstPageReviewScenario(
+    process.env.EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE,
+    reviewFixturesEnabled,
+  );
   const shopReviewScenario = resolveShopReviewScenario(
     process.env.EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE,
     reviewFixturesEnabled,
@@ -220,7 +230,9 @@ export const createMobileApplication = (
     reviewFixturesEnabled,
   );
   const databaseOwner = new SQLiteDatabaseOwner(
-    options.databaseName ?? (epic08ExitReviewScenario !== undefined
+    options.databaseName ?? (historyFirstPageReviewScenario !== undefined
+      ? historyFirstPageReviewDatabaseName(historyFirstPageReviewScenario)
+      : epic08ExitReviewScenario !== undefined
       ? epic08ExitReviewDatabaseName(epic08ExitReviewScenario)
       : inventoryEquipReviewScenario !== undefined
       ? inventoryEquipReviewDatabaseName(inventoryEquipReviewScenario)
@@ -239,6 +251,10 @@ export const createMobileApplication = (
   );
   const transaction = new SQLiteTransaction(databaseOwner);
   const persistence = createSQLitePersistenceGraph(databaseOwner, transaction);
+  const historyFirstPageReviewFixture = createHistoryFirstPageReviewFixture(
+    historyFirstPageReviewScenario,
+    persistence.standardFocusHistory,
+  );
   const epic08ExitReviewFixture = createEpic08ExitReviewFixture(
     epic08ExitReviewScenario,
     persistence.analyticsQueue,
@@ -524,6 +540,10 @@ export const createMobileApplication = (
     ...(roomDecorationReviewScenario === undefined ? {} : {
       reviewProjection: createRoomDecorationReviewProjection(roomDecorationReviewScenario)!,
     }),
+  });
+  const history = createHistorySlice({
+    criticalRecovery: bootstrap,
+    history: historyFirstPageReviewFixture?.history ?? persistence.standardFocusHistory,
   });
   const confirmedReset = new ConfirmedLocalDataReset({
     activeSessions: persistence.sessions,
@@ -1029,6 +1049,7 @@ export const createMobileApplication = (
     standardFocusNotificationNavigation: standardFocusSideEffects.navigation,
     shop: shop.shop,
     roomDecorations: roomDecorations.controller,
+    history: history.controller,
     standardFocusReviewResetAvailable: reviewFixturesEnabled,
     onboardingTrialRunning,
     onboardingTrialCompletion,
@@ -1047,6 +1068,25 @@ export const createMobileApplication = (
     boot: async () => {
       await runProbeIfEnabled();
       await bootstrap.boot();
+      if (
+        bootstrap.getSnapshot().status === 'ready' &&
+        historyFirstPageReviewFixture !== undefined
+      ) {
+        const changed = await historyFirstPageReviewFixture.prepare({
+          coordinator: sessionCommands,
+          history: persistence.standardFocusHistory,
+          installation: persistence.installation,
+          longBreakCadence: persistence.longBreakCadence,
+          profile: persistence.profile,
+          rewards: persistence.rewards,
+          sessions: persistence.sessions,
+          transaction,
+        });
+        if (changed) {
+          const refreshed = await bootstrap.refreshReadySnapshot();
+          if (!refreshed.ok) bootstrap.enterRecovery('DATABASE_READ_FAILED');
+        }
+      }
       if (
         bootstrap.getSnapshot().status === 'ready' &&
         epic08ExitReviewFixture !== undefined
@@ -1311,6 +1351,7 @@ export const createMobileApplication = (
         standardFocusSideEffects.navigation.dispose();
         shop.dispose();
         roomDecorations.dispose();
+        history.dispose();
         onboardingTrialRunning.dispose();
         onboardingTrialHandoff.dispose();
         onboardingTrialPetFeedback.dispose();

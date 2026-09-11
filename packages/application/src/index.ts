@@ -4,6 +4,15 @@ export {
   type FoundationSnapshot,
 } from './foundation/create-foundation-snapshot.use-case';
 export {
+  FOCUS_HISTORY_PAGE_SIZE,
+  LoadFocusHistoryPageUseCase,
+  type FocusHistoryFirstPageProjection,
+  type FocusHistoryItemProjection,
+  type LoadFocusHistoryPageDependencies,
+  type LoadFocusHistoryPageError,
+  type LoadFocusHistoryPageErrorCode,
+} from './history/load-focus-history-page.use-case';
+export {
   createHomeProfileProjection,
   type HomeProfileProjection,
 } from './home/create-home-profile.projection';

@@ -24,6 +24,7 @@ import type {
   PetVisualDiagnostic,
   ShopControllerProjection,
   RoomDecorationsControllerProjection,
+  HistoryControllerProjection,
 } from '@/application';
 
 const MobileApplicationContext = createContext<MobileApplicationFacade | undefined>(undefined);
@@ -195,6 +196,24 @@ export const useRoomDecorationsActions = () => {
     activate: roomDecorations.activate,
     deactivate: roomDecorations.deactivate,
     retry: roomDecorations.retry,
+  };
+};
+
+export const useHistoryProjection = (): HistoryControllerProjection => {
+  const { history } = useMobileApplication();
+  return useSyncExternalStore(
+    history.subscribe,
+    history.getSnapshot,
+    history.getSnapshot,
+  );
+};
+
+export const useHistoryActions = () => {
+  const { history } = useMobileApplication();
+  return {
+    activate: history.activate,
+    deactivate: history.deactivate,
+    retry: history.retry,
   };
 };
 

@@ -97,6 +97,7 @@ export { AppVisibilityController } from './visibility/app-visibility.controller'
 export * from './break';
 export * from './shop';
 export * from './room';
+export * from './history';
 export {
   OnboardingTrialRunningController,
   type OnboardingTrialRunningControllerDependencies,

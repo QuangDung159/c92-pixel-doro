@@ -21,11 +21,11 @@ describe('EPIC-08 aggregate production boundary', () => {
     );
   });
 
-  it('retains later-Epic prototype ownership while Shop remains retired from it', () => {
+  it('retains Settings prototype ownership while Shop and History remain retired from it', () => {
     const root = read('apps/mobile/src/app/_layout.tsx');
     expect(root).toContain('PrototypeProvider');
     expect(read('apps/mobile/src/presentation/features/history/index.tsx'))
-      .toMatch(/prototype/i);
+      .not.toMatch(/prototype|mock|sample/i);
     expect(read('apps/mobile/src/presentation/features/settings/index.tsx'))
       .toMatch(/prototype/i);
     expect(read('apps/mobile/src/presentation/features/shop/index.tsx'))

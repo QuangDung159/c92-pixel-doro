@@ -50,6 +50,23 @@ const equippedRoomFlow = await readFile(
 const epic08ExitFlow = await readFile(
   `${deviceDirectory}epic-08-exit-smoke.md`, 'utf8',
 );
+const focusHistoryFirstPageFlow = await readFile(
+  `${deviceDirectory}focus-history-first-page-smoke.md`, 'utf8',
+);
+for (const evidence of [
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=history_first_page_empty',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=history_first_page_mixed',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=history_first_page_read_failure_once',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=history_first_page_corrupt',
+  'pixeldoro-us-09-01-', '11/09/2026', 'Hoàn thành', 'Thất bại', 'Đã hủy',
+  'Thử lại', 'Airplane mode', 'VoiceOver/TalkBack', 'Reduce Motion',
+  'pixeldoro.db', 'NOT_RUN', '<implementation-sha>',
+  'unset EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE',
+]) {
+  if (!focusHistoryFirstPageFlow.includes(evidence)) {
+    throw new Error(`Focus history first-page device guide is missing: ${evidence}`);
+  }
+}
 for (const evidence of [
   'EXPO_PUBLIC_EPIC_08_EXIT_REVIEW_FIXTURE=epic_08_fresh_reward_to_room',
   'epic_08_relaunch_committed', 'epic_08_provider_failure',

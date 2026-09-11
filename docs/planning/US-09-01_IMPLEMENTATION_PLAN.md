@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_09_01_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-09-01 Implementation Plan
-version: 0.1.0
-status: PENDING_OWNER_CONFIRMATION
-implementation_status: NOT_STARTED
+version: 0.3.0
+status: IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE
+implementation_status: AUTOMATED_GATES_PASSED
 date: 2026-09-11
 last_updated: 2026-09-11
 owner: Dũng Lư
@@ -12,7 +12,8 @@ reviewer_role: Tech Lead/Product Owner
 language: vi
 branch: feats/epic-09
 planning_baseline_sha: 950cd90c2eae3ae4e6abe99f5e1ea42e207a9f55
-implementation_start_sha: null
+implementation_start_sha: 950cd90c2eae3ae4e6abe99f5e1ea42e207a9f55
+current_candidate_base_sha: f1213e4429ee3ec55c490eccd459ab611af0c202
 exact_implementation_sha: null
 previous_epic: EPIC-08
 previous_epic_status: DONE_OWNER_ACCEPTED
@@ -23,7 +24,7 @@ schema_change: NONE_PROPOSED
 dependency_change: NONE_PROPOSED
 native_change: NONE_PROPOSED
 analytics_change: NONE_PROPOSED_IN_THIS_STORY
-next_gate: OWNER_CONFIRM_US0901_CONFIRM_01_TO_06_AND_AUTHORIZE_CODING
+next_gate: RUN_OWNER_QUICK_UI_SMOKE_AND_CONFIRM
 scope:
   - mobile_mvp
   - epic_09
@@ -32,7 +33,7 @@ scope:
   - first_page_read_projection
   - production_history_screen
   - read_only
-authority: PROPOSED_IMPLEMENTATION_PLAN
+authority: APPROVED_IMPLEMENTATION_PLAN
 story_baseline: ./EPIC-09_USER_STORIES.md
 epic_baseline: ./MVP_EPICS.md
 source_of_truth: ../PIXELDORO_CORE_TRUTH.md
@@ -53,8 +54,8 @@ previous_epic_exit: ./EPIC-08_EXIT_REPORT.md
 ## 0. Mục đích, outcome và gate
 
 Tài liệu này chuyển `US-09-01` trong breakdown EPIC-09 thành một implementation plan reviewable.
-Plan chỉ mô tả implementation candidate; chưa cấp quyền coding, không claim test, device evidence,
-commit hoặc push.
+Plan đã được owner duyệt và implementation candidate đã hoàn tất automated gates. Manual device/UI
+evidence vẫn `NOT_RUN`; candidate chưa commit hoặc push.
 
 **User outcome:** khi mở tab Lịch sử, user thấy tối đa 20 phiên Standard Focus terminal gần nhất từ
 SQLite theo stable order, với ngày, configured duration, work tag và explicit status; hoặc thấy
@@ -77,7 +78,7 @@ owner chấp nhận exact candidate của Story 01 và read-only first-page cont
 | Worktree trước file plan | Clean |
 | EPIC-09 breakdown | Committed tại planning HEAD; status `PENDING_OWNER_CONFIRMATION` |
 | EPIC-08 | `DONE_OWNER_ACCEPTED`; behavior SHA `30adc34be23d...` |
-| Implementation authorization | Chưa có |
+| Implementation authorization | Owner approved Option A cho `US0901-CONFIRM-01→06` |
 
 ### 0.2. Readiness checklist trước coding
 
@@ -88,9 +89,9 @@ owner chấp nhận exact candidate của Story 01 và read-only first-page cont
 - [x] Existing schema/query chứng minh đủ durable facts; không có migration requirement.
 - [x] Existing query đã có stable order, terminal Standard Focus filter, cursor và index evidence.
 - [x] EPIC-08 predecessor đã owner accepted.
-- [ ] Owner duyệt `US0901-CONFIRM-01→06` và các inherited Story-01 decisions.
-- [ ] Exact clean `implementation_start_sha` được ghi sau approval, trước production edit.
-- [ ] Planned production paths được re-check để không overwrite owner changes mới.
+- [x] Owner duyệt `US0901-CONFIRM-01→06` và các inherited Story-01 decisions ngày 2026-09-11.
+- [x] Exact clean `implementation_start_sha` được ghi sau approval, trước production edit.
+- [x] Planned production paths được re-check để không overwrite owner changes mới.
 
 ## 1. Authority reconciliation và scope boundary
 
@@ -449,12 +450,12 @@ stop and add the exact consumer/regression impact to this plan before editing it
 
 ### 5.3. Size and responsibility gates
 
-- [ ] No component exceeds 300 lines.
-- [ ] Any component approaching 240–260 lines gets explicit split review.
-- [ ] `HistoryScreen` does not absorb row/status/list implementations if independent tests are clearer.
-- [ ] Route and hooks remain thin; no durable state in React state/context/Zustand.
-- [ ] `create-mobile-application.ts` contains wiring only for this feature.
-- [ ] Feature-local components are not promoted to common speculatively.
+- [x] No component exceeds 300 lines.
+- [x] Any component approaching 240–260 lines gets explicit split review.
+- [x] `HistoryScreen` does not absorb row/status/list implementations if independent tests are clearer.
+- [x] Route and hooks remain thin; no durable state in React state/context/Zustand.
+- [x] `create-mobile-application.ts` contains wiring only for this feature.
+- [x] Feature-local components are not promoted to common speculatively.
 
 ## 6. Navigation, lifecycle và recovery matrix
 
@@ -552,38 +553,38 @@ Production screen/query/controller execution must preserve the exact product-tab
 
 ### 9.1. T00 gate
 
-- [ ] Owner approves `US0901-CONFIRM-01→06` Option A.
-- [ ] Approval explicitly authorizes coding US-09-01 only, not Story 02 or the whole Epic.
-- [ ] Current branch/HEAD/origin/worktree is re-audited.
-- [ ] Existing owner changes are preserved; conflicting paths stop for review.
-- [ ] `implementation_start_sha` is recorded before T01.
+- [x] Owner approves `US0901-CONFIRM-01→06` Option A.
+- [x] Approval explicitly authorizes coding US-09-01 only, not Story 02 or the whole Epic.
+- [x] Current branch/HEAD/origin/worktree is re-audited.
+- [x] Existing owner changes are preserved; no conflicting production-path change exists.
+- [x] `implementation_start_sha` is recorded as `950cd90c2eae3ae4e6abe99f5e1ea42e207a9f55` before T01.
 
 ### 9.2. T01–T04 gate
 
-- [ ] Query rejects impossible canonical dates without schema/migration edit.
-- [ ] Use case owns fixed profile/page input and validates output defensively.
-- [ ] No layer duplicates SQL inclusion/order logic.
-- [ ] Technical read errors remain local; durable invalid facts enter exact critical recovery.
-- [ ] Controller coalesces pending work and drops stale completion.
-- [ ] Facade/hooks expose no repository/query/SQLite object to Presentation.
+- [x] Query rejects impossible canonical dates without schema/migration edit.
+- [x] Use case owns fixed profile/page input and validates output defensively.
+- [x] No layer duplicates SQL inclusion/order logic.
+- [x] Technical read errors remain local; durable invalid facts enter exact critical recovery.
+- [x] Controller coalesces pending work and drops stale completion.
+- [x] Facade/hooks expose no repository/query/SQLite object to Presentation.
 
 ### 9.3. T05–T07 gate
 
-- [ ] History displays only date/duration/tag/status from typed projection.
-- [ ] Empty/loading/error/Retry/ready are all observable without mock fallback.
+- [x] History displays only date/duration/tag/status from typed projection.
+- [x] Empty/loading/error/Retry/ready are all observable without mock fallback.
 - [ ] Status/date semantics survive grayscale and screen reader.
-- [ ] No contribution/load-more/date-group/analytics feature leaks into Story 01.
-- [ ] History-only prototype imports/data/controls are absent.
-- [ ] Every fixture uses exact isolated database namespace and deterministic cleanup.
+- [x] No contribution/load-more/date-group/analytics feature leaks into Story 01.
+- [x] History-only prototype imports/data/controls are absent.
+- [x] Every fixture uses exact isolated database namespace and deterministic cleanup.
 
 ### 9.4. T08–T09 gate
 
-- [ ] Unit/controller/component/SQLite/static tests pass on exact candidate.
-- [ ] Read/render/retry/relaunch product-table fingerprints are identical.
-- [ ] Existing full regression suite, boundary, hygiene and device-guide validator pass.
-- [ ] iOS and Android JS exports pass; Doctor drift is recorded, not silently fixed.
-- [ ] Manual guide exists with actual status, initially `NOT_RUN`.
-- [ ] Implementation report contains exact files, commands, results, residual limitations and SHA status.
+- [x] Unit/controller/component/SQLite/static tests pass on exact candidate.
+- [x] Read/render/retry/relaunch product-table fingerprints are identical.
+- [x] Existing full regression suite, boundary, hygiene and device-guide validator pass.
+- [x] iOS and Android JS exports pass; Doctor drift is recorded, not silently fixed.
+- [x] Manual guide exists with actual status, initially `NOT_RUN`.
+- [x] Implementation report contains exact files, commands, results, residual limitations and SHA status.
 
 ## 10. Automated test strategy
 
@@ -746,12 +747,12 @@ is always the primary navigation entry.
 
 ### 13.1. Definition of Ready
 
-- [ ] Owner approves `US0901-CONFIRM-01→06` Option A and authorizes Story-01 coding.
-- [ ] Relevant breakdown decisions `US0900-CONFIRM-01/05/08/10` are thereby ratified for Story 01.
-- [ ] First-page/row/lifecycle/recovery/component/fixture contracts are settled.
-- [ ] Branch, HEAD, origin and worktree are re-audited after approval.
-- [ ] No owner change conflicts with planned files.
-- [ ] Exact `implementation_start_sha` is written into this plan before code edits.
+- [x] Owner approves `US0901-CONFIRM-01→06` Option A and authorizes Story-01 coding.
+- [x] Relevant breakdown decisions `US0900-CONFIRM-01/05/08/10` are thereby ratified for Story 01.
+- [x] First-page/row/lifecycle/recovery/component/fixture contracts are settled.
+- [x] Branch, HEAD, origin and worktree are re-audited after approval.
+- [x] No owner change conflicts with planned files.
+- [x] Exact `implementation_start_sha` is written into this plan before code edits.
 
 ### 13.2. Definition of Done
 
@@ -783,7 +784,7 @@ is always the primary navigation entry.
   nhưng không render hoặc expose load-more action.
 - **Option B:** đọc `100` rows và không giữ cursor seam.
 - **Impact/block:** A reuse query/paging contract và giữ UI slice nhỏ; block T02/controller acceptance.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-11.
 
 ### US0901-CONFIRM-02 — Row content và date format
 
@@ -792,7 +793,7 @@ is always the primary navigation entry.
   status; không mode, time-of-day, XP/Coin/reward.
 - **Option B:** chỉ duration/tag/status, không hiển thị date trước Story 02.
 - **Impact/block:** A làm recent history có ngữ cảnh mà không timezone recompute; block row copy/a11y tests.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-11.
 
 ### US0901-CONFIRM-03 — Refocus behavior tạm thời của Story 01
 
@@ -801,7 +802,7 @@ is always the primary navigation entry.
   không refresh; cold relaunch đọc lại. Retry chỉ xuất hiện sau technical error.
 - **Option B:** Story 01 đã refresh mỗi refocus và thêm ready-refreshing/stale-error state.
 - **Impact/block:** A giữ vertical slice nhỏ và tránh implement nửa Story 02; block controller state shape.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-11.
 
 ### US0901-CONFIRM-04 — Validation và Recovery boundary
 
@@ -812,7 +813,7 @@ is always the primary navigation entry.
   không repair/reset tự động.
 - **Option B:** mọi read failure vào global Recovery và không thêm defensive page validation.
 - **Impact/block:** A fail closed cho durable truth nhưng giữ app usable với lỗi tạm; block T01–T03.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-11.
 
 ### US0901-CONFIRM-05 — Component và prototype boundary
 
@@ -822,7 +823,7 @@ is always the primary navigation entry.
 - **Option B:** tạo common virtualized history primitives và mở rộng ScreenShell ngay.
 - **Impact/block:** A ít regression và để grouping/pagination quyết định virtualization ở Story 02;
   block T05/T06.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-11.
 
 ### US0901-CONFIRM-06 — Fixture và evidence gate
 
@@ -832,13 +833,13 @@ is always the primary navigation entry.
   structured/formal breadth giữ `NOT_RUN` nếu chưa thực thi.
 - **Option B:** không tạo device fixtures; chỉ dựa vào automated tests/manual data hiện có.
 - **Impact/block:** A cho evidence lặp lại và cleanup an toàn; block T07–T09/candidate acceptance.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-11.
 
 ### 14.1. Confirmation response
 
-Owner có thể duyệt và mở coding bằng một câu:
+Owner đã duyệt và mở coding bằng câu:
 
-`Duyệt US0901-CONFIRM-01→06 theo Option A và authorize coding US-09-01`
+`Duyệt US0901-CONFIRM-01→06 theo Option A` → tiến hành coding US-09-01.
 
 Approval này ratify `US0900-CONFIRM-01/05/08/10` cho phạm vi Story 01, nhưng không resolve các
 confirmation contribution/analytics/later-Story khác và không authorize commit, push hoặc US-09-02.
@@ -880,4 +881,6 @@ durable fact.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.3.0 | 2026-09-11 | Codex | Completed US-09-01 candidate; recorded automated quality/export/SQLite/static evidence, honest Doctor drift and `NOT_RUN` manual status; opened owner UI smoke gate. No commit or push. |
+| 0.2.0 | 2026-09-11 | Codex | Recorded owner approval for `US0901-CONFIRM-01→06` Option A and coding authorization; locked implementation start SHA `950cd90c...`. |
 | 0.1.0 | 2026-09-11 | Codex | Audited committed EPIC-09 breakdown and production query/UI/composition/test baseline; proposed a read-only 20-row first-page slice, canonical date hardening, typed use case/controller, History-only prototype retirement, isolated fixtures and six owner confirmations. No coding, test claim, commit or push. |
