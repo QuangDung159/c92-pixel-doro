@@ -24,20 +24,50 @@ describe('roomDecorationManifest', () => {
     expect(roomDecorationAtlas.sha256).toHaveLength(64);
     expect(roomBackdropAsset.width / roomBackdropAsset.height).toBeCloseTo(1672 / 941, 6);
     expect(roomDecorationManifest.find(({ itemId }) => itemId === 'desk-mug'))
-      .toMatchObject({ xRatio: 0.035, yRatio: 0.33, sizeRatio: 0.0931, layer: 'front' });
+      .toMatchObject({
+        sourceBounds: { x: 93, y: 147, width: 199, height: 162 },
+        target: { leftRatio: 0.020, topRatio: 0.227, widthRatio: 0.064, heightRatio: 0.046 },
+        layer: 'front',
+      });
     expect(roomDecorationManifest.find(({ itemId }) => itemId === 'tiny-plant'))
-      .toMatchObject({ xRatio: 0.125, yRatio: 0.31, sizeRatio: 0.10, layer: 'front' });
+      .toMatchObject({
+        sourceBounds: { x: 70, y: 99, width: 198, height: 226 },
+        target: { leftRatio: 0.043, topRatio: 0.187, widthRatio: 0.064, heightRatio: 0.078 },
+        layer: 'front',
+      });
     expect(roomDecorationManifest.find(({ itemId }) => itemId === 'book-stack'))
-      .toMatchObject({ xRatio: 0.19, yRatio: 0.325, sizeRatio: 0.1172, layer: 'front' });
+      .toMatchObject({
+        sourceBounds: { x: 30, y: 146, width: 277, height: 176 },
+        target: { leftRatio: 0.109, topRatio: 0.212, widthRatio: 0.097, heightRatio: 0.048 },
+        layer: 'front',
+      });
     const mug = roomDecorationManifest.find(({ itemId }) => itemId === 'desk-mug')!;
     const plant = roomDecorationManifest.find(({ itemId }) => itemId === 'tiny-plant')!;
-    expect(mug.xRatio).toBeLessThan(plant.xRatio);
-    expect(plant.xRatio).toBeLessThan(
-      roomDecorationManifest.find(({ itemId }) => itemId === 'book-stack')!.xRatio,
+    expect(mug.target.leftRatio).toBeLessThan(plant.target.leftRatio);
+    expect(plant.target.leftRatio).toBeLessThan(
+      roomDecorationManifest.find(({ itemId }) => itemId === 'book-stack')!.target.leftRatio,
     );
-    expect(roomDecorationManifest.every(({ xRatio, yRatio, sizeRatio }) =>
-      xRatio >= 0 && xRatio < 1 && yRatio >= 0 && yRatio < 1 &&
-      sizeRatio > 0 && sizeRatio < 0.2)).toBe(true);
+    expect(roomDecorationManifest.every(({ sourceBounds, target }) =>
+      sourceBounds.x >= 0 && sourceBounds.y >= 0 &&
+      sourceBounds.width > 0 && sourceBounds.height > 0 &&
+      sourceBounds.x + sourceBounds.width <= 362 &&
+      sourceBounds.y + sourceBounds.height <= 362 &&
+      target.leftRatio >= 0 && target.topRatio >= 0 &&
+      target.widthRatio > 0 && target.heightRatio > 0 &&
+      target.leftRatio + target.widthRatio <= 1 &&
+      (target.topRatio + target.heightRatio) * roomBackdropAsset.width <=
+        roomBackdropAsset.height)).toBe(true);
+  });
+
+  it('maps the visible sprite bounds onto the approved reference target', () => {
+    const room = { width: 640, height: 360 };
+    for (const item of roomDecorationManifest) {
+      const frame = resolveRoomDecorationFrame(item, room);
+      expect(frame.left).toBeCloseTo(room.width * item.target.leftRatio, 6);
+      expect(frame.top).toBeCloseTo(room.width * item.target.topRatio, 6);
+      expect(frame.width).toBeCloseTo(room.width * item.target.widthRatio, 6);
+      expect(frame.height).toBeCloseTo(room.width * item.target.heightRatio, 6);
+    }
   });
 
   it('scales every frame uniformly from the measured portrait room canvas', () => {
@@ -47,7 +77,10 @@ describe('roomDecorationManifest', () => {
     expect(large).toEqual({
       left: compact.left * 2,
       top: compact.top * 2,
-      size: compact.size * 2,
+      width: compact.width * 2,
+      height: compact.height * 2,
+      atlasCellWidth: compact.atlasCellWidth * 2,
+      atlasCellHeight: compact.atlasCellHeight * 2,
     });
   });
 

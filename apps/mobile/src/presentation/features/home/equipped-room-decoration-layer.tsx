@@ -29,7 +29,10 @@ const AtlasSprite = ({
   readonly room: RoomLayout;
 }) => {
   const frame = resolveRoomDecorationFrame(item, room);
-  const size = frame.size;
+  const sourceLeft = item.atlasColumn * frame.atlasCellWidth +
+    item.sourceBounds.x * frame.atlasCellWidth / 362;
+  const sourceTop = item.atlasRow * frame.atlasCellHeight +
+    item.sourceBounds.y * frame.atlasCellHeight / 362;
   return (
     <View
       accessibilityElementsHidden
@@ -38,8 +41,8 @@ const AtlasSprite = ({
       style={[styles.spriteWindow, {
         left: frame.left,
         top: frame.top,
-        width: size,
-        height: size,
+        width: frame.width,
+        height: frame.height,
       }]}
     >
       <Image
@@ -48,10 +51,10 @@ const AtlasSprite = ({
         source={item.source}
         style={{
           position: 'absolute',
-          width: size * roomDecorationAtlas.columns,
-          height: size * roomDecorationAtlas.rows,
-          left: -item.atlasColumn * size,
-          top: -item.atlasRow * size,
+          width: frame.atlasCellWidth * roomDecorationAtlas.columns,
+          height: frame.atlasCellHeight * roomDecorationAtlas.rows,
+          left: -sourceLeft,
+          top: -sourceTop,
         }}
       />
     </View>

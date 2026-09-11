@@ -37,8 +37,13 @@ EXPO_PUBLIC_EPIC_08_ROOM_REVIEW_FIXTURE=room_full_equipped pnpm start --clear
 ```
 
 - [ ] All 12 approved decorations render together without changing SQLite ownership/equipment.
-- [ ] Desk order matches the approved reference: mug, plant, book stack, then desk lamp.
-- [ ] Wall/floor objects stay in their intended zones and do not cover Cat or navigation.
+- [ ] Compare visible artwork bounds (not transparent atlas cells) with the approved contact sheet:
+  mug/plant/books/lamp sit on the desk; calendar/poster/window hang on the wall; bookshelf,
+  armchair and standing lamp form the right-side cluster; cushion/rug sit on the floor.
+- [ ] Relative sizes match the approved composition: window/rug/furniture remain large while desk
+  accessories remain small; Cat is centered above the rug.
+- [ ] Repeat the full-room fixture on one narrow and one wide portrait device. Every object keeps the
+  same relationship to the room surfaces; no per-device anchor adjustment or state reset is needed.
 
 ## Empty và cleanup
 
