@@ -14,7 +14,11 @@ describe('createShopSlice', () => {
         ok: true as const,
         value: 'enqueued' as const,
       })) },
-      catalog: { list: vi.fn(async () => ({ ok: true as const, value: [] })) },
+      catalog: {
+        findById: vi.fn(),
+        findByIdInTransaction: vi.fn(),
+        list: vi.fn(async () => ({ ok: true as const, value: [] })),
+      },
       clock: { nowMs: () => 1_000 },
       coordinator,
       criticalRecovery: { enterRecovery: vi.fn() },
@@ -23,7 +27,23 @@ describe('createShopSlice', () => {
         value: { profileId: 1, totalXp: 0, coinBalance: 0 },
       })) },
       id: { nextId: () => 'episode-1' },
-      ownedItems: { listByProfile: vi.fn(async () => ({ ok: true as const, value: [] })) },
+      ownedItems: {
+        find: vi.fn(),
+        findInTransaction: vi.fn(),
+        insertInTransaction: vi.fn(),
+        listByProfile: vi.fn(async () => ({ ok: true as const, value: [] })),
+        setEquippedInTransaction: vi.fn(),
+      },
+      profile: {
+        findInTransaction: vi.fn(),
+        debitCatalogItemInTransaction: vi.fn(),
+      },
+      purchases: {
+        findByProfileAndItem: vi.fn(),
+        findByProfileAndItemInTransaction: vi.fn(),
+        insertInTransaction: vi.fn(),
+      },
+      readiness: { run: (work) => ({ ok: true as const, value: work() }) },
       readBootstrap: () => ({ status: 'ready', snapshot: {
         migrationVersion: 1,
         installation: { installedAt: 1, onboardingCompletedAt: null },
@@ -40,6 +60,7 @@ describe('createShopSlice', () => {
         profile: { totalXp: 0, coinBalance: 0 },
         catalog: [],
       }, lifecycleState: 'active' }),
+      transaction: { execute: vi.fn() },
     });
 
     await slice.shop.activate();

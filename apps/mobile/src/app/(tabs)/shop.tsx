@@ -9,7 +9,15 @@ import {
 
 export default function ShopRoute() {
   const projection = useShopProjection();
-  const { activate, deactivate, retry } = useShopActions();
+  const {
+    activate,
+    confirmPurchase,
+    deactivate,
+    dismissPurchase,
+    requestPurchase,
+    retry,
+    retryPurchaseRefresh,
+  } = useShopActions();
 
   useFocusEffect(
     useCallback(() => {
@@ -18,5 +26,14 @@ export default function ShopRoute() {
     }, [activate, deactivate]),
   );
 
-  return <ShopScreen onRetry={() => void retry()} projection={projection} />;
+  return (
+    <ShopScreen
+      onConfirmPurchase={() => void confirmPurchase()}
+      onDismissPurchase={dismissPurchase}
+      onRequestPurchase={requestPurchase}
+      onRetry={() => void retry()}
+      onRetryPurchaseRefresh={() => void retryPurchaseRefresh()}
+      projection={projection}
+    />
+  );
 }

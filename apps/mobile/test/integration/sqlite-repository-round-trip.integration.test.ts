@@ -14,8 +14,13 @@ import type {
   PersistenceError,
   RunningSessionRecord,
 } from '@pixeldoro/application';
+import { PurchaseItemUseCase, SessionCommandCoordinator } from '@pixeldoro/application';
 import { MigrationRunner } from '@/infrastructure/database/migration-runner';
 import { productionMigrationRegistry } from '@/infrastructure/database/migrations/migration-registry';
+import {
+  INITIAL_CATALOG_SEED,
+  INITIAL_SCHEMA_VERSION,
+} from '@/infrastructure/database/migrations/schema-manifest';
 import { createSQLitePersistenceGraph } from '@/infrastructure/database/persistence-graph';
 import { SQLiteDatabaseOwner } from '@/infrastructure/database/sqlite-database-owner';
 import type {
@@ -119,6 +124,91 @@ afterEach(async () => {
 });
 
 describe('SQLite repository durable round trip', () => {
+  it('commits one atomic purchase and reopens the debited unequipped ownership', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'pixeldoro-us0802-'));
+    temporaryDirectories.push(directory);
+    const driver = new HostSQLiteDriver(directory);
+    const databaseName = 'purchase.db';
+    const first = await createDatabase(driver, databaseName);
+    const session: RunningSessionRecord = {
+      id: 'purchase-focus-1', profileId: 1, sessionType: 'focus', focusVariant: 'standard',
+      mode: 'relax', status: 'running', workTag: 'coding', configuredDurationMinutes: 25,
+      startedAt: timestamp, endsAt: timestamp + 1_500_000, backgroundedAt: null,
+      resolvedAt: null, xpEarned: 0, coinsEarned: 0, rewardClaimedAt: null,
+      scheduledEndLocalDate: '2026-08-28', scheduledEndUtcOffsetMinutes: 420,
+      createdAt: timestamp, updatedAt: timestamp,
+    };
+    const rewarded = await first.transaction.execute(async (scope) => {
+      const inserted = await first.graph.sessions.insertRunningInTransaction(scope, session);
+      if (!inserted.ok) return inserted;
+      const resolvedAt = session.endsAt;
+      const transitioned = await first.graph.sessions.transitionFromRunningInTransaction(scope, {
+        sessionId: session.id, status: 'completed', resolvedAt, xpEarned: 25,
+        coinsEarned: 5, rewardClaimedAt: resolvedAt, updatedAt: resolvedAt,
+      });
+      if (!transitioned.ok) return transitioned;
+      const progressed = await first.graph.profile.applyProgressionInTransaction(scope, {
+        profileId: 1, xpDelta: 25, coinDelta: 5, updatedAt: resolvedAt,
+      });
+      if (!progressed.ok) return progressed;
+      return first.graph.rewards.insertInTransaction(scope, {
+        id: 'purchase-reward-1', sessionId: session.id, profileId: 1,
+        xpDelta: 25, coinDelta: 5, reason: 'focus_completed', createdAt: resolvedAt,
+      });
+    });
+    expect(rewarded).toMatchObject({ ok: true });
+
+    const approvedCatalog = INITIAL_CATALOG_SEED.map((item) => ({
+      ...item, catalogVersion: INITIAL_SCHEMA_VERSION,
+    }));
+    const purchase = new PurchaseItemUseCase({
+      approvedCatalog,
+      catalog: first.graph.catalog,
+      clock: { nowMs: () => session.endsAt + 1 },
+      coordinator: new SessionCommandCoordinator(),
+      economy: first.graph.economyConsistency,
+      id: { nextId: () => 'purchase-receipt-1' },
+      ownedItems: first.graph.ownedItems,
+      profile: first.graph.profile,
+      purchases: first.graph.purchases,
+      transaction: first.transaction,
+    });
+    expect(await purchase.execute({ itemId: 'desk-mug' })).toMatchObject({
+      ok: true,
+      value: {
+        outcome: 'fresh_commit', coinBalance: 0,
+        receipt: { id: 'purchase-receipt-1', pricePaidCoins: 5 },
+        ownership: { isEquipped: false, equippedAt: null },
+      },
+    });
+    await first.owner.close();
+
+    const reopened = await createDatabase(driver, databaseName);
+    expect(await reopened.graph.economyConsistency.verify(1)).toMatchObject({
+      ok: true, value: { totalXp: 25, coinBalance: 0 },
+    });
+    expect(await reopened.graph.purchases.findByProfileAndItem(1, 'desk-mug'))
+      .toMatchObject({ ok: true, value: { id: 'purchase-receipt-1', coinDelta: -5 } });
+    expect(await reopened.graph.ownedItems.find(1, 'desk-mug'))
+      .toMatchObject({ ok: true, value: { isEquipped: false, equippedAt: null } });
+    const reopenedPurchase = new PurchaseItemUseCase({
+      approvedCatalog,
+      catalog: reopened.graph.catalog,
+      clock: { nowMs: () => session.endsAt + 2 },
+      coordinator: new SessionCommandCoordinator(),
+      economy: reopened.graph.economyConsistency,
+      id: { nextId: () => 'purchase-receipt-2' },
+      ownedItems: reopened.graph.ownedItems,
+      profile: reopened.graph.profile,
+      purchases: reopened.graph.purchases,
+      transaction: reopened.transaction,
+    });
+    expect(await reopenedPurchase.execute({ itemId: 'desk-mug' })).toMatchObject({
+      ok: true, value: { outcome: 'already_owned', coinBalance: 0 },
+    });
+    await reopened.owner.close();
+  });
+
   it('selects the latest onboarding trial deterministically and excludes Standard Focus', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'pixeldoro-us0501-'));
     temporaryDirectories.push(directory);

@@ -1,27 +1,27 @@
 ---
 document_id: PIXELDORO_US_08_02_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-08-02 Implementation Plan
-version: 0.1.0
-status: DRAFT_AWAITING_OWNER_CONFIRMATION
-implementation_status: NOT_STARTED
+version: 0.3.0
+status: IMPLEMENTED_AWAITING_OWNER_SMOKE
+implementation_status: CANDIDATE_WORKTREE_VALIDATED
 date: 2026-09-10
-last_updated: 2026-09-10
+last_updated: 2026-09-11
 owner: Dũng Lư
 reviewer: Dũng Lư
 reviewer_role: Tech Lead/Product Owner
 language: vi
 branch: feats/epic-08
 planning_baseline_sha: 9be0a0f399a78014bb1a67239b0c478b30a7cdcd
-implementation_start_sha: null
+implementation_start_sha: 9be0a0f399a78014bb1a67239b0c478b30a7cdcd
 exact_implementation_sha: null
 previous_story: US-08-01
 previous_story_status: DONE_OWNER_ACCEPTED
 previous_story_implementation_sha: 9be0a0f399a78014bb1a67239b0c478b30a7cdcd
 manual_device_status: NOT_RUN
 formal_tester_status: NOT_RUN_DEFERRED_TO_EPIC_12_UNLESS_EXECUTED
-schema_change: NONE_PROPOSED
-dependency_change: NONE_PROPOSED
-native_change: NONE_PROPOSED
+schema_change: NONE
+dependency_change: NONE
+native_change: NONE
 scope:
   - mobile_mvp
   - epic_08
@@ -47,12 +47,13 @@ adr_analytics: ../architecture/decisions/ADR-008-posthog-analytics-and-cost-guar
 mua đúng một lần. Thành công trừ đúng Coin và tạo ownership unequipped; thiếu Coin hoặc đã sở hữu
 không thay đổi dữ liệu và có phản hồi rõ ràng.
 
-**Planning status:** `DRAFT_AWAITING_OWNER_CONFIRMATION`.
-**Implementation status:** `NOT_STARTED`.
+**Planning status:** `APPROVED_OPTION_A_01_TO_06`.
+**Implementation status:** `CANDIDATE_WORKTREE_VALIDATED` from SHA `9be0a0f399a...`; owner UI smoke
+and an exact committed implementation SHA are still pending.
 
-Owner đã accept US-08-01 tại exact SHA `9be0a0f399a...` và mở planning US-08-02. Lượt này chỉ cập
-nhật documentation và lập plan; không sửa production code, migration, dependency/native, không
-commit và không push. Coding chỉ mở sau khi owner duyệt mục 13.
+Owner đã accept US-08-01 tại exact SHA `9be0a0f399a...`, sau đó duyệt `US0802-CONFIRM-01→06` theo
+Option A và mở coding. Candidate hiện đã implement/automated-validate trong worktree; không có
+migration, dependency/native change, commit hoặc push.
 
 ### 0.1. In scope
 
@@ -439,8 +440,8 @@ EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=purchase_exact_balance pnpm start --clear
 - [x] EPIC confirmations 02/03/04/08/09 are approved Option A.
 - [x] Existing transaction/repository/schema/UI capabilities and gaps are audited.
 - [x] No schema/dependency/native change is required.
-- [ ] Owner approves `US0802-CONFIRM-01→06` or supplies exact variance.
-- [ ] Record implementation start SHA immediately before first production edit.
+- [x] Owner approved `US0802-CONFIRM-01→06 theo Option A` on 2026-09-10.
+- [x] Implementation start SHA recorded as `9be0a0f399a...` before first production edit.
 
 ### Definition of Done
 
@@ -464,7 +465,7 @@ EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=purchase_exact_balance pnpm start --clear
   reward, purchase and Shop reads; keep current name for this Story.
 - **Option B:** add a second `EconomyCommandCoordinator` mutex.
 - **Impact:** A prevents cross-queue interleaving without rename churn.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-10.
 
 ### US0802-CONFIRM-02 — Transaction receipt read port
 
@@ -472,7 +473,7 @@ EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=purchase_exact_balance pnpm start --clear
   SQLite adapter; no raw SQL in use case.
 - **Option B:** infer already-owned from ownership only and let insert constraint classify receipt.
 - **Impact:** A enables coherent preflight/postcondition and clean corruption classification.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-10.
 
 ### US0802-CONFIRM-03 — Unaffordable item interaction
 
@@ -480,7 +481,7 @@ EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=purchase_exact_balance pnpm start --clear
   revalidates insufficient balance for stale/concurrent state.
 - **Option B:** allow confirmation/command for every available item, then show insufficient result.
 - **Impact:** A avoids a knowingly futile confirmation while retaining race safety.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-10.
 
 ### US0802-CONFIRM-04 — Commit versus refresh failure UX
 
@@ -488,7 +489,7 @@ EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=purchase_exact_balance pnpm start --clear
   `committed_refresh_pending`; Retry only reloads Shop. Never rerun the purchase command.
 - **Option B:** show generic purchase error and let Confirm retry.
 - **Impact:** A prevents duplicate intent and tells the truth about durable commit.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-10.
 
 ### US0802-CONFIRM-05 — Purchase dialog common API
 
@@ -496,7 +497,7 @@ EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=purchase_exact_balance pnpm start --clear
   purchase uses `Để sau` + primary `Mua với X Coin` and restores exact tile focus.
 - **Option B:** use current hard-coded `Tiếp tục`/secondary-confirm dialog unchanged.
 - **Impact:** A gives correct spend semantics/a11y while preserving Focus/Break defaults.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-10.
 
 ### US0802-CONFIRM-06 — Analytics after ambiguous recovered commit
 
@@ -504,10 +505,10 @@ EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=purchase_exact_balance pnpm start --clear
   current-attempt `recovery_commit`; queue dedupe prevents duplicates. Never emit for pre-owned.
 - **Option B:** emit only for direct `fresh_commit`, accepting a missing event after recovered commit.
 - **Impact:** A preserves newly committed event coverage without touching economy truth.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-10.
 
-Owner có thể duyệt một lần bằng `Duyệt US0802-CONFIRM-01→06 theo Option A` hoặc nêu ID cần chỉnh.
-Approval mở coding gate nhưng không tự authorize commit/push.
+Owner đã duyệt `Duyệt US0802-CONFIRM-01→06 theo Option A` và authorize coding. Approval không tự
+authorize commit/push.
 
 ## 14. Impact verdict and change log
 
@@ -522,4 +523,6 @@ Approval mở coding gate nhưng không tự authorize commit/push.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.3.0 | 2026-09-11 | Codex | Implemented the approved atomic purchase candidate in the worktree: shared serialization, transaction receipt read, exact debit/receipt/unequipped ownership, ambiguous readback, refresh-only committed recovery, deterministic analytics, Shop UI and four safe quick-review fixtures. Typecheck/lint/tests/boundaries/hygiene pass; owner/formal UI evidence and exact committed SHA remain pending. |
+| 0.2.0 | 2026-09-10 | Codex | Recorded owner approval of Option A for confirmations 01–06 and coding authorization. Implementation starts from exact SHA `9be0a0f...`; commit/push remain unauthorized. |
 | 0.1.0 | 2026-09-10 | Codex | Initial US-08-02 plan after owner acceptance of US-08-01. Audited transaction/ports/schema/UI, identified one transaction-scoped receipt-read gap, proposed shared serialization, atomic/readback contract, fixtures/tests and six owner confirmations. No production code changed. |

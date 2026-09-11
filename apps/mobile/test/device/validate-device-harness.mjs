@@ -38,6 +38,22 @@ const epic07ExitFlow = await readFile(`${deviceDirectory}epic-07-exit-smoke.md`,
 const progressionCatalogFlow = await readFile(
   `${deviceDirectory}progression-catalog-smoke.md`, 'utf8',
 );
+const shopPurchaseFlow = await readFile(
+  `${deviceDirectory}shop-purchase-smoke.md`, 'utf8',
+);
+for (const evidence of [
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=purchase_exact_balance',
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=purchase_insufficient',
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=purchase_owned',
+  'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=purchase_read_failure_once',
+  'pixeldoro-us-08-02-', 'Mua với 5 Coin', 'Để sau', 'Đang mua…',
+  'Thử đọc lại dữ liệu', 'VoiceOver/TalkBack', 'Reduce Motion', 'Airplane mode',
+  'NOT_RUN', 'unset EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE',
+]) {
+  if (!shopPurchaseFlow.includes(evidence)) {
+    throw new Error(`Shop purchase device guide is missing: ${evidence}`);
+  }
+}
 for (const evidence of [
   'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=shop_fresh_zero',
   'EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE=shop_progress_45',

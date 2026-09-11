@@ -3,9 +3,17 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { palette } from '@/presentation/theme/palette';
 
-export const InlineNotice = ({ children }: { readonly children: ReactNode }) => (
+export const InlineNotice = ({
+  children,
+  announce = false,
+}: {
+  readonly children: ReactNode;
+  readonly announce?: boolean;
+}) => (
   <View style={styles.notice}>
-    <Text style={styles.text}>{children}</Text>
+    <Text accessibilityLiveRegion={announce ? 'polite' : 'none'} style={styles.text}>
+      {children}
+    </Text>
   </View>
 );
 

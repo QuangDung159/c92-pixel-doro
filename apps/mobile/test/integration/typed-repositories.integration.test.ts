@@ -136,6 +136,14 @@ describe('typed SQLite repositories', () => {
         ok: true,
         value: { priceCoins: 10 },
       });
+      expect(await graph.purchases.findByProfileAndItemInTransaction(
+        scope,
+        1,
+        'desk-lamp',
+      )).toMatchObject({
+        ok: true,
+        value: { id: 'purchase-1', pricePaidCoins: 10 },
+      });
       return { ok: false, error: { code: 'INJECTED' } };
     });
 

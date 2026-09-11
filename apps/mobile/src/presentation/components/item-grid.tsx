@@ -1,14 +1,25 @@
 import { StyleSheet, View } from 'react-native';
 
-import { ItemTile, type ItemTileModel } from './item-tile';
+import { ItemTile, type ItemTileAction, type ItemTileModel } from './item-tile';
 
-export const ItemGrid = ({ items }: { readonly items: readonly ItemTileModel[] }) => (
+export const ItemGrid = ({
+  items,
+  actionForItem,
+}: {
+  readonly items: readonly ItemTileModel[];
+  readonly actionForItem?: (item: ItemTileModel) => ItemTileAction | undefined;
+}) => (
   <View accessibilityRole="list" style={styles.grid}>
-    {items.map((item) => (
-      <View key={item.id} style={styles.cell}>
-        <ItemTile item={item} />
-      </View>
-    ))}
+    {items.map((item) => {
+      const action = actionForItem?.(item);
+      return (
+        <View key={item.id} style={styles.cell}>
+          {action === undefined
+            ? <ItemTile item={item} />
+            : <ItemTile action={action} item={item} />}
+        </View>
+      );
+    })}
   </View>
 );
 

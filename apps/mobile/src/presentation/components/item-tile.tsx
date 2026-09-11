@@ -2,6 +2,7 @@ import type { ShopItemState } from '@pixeldoro/application';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { palette } from '@/presentation/theme/palette';
+import { PrimaryButton } from './button';
 import { Panel } from './panel';
 
 export interface ItemTileModel {
@@ -9,6 +10,14 @@ export interface ItemTileModel {
   readonly displayName: string;
   readonly priceCoins: number;
   readonly state: ShopItemState;
+}
+
+export interface ItemTileAction {
+  readonly label: string;
+  readonly accessibilityLabel?: string;
+  readonly disabled?: boolean;
+  readonly busy?: boolean;
+  readonly onPress: () => void;
 }
 
 const stateLabel = (state: ShopItemState): string => {
@@ -22,7 +31,13 @@ const stateLabel = (state: ShopItemState): string => {
   }
 };
 
-export const ItemTile = ({ item }: { readonly item: ItemTileModel }) => {
+export const ItemTile = ({
+  item,
+  action,
+}: {
+  readonly item: ItemTileModel;
+  readonly action?: ItemTileAction;
+}) => {
   const label = stateLabel(item.state);
   return (
     <Panel style={styles.panel} tone={item.state === 'equipped' ? 'gold' : 'default'}>
@@ -35,6 +50,15 @@ export const ItemTile = ({ item }: { readonly item: ItemTileModel }) => {
         <Text style={styles.price}>{item.priceCoins} Coin</Text>
         <Text style={styles.state}>{label}</Text>
       </View>
+      {action === undefined ? null : (
+        <PrimaryButton
+          accessibilityLabel={action.accessibilityLabel ?? action.label}
+          busy={action.busy ?? false}
+          disabled={action.disabled ?? false}
+          label={action.label}
+          onPress={action.onPress}
+        />
+      )}
     </Panel>
   );
 };

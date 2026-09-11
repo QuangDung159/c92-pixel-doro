@@ -145,7 +145,7 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 | `EPIC-05` | `DONE_OWNER_ACCEPTED` | Exact implementation SHA `580f559`; root `82/391`, SQLite exclusions và owner quick UI smoke pass. Formal tester matrix deferred. |
 | `EPIC-06` | `DONE_OWNER_ACCEPTED` | Exact candidate `458a886`; Standard Relax/Strict end-to-end, notification/analytics/a11y hooks, owner iOS/Android quick smoke. Formal tester deferred. |
 | `EPIC-07` | `DONE_OWNER_ACCEPTED` | Exact candidate `f6c7b92`; Break/cadence lifecycle, notification/analytics and owner quick UI pass. Formal device/accessibility matrix deferred. |
-| `EPIC-08` | `IN_PROGRESS` | US-08-01 `DONE_OWNER_ACCEPTED` tại `9be0a0f`; US-08-02 đang chờ owner duyệt plan. |
+| `EPIC-08` | `IN_PROGRESS` | US-08-01 `DONE_OWNER_ACCEPTED` tại `9be0a0f`; US-08-02 worktree candidate đã qua automated gates, chờ owner quick UI smoke. |
 
 Bảy Epic đầu và US-08-01 hoàn thành không đồng nghĩa Mobile MVP hoàn tất. EPIC-08 vẫn `IN_PROGRESS`;
 EPIC-09–12 giữ nguyên execution order. Không được dùng progress này để nhận purchase/equip/room,

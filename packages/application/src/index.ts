@@ -18,6 +18,14 @@ export {
   type ShopProjection,
 } from './shop/load-shop-projection.use-case';
 export {
+  PurchaseItemUseCase,
+  type PurchaseItemDependencies,
+  type PurchaseItemError,
+  type PurchaseItemErrorCode,
+  type PurchaseItemInput,
+  type PurchaseItemOutcome,
+} from './shop/purchase-item.use-case';
+export {
   loadPetCompanionProjection,
   type PetCompanionProjection,
   type PetCompanionSessionReader,

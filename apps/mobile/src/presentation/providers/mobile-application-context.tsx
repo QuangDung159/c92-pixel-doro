@@ -166,8 +166,12 @@ export const useShopActions = () => {
   const { shop } = useMobileApplication();
   return {
     activate: shop.activate,
+    confirmPurchase: shop.confirmPurchase,
     deactivate: shop.deactivate,
+    dismissPurchase: shop.dismissPurchase,
+    requestPurchase: shop.requestPurchase,
     retry: shop.retry,
+    retryPurchaseRefresh: shop.retryPurchaseRefresh,
   };
 };
 

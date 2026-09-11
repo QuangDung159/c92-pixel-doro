@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 const read = (path: string): string => readFileSync(resolve(process.cwd(), path), 'utf8');
 
-describe('US-08-01 production integrity', () => {
+describe('EPIC-08 production Shop integrity', () => {
   it('keeps the Shop route on the application facade and focus lifecycle', () => {
     const route = read('apps/mobile/src/app/(tabs)/shop.tsx');
     expect(route).toContain('useShopProjection');
@@ -13,10 +13,11 @@ describe('US-08-01 production integrity', () => {
     expect(route).not.toMatch(/from ['"].*(prototype|repository|sqlite|domain)/i);
   });
 
-  it('keeps production Shop presentation free of mock catalog and mutation controls', () => {
+  it('keeps production Shop presentation free of mock catalog and repository access', () => {
     const screen = read('apps/mobile/src/presentation/features/shop/index.tsx');
-    expect(screen).toContain('<ItemGrid items={projection.shop.items} />');
-    expect(screen).not.toMatch(/mock|sample|prototype|mua ngay|trang bị|onPurchase|onEquip/i);
+    expect(screen).toContain('<ItemGrid actionForItem={actionForItem} items={projection.shop.items} />');
+    expect(screen).toContain('<ConfirmationDialog');
+    expect(screen).not.toMatch(/mock|sample|prototype|repository|sqlite|onEquip/i);
   });
 
   it('keeps route, screen and reusable item components reviewable', () => {

@@ -22,4 +22,12 @@ describe('ItemTile', () => {
     expect(serialized).toContain(`Cốc trên bàn, 5 Coin, ${label}`);
     expect(serialized).not.toMatch(/onPress|button/);
   });
+
+  it('renders an optional explicit purchase action', () => {
+    const tree = ItemTile({
+      item: { id: 'desk-mug', displayName: 'Cốc trên bàn', priceCoins: 5, state: 'available' },
+      action: { label: 'Mua', onPress: vi.fn() },
+    });
+    expect(JSON.stringify(tree)).toContain('Mua');
+  });
 });

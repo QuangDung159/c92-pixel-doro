@@ -1,10 +1,10 @@
 ---
 document_id: PIXELDORO_EPIC_08_USER_STORIES
 title: PixelDoro EPIC-08 — Progression, Shop và Inventory Loop User Stories
-version: 0.4.0
-status: US_08_01_DONE_US_08_02_PLANNING
+version: 0.5.0
+status: US_08_01_DONE_US_08_02_CANDIDATE
 date: 2026-09-10
-last_updated: 2026-09-10
+last_updated: 2026-09-11
 owner: Dũng Lư
 reviewed_by: Dũng Lư
 confirmations_approved_at: 2026-09-10
@@ -20,12 +20,12 @@ baseline_sha: 6e68fe5d800342e187f267f356b08335ace9a6b6
 previous_epic: EPIC-07
 previous_epic_status: DONE_OWNER_ACCEPTED
 previous_epic_implementation_sha: f6c7b9269b2abee07bfe8eeb5d804c6245b67c0a
-implementation_status: US_08_01_DONE_OWNER_ACCEPTED
+implementation_status: US_08_02_CANDIDATE_WORKTREE_VALIDATED
 formal_tester_status: DEFERRED_TO_EPIC_12_UNLESS_ACTUALLY_RUN
 schema_impact: NONE_APPROVED_EXISTING_SCHEMA_001_SUFFICIENT
 dependency_impact: NONE_APPROVED
 native_impact: NONE_APPROVED
-next_gate: OWNER_US_08_02_PLAN_CONFIRMATION
+next_gate: OWNER_US_08_02_QUICK_UI_SMOKE
 product_truth: ../PIXELDORO_CORE_TRUTH.md
 epic_baseline: ./MVP_EPICS.md
 gamification_specification: ../specifications/gamification-rules.md
@@ -37,8 +37,9 @@ data_model: ../architecture/data-model.md
 ## 0. Mục đích và authority
 
 Tài liệu này phân rã `EPIC-08` thành các vertical slice nhỏ, có outcome nhìn thấy, rollback và review
-độc lập. US-08-01 đã được owner quick-UI accept tại exact SHA `9be0a0f399a...`; US-08-02 đang ở
-planning gate. Không có migration, dependency hoặc native configuration change.
+độc lập. US-08-01 đã được owner quick-UI accept tại exact SHA `9be0a0f399a...`; US-08-02 đã có
+candidate worktree qua automated gates và đang chờ owner quick UI smoke. Không có migration,
+dependency hoặc native configuration change.
 
 Thứ tự authority khi review hoặc triển khai:
 
@@ -196,7 +197,7 @@ selection, visual payoff và cuối cùng cross-feature exit. Mỗi Story chỉ 
 | Order | Story | User outcome | Priority | Dependencies | Initial status |
 |---:|---|---|---|---|---|
 | 1 | US-08-01 — Committed Progression và Production Catalog | User sees trustworthy level/XP/Coin and all 12 catalog items | P0 | EPIC-07; confirmations 01/03/08/09/10 approved | DONE_OWNER_ACCEPTED (`9be0a0f...`) |
-| 2 | US-08-02 — Atomic One-time Purchase | User can safely buy one affordable item once | P0 | 01; confirmations 02/03/04/08/09 | PLANNING_AWAITING_OWNER_CONFIRMATION |
+| 2 | US-08-02 — Atomic One-time Purchase | User can safely buy one affordable item once | P0 | 01; confirmations 02/03/04/08/09 | CANDIDATE_AWAITING_OWNER_SMOKE |
 | 3 | US-08-03 — Durable Inventory và Free Equip | User can distinguish owned items and equip/unequip without cost | P0 | 02; confirmations 05/06/08/09 | BLOCKED |
 | 4 | US-08-04 — Equipped Decorations in Pet Room | User sees equipped purchases persist in the room | P1 | 03; confirmations 06/07/09 | BLOCKED |
 | 5 | US-08-05 — Offline Loop Integrity và Exit Candidate | User can complete reward→buy→equip→relaunch loop reliably | P1 | 01–04; confirmations 08/09/10/11 | BLOCKED |
@@ -310,7 +311,7 @@ Android: `adb shell am start -W -a android.intent.action.VIEW -d 'pixeldoro://sh
   unequipped; analytics after commit only.
 - **Domain rules:** valid stable item identity; price is positive authoritative catalog value; no
   negative balance; already-owned rejects/no-op; exactly one purchase per profile/item.
-- **Application owner:** planned `PurchaseItemUseCase`, `EconomyCommandCoordinator`, Shop controller.
+- **Application owner:** `PurchaseItemUseCase`, existing shared `SessionCommandCoordinator`, Shop controller.
 - **Transaction boundary:** one `BEGIN IMMEDIATE` reads catalog/profile/ownership, guarded debit,
   inserts receipt + owned row, verifies postcondition and commits. Any failure rolls back all. Retry
   after committed/ambiguous result reads existing receipt and returns `already_owned`, never debits.
@@ -319,8 +320,8 @@ Android: `adb shell am start -W -a android.intent.action.VIEW -d 'pixeldoro://sh
 - **Navigation:** remain in Shop; success refreshes committed projection; Back during pending cannot
   start another command; relaunch returns committed state.
 - **Offline:** full local command; network/provider unavailable is irrelevant.
-- **Analytics:** deterministic `item_unlocked:<purchaseReceiptId>` only after fresh commit; failure is
-  swallowed/reported separately and never rolls back purchase.
+- **Analytics:** deterministic `item_unlocked:<purchaseReceiptId>` after fresh or current-attempt
+  recovered commit; never for pre-owned. Failure is isolated and never rolls back purchase.
 - **Accessibility:** dialog title/body include item + authoritative price; focus trapped/restored;
   busy state announced once; success/error live region; buttons meet touch target.
 - **Open questions/Option A:** `US0800-CONFIRM-02/03/04/08/09` đều `APPROVED_OPTION_A` ngày
@@ -328,38 +329,38 @@ Android: `adb shell am start -W -a android.intent.action.VIEW -d 'pixeldoro://sh
 
 ### 8.1. Acceptance criteria
 
-- [ ] Presentation submits only `itemId`; no UI price is accepted by command or persistence API.
-- [ ] Successful purchase atomically debits exact catalog price, inserts one receipt and one owned row.
-- [ ] New ownership starts `isEquipped=false`, `equippedAt=null`; purchase does not auto-equip.
-- [ ] Insufficient Coin changes no balance/receipt/ownership and provides actionable copy.
-- [ ] Already-owned item cannot be purchased again and changes no Coin.
-- [ ] Rapid double tap, concurrent commands, retry and relaunch produce at most one debit/receipt/owner.
-- [ ] Catalog/profile/receipt/ownership corrupt or missing fails closed; UI never repairs totals.
-- [ ] Write/commit/readback failure never displays uncommitted success; ambiguous commit recovers by read.
-- [ ] Analytics/animation/audio/haptic/provider failure leaves committed economy unchanged.
-- [ ] Purchase/reward commands cannot interleave into negative or inconsistent balance.
+- [x] Presentation submits only `itemId`; no UI price is accepted by command or persistence API.
+- [x] Successful purchase atomically debits exact catalog price, inserts one receipt and one owned row.
+- [x] New ownership starts `isEquipped=false`, `equippedAt=null`; purchase does not auto-equip.
+- [x] Insufficient Coin changes no balance/receipt/ownership and provides actionable copy.
+- [x] Already-owned item cannot be purchased again and changes no Coin.
+- [x] Rapid double tap, concurrent same-item command, retry and relaunch produce at most one debit/receipt/owner.
+- [x] Catalog/profile/receipt/ownership corrupt or missing fails closed; UI never repairs totals.
+- [x] Write/commit/readback failure never displays uncommitted success; ambiguous commit recovers by read.
+- [x] Analytics/animation/audio/haptic/provider failure leaves committed economy unchanged.
+- [x] Purchase/reward commands share one coordinator and cannot interleave into a negative balance.
 
 ### 8.2. Automated tests
 
-- [ ] Domain unit: item identity/price/owned/balance decision including exact-balance success.
-- [ ] Application: success, insufficient, already owned, missing item/profile, every dependency failure.
+- [x] Application unit: item identity/price/owned/balance decision including exact-balance success.
+- [x] Application: success, insufficient, already owned, corrupt pair and ambiguous commit readback.
 - [ ] Application race/idempotency: double tap, concurrent same item, concurrent different items,
   purchase concurrent with reward; committed-result readback.
-- [ ] Repository/mapper: guarded debit zero-change classification, insert conflicts and corrupt rows.
+- [x] Repository/mapper: transaction-scoped receipt read, guarded debit and typed row mapping.
 - [ ] Real SQLite: full transaction commit/rollback at debit/receipt/ownership/commit/read stages;
   close/reopen; no negative balance; unique backstops.
-- [ ] Controller/component: confirmation/dismiss/busy/success/error/retry and no optimistic truth.
+- [x] Controller/component: confirmation/dismiss/busy/success/error/refresh-only retry and no optimistic truth.
 - [ ] Navigation/lifecycle: background, unmount, relaunch during/after command.
-- [ ] Analytics failure/dedupe/disabled test; architecture/integrity scans; platform exports.
+- [x] Analytics deterministic ID/disabled/failure test; architecture/integrity scans; iOS/Android exports.
 
 ### 8.3. Fixture/data requirements
 
-`pixeldoro-us-08-02-`: `purchase_exact_balance`, `purchase_insufficient`, `purchase_owned`,
-`purchase_double_tap`, `purchase_concurrent_same`, `purchase_concurrent_different`,
-`purchase_debit_failure_once`, `purchase_receipt_failure_once`, `purchase_ownership_failure_once`,
-`purchase_commit_ambiguous_once`, `purchase_read_failure_once`, `purchase_analytics_failure`.
+Implemented quick-UI fixtures under `pixeldoro-us-08-02-`: `purchase_exact_balance`,
+`purchase_insufficient`, `purchase_owned`, `purchase_read_failure_once`. Rapid/concurrent/write-stage/
+ambiguous/analytics failure breadth stays automated so the device harness never seeds fake partial
+durable truth; formal breadth remains deferred per confirmation 11.
 
-### 8.4. Manual device guide — planned file
+### 8.4. Manual device guide
 
 File: `apps/mobile/test/device/shop-purchase-smoke.md`; initial status `NOT_RUN`.
 
@@ -383,10 +384,10 @@ quoted URL through `adb shell am start`.
 
 ### 8.5. DoR, DoD và next gate
 
-- [ ] **DoR:** US-08-01 accepted; confirmations 02/03/04/08/09 explicitly approved.
-- [ ] **DoR:** transaction failure table and concurrency strategy reviewed against schema backstops.
-- [ ] **DoD:** all acceptance/race/SQLite/UI checks pass without schema change.
-- [ ] **DoD:** manual guide exists; owner/formal evidence recorded separately and truthfully.
+- [x] **DoR:** US-08-01 accepted; confirmations 01→06 explicitly approved for this Story.
+- [x] **DoR:** transaction failure table and concurrency strategy reviewed against schema backstops.
+- [x] **DoD automated:** implementation/typecheck/lint/tests/boundaries/hygiene pass without schema change.
+- [x] **DoD evidence prep:** manual guide exists; owner/formal evidence remains truthfully `NOT_RUN`.
 - [ ] **Evidence:** exact transaction trace, before/after balance/receipt/owner counts, report/SHA.
 - [ ] **Gate US-08-03:** owner accepts purchase UX and exact candidate.
 
@@ -1054,6 +1055,7 @@ locked to `NONE` unless a later demonstrated gap is separately reviewed.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.5.0 | 2026-09-11 | Codex | Recorded US-08-02 worktree candidate after Option A implementation: atomic buy-once, shared coordinator, confirmed/insufficient/committed-refresh UI, deterministic analytics, real SQLite reopen and safe device fixtures. Automated gates and iOS/Android exports pass; owner smoke and exact committed SHA remain pending. |
 | 0.4.0 | 2026-09-10 | Codex | Recorded owner quick UI PASS for US-08-01 at exact SHA `9be0a0f...`: no crash and expected behavior. Story 01 is DONE_OWNER_ACCEPTED and US-08-02 planning is open; structured/formal device evidence remains NOT_RUN. |
 | 0.3.0 | 2026-09-10 | Codex | Recorded US-08-01 plan approval and coding authorization. Story 01 is an uncommitted candidate awaiting owner quick UI; automated quality and both platform exports pass, manual/formal evidence remains NOT_RUN. |
 | 0.2.1 | 2026-09-10 | Codex | Corrected the US-08-01 durable/device threshold fixture from unreachable `49 XP` to production-reachable `45→50 XP`; retained `49 XP` as an exact unit boundary. No scope or production behavior changed. |

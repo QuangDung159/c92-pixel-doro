@@ -13,6 +13,7 @@ vi.mock('react-native-safe-area-context', () => ({ SafeAreaView: 'SafeAreaView' 
 const ready = {
   status: 'ready' as const,
   refresh: 'idle' as const,
+  purchase: { status: 'idle' as const },
   shop: {
     profile: {
       level: 1,
@@ -31,9 +32,17 @@ const ready = {
   },
 };
 
+const actions = {
+  onRetry: vi.fn(),
+  onRequestPurchase: vi.fn(),
+  onConfirmPurchase: vi.fn(),
+  onDismissPurchase: vi.fn(),
+  onRetryPurchaseRefresh: vi.fn(),
+};
+
 describe('ShopScreen', () => {
-  it('renders production progression and all projected items without actions', () => {
-    const tree = ShopScreen({ projection: ready, onRetry: vi.fn() });
+  it('renders production progression, items, and exact affordability actions', () => {
+    const tree = ShopScreen({ projection: ready, ...actions });
     const serialized = JSON.stringify(tree);
     expect(serialized).toContain('ĐỒ TRANG TRÍ');
     expect(serialized.match(/"displayName":"Item /g)).toHaveLength(12);
@@ -41,15 +50,32 @@ describe('ShopScreen', () => {
   });
 
   it('renders finite loading, initial error and stale refresh error states', () => {
-    expect(JSON.stringify(ShopScreen({ projection: { status: 'loading' }, onRetry: vi.fn() })))
+    expect(JSON.stringify(ShopScreen({ projection: { status: 'loading' }, ...actions })))
       .toContain('Đang mở cửa hàng');
     expect(JSON.stringify(ShopScreen({
       projection: { status: 'error', code: 'SHOP_READ_FAILED' },
-      onRetry: vi.fn(),
+      ...actions,
     }))).toContain('Coin và vật phẩm không bị thay đổi');
     expect(JSON.stringify(ShopScreen({
       projection: { ...ready, refresh: 'error' },
-      onRetry: vi.fn(),
+      ...actions,
     }))).toContain('committed gần nhất');
+  });
+
+  it('renders purchase confirmation and committed refresh-only recovery copy', () => {
+    expect(JSON.stringify(ShopScreen({
+      projection: { ...ready, shop: {
+        ...ready.shop,
+        profile: { ...ready.shop.profile, coinBalance: 5 },
+      }, purchase: { status: 'confirming', itemId: 'item-4' } },
+      ...actions,
+    }))).toContain('Mua với 5 Coin');
+    expect(JSON.stringify(ShopScreen({
+      projection: {
+        ...ready,
+        purchase: { status: 'committed_refresh_pending', itemId: 'item-0' },
+      },
+      ...actions,
+    }))).toContain('Đã ghi nhận giao dịch');
   });
 });
