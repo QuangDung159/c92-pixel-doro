@@ -101,8 +101,8 @@ const styles = StyleSheet.create({
     left: "5%",
     position: "absolute",
     right: 0,
-    top: "27%",
-    transform: [{ scale: 0.4 }],
+    top: "25%",
+    transform: [{ scale: 0.45 }],
   },
   roomSemanticStatus: { height: 0, width: 0 },
 });
