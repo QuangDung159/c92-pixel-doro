@@ -46,6 +46,10 @@ export interface CreateStandardFocusSliceDependencies {
     sessionId: string,
     freshness: 'fresh_commit' | 'existing_terminal',
   ) => void;
+  readonly readDefaults?: () => {
+    readonly durationMinutes: number;
+    readonly mode: 'relax' | 'strict';
+  };
 }
 
 export interface StandardFocusSlice {
@@ -146,7 +150,12 @@ export const createStandardFocusSlice = (
     }
     return { ok: true, session: startResult.value.session };
   };
-  const setup = new StandardFocusSetupController({ start });
+  const setup = new StandardFocusSetupController({
+    start,
+    ...(dependencies.readDefaults === undefined
+      ? {}
+      : { readDefaults: dependencies.readDefaults }),
+  });
 
   return {
     setup,

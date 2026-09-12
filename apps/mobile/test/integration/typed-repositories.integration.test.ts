@@ -120,6 +120,28 @@ describe('typed SQLite repositories', () => {
     await owner.close();
   });
 
+  it('patches exactly one settings column without replacing unrelated preferences', async () => {
+    const { driver, graph, owner } = await createHarness();
+
+    expect(await graph.settings.patch({
+      focusDurationMinutes: 50,
+      updatedAt: timestamp + 1,
+    })).toEqual({ ok: true, value: 'updated' });
+    const statement = driver.connection.boundStatements.at(-1);
+    expect(statement?.sql).toContain(
+      'UPDATE app_settings SET focus_duration_minutes = ?, updated_at = ? WHERE id = 1',
+    );
+    expect(statement?.sql).not.toContain('analytics_enabled');
+    expect(statement?.parameters).toEqual([50, timestamp + 1]);
+
+    expect(await graph.settings.patch({
+      soundEnabled: false,
+      analyticsEnabled: false,
+      updatedAt: timestamp + 2,
+    })).toMatchObject({ ok: false, error: { field: 'patch_input' } });
+    await owner.close();
+  });
+
   it('uses one current transaction scope across repositories and rolls back returned failure', async () => {
     const { driver, graph, owner, transaction } = await createHarness();
     const result = await transaction.execute(async (scope): Promise<ApplicationResult<void, { code: 'INJECTED' }>> => {

@@ -2,6 +2,7 @@ import type { ShopItemState } from '@pixeldoro/application';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { palette } from '@/presentation/theme/palette';
+import { RoomDecorationThumbnail } from '@/presentation/room/room-decoration-thumbnail';
 import { PrimaryButton } from './button';
 import { Panel } from './panel';
 
@@ -45,7 +46,7 @@ export const ItemTile = ({
         accessible
         accessibilityLabel={`${item.displayName}, ${item.priceCoins} Coin, ${label}`}
       >
-        <Text accessibilityElementsHidden style={styles.marker}>◆</Text>
+        <RoomDecorationThumbnail itemId={item.id} />
         <Text style={styles.name}>{item.displayName}</Text>
         <Text style={styles.price}>{item.priceCoins} Coin</Text>
         <Text style={styles.state}>{label}</Text>
@@ -65,7 +66,6 @@ export const ItemTile = ({
 
 const styles = StyleSheet.create({
   panel: { flexGrow: 1, minHeight: 176 },
-  marker: { color: palette.accentDark, fontSize: 36, fontWeight: '900', textAlign: 'center' },
   name: { color: palette.textPrimary, fontSize: 17, fontWeight: '900', lineHeight: 22, textAlign: 'center' },
   price: { color: palette.textSecondary, fontSize: 14, fontWeight: '800', marginTop: 8, textAlign: 'center' },
   state: { color: palette.accentBlue, fontSize: 12, fontWeight: '900', marginTop: 8, textAlign: 'center' },

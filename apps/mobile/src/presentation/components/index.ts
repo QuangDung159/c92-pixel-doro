@@ -23,3 +23,4 @@ export { ItemGrid } from './item-grid';
 export { SectionLabel } from './section-label';
 export { Stat, StatDisplay, type StatDisplayProps } from './stat-display';
 export { EmptyState, ErrorState, LoadingState } from './status-surface';
+export { ToggleRow, type ToggleRowProps } from './toggle-row';

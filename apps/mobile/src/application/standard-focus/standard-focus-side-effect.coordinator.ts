@@ -59,7 +59,7 @@ export class StandardFocusSideEffectCoordinator {
 
   ensureRunning(session: RunningSessionRecord): void {
     if (this.disposed || !isValidStandardFocusNotificationSession(session)) return;
-    this.track(this.ensureNotification(session));
+    this.track(this.ensureNotification(session, false));
   }
 
   afterTerminal(
@@ -100,16 +100,19 @@ export class StandardFocusSideEffectCoordinator {
   private async runStarted(session: RunningSessionRecord): Promise<void> {
     await Promise.allSettled([
       this.dependencies.analytics.recordStarted(session),
-      this.ensureNotification(session),
+      this.ensureNotification(session, true),
     ]);
   }
 
-  private async ensureNotification(session: RunningSessionRecord): Promise<void> {
+  private async ensureNotification(
+    session: RunningSessionRecord,
+    mayRequest: boolean,
+  ): Promise<void> {
     const settings = this.safeSettings();
     if (settings === null || !settings.notificationsEnabled) return;
     let permission = await this.dependencies.notifications.readPermission();
     if (!permission.ok) return;
-    if (permission.value === 'undetermined') {
+    if (permission.value === 'undetermined' && mayRequest) {
       permission = await this.dependencies.notifications.requestPermission();
     }
     if (!permission.ok || permission.value !== 'allowed' || this.disposed) return;

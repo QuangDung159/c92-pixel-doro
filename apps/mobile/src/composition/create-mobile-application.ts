@@ -15,6 +15,8 @@ import {
   OnboardingTrialResultController,
   OnboardingTrialRunningController,
   ReadinessGate,
+  AnalyticsCaptureGate,
+  SettingsController,
   StandardFocusLifecycleController,
   StandardFocusOutcomeController,
   type AppLifecyclePort,
@@ -34,6 +36,7 @@ import {
   type FocusNotificationResponseSource,
   type StandardFocusNotificationNavigationController,
   type StartupReconciliationPort,
+  type SensoryFeedbackPort,
 } from '@/application';
 import {
   PetCompanionController,
@@ -79,6 +82,8 @@ import {
   ExpoNotificationGatewayAdapter,
 } from '@/infrastructure/platform/notifications/expo-focus-notification.adapter';
 import { DeviceTimeoutScheduler } from '@/infrastructure/platform/timing/device-timeout.scheduler';
+import { ExpoSensoryFeedbackAdapter } from '@/infrastructure/platform/sensory/expo-sensory-feedback.adapter';
+import { Linking } from 'react-native';
 
 import type { MobileApplication } from './mobile-application';
 import type { Epic02ExitCompletionCandidate } from './diagnostics/run-epic-02-exit-probe';
@@ -158,6 +163,10 @@ import {
   epic09ExitReviewDatabaseName,
   resolveEpic09ExitReviewScenario,
 } from './review/epic-09-exit-review-fixture';
+import {
+  resolveSettingsReviewScenario,
+  settingsReviewDatabaseName,
+} from './review/settings-review-fixture';
 
 const PIXELDORO_DATABASE_NAME = 'pixeldoro.db';
 
@@ -185,6 +194,8 @@ export interface CreateMobileApplicationOptions {
   readonly resetNotificationCleanup?: ResetNotificationCleanupPort;
   readonly sqliteDriver?: SQLiteDriver;
   readonly startupReconciliation?: StartupReconciliationPort;
+  readonly sensoryFeedback?: SensoryFeedbackPort;
+  readonly openSystemSettings?: () => Promise<void>;
 }
 
 export const createMobileApplication = (
@@ -196,6 +207,8 @@ export const createMobileApplication = (
   const localCalendar = options.localCalendar ?? new DeviceLocalCalendarAdapter();
   const appLifecycle =
     options.appLifecycle ?? new ReactNativeAppLifecycleAdapter();
+  const sensory = options.sensoryFeedback ?? new ExpoSensoryFeedbackAdapter();
+  const analyticsGate = new AnalyticsCaptureGate();
   const baseFocusNotifications = options.focusNotifications ??
     new ExpoFocusNotificationAdapter(
       new ExpoNotificationGatewayAdapter(),
@@ -208,6 +221,10 @@ export const createMobileApplication = (
     options.diagnosticsEnabled !== false &&
     typeof __DEV__ !== 'undefined' &&
     __DEV__;
+  const settingsReviewScenario = resolveSettingsReviewScenario(
+    process.env.EXPO_PUBLIC_EPIC_10_REVIEW_FIXTURE,
+    reviewFixturesEnabled,
+  );
   const historyFirstPageReviewScenario = resolveHistoryFirstPageReviewScenario(
     process.env.EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE,
     reviewFixturesEnabled,
@@ -257,7 +274,9 @@ export const createMobileApplication = (
     reviewFixturesEnabled,
   );
   const databaseOwner = new SQLiteDatabaseOwner(
-    options.databaseName ?? (epic09ExitReviewScenario !== undefined
+    options.databaseName ?? (settingsReviewScenario !== undefined
+      ? settingsReviewDatabaseName(settingsReviewScenario)
+      : epic09ExitReviewScenario !== undefined
       ? epic09ExitReviewDatabaseName(epic09ExitReviewScenario)
       : contributionReviewScenario !== undefined
       ? contributionReviewDatabaseName(contributionReviewScenario)
@@ -412,7 +431,12 @@ export const createMobileApplication = (
   const coordinatedSideEffectAnalyticsQueue = {
     enqueueBounded: (
       ...args: Parameters<typeof sideEffectAnalyticsQueue.enqueueBounded>
-    ) => sessionCommands.run(() => sideEffectAnalyticsQueue.enqueueBounded(...args)),
+    ) => sessionCommands.run(() => {
+      if (!analyticsGate.isEnabled(true)) {
+        return Promise.resolve({ ok: true as const, value: 'already_queued' as const });
+      }
+      return sideEffectAnalyticsQueue.enqueueBounded(...args);
+    }),
   };
   const startupStandardReconciliation = new ReconcileStandardFocusUseCase({
     clock: standardFocusClock,
@@ -551,6 +575,15 @@ export const createMobileApplication = (
         },
       ),
   });
+  const emitSensory = (
+    kind: Parameters<SensoryFeedbackPort['emit']>[0],
+    freshnessKey: string,
+  ): void => {
+    const projection = bootstrap.getSnapshot();
+    if (projection.status !== 'ready') return;
+    void sensory.emit(kind, projection.snapshot.settings, freshnessKey)
+      .catch(() => undefined);
+  };
   const onboardingAnalytics =
     options.onboardingAnalytics ??
     new OnboardingAnalyticsRecorder({
@@ -559,7 +592,7 @@ export const createMobileApplication = (
         return projection.status === 'ready' &&
           projection.snapshot.settings.analyticsEnabled;
       },
-      queue: persistence.analyticsQueue,
+      queue: coordinatedSideEffectAnalyticsQueue,
     });
   const shop = createShopSlice({
     analyticsQueue: coordinatedSideEffectAnalyticsQueue,
@@ -580,6 +613,7 @@ export const createMobileApplication = (
     readiness,
     readBootstrap: bootstrap.getSnapshot,
     transaction,
+    onFreshUnlock: (receipt) => emitSensory('fresh_reward', receipt.id),
   });
   const roomDecorations = createRoomDecorationsSlice({
     catalog: persistence.catalog,
@@ -663,10 +697,16 @@ export const createMobileApplication = (
     onStarted: (session) => {
       breakOutcome.reset();
       breakSideEffects.coordinator.afterStarted(session);
+      emitSensory('committed_start', session.id);
     },
-    onTerminal: (outcome) => breakSideEffects.coordinator.afterTerminal(
-      outcome.sessionId, outcome.outcome, outcome.freshness,
-    ),
+    onTerminal: (outcome) => {
+      breakSideEffects.coordinator.afterTerminal(
+        outcome.sessionId, outcome.outcome, outcome.freshness,
+      );
+      if (outcome.outcome === 'completed' && outcome.freshness === 'fresh_commit') {
+        emitSensory('fresh_completion', outcome.sessionId);
+      }
+    },
   });
   const breakLifecycle = new BreakLifecycleController({
     criticalRecovery: bootstrap,
@@ -679,6 +719,9 @@ export const createMobileApplication = (
         breakSideEffects.coordinator.afterTerminal(
           outcome.sessionId, 'completed', outcome.freshness,
         );
+        if (outcome.freshness === 'fresh_commit') {
+          emitSensory('fresh_completion', outcome.sessionId);
+        }
       } else if (outcome.outcome === 'terminal_winner') {
         breakSideEffects.coordinator.afterTerminal(
           outcome.sessionId, 'cancelled', 'existing_terminal',
@@ -768,9 +811,21 @@ export const createMobileApplication = (
     onFreshFailure: (sessionId, resolvedAt) => {
       standardFocusOutcome.publishFreshFailure(sessionId, resolvedAt);
     },
-    onStarted: (session) => standardFocusSideEffects.coordinator.afterStarted(session),
+    onStarted: (session) => {
+      standardFocusSideEffects.coordinator.afterStarted(session);
+      emitSensory('committed_start', session.id);
+    },
     onTerminal: (sessionId, freshness) =>
       standardFocusSideEffects.coordinator.afterTerminal(sessionId, freshness),
+    readDefaults: () => {
+      const projection = bootstrap.getSnapshot();
+      return projection.status === 'ready'
+        ? {
+            durationMinutes: projection.snapshot.settings.focusDurationMinutes,
+            mode: projection.snapshot.settings.defaultMode,
+          }
+        : { durationMinutes: 25, mode: 'relax' as const };
+    },
   });
   const standardFocusLifecycle = new StandardFocusLifecycleController({
     clock: standardFocusClock,
@@ -788,6 +843,9 @@ export const createMobileApplication = (
           outcome.sessionId,
           outcome.freshness,
         );
+        if (outcome.outcome === 'completed' && outcome.freshness === 'fresh_commit') {
+          emitSensory('fresh_completion', outcome.sessionId);
+        }
       } else if (outcome.outcome === 'terminal_winner') {
         standardFocusSideEffects.coordinator.afterTerminal(
           outcome.sessionId,
@@ -813,6 +871,39 @@ export const createMobileApplication = (
     petTerminalFeedback,
   });
   onboardingTrialPetFeedback.start();
+  const resetProductData = async () => {
+    const result = await confirmedReset.execute();
+    if (!result.ok) return result;
+    onboardingTrialCompletion.reset();
+    onboardingTrialHandoff.reset();
+    onboardingTrialPetFeedback.reset();
+    standardFocus.setup.reset();
+    standardFocusOutcome.reset();
+    breakOutcome.reset();
+    await Promise.all([
+      firstUseEntry.refresh(),
+      onboardingTrialRunning.refresh(),
+      standardFocus.session.refresh(),
+      breakStart.session.refresh(),
+      refreshPetCompanion(),
+    ]);
+    return result;
+  };
+  const settings = new SettingsController({
+    analyticsGate,
+    analyticsQueue: persistence.analyticsQueue,
+    bootstrap,
+    clock,
+    coordinator: sessionCommands,
+    id,
+    installation: persistence.installation,
+    notifications: focusNotifications,
+    openSystemSettings: options.openSystemSettings ?? (() => Linking.openSettings()),
+    reset: resetProductData,
+    sensory,
+    sessions: persistence.sessions,
+    settings: persistence.settings,
+  });
   const petVisualDiagnostics =
     options.petVisualDiagnostics ?? new SafeConsolePetVisualDiagnosticsAdapter();
   const petTerminalReviewFixture = createPetTerminalReviewFixture(
@@ -888,6 +979,7 @@ export const createMobileApplication = (
 
   const startPetLifecycleRefresh = (): void => {
     unsubscribePetLifecycle ??= appLifecycle.subscribe((state) => {
+      void sensory.setActive(state === 'active').catch(() => undefined);
       if (state === 'background') {
         appVisibility.publish(state);
         onboardingTrialRunning.setAppVisible(false);
@@ -1107,6 +1199,7 @@ export const createMobileApplication = (
     roomDecorations: roomDecorations.controller,
     history: history.controller,
     historyContribution: history.contribution,
+    settings,
     standardFocusReviewResetAvailable: reviewFixturesEnabled,
     onboardingTrialRunning,
     onboardingTrialCompletion,
@@ -1123,6 +1216,8 @@ export const createMobileApplication = (
     readiness,
     transaction,
     boot: async () => {
+      await sensory.setActive(appLifecycle.getCurrentState() === 'active')
+        .catch(() => undefined);
       await runProbeIfEnabled();
       await bootstrap.boot();
       if (
@@ -1384,19 +1479,8 @@ export const createMobileApplication = (
     retryOnboardingTrialPetFeedback: () => onboardingTrialPetFeedback.retry(),
     resetStandardFocusReviewData: async () => {
       if (!reviewFixturesEnabled) return false;
-      const result = await confirmedReset.execute();
+      const result = await resetProductData();
       if (!result.ok) return false;
-      onboardingTrialCompletion.reset();
-      onboardingTrialHandoff.reset();
-      onboardingTrialPetFeedback.reset();
-      standardFocus.setup.reset();
-      standardFocusOutcome.reset();
-      await Promise.all([
-        firstUseEntry.refresh(),
-        onboardingTrialRunning.refresh(),
-        standardFocus.session.refresh(),
-        refreshPetCompanion(),
-      ]);
       return true;
     },
     recordPetVisualDiagnostic: (diagnostic) => {
@@ -1455,6 +1539,7 @@ export const createMobileApplication = (
         shop.dispose();
         roomDecorations.dispose();
         history.dispose();
+        settings.dispose();
         onboardingTrialRunning.dispose();
         onboardingTrialHandoff.dispose();
         onboardingTrialPetFeedback.dispose();
@@ -1464,6 +1549,7 @@ export const createMobileApplication = (
         petCompanion.dispose();
         petTerminalFeedback.dispose();
         await bootstrap.dispose();
+        await sensory.dispose();
       })();
       return disposePromise;
     },

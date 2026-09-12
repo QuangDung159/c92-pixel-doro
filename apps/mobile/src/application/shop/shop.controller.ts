@@ -82,6 +82,7 @@ export interface ShopControllerDependencies {
   readonly loader: ShopProjectionLoader;
   readonly purchaseItem: PurchaseItemCommand;
   readonly setItemEquipped: SetItemEquippedCommand;
+  readonly onFreshUnlock?: (receipt: Parameters<ItemUnlockedAnalyticsRecorderPort['recordUnlocked']>[0]) => void;
 }
 
 const IDLE_PURCHASE: ShopPurchaseProjection = Object.freeze({ status: 'idle' });
@@ -509,6 +510,7 @@ export class ShopController {
     receipt: Parameters<ItemUnlockedAnalyticsRecorderPort['recordUnlocked']>[0],
   ): void {
     try {
+      this.dependencies.onFreshUnlock?.(receipt);
       void this.dependencies.itemUnlockedAnalytics.recordUnlocked(receipt)
         .catch(() => undefined);
     } catch {

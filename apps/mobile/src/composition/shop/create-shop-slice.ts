@@ -46,6 +46,11 @@ export interface CreateShopSliceDependencies {
   readonly readiness: CommandReadinessPort;
   readonly readBootstrap: () => BootstrapProjection;
   readonly transaction: TransactionPort;
+  readonly onFreshUnlock?: (receipt: {
+    readonly id: string;
+    readonly itemId: string;
+    readonly createdAt: number;
+  }) => void;
 }
 
 export const createShopSlice = (dependencies: CreateShopSliceDependencies) => {
@@ -146,6 +151,9 @@ export const createShopSlice = (dependencies: CreateShopSliceDependencies) => {
     loader,
     purchaseItem,
     setItemEquipped,
+    ...(dependencies.onFreshUnlock === undefined
+      ? {}
+      : { onFreshUnlock: dependencies.onFreshUnlock }),
   });
   return Object.freeze({
     shop,

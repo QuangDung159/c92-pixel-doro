@@ -42,13 +42,24 @@ export type StandardFocusSetupStartResult =
     };
 
 export interface StandardFocusSetupControllerDependencies {
+  readonly readDefaults?: () => Pick<
+    StandardFocusSetupConfiguration,
+    'durationMinutes' | 'mode'
+  >;
   readonly start: (
     configuration: StandardFocusSetupConfiguration,
   ) => Promise<StandardFocusSetupStartResult>;
 }
 
-const initialProjection = (): StandardFocusSetupProjection => ({
-  configuration: DEFAULT_STANDARD_FOCUS_CONFIGURATION,
+const initialProjection = (
+  defaults: Pick<StandardFocusSetupConfiguration, 'durationMinutes' | 'mode'> =
+    DEFAULT_STANDARD_FOCUS_CONFIGURATION,
+): StandardFocusSetupProjection => ({
+  configuration: Object.freeze({
+    durationMinutes: defaults.durationMinutes,
+    mode: defaults.mode,
+    workTag: DEFAULT_STANDARD_FOCUS_CONFIGURATION.workTag,
+  }),
   command: { status: 'idle' },
 });
 
@@ -82,7 +93,7 @@ export class StandardFocusSetupController {
 
   reset = (): void => {
     if (this.disposed || this.operation !== undefined) return;
-    this.publish(initialProjection());
+    this.publish(initialProjection(this.readDefaults()));
   };
 
   start = (): Promise<StandardFocusSetupStartResult> => {
@@ -122,7 +133,7 @@ export class StandardFocusSetupController {
     }
     if (this.disposed) return result;
     if (result.ok) {
-      this.publish(initialProjection());
+      this.publish(initialProjection(this.readDefaults()));
     } else {
       this.publish({ configuration, command: { status: 'error', error: result.error } });
     }
@@ -133,6 +144,20 @@ export class StandardFocusSetupController {
     if (this.disposed || this.operation !== undefined) return;
     if (!validateStandardFocusConfiguration(configuration).ok) return;
     this.publish({ configuration: Object.freeze(configuration), command: { status: 'idle' } });
+  }
+
+  private readDefaults(): Pick<StandardFocusSetupConfiguration, 'durationMinutes' | 'mode'> {
+    try {
+      const defaults = this.dependencies.readDefaults?.() ??
+        DEFAULT_STANDARD_FOCUS_CONFIGURATION;
+      if (validateStandardFocusConfiguration({
+        ...defaults,
+        workTag: DEFAULT_STANDARD_FOCUS_CONFIGURATION.workTag,
+      }).ok) return defaults;
+    } catch {
+      // A safe product default keeps Setup usable if its projection is unavailable.
+    }
+    return DEFAULT_STANDARD_FOCUS_CONFIGURATION;
   }
 
   private publish(projection: StandardFocusSetupProjection): void {

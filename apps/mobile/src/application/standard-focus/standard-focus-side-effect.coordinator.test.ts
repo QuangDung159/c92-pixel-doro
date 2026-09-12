@@ -82,6 +82,23 @@ describe('StandardFocusSideEffectCoordinator', () => {
     expect(notifications.ensure).not.toHaveBeenCalled();
   });
 
+  it('never requests permission while reconciling a running session after relaunch', async () => {
+    const notifications = notificationPort();
+    const coordinator = new StandardFocusSideEffectCoordinator({
+      analytics: { recordStarted: vi.fn(), recordTerminal: vi.fn() },
+      notifications,
+      responses: responseSource().source,
+      readSettings: () => ({ analyticsEnabled: true, notificationsEnabled: true, soundEnabled: true }),
+      loadResult: vi.fn(),
+      onNotificationSession: vi.fn(),
+    });
+    coordinator.ensureRunning(running());
+    await coordinator.whenIdle();
+    expect(notifications.readPermission).toHaveBeenCalledOnce();
+    expect(notifications.requestPermission).not.toHaveBeenCalled();
+    expect(notifications.ensure).not.toHaveBeenCalled();
+  });
+
   it('cancels every terminal notification but records only fresh committed facts', async () => {
     const notifications = notificationPort();
     const terminal = cancelled();

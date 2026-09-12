@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_US_09_05_IMPLEMENTATION_REPORT
 title: PixelDoro Mobile MVP — US-09-05 Implementation Report
-version: 0.2.0
+version: 0.3.0
 status: DONE_OWNER_ACCEPTED
 date: 2026-09-12
 owner: Dũng Lư
@@ -30,8 +30,8 @@ Retry, Load more, render và Contribution không ghi event. Mọi ID/clock/setti
 best-effort và không đổi UI, Recovery, navigation hoặc product facts.
 
 Owner đã xác nhận quick UI smoke ngày 2026-09-12 trên exact committed/pushed SHA `a1abf5f...`: app
-không crash và behavior hoạt động như kỳ vọng. US-09-05 là `DONE_OWNER_ACCEPTED`; explicit EPIC-09
-exit acceptance vẫn là gate riêng nên Epic chưa được ghi DONE.
+không crash và behavior hoạt động như kỳ vọng. US-09-05 là `DONE_OWNER_ACCEPTED`; owner sau đó đã
+explicitly close EPIC-09 trong gate riêng.
 
 ## 2. Implemented behavior
 
@@ -67,15 +67,16 @@ No migration/schema/index/trigger, package/lockfile, native config, permission, 
 product-history write was added. Analytics stays inside the existing bounded local queue. Normal
 `pixeldoro.db` is not selected by any exit fixture.
 
-## 5. Remaining Epic gate
+## 5. Epic closure
 
 - Story 05 quick UI and exact-SHA acceptance are complete.
-- Explicit owner authorization is still required to close EPIC-09; this report does not infer it.
+- Owner explicitly authorized EPIC-09 closure on 2026-09-12; EPIC-10 planning moves to a separate thread.
 - Formal iOS/Android physical-device and full accessibility breadth remains `NOT_RUN` unless executed.
 
 ## 6. Change log
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.3.0 | 2026-09-12 | Codex | Linked explicit owner EPIC-09 closure; opened only EPIC-10 planning in a separate thread while retaining deferred formal evidence. |
 | 0.2.0 | 2026-09-12 | Codex | Bound owner quick UI PASS to exact committed/pushed SHA `a1abf5f...`; no crash and expected behavior. Closed US-09-05 as `DONE_OWNER_ACCEPTED`; formal breadth and explicit Epic closure remain pending. |
 | 0.1.0 | 2026-09-12 | Codex | Recorded the implemented candidate, automated/platform evidence and honest pre-smoke status. |

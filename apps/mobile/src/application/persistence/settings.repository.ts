@@ -28,8 +28,23 @@ export interface ReplaceAppSettingsInput {
   readonly updatedAt: number;
 }
 
+export type AppSettingsPatch = Partial<Pick<
+  AppSettingsRecord,
+  | 'focusDurationMinutes'
+  | 'defaultMode'
+  | 'soundEnabled'
+  | 'hapticsEnabled'
+  | 'notificationsEnabled'
+  | 'analyticsEnabled'
+>> & {
+  readonly updatedAt: number;
+};
+
 export interface AppSettingsRepository {
   find(): Promise<PersistenceResult<AppSettingsRecord | null>>;
+  patch(
+    input: AppSettingsPatch,
+  ): Promise<PersistenceResult<'updated' | 'not_updated'>>;
   replace(
     input: ReplaceAppSettingsInput,
   ): Promise<PersistenceResult<'updated' | 'not_updated'>>;

@@ -44,13 +44,14 @@ export const DurationControl = ({
     </View>
     <View accessibilityRole="radiogroup" style={styles.quickValues}>
       {quickValues.map((duration) => (
-        <ChoiceChip
-          disabled={disabled}
-          key={duration}
-          label={`${duration} phút`}
-          onPress={() => onChange(duration)}
-          selected={value === duration}
-        />
+        <View key={duration} style={styles.quickValue}>
+          <ChoiceChip
+            disabled={disabled}
+            label={`${duration} phút`}
+            onPress={() => onChange(duration)}
+            selected={value === duration}
+          />
+        </View>
       ))}
     </View>
   </View>
@@ -77,5 +78,6 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     letterSpacing: 2,
   },
-  quickValues: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  quickValues: { flexDirection: 'row', gap: 8 },
+  quickValue: { flexBasis: 0, flexGrow: 1, minWidth: 0 },
 });

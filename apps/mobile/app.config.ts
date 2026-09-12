@@ -46,6 +46,14 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         },
       ],
       'expo-sqlite',
+      [
+        'expo-audio',
+        {
+          enableBackgroundPlayback: false,
+          microphonePermission: false,
+          recordAudioAndroid: false,
+        },
+      ],
       'expo-updates',
       [
         'expo-build-properties',

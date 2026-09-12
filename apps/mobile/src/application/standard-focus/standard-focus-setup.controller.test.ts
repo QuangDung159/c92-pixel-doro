@@ -63,4 +63,22 @@ describe('StandardFocusSetupController', () => {
     expect(await controller.start()).toMatchObject({ ok: true });
     expect(start).toHaveBeenCalledTimes(2);
   });
+
+  it('uses the latest durable duration and mode for every fresh Setup reset', () => {
+    let defaults = { durationMinutes: 50, mode: 'strict' as const };
+    const controller = new StandardFocusSetupController({
+      readDefaults: () => defaults,
+      start: async () => ({ ok: true, session }),
+    });
+
+    controller.reset();
+    expect(controller.getSnapshot().configuration).toEqual({
+      durationMinutes: 50, mode: 'strict', workTag: 'coding',
+    });
+    defaults = { durationMinutes: 15, mode: 'strict' };
+    controller.reset();
+    expect(controller.getSnapshot().configuration).toEqual({
+      durationMinutes: 15, mode: 'strict', workTag: 'coding',
+    });
+  });
 });

@@ -25,6 +25,7 @@ interface TestElementProps {
   readonly children?: ReactNode;
   readonly label?: string;
   readonly onPress?: () => void;
+  readonly style?: unknown;
 }
 
 const isTestElement = (node: ReactNode): node is ReactElement<TestElementProps> =>
@@ -41,9 +42,14 @@ describe('DurationControl', () => {
     const buttons = elements.filter((element) => element.type === SecondaryButton);
     const quick = elements.find((element) =>
       element.type === ChoiceChip && element.props.label === '50 phút');
+    const equalColumns = elements.filter((element) => {
+      const style = element.props.style as { readonly flexBasis?: number } | undefined;
+      return element.type === 'View' && style?.flexBasis === 0;
+    });
     buttons[0]?.props.onPress?.();
     buttons[1]?.props.onPress?.();
     quick?.props.onPress?.();
     expect(onChange.mock.calls).toEqual([[20], [30], [50]]);
+    expect(equalColumns).toHaveLength(3);
   });
 });

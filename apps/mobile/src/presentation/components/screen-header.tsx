@@ -1,6 +1,6 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from "react-native";
 
-import { palette } from '@/presentation/theme/palette';
+import { palette } from "@/presentation/theme/palette";
 
 export interface ScreenHeaderProps {
   readonly eyebrow: string;
@@ -29,13 +29,13 @@ const styles = StyleSheet.create({
   eyebrow: {
     color: palette.accentDark,
     fontSize: 12,
-    fontWeight: '900',
+    fontWeight: "900",
     letterSpacing: 2,
   },
   title: {
     color: palette.textPrimary,
-    fontSize: 34,
-    fontWeight: '900',
+    fontSize: 24,
+    fontWeight: "900",
     letterSpacing: -1,
     lineHeight: 39,
   },
