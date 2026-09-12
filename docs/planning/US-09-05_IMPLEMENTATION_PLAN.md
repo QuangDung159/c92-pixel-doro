@@ -26,7 +26,7 @@ schema_change: NONE_PROPOSED
 dependency_change: NONE_PROPOSED
 native_change: NONE_PROPOSED
 analytics_change: ADD_EXISTING_ALLOWLIST_EVENT_HOOK_ONLY
-next_gate: EXPLICIT_EPIC_09_EXIT_CLOSURE_AUTHORIZATION
+next_gate: COMPLETE_EPIC_09_CLOSED
 scope:
   - mobile_mvp
   - epic_09
@@ -351,7 +351,7 @@ is complete; only the separate explicit Epic closure authorization remains pendi
 - [x] Automated/static/platform evidence and manual/formal statuses are recorded honestly.
 - [x] Story report and Epic Exit Report candidate exist without premature DONE claim.
 - [x] Owner accepts exact committed SHA through quick UI smoke.
-- [ ] Owner separately authorizes EPIC-09 closure before EPIC-10 planning.
+- [x] Owner separately authorizes EPIC-09 closure before EPIC-10 planning.
 
 ## 10. Owner Confirmation Register
 
@@ -425,6 +425,7 @@ retention/reset policy; never delete product data or normal `pixeldoro.db` durin
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.5.0 | 2026-09-12 | Codex | Recorded explicit owner EPIC-09 closure after exact-SHA Story acceptance. EPIC-10 planning is delegated to a separate thread; no later-Epic implementation or commit/push was started here. |
 | 0.4.0 | 2026-09-12 | Codex | Bound owner quick UI PASS to exact committed/pushed SHA `a1abf5f...`: no crash and expected behavior. US-09-05 is `DONE_OWNER_ACCEPTED`; structured/formal breadth remains `NOT_RUN`; explicit EPIC-09 closure authorization remains pending. |
 | 0.3.0 | 2026-09-12 | Codex | Implemented the approved local `history_viewed` focus-episode hook, six isolated exit fixtures, real-SQLite aggregate/reopen/failure evidence, static/device gates and candidate reports. Quality passed 206 files/1,056 tests; iOS/Android exports passed; Doctor 20/21 with the same 9 SDK-57 patch drifts. Owner/manual smoke remains `NOT_RUN`; no commit/push or Epic closure claim. |
 | 0.2.0 | 2026-09-12 | Codex | Recorded owner approval for `US0905-CONFIRM-01→06 Option A`, opened coding and bound exact implementation start SHA `0a84afe...`. No commit/push or Epic closure authority. |

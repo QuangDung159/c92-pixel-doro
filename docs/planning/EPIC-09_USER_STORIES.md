@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_EPIC_09_USER_STORIES
 title: PixelDoro EPIC-09 — Focus History và Contribution Graph User Stories
-version: 1.3.0
-status: ALL_STORIES_OWNER_ACCEPTED_AWAITING_EXPLICIT_EPIC_EXIT
+version: 2.0.0
+status: DONE_OWNER_ACCEPTED
 date: 2026-09-11
 last_updated: 2026-09-12
 owner: Dũng Lư
@@ -25,7 +25,8 @@ schema_impact: NONE_PROPOSED_EXISTING_SCHEMA_001_SUFFICIENT
 dependency_impact: NONE_PROPOSED
 native_impact: NONE_PROPOSED
 product_gate: OPEN_006_RESOLVED_OPTION_A
-next_gate: EXPLICIT_EPIC_09_EXIT_CLOSURE_AUTHORIZATION
+epic_exit_accepted_sha: a1abf5fecea6f27483de024bc64df2f2b2bfe0b5
+next_gate: EPIC_10_PLANNING_IN_SEPARATE_THREAD
 product_truth: ../PIXELDORO_CORE_TRUTH.md
 epic_baseline: ./MVP_EPICS.md
 data_model: ../architecture/data-model.md
@@ -41,8 +42,8 @@ previous_epic_exit: ./EPIC-08_EXIT_REPORT.md
 Tài liệu này audit baseline và theo dõi các vertical slice của `EPIC-09`, với output quan sát được,
 dependency, test, device guide, rollback và owner gate riêng. US-09-01→04 đã owner accepted;
 US-09-05 đã owner accepted tại exact committed/pushed SHA `a1abf5f...`; cả năm Stories đã accepted.
-EPIC-09 vẫn chờ explicit owner exit authorization và tài liệu này không
-tự cấp quyền coding, commit hoặc push.
+Owner explicitly closed EPIC-09 on 2026-09-12. EPIC-10 planning is delegated to a separate thread;
+tài liệu này không tự cấp quyền coding, commit hoặc push cho Epic kế tiếp.
 
 Thứ tự authority khi review hoặc triển khai:
 
@@ -775,7 +776,7 @@ Proposed file: `apps/mobile/test/device/epic-09-exit-smoke.md`; `Status: NOT_RUN
 - [x] **DoD:** all Story acceptance/tests pass with exact counts/output and SHA.
 - [x] **DoD:** manual/owner/formal evidence status is explicit; no unchecked case labeled PASS.
 - [x] **DoD:** implementation report and EPIC-09 Exit Report candidate exist only after implementation.
-- [ ] **Exit gate:** owner explicitly accepts exact candidate and authorizes EPIC-09 closure/EPIC-10
+- [x] **Exit gate:** owner explicitly accepts exact candidate and authorizes EPIC-09 closure/EPIC-10
   planning; no implicit next-Epic coding.
 
 ## 14. Common Component Reuse Matrix
@@ -970,7 +971,7 @@ separate classes.
 - [x] Schema `001`, dependencies, lockfile and native config have no unauthorized drift.
 - [x] Full automated/static/platform gates pass on exact candidate.
 - [x] Five Story reports/guides and exact accepted SHAs are recorded.
-- [ ] Owner explicitly accepts EPIC-09 exact candidate and authorizes closure/EPIC-10 planning.
+- [x] Owner explicitly accepts EPIC-09 exact candidate and authorizes closure/EPIC-10 planning.
 
 ## 24. Owner Confirmation Register
 
@@ -1116,6 +1117,7 @@ không tạo implementation plan Story 01 trong cùng bước này.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 2.0.0 | 2026-09-12 | Codex | Recorded explicit owner EPIC-09 closure. Marked Epic `DONE_OWNER_ACCEPTED` at accepted behavior SHA `a1abf5f...`, kept formal breadth deferred, and opened only the EPIC-10 planning gate for a separate thread. |
 | 1.3.0 | 2026-09-12 | Codex | Bound US-09-05 owner quick UI PASS to exact committed/pushed SHA `a1abf5f...`: no crash and expected behavior. All five Stories are `DONE_OWNER_ACCEPTED`; explicit EPIC-09 closure/EPIC-10 planning authorization remains pending and structured/formal breadth remains `NOT_RUN`. |
 | 1.2.0 | 2026-09-12 | Codex | Recorded the US-09-05 uncommitted candidate: exact local view analytics, six exit fixtures, real-SQLite aggregate/reopen/failure proof, static/device gates and candidate reports. Quality passed 206 files/1,056 tests and both exports; owner quick UI and explicit Epic exit acceptance remain pending. |
 | 1.1.0 | 2026-09-12 | Codex | Recorded owner approval for `US0905-CONFIRM-01→06 Option A`; opened Story-05 coding on exact start SHA `0a84afe...`. No commit/push or Epic closure authority. |

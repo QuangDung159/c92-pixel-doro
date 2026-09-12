@@ -1,16 +1,16 @@
 ---
 document_id: PIXELDORO_MVP_EPIC_BREAKDOWN
 title: PixelDoro Mobile MVP — Epic Breakdown
-version: 2.6.0
-status: EPIC_01_TO_08_DONE_EPIC_09_PLANNING_READY
-last_updated: 2026-09-11
+version: 2.7.0
+status: EPIC_01_TO_09_DONE_EPIC_10_PLANNING_READY
+last_updated: 2026-09-12
 owner: Dũng Lư
 reviewer: Dũng Lư
 reviewer_role: Tech Lead
 approved_by: Dũng Lư
 approver_role: Product Owner
 approved_at: 2026-08-27
-amended_at: 2026-09-11
+amended_at: 2026-09-12
 amendment_approved_by: Dũng Lư
 language: vi
 scope:
@@ -129,7 +129,7 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 - [x] `06 / EPIC-06 / W3` — Standard Focus — `DONE_OWNER_ACCEPTED` 2026-09-07.
 - [x] `07 / EPIC-07 / W3` — Break & Cadence — `DONE_OWNER_ACCEPTED` 2026-09-10.
 - [x] `08 / EPIC-08 / W3` — Progression & Shop.
-- [ ] `09 / EPIC-09 / W3` — History & Contribution.
+- [x] `09 / EPIC-09 / W3` — History & Contribution — `DONE_OWNER_ACCEPTED` 2026-09-12.
 - [ ] `10 / EPIC-10 / W3` — Settings & Data Control.
 - [ ] `11 / EPIC-11 / W3` — Analytics, Feedback & Store Review.
 - [ ] `12 / EPIC-12 / W4` — Beta Readiness.
@@ -146,10 +146,11 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 | `EPIC-06` | `DONE_OWNER_ACCEPTED` | Exact candidate `458a886`; Standard Relax/Strict end-to-end, notification/analytics/a11y hooks, owner iOS/Android quick smoke. Formal tester deferred. |
 | `EPIC-07` | `DONE_OWNER_ACCEPTED` | Exact candidate `f6c7b92`; Break/cadence lifecycle, notification/analytics and owner quick UI pass. Formal device/accessibility matrix deferred. |
 | `EPIC-08` | `DONE_OWNER_ACCEPTED` | US-08-01→05 owner accepted; exact candidate `30adc34...`; Exit Report closed by owner authorization. |
+| `EPIC-09` | `DONE_OWNER_ACCEPTED` | US-09-01→05 owner accepted; exact behavior candidate `a1abf5f...`; History/Contribution exit closed by owner authorization. |
 
-Tám Epic đầu đã `DONE_OWNER_ACCEPTED`. EPIC-09 dependency gate is open but its planning/coding has not
-started implicitly; EPIC-09–12 retain execution order. Purchase/equip/room của EPIC-08 đã
-production-ready theo accepted scope; History, Settings, provider analytics và Beta Readiness chưa hoàn tất.
+Chín Epic đầu đã `DONE_OWNER_ACCEPTED`. EPIC-10 dependency/planning gate is open for the owner's separate
+thread, but its implementation has not started implicitly; EPIC-10–12 retain execution order. History và
+Contribution đã production-ready theo accepted scope; Settings, provider analytics và Beta Readiness chưa hoàn tất.
 
 ## 3. Critical path và delivery gates
 
@@ -623,14 +624,14 @@ matrix tiếp tục `DEFERRED_TO_LATER_PHASE` và được carry sang later vali
 
 **Epic completion checklist:**
 
-- [ ] History chỉ query `session_type = focus` và `focus_variant = standard`.
-- [ ] Recent list hiển thị đúng duration/tag/status.
-- [ ] Failed/cancelled có thể xuất hiện trong history nhưng đóng góp 0 phút.
-- [ ] Trial không xuất hiện trong standard history/contribution.
-- [ ] Local day dùng immutable scheduled-end date đã persist.
-- [ ] Timezone change/reconcile muộn không regroup session cũ.
-- [ ] Contribution graph không chỉ dùng màu để truyền đạt dữ liệu.
-- [ ] Final intensity/color thresholds chỉ được khóa sau `OPEN-006` resolved.
+- [x] History chỉ query `session_type = focus` và `focus_variant = standard`.
+- [x] Recent list hiển thị đúng duration/tag/status.
+- [x] Failed/cancelled có thể xuất hiện trong history nhưng đóng góp 0 phút.
+- [x] Trial không xuất hiện trong standard history/contribution.
+- [x] Local day dùng immutable scheduled-end date đã persist.
+- [x] Timezone change/reconcile muộn không regroup session cũ.
+- [x] Contribution graph không chỉ dùng màu để truyền đạt dữ liệu.
+- [x] Final intensity/color thresholds chỉ được khóa sau `OPEN-006` resolved.
 
 **Out of scope:** Weekly/monthly deep analytics, cloud history, streak UI và contribution-based unlock.
 
@@ -869,6 +870,13 @@ Story hoặc implementation tương lai.
 - [x] Không estimate deadline trước khi Story refinement hoàn tất.
 
 ## 10. Change log
+
+### 2.7.0 — 2026-09-12
+
+- Owner explicitly authorized EPIC-09 closure at accepted behavior candidate `a1abf5f...`; marked
+  `EPIC-09` `DONE_OWNER_ACCEPTED` with five accepted Stories and retained formal breadth as deferred.
+- Opened only the EPIC-10 dependency/planning gate for a separate thread; no EPIC-10 implementation,
+  commit or push was started here.
 
 ### 2.6.0 — 2026-09-11
 
