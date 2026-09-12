@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_09_04_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-09-04 Implementation Plan
-version: 0.3.0
-status: IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE
-implementation_status: CANDIDATE_READY_FOR_OWNER_UI_SMOKE
+version: 0.4.0
+status: DONE_OWNER_ACCEPTED
+implementation_status: DONE_OWNER_ACCEPTED
 date: 2026-09-12
 last_updated: 2026-09-12
 owner: Dũng Lư
@@ -13,13 +13,13 @@ language: vi
 branch: feats/epic-09
 planning_baseline_sha: c0291ece7a905e4048889bd96a99f2fd39a3db28
 implementation_start_sha: c0291ece7a905e4048889bd96a99f2fd39a3db28
-current_candidate_base_sha: c0291ece7a905e4048889bd96a99f2fd39a3db28
-exact_implementation_sha: null
-candidate_identity: UNCOMMITTED_WORKTREE_ON_APPROVED_START_SHA
+current_candidate_base_sha: cdce571d7f61e088d7f48c297d32a9373e7f0a99
+exact_implementation_sha: cdce571d7f61e088d7f48c297d32a9373e7f0a99
+candidate_identity: EXACT_COMMITTED_OWNER_ACCEPTED_SHA
 previous_story: US-09-03
 previous_story_status: DONE_OWNER_ACCEPTED
 previous_story_accepted_sha: c0291ece7a905e4048889bd96a99f2fd39a3db28
-manual_device_status: NOT_RUN
+manual_device_status: OWNER_QUICK_UI_SMOKE_REPORTED_PASS
 formal_tester_status: NOT_RUN
 schema_change: NONE_PROPOSED
 dependency_change: NONE_PROPOSED
@@ -27,7 +27,7 @@ native_change: NONE_PROPOSED
 analytics_change: NONE_PROPOSED
 product_decision: OPEN_006_RESOLVED_OPTION_A
 automated_status: PASS_203_FILES_1044_TESTS
-next_gate: OWNER_QUICK_VISUAL_UI_SMOKE_AND_ACCEPT_EXACT_COMMITTED_SHA
+next_gate: US_09_05_IMPLEMENTATION_PLAN_CONFIRMATION
 scope:
   - mobile_mvp
   - epic_09
@@ -320,7 +320,7 @@ Reduce Motion, airplane mode/cold relaunch và cleanup exact isolated DB/env. Ch
 - [x] Legend is exact, non-evaluative and structurally meaningful without color.
 - [x] No interaction/animation/network/data/schema/dependency/native/analytics drift.
 - [x] Automated/static/platform gates pass with exact evidence; manual status remains `NOT_RUN`.
-- [ ] Owner final visual smoke is bound to exact committed SHA before Story 04 closes.
+- [x] Owner final visual smoke is bound to exact committed SHA `cdce571...`; Story 04 closed.
 
 ## 10. Owner Confirmation Register
 
@@ -392,6 +392,7 @@ isolated cleanup contract của Story 03.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.4.0 | 2026-09-12 | Codex | Bound owner quick visual UI PASS to exact committed/pushed SHA `cdce571...`: no crash and expected behavior. Closed US-09-04 as `DONE_OWNER_ACCEPTED`; structured/formal breadth remains `NOT_RUN`; opened US-09-05 planning. |
 | 0.3.0 | 2026-09-12 | Codex | Implemented approved Option A candidate: exact five-band visual tokens, contrast-safe peak border, decorative seven-cell strip, retained accessible details, today marker, exact legend and device guide. Full quality passed 203 files/1,044 tests; iOS/Android exports passed; Doctor remains 20/21 known patch drift. Candidate is uncommitted on `c0291ec...`; owner visual smoke remains `NOT_RUN`. |
 | 0.2.0 | 2026-09-12 | Codex | Recorded owner approval for `US0904-CONFIRM-01→06 Option A`, opened Story-04 coding and bound exact implementation start SHA `c0291ec...`. No commit/push authority. |
 | 0.1.0 | 2026-09-12 | Codex | Audited accepted US-09-03 SHA `c0291ec...`, resolved palette, current neutral panel/a11y/scroll architecture and actual token contrast; proposed Presentation-only seven-cell graph, exact legend, adaptive peak border, retained text rows, fixture reuse and six owner confirmations. No coding, commit or push. |

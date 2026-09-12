@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_09_USER_STORIES
 title: PixelDoro EPIC-09 — Focus History và Contribution Graph User Stories
-version: 0.9.0
+version: 1.0.0
 status: IMPLEMENTATION_IN_PROGRESS_OWNER_GATED
 date: 2026-09-11
 last_updated: 2026-09-12
@@ -19,13 +19,13 @@ previous_epic: EPIC-08
 previous_epic_status: DONE_OWNER_ACCEPTED
 previous_epic_accepted_sha: 30adc34be23dca48379b6f2553203fdadb9f9e5b
 previous_epic_closure_commit: 05e3e883e0c6dc3292b3707fd5fe5af65032dc75
-implementation_status: US_09_01_TO_03_DONE_OWNER_ACCEPTED_US_09_04_CANDIDATE_AWAITING_OWNER_UI
+implementation_status: US_09_01_TO_04_DONE_OWNER_ACCEPTED_US_09_05_PLANNING_OWNER_GATED
 formal_tester_status: NOT_RUN
 schema_impact: NONE_PROPOSED_EXISTING_SCHEMA_001_SUFFICIENT
 dependency_impact: NONE_PROPOSED
 native_impact: NONE_PROPOSED
 product_gate: OPEN_006_RESOLVED_OPTION_A
-next_gate: OWNER_VISUAL_SMOKE_US_09_04_EXACT_CANDIDATE
+next_gate: OWNER_CONFIRM_US_09_05_IMPLEMENTATION_PLAN
 product_truth: ../PIXELDORO_CORE_TRUTH.md
 epic_baseline: ./MVP_EPICS.md
 data_model: ../architecture/data-model.md
@@ -39,8 +39,8 @@ previous_epic_exit: ./EPIC-08_EXIT_REPORT.md
 ## 0. Mục đích và authority
 
 Tài liệu này audit baseline và theo dõi các vertical slice của `EPIC-09`, với output quan sát được,
-dependency, test, device guide, rollback và owner gate riêng. US-09-01→03 đã owner accepted;
-US-09-04 đang ở implementation-plan confirmation gate và Story sau vẫn cần gate riêng. Tài liệu không
+dependency, test, device guide, rollback và owner gate riêng. US-09-01→04 đã owner accepted;
+US-09-05 đang ở implementation-plan confirmation gate. Tài liệu không
 tự cấp quyền coding, commit hoặc push.
 
 Thứ tự authority khi review hoặc triển khai:
@@ -365,8 +365,8 @@ horizontal “backend-only” slice; Story 03 có neutral semantic day panel tr�
 | 1 | US-09-01 — Truthful Standard Focus History First Page | History tab đọc và hiển thị first page terminal Standard Focus thật từ SQLite | P0 | EPIC-08; confirmations 05/08/10 | DONE_OWNER_ACCEPTED — `18057faf...` |
 | 2 | US-09-02 — Date-grouped Pagination và Resilient Refresh | User xem thêm history theo ngày mà không duplicate/mất dữ liệu khi refresh lỗi | P0 | 01; confirmations 01/02/06 | DONE_OWNER_ACCEPTED — `91d0612...` |
 | 3 | US-09-03 — Stable Daily Contribution Projection | User thấy đủ các ngày trong range và đúng completed minutes/intensity semantics | P0 | 01; confirmations 03/04 | DONE_OWNER_ACCEPTED — `c0291ec...` |
-| 4 | US-09-04 — Production Contribution Graph và Accessibility | User đọc graph rõ trên small screen, screen reader, largest text và grayscale | P1 | 02/03; `OPEN-006` confirmation 04 | IMPLEMENTED_AWAITING_OWNER_UI — uncommitted on `c0291ec...` |
-| 5 | US-09-05 — Offline Lifecycle, Analytics, Prototype Integrity và Epic Exit | History ổn định qua refocus/relaunch/offline và sẵn sàng exit evidence | P1 | 01→04; confirmations 06/07/09/10 | NOT_STARTED |
+| 4 | US-09-04 — Production Contribution Graph và Accessibility | User đọc graph rõ trên small screen, screen reader, largest text và grayscale | P1 | 02/03; `OPEN-006` confirmation 04 | DONE_OWNER_ACCEPTED — `cdce571...` |
+| 5 | US-09-05 — Offline Lifecycle, Analytics, Prototype Integrity và Epic Exit | History ổn định qua refocus/relaunch/offline và sẵn sàng exit evidence | P1 | 01→04; confirmations 06/07/09/10 | PLANNING_AWAITING_OWNER_CONFIRMATION |
 
 ## 9. US-09-01 — Truthful Standard Focus History First Page
 
@@ -681,7 +681,7 @@ Implemented file: `apps/mobile/test/device/contribution-graph-accessibility-smok
 - [x] **DoR:** Stories 02/03 accepted and `OPEN-006` resolved explicitly.
 - [x] **DoR:** final palette/threshold/legend copy approved through `US0904-CONFIRM-01→06 Option A`.
 - [x] **DoD:** component/a11y/static tests pass; manual status is recorded, never inferred.
-- [ ] **DoD:** final visual owner acceptance bound to exact SHA before Story 05 exit.
+- [x] **DoD:** final visual owner acceptance bound to exact SHA `cdce571...`; Story 05 planning open.
 
 ## 13. US-09-05 — Offline Lifecycle, Analytics, Prototype Integrity và Epic Exit
 
@@ -918,7 +918,7 @@ settings, fixture env, dedicated isolated database, cleanup/reset and env-unset 
 | US-09-01 | `apps/mobile/test/device/focus-history-first-page-smoke.md` | empty/mixed/exclusions/error/Retry/relaunch/a11y | PASS_OWNER_QUICK_UI at `18057faf...`; structured breadth NOT_RUN |
 | US-09-02 | `apps/mobile/test/device/focus-history-pagination-lifecycle-smoke.md` | group/page/append failure/refocus/small screen | PASS_OWNER_QUICK_UI at `91d0612...`; structured breadth NOT_RUN |
 | US-09-03 | `apps/mobile/test/device/contribution-projection-smoke.md` | zero/mixed/range/local-day/timezone/error | PASS_OWNER_QUICK_UI at `c0291ec...`; structured breadth NOT_RUN |
-| US-09-04 | `apps/mobile/test/device/contribution-graph-accessibility-smoke.md` | final colors, VoiceOver/TalkBack, largest text, grayscale, Reduce Motion | NOT_RUN |
+| US-09-04 | `apps/mobile/test/device/contribution-graph-accessibility-smoke.md` | final colors, VoiceOver/TalkBack, largest text, grayscale, Reduce Motion | PASS_OWNER_QUICK_UI at `cdce571...`; structured breadth NOT_RUN |
 | US-09-05 | `apps/mobile/test/device/epic-09-exit-smoke.md` | aggregate offline/relaunch/lifecycle/analytics/prototype integrity | NOT_RUN |
 
 Race, corrupt and destructive scenarios remain automated when UI reproduction cannot be deterministic.
@@ -1115,6 +1115,7 @@ không tạo implementation plan Story 01 trong cùng bước này.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 1.0.0 | 2026-09-12 | Codex | Bound US-09-04 owner quick visual UI PASS to exact committed/pushed SHA `cdce571...`; no crash and expected behavior. Structured/formal breadth remains `NOT_RUN`; closed Story 04 and opened owner-gated US-09-05 implementation planning. |
 | 0.9.0 | 2026-09-12 | Codex | Recorded approved US-09-04 Option A implementation candidate on uncommitted worktree over `c0291ec...`: exact palette/contrast mapping, static seven-cell strip, retained accessible rows, today marker, exact legend and smoke guide. Quality passed 203 files/1,044 tests; platform exports passed; owner visual smoke remains `NOT_RUN`. |
 | 0.8.0 | 2026-09-12 | Codex | Recorded owner approval for `US0904-CONFIRM-01→06 Option A`; opened US-09-04 coding on exact start SHA `c0291ec...`. No commit/push authority. |
 | 0.7.0 | 2026-09-12 | Codex | Bound US-09-03 owner quick UI PASS to exact committed/pushed SHA `c0291ec...`; no crash and expected behavior. Structured/formal breadth remains `NOT_RUN`; closed Story 03 and opened owner-gated US-09-04 implementation planning. |

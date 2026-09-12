@@ -1,7 +1,9 @@
 # US-09-04 — Contribution graph visual/accessibility UI smoke
 
-Status: `NOT_RUN`. Chỉ ghi PASS sau khi chạy trên exact `<implementation-sha>`. Guide reuse fixture DB
-prefix `pixeldoro-us-09-03-`; không tạo hoặc đụng production database `pixeldoro.db`.
+Status: `OWNER_QUICK_UI_SMOKE_REPORTED_PASS`. Owner xác nhận ngày 2026-09-12 tại exact committed/
+pushed SHA `cdce571d7f61e088d7f48c297d32a9373e7f0a99`: không crash và behavior hoạt động như kỳ vọng.
+Đây là quick UI acceptance; structured visual/platform/accessibility rows vẫn `NOT_RUN`. Guide reuse
+fixture DB prefix `pixeldoro-us-09-03-`; không tạo hoặc đụng production database `pixeldoro.db`.
 
 ## 1. Setup và primary visual
 
@@ -65,6 +67,7 @@ PASS/FAIL/BLOCKED, screenshot/recording và notes; case chưa chạy giữ `NOT_
 
 | Platform/device/OS | Fixture/settings | Result | Artifact/notes |
 |---|---|---|---|
+| `Owner available UI environment; metadata not recorded` | `Quick visual UI smoke` | `PASS_OWNER_QUICK_UI` | 2026-09-12 at `cdce571...`: no crash, behavior worked as expected |
 | `<fill>` | `contribution_mixed_week` | `NOT_RUN` | `<implementation-sha>` |
 | `<fill>` | `contribution_zero_week` | `NOT_RUN` | `<fill>` |
 | `<fill>` | `contribution_threshold_edges` | `NOT_RUN` | `<fill>` |
