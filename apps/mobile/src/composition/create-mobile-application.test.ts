@@ -33,6 +33,7 @@ afterEach(() => {
   delete process.env.EXPO_PUBLIC_EPIC_07_REVIEW_FIXTURE;
   delete process.env.EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE;
   delete process.env.EXPO_PUBLIC_EPIC_08_EXIT_REVIEW_FIXTURE;
+  delete process.env.EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE;
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
 });

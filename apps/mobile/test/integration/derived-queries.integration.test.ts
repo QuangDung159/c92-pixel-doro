@@ -12,6 +12,14 @@ import { afterEach, describe, expect, it } from 'vitest';
 import type {
   AnalyticsEventRecord,
 } from '@/application';
+import {
+  buildFocusHistorySections,
+  LoadDailyContributionUseCase,
+  LoadFocusHistoryPageUseCase,
+  SessionCommandCoordinator,
+} from '@pixeldoro/application';
+import { createHistoryFirstPageReviewFixture } from '@/composition/review/history-first-page-review-fixture';
+import { createHistoryGroupedReviewFixture } from '@/composition/review/history-grouped-review-fixture';
 import { MigrationRunner } from '@/infrastructure/database/migration-runner';
 import { productionMigrationRegistry } from '@/infrastructure/database/migrations/migration-registry';
 import { createSQLitePersistenceGraph } from '@/infrastructure/database/persistence-graph';
@@ -346,6 +354,44 @@ describe('US-02-06 derived durable queries', () => {
       database.owner, 'attempt-future', '0.3.0', REVIEW_NOW + 1,
     );
 
+    const historyFingerprint = (): Promise<string> =>
+      database.owner.withConnection(async (connection) => JSON.stringify({
+        sessions: await connection.getAllAsync<unknown>(
+          'SELECT * FROM sessions ORDER BY id',
+          [],
+        ),
+        rewards: await connection.getAllAsync<unknown>(
+          'SELECT * FROM reward_transactions ORDER BY id',
+          [],
+        ),
+        profile: await connection.getAllAsync<unknown>(
+          'SELECT * FROM pet_profiles ORDER BY id',
+          [],
+        ),
+        settings: await connection.getAllAsync<unknown>(
+          'SELECT * FROM app_settings ORDER BY id',
+          [],
+        ),
+      }));
+    const beforeHistoryRead = await historyFingerprint();
+    const projection = await new LoadFocusHistoryPageUseCase({
+      history: database.graph.standardFocusHistory,
+    }).execute();
+    expect(projection).toMatchObject({
+      ok: true,
+      value: {
+        items: [
+          { id: 'standard-after' },
+          { id: 'cancelled-b' },
+          { id: 'failed-a' },
+          { id: 'standard-same-day' },
+          { id: 'standard-before' },
+        ],
+        nextCursor: null,
+      },
+    });
+    expect(await historyFingerprint()).toBe(beforeHistoryRead);
+
     const firstHistoryPage = await database.graph.standardFocusHistory.list({
       profileId: 1,
       limit: 2,
@@ -469,6 +515,261 @@ describe('US-02-06 derived durable queries', () => {
       ok: true,
       value: [{ scheduledEndLocalDate: '2026-08-29', totalCompletedMinutes: 50 }],
     });
+    await reopened.owner.close();
+  });
+
+  it('builds an immutable seven-day Contribution projection from real SQLite facts without writes', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'pixeldoro-us0903-contribution-'));
+    temporaryDirectories.push(directory);
+    const driver = new HostSQLiteDriver(directory);
+    const databaseName = 'contribution-projection.db';
+    const database = await createDatabase(driver, databaseName);
+    const common = {
+      sessionType: 'focus' as const,
+      focusVariant: 'standard' as const,
+      mode: 'relax' as const,
+      workTag: 'coding' as const,
+    };
+    const fixtures: readonly SessionFixture[] = [
+      { ...common, id: 'us0903-completed-a', status: 'completed', durationMinutes: 25,
+        startedAt: BASE_TIMESTAMP, resolvedAt: BASE_TIMESTAMP + 25 * 60_000,
+        localDate: '2026-09-08' },
+      { ...common, id: 'us0903-completed-b', status: 'completed', durationMinutes: 50,
+        startedAt: BASE_TIMESTAMP + DAY_MS, resolvedAt: BASE_TIMESTAMP + DAY_MS + 50 * 60_000,
+        localDate: '2026-09-12', utcOffsetMinutes: -300 },
+      { ...common, id: 'us0903-failed', status: 'failed', durationMinutes: 25,
+        startedAt: BASE_TIMESTAMP + 2 * DAY_MS, resolvedAt: BASE_TIMESTAMP + 2 * DAY_MS + 1_000,
+        localDate: '2026-09-12' },
+      { ...common, id: 'us0903-running', status: 'running', durationMinutes: 25,
+        startedAt: BASE_TIMESTAMP + 3 * DAY_MS, resolvedAt: null, localDate: '2026-09-12' },
+      { id: 'us0903-trial', sessionType: 'focus', focusVariant: 'onboarding_trial', mode: 'relax',
+        status: 'completed', workTag: null, durationMinutes: 5,
+        startedAt: BASE_TIMESTAMP + 4 * DAY_MS,
+        resolvedAt: BASE_TIMESTAMP + 4 * DAY_MS + 5 * 60_000, localDate: '2026-09-12' },
+      { id: 'us0903-break', sessionType: 'short_break', focusVariant: null, mode: null,
+        status: 'completed', workTag: null, durationMinutes: 5,
+        startedAt: BASE_TIMESTAMP + 5 * DAY_MS,
+        resolvedAt: BASE_TIMESTAMP + 5 * DAY_MS + 5 * 60_000, localDate: '2026-09-12' },
+    ];
+    for (const fixture of fixtures) await insertSession(database.owner, fixture);
+
+    const fingerprint = (): Promise<string> => database.owner.withConnection(async (connection) =>
+      JSON.stringify({
+        sessions: await connection.getAllAsync<unknown>('SELECT * FROM sessions ORDER BY id', []),
+        rewards: await connection.getAllAsync<unknown>(
+          'SELECT * FROM reward_transactions ORDER BY id', [],
+        ),
+        profile: await connection.getAllAsync<unknown>(
+          'SELECT * FROM pet_profiles ORDER BY id', [],
+        ),
+      }));
+    const before = await fingerprint();
+    const load = (contribution = database.graph.contribution) =>
+      new LoadDailyContributionUseCase({
+        calendar: { snapshot: () => ({
+          ok: true,
+          value: { localDate: '2026-09-12', utcOffsetMinutes: 420 },
+        }) },
+        clock: { nowMs: () => BASE_TIMESTAMP + 6 * DAY_MS },
+        contribution,
+      }).execute();
+    const result = await load();
+    expect(result).toMatchObject({
+      ok: true,
+      value: {
+        startLocalDate: '2026-09-06',
+        endLocalDate: '2026-09-12',
+        days: [
+          { localDate: '2026-09-06', completedMinutes: 0, intensity: 'zero' },
+          { localDate: '2026-09-07', completedMinutes: 0 },
+          { localDate: '2026-09-08', completedMinutes: 25, completedSessionCount: 1,
+            intensity: 'medium' },
+          { localDate: '2026-09-09', completedMinutes: 0 },
+          { localDate: '2026-09-10', completedMinutes: 0 },
+          { localDate: '2026-09-11', completedMinutes: 0 },
+          { localDate: '2026-09-12', completedMinutes: 50, completedSessionCount: 1,
+            intensity: 'high' },
+        ],
+      },
+    });
+    expect(await fingerprint()).toBe(before);
+
+    await database.owner.close();
+    const reopened = await createDatabase(driver, databaseName);
+    const reopenedResult = await new LoadDailyContributionUseCase({
+      calendar: { snapshot: () => ({
+        ok: true,
+        value: { localDate: '2026-09-12', utcOffsetMinutes: -300 },
+      }) },
+      clock: { nowMs: () => BASE_TIMESTAMP + 6 * DAY_MS },
+      contribution: reopened.graph.contribution,
+    }).execute();
+    expect(reopenedResult).toEqual(result);
+    await reopened.owner.close();
+  });
+
+  it('fails closed when a shape-valid history local date is not a real calendar date', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'pixeldoro-us0901-history-date-'));
+    temporaryDirectories.push(directory);
+    const driver = new HostSQLiteDriver(directory);
+    const database = await createDatabase(driver, 'invalid-history-date.db');
+
+    await insertSession(database.owner, {
+      id: 'invalid-local-date',
+      sessionType: 'focus',
+      focusVariant: 'standard',
+      mode: 'relax',
+      status: 'cancelled',
+      workTag: 'coding',
+      durationMinutes: 25,
+      startedAt: BASE_TIMESTAMP,
+      resolvedAt: BASE_TIMESTAMP + 1_000,
+      localDate: '2026-02-30',
+    });
+
+    expect(await database.graph.standardFocusHistory.list({
+      profileId: 1,
+      limit: 20,
+      cursor: null,
+    })).toEqual({
+      ok: false,
+      error: {
+        kind: 'persistence_error',
+        code: 'PERSISTENCE_CORRUPT_DATA',
+        entity: 'sessions',
+        field: 'history_identity',
+      },
+    });
+    await database.owner.close();
+  });
+
+  it('prepares the isolated mixed History fixture through production boundaries', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'pixeldoro-us0901-history-fixture-'));
+    temporaryDirectories.push(directory);
+    const driver = new HostSQLiteDriver(directory);
+    const databaseName = 'history-fixture.db';
+    const database = await createDatabase(driver, databaseName);
+    const fixture = createHistoryFirstPageReviewFixture(
+      'history_first_page_mixed',
+      database.graph.standardFocusHistory,
+    );
+    if (fixture === undefined) throw new Error('history fixture missing');
+    const coordinator = new SessionCommandCoordinator();
+    expect(await fixture.prepare({
+      coordinator,
+      history: database.graph.standardFocusHistory,
+      installation: database.graph.installation,
+      longBreakCadence: database.graph.longBreakCadence,
+      profile: database.graph.profile,
+      rewards: database.graph.rewards,
+      sessions: database.graph.sessions,
+      transaction: database.transaction,
+    })).toBe(true);
+    expect(await fixture.prepare({
+      coordinator,
+      history: database.graph.standardFocusHistory,
+      installation: database.graph.installation,
+      longBreakCadence: database.graph.longBreakCadence,
+      profile: database.graph.profile,
+      rewards: database.graph.rewards,
+      sessions: database.graph.sessions,
+      transaction: database.transaction,
+    })).toBe(false);
+
+    expect(await new LoadFocusHistoryPageUseCase({
+      history: fixture.history,
+    }).execute()).toMatchObject({
+      ok: true,
+      value: {
+        items: [
+          { id: 'us0901-standard-cancelled', status: 'cancelled', workTag: 'writing' },
+          { id: 'us0901-standard-failed', status: 'failed', workTag: 'study' },
+          { id: 'us0901-standard-completed', status: 'completed', workTag: 'coding' },
+        ],
+        nextCursor: null,
+      },
+    });
+    await database.owner.close();
+
+    const reopened = await createDatabase(driver, databaseName);
+    const reopenedProjection = await new LoadFocusHistoryPageUseCase({
+      history: reopened.graph.standardFocusHistory,
+    }).execute();
+    expect(reopenedProjection.ok).toBe(true);
+    if (!reopenedProjection.ok) throw new Error('reopened history failed');
+    expect(reopenedProjection.value.items.map(({ id }) => id)).toEqual([
+      'us0901-standard-cancelled',
+      'us0901-standard-failed',
+      'us0901-standard-completed',
+    ]);
+    await reopened.owner.close();
+  });
+
+  it('paginates and groups the isolated 21-row History fixture without durable writes', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'pixeldoro-us0902-history-fixture-'));
+    temporaryDirectories.push(directory);
+    const driver = new HostSQLiteDriver(directory);
+    const databaseName = 'history-grouped-fixture.db';
+    const database = await createDatabase(driver, databaseName);
+    const fixture = createHistoryGroupedReviewFixture(
+      'history_grouped_21',
+      database.graph.standardFocusHistory,
+    );
+    if (fixture === undefined) throw new Error('grouped history fixture missing');
+    const dependencies = {
+      coordinator: new SessionCommandCoordinator(),
+      installation: database.graph.installation,
+      profile: database.graph.profile,
+      rewards: database.graph.rewards,
+      sessions: database.graph.sessions,
+      transaction: database.transaction,
+    };
+    expect(await fixture.prepare(dependencies)).toBe(true);
+    expect(await fixture.prepare(dependencies)).toBe(false);
+
+    const fingerprint = (): Promise<string> => database.owner.withConnection(async (connection) =>
+      JSON.stringify({
+        sessions: await connection.getAllAsync<unknown>('SELECT * FROM sessions ORDER BY id', []),
+        rewards: await connection.getAllAsync<unknown>(
+          'SELECT * FROM reward_transactions ORDER BY id', [],
+        ),
+        profile: await connection.getAllAsync<unknown>(
+          'SELECT * FROM pet_profiles ORDER BY id', [],
+        ),
+        settings: await connection.getAllAsync<unknown>(
+          'SELECT * FROM app_settings ORDER BY id', [],
+        ),
+      }));
+    const before = await fingerprint();
+    const loader = new LoadFocusHistoryPageUseCase({ history: fixture.history });
+    const firstPage = await loader.execute({ cursor: null });
+    expect(firstPage).toMatchObject({ ok: true, value: { items: { length: 20 } } });
+    if (!firstPage.ok || firstPage.value.nextCursor === null) {
+      throw new Error('expected grouped first-page cursor');
+    }
+    const nextPage = await loader.execute({ cursor: firstPage.value.nextCursor });
+    expect(nextPage).toMatchObject({ ok: true, value: { items: { length: 1 }, nextCursor: null } });
+    if (!nextPage.ok) throw new Error('expected grouped next page');
+    const sections = buildFocusHistorySections([
+      ...firstPage.value.items,
+      ...nextPage.value.items,
+    ]);
+    expect(sections).toMatchObject({
+      ok: true,
+      value: [
+        { localDate: '2026-09-11', completedMinutes: 105, items: { length: 7 } },
+        { localDate: '2026-09-10', completedMinutes: 85, items: { length: 7 } },
+        { localDate: '2026-09-09', completedMinutes: 105, items: { length: 7 } },
+      ],
+    });
+    expect(await fingerprint()).toBe(before);
+    await database.owner.close();
+
+    const reopened = await createDatabase(driver, databaseName);
+    const reopenedPage = await new LoadFocusHistoryPageUseCase({
+      history: reopened.graph.standardFocusHistory,
+    }).execute({ cursor: null });
+    expect(reopenedPage).toMatchObject({ ok: true, value: { items: { length: 20 } } });
     await reopened.owner.close();
   });
 

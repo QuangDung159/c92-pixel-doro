@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_CORE_TRUTH
 title: PixelDoro Product Core — Single Source of Truth
-version: 1.16.0
+version: 1.17.0
 status: ACTIVE
-last_updated: 2026-09-03
+last_updated: 2026-09-12
 owner: Dũng Lư
 owner_roles:
   - Tech Lead
@@ -806,7 +806,17 @@ Mỗi ô biểu diễn tổng số phút của các standard Focus session `comp
 Session `failed` và `cancelled` không đóng góp vào intensity.
 Onboarding trial không đóng góp vào intensity dù trial `completed`.
 
-Ngưỡng màu cụ thể: `OPEN`.
+Contribution graph dùng năm band cố định theo completed Standard Focus minutes:
+
+- `zero`: `0` phút → `background`;
+- `low`: `1–24` phút → `surface`;
+- `medium`: `25–49` phút → `surfaceStrong`;
+- `high`: `50–99` phút → `accent`;
+- `peak`: `100+` phút → `accentDark`.
+
+Band và palette mapping không được persist. Final graph luôn kèm border, numeric minutes và text
+legend để màu không phải meaning duy nhất. Quyết định này được Product Owner chốt qua
+`US0903-CONFIRM-03/04 Option A` ngày 2026-09-12.
 
 ---
 
@@ -1151,6 +1161,7 @@ exclusion đã có, vì production graph UI thuộc EPIC-09.
 | GR-OPEN-003 | Onboarding trial là special Focus cố định 5 phút; completed trial nhận 5 XP/1 Coin bằng automatic idempotent grant nhưng không tính standard history/contribution, Long Break cadence, store-review eligibility hoặc core Focus/reward analytics. | Product/Game Design | `RESOLVED` | 2026-08-26 |
 | DM-OPEN-006 | Onboarding trial dùng Relax semantics, persist `mode = relax`, không có work tag (`workTag = null`), không hiển thị mode/tag selector và không có Strict failure branch. | Product/Engineering | `RESOLVED` | 2026-08-27 |
 | OPEN-005 | Mobile MVP có đúng 12 neutral room `furniture` items với exact ID/name/price 5–120 Coin theo §9.4; catalog mở từ đầu, không level-gate, mua một lần atomically bằng Coin và equip miễn phí khi owned. | Product/Game Design | `RESOLVED` | 2026-08-26 |
+| OPEN-006 | Contribution dùng bands `0`, `1–24`, `25–49`, `50–99`, `100+` completed Standard Focus minutes, map lần lượt vào `background`, `surface`, `surfaceStrong`, `accent`, `accentDark`; luôn có border/numeric/text meaning và không persist band/color. | Product/Design | `RESOLVED` | 2026-09-12 |
 
 ## 20.2. Open decisions
 
@@ -1158,7 +1169,6 @@ Các mục sau chưa được chốt và phải được quyết định rõ tro
 
 | ID | Câu hỏi | Owner | Trạng thái |
 |---|---|---|---|
-| OPEN-006 | Contribution graph dùng các ngưỡng màu nào? | Product/Design | `OPEN` |
 | OPEN-009 | Người dùng có được đặt tên Pet trong onboarding không? | Product | `OPEN` |
 
 Không mục nào trong bảng này được xem là requirement đã chốt cho tới khi trạng thái được cập nhật.
@@ -1186,6 +1196,13 @@ Không mục nào trong bảng này được xem là requirement đã chốt cho
 ---
 
 # 22. Change Log
+
+## 1.17.0 — 2026-09-12
+
+- Chốt `OPEN-006` theo `US0903-CONFIRM-03/04 Option A`: five contribution bands `0`, `1–24`,
+  `25–49`, `50–99`, `100+` completed Standard Focus minutes.
+- Map bands lần lượt vào existing theme tokens `background`, `surface`, `surfaceStrong`, `accent`,
+  `accentDark`; band/color không persist và final visual phải có border/numeric/text fallback.
 
 ## 1.16.0 — 2026-09-03
 

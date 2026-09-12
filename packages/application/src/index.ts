@@ -4,6 +4,37 @@ export {
   type FoundationSnapshot,
 } from './foundation/create-foundation-snapshot.use-case';
 export {
+  FOCUS_HISTORY_PAGE_SIZE,
+  LoadFocusHistoryPageUseCase,
+  type FocusHistoryPageProjection,
+  type FocusHistoryFirstPageProjection,
+  type FocusHistoryItemProjection,
+  type LoadFocusHistoryPageInput,
+  type LoadFocusHistoryPageDependencies,
+  type LoadFocusHistoryPageError,
+  type LoadFocusHistoryPageErrorCode,
+} from './history/load-focus-history-page.use-case';
+export {
+  buildFocusHistorySections,
+  type FocusHistoryDateSection,
+} from './history/build-focus-history-sections';
+export {
+  buildContributionRangeProjection,
+  contributionIntensityFor,
+  CONTRIBUTION_RANGE_DAYS,
+  type BuildContributionRangeInput,
+  type ContributionIntensityBand,
+  type ContributionProjectionError,
+  type ContributionRangeProjection,
+  type DailyContributionProjection,
+} from './history/build-contribution-range-projection';
+export {
+  LoadDailyContributionUseCase,
+  type LoadDailyContributionDependencies,
+  type LoadDailyContributionError,
+  type LoadDailyContributionErrorCode,
+} from './history/load-daily-contribution.use-case';
+export {
   createHomeProfileProjection,
   type HomeProfileProjection,
 } from './home/create-home-profile.projection';

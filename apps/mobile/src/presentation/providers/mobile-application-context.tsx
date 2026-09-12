@@ -24,6 +24,8 @@ import type {
   PetVisualDiagnostic,
   ShopControllerProjection,
   RoomDecorationsControllerProjection,
+  HistoryControllerProjection,
+  ContributionControllerProjection,
 } from '@/application';
 
 const MobileApplicationContext = createContext<MobileApplicationFacade | undefined>(undefined);
@@ -195,6 +197,48 @@ export const useRoomDecorationsActions = () => {
     activate: roomDecorations.activate,
     deactivate: roomDecorations.deactivate,
     retry: roomDecorations.retry,
+  };
+};
+
+export const useHistoryProjection = (): HistoryControllerProjection => {
+  const { history } = useMobileApplication();
+  return useSyncExternalStore(
+    history.subscribe,
+    history.getSnapshot,
+    history.getSnapshot,
+  );
+};
+
+export const useHistoryActions = () => {
+  const { history } = useMobileApplication();
+  return {
+    activate: history.activate,
+    deactivate: history.deactivate,
+    loadMore: history.loadMore,
+    refresh: history.refresh,
+    retryInitial: history.retryInitial,
+    retryLoadMore: history.retryLoadMore,
+    retryRefresh: history.retryRefresh,
+  };
+};
+
+export const useHistoryContributionProjection = (): ContributionControllerProjection => {
+  const { historyContribution } = useMobileApplication();
+  return useSyncExternalStore(
+    historyContribution.subscribe,
+    historyContribution.getSnapshot,
+    historyContribution.getSnapshot,
+  );
+};
+
+export const useHistoryContributionActions = () => {
+  const { historyContribution } = useMobileApplication();
+  return {
+    activate: historyContribution.activate,
+    deactivate: historyContribution.deactivate,
+    refresh: historyContribution.refresh,
+    retryInitial: historyContribution.retryInitial,
+    retryRefresh: historyContribution.retryRefresh,
   };
 };
 

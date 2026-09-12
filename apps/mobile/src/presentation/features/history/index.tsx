@@ -1,93 +1,109 @@
-import { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import type {
+  ContributionControllerProjection,
+  HistoryControllerProjection,
+} from '@/application';
 
 import {
   EmptyState,
   ErrorState,
   LoadingState,
-  PixelPanel,
-  PrototypeScreen,
   ScreenHeader,
+  ScreenShell,
 } from '@/presentation/components';
-import {
-  ControlButton,
-  PrototypeBadge,
-  PrototypeControls,
-} from '@/presentation/prototype/components';
-import { palette } from '@/presentation/theme/palette';
 
-type HistoryReviewState = 'empty' | 'sample' | 'loading' | 'error';
+import { FocusHistoryList } from './focus-history-list';
+import { ContributionPanel } from './contribution-panel';
+import { HistoryRefreshStatus } from './history-refresh-status';
 
-export const HistoryScreen = () => {
-  const [reviewState, setReviewState] = useState<HistoryReviewState>('empty');
+export interface HistoryScreenProps {
+  readonly contribution: ContributionControllerProjection;
+  readonly projection: HistoryControllerProjection;
+  readonly onLoadMore: () => void;
+  readonly onRetryInitial: () => void;
+  readonly onRetryLoadMore: () => void;
+  readonly onRetryRefresh: () => void;
+  readonly onRetryContributionInitial: () => void;
+  readonly onRetryContributionRefresh: () => void;
+}
 
+export const HistoryScreen = ({
+  contribution,
+  onLoadMore,
+  onRetryInitial,
+  onRetryLoadMore,
+  onRetryRefresh,
+  onRetryContributionInitial,
+  onRetryContributionRefresh,
+  projection,
+}: HistoryScreenProps) => {
+  const contributionPanel = (
+    <ContributionPanel
+      onRetryInitial={onRetryContributionInitial}
+      onRetryRefresh={onRetryContributionRefresh}
+      projection={contribution}
+    />
+  );
   return (
-    <PrototypeScreen>
-      <PrototypeBadge />
+    <ScreenShell scrollable={false}>
       <ScreenHeader
-        description="Nhìn lại nỗ lực mà không biến nó thành áp lực."
-        eyebrow="HISTORY"
-        title="Những nhịp đã hoàn thành."
+        description="Nhìn lại những phiên Focus đã lưu trên thiết bị."
+        eyebrow="LỊCH SỬ"
+        title="Những nhịp đã qua."
       />
-      {reviewState === 'empty' ? (
-        <EmptyState body="Phiên Focus chuẩn đầu tiên sẽ xuất hiện ở đây. Trial 5 phút không được tính." title="Chưa có lịch sử Focus" />
+      {projection.status === 'idle' || projection.status === 'loading' ? (
+        <LoadingState label="Đang đọc lịch sử Focus…" />
       ) : null}
-      {reviewState === 'loading' ? <LoadingState label="Đang dựng hành trình…" /> : null}
-      {reviewState === 'error' ? (
-        <ErrorState body="Không đọc được lịch sử mock. Hãy thử lại mà không ảnh hưởng phiên hiện tại." onRetry={() => setReviewState('sample')} title="Lịch sử chưa sẵn sàng" />
-      ) : null}
-      {reviewState === 'sample' ? (
+      {projection.status === 'empty' ? (
         <>
-          <PixelPanel>
-            <Text style={styles.sectionTitle}>7 ngày gần đây</Text>
-            <View accessibilityLabel="Contribution preview trung tính, màu chưa được chốt" style={styles.graphRow}>
-              {[0, 1, 2, 3, 4, 5, 6].map((day) => (
-                <View key={day} style={[styles.graphCell, day === 2 && styles.graphCellFilled, day === 5 && styles.graphCellFilled]} />
-              ))}
-            </View>
-            <Text style={styles.pendingCopy}>Intensity color đang chờ `OPEN-006`; preview không khóa ngưỡng màu.</Text>
-          </PixelPanel>
-          <PixelPanel>
-            <Text style={styles.sectionTitle}>Gần đây</Text>
-            <View style={styles.sessionRow}>
-              <View style={styles.statusCompleted} />
-              <View style={styles.sessionCopy}>
-                <Text style={styles.sessionTitle}>25 phút · Lập trình</Text>
-                <Text style={styles.sessionMeta}>Hoàn thành · +25 XP · +5 Coin</Text>
-              </View>
-            </View>
-            <View style={styles.divider} />
-            <View style={styles.sessionRow}>
-              <View style={styles.statusCancelled} />
-              <View style={styles.sessionCopy}>
-                <Text style={styles.sessionTitle}>15 phút · Đọc</Text>
-                <Text style={styles.sessionMeta}>Đã hủy · không reward</Text>
-              </View>
-            </View>
-          </PixelPanel>
+          <HistoryRefreshStatus onRetry={onRetryRefresh} status={projection.refresh} />
+          <FocusHistoryList
+            contributionHeader={contributionPanel}
+            emptyState={(
+              <EmptyState
+                body="Phiên Focus chuẩn đầu tiên sẽ xuất hiện ở đây. Trial và phiên nghỉ không nằm trong lịch sử này."
+                title="Chưa có lịch sử Focus"
+              />
+            )}
+            onLoadMore={onLoadMore}
+            onRetryLoadMore={onRetryLoadMore}
+            pagination="end"
+            sections={[]}
+          />
         </>
       ) : null}
-      <PrototypeControls>
-        <ControlButton label="Empty" onPress={() => setReviewState('empty')} />
-        <ControlButton label="Sample" onPress={() => setReviewState('sample')} />
-        <ControlButton label="Loading" onPress={() => setReviewState('loading')} />
-        <ControlButton label="Error" onPress={() => setReviewState('error')} />
-      </PrototypeControls>
-    </PrototypeScreen>
+      {projection.status === 'error' ? (
+        <ErrorState
+          body={projection.code === 'HISTORY_DATA_INVALID'
+            ? 'Dữ liệu lịch sử cần được kiểm tra an toàn trước khi hiển thị.'
+            : 'Chưa đọc được lịch sử trên thiết bị. Các phiên đã lưu không bị thay đổi.'}
+          onRetry={onRetryInitial}
+          title="Lịch sử cần thử lại"
+        />
+      ) : null}
+      {projection.status === 'ready' ? (
+        <>
+          <HistoryRefreshStatus onRetry={onRetryRefresh} status={projection.refresh} />
+          <FocusHistoryList
+            contributionHeader={contributionPanel}
+            onLoadMore={onLoadMore}
+            onRetryLoadMore={onRetryLoadMore}
+            pagination={projection.pagination}
+            sections={projection.sections}
+          />
+        </>
+      ) : null}
+    </ScreenShell>
   );
 };
 
-const styles = StyleSheet.create({
-  sectionTitle: { color: palette.textPrimary, fontSize: 18, fontWeight: '900' },
-  graphRow: { flexDirection: 'row', gap: 7 },
-  graphCell: { backgroundColor: palette.background, borderColor: palette.border, borderWidth: 2, flex: 1, height: 38 },
-  graphCellFilled: { backgroundColor: palette.surfaceStrong },
-  pendingCopy: { color: palette.textSecondary, fontSize: 11, lineHeight: 17 },
-  sessionRow: { alignItems: 'center', flexDirection: 'row', gap: 12 },
-  statusCompleted: { backgroundColor: palette.accent, height: 14, width: 14 },
-  statusCancelled: { backgroundColor: palette.textSecondary, height: 14, width: 14 },
-  sessionCopy: { flex: 1, gap: 3 },
-  sessionTitle: { color: palette.textPrimary, fontSize: 15, fontWeight: '900' },
-  sessionMeta: { color: palette.textSecondary, fontSize: 12 },
-  divider: { backgroundColor: palette.border, height: 1, opacity: 0.2 },
-});
+export { FocusHistoryList } from './focus-history-list';
+export { FocusHistoryRow, formatHistoryLocalDate } from './focus-history-row';
+export { HistoryStatusBadge, historyStatusLabel } from './history-status-badge';
+export { HistoryDateSectionHeader } from './history-date-section-header';
+export { HistoryPaginationFooter } from './history-pagination-footer';
+export { HistoryRefreshStatus } from './history-refresh-status';
+export { ContributionPanel } from './contribution-panel';
+export { ContributionDayRow, contributionRangeLabels } from './contribution-day-row';
+export { ContributionGraphStrip } from './contribution-graph-strip';
+export { ContributionLegend } from './contribution-legend';
+export { contributionVisualTokens } from './contribution-visual-tokens';

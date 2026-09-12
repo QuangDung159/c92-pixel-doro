@@ -118,7 +118,8 @@ const mapHistoryEntry = (row: SessionRow): RowMapping<StandardFocusHistoryEntry>
     session.status === 'running' ||
     session.mode === null ||
     session.workTag === null ||
-    session.resolvedAt === null
+    session.resolvedAt === null ||
+    !isCanonicalLocalDate(session.scheduledEndLocalDate)
   ) return corrupt('history_identity');
   return mapped({
     id: session.id,

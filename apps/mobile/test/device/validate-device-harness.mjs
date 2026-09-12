@@ -50,6 +50,96 @@ const equippedRoomFlow = await readFile(
 const epic08ExitFlow = await readFile(
   `${deviceDirectory}epic-08-exit-smoke.md`, 'utf8',
 );
+const focusHistoryFirstPageFlow = await readFile(
+  `${deviceDirectory}focus-history-first-page-smoke.md`, 'utf8',
+);
+const focusHistoryPaginationFlow = await readFile(
+  `${deviceDirectory}focus-history-pagination-lifecycle-smoke.md`, 'utf8',
+);
+const contributionProjectionFlow = await readFile(
+  `${deviceDirectory}contribution-projection-smoke.md`, 'utf8',
+);
+const contributionGraphFlow = await readFile(
+  `${deviceDirectory}contribution-graph-accessibility-smoke.md`, 'utf8',
+);
+const epic09ExitFlow = await readFile(
+  `${deviceDirectory}epic-09-exit-smoke.md`, 'utf8',
+);
+for (const evidence of [
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=epic_09_empty',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=epic_09_mixed_40',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=epic_09_offline_relaunch',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=epic_09_read_failure_once',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=epic_09_analytics_failure_once',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=epic_09_timezone_changed',
+  'pixeldoro-us-09-05-', 'history_viewed:<focusEpisodeId>', 'Xem thêm',
+  'Thử lại', 'Airplane mode', 'VoiceOver/TalkBack', 'Reduce Motion',
+  'pixeldoro.db', 'NOT_RUN', '<implementation-sha>',
+  'unset EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE',
+]) {
+  if (!epic09ExitFlow.includes(evidence)) {
+    throw new Error(`EPIC-09 exit device guide is missing: ${evidence}`);
+  }
+}
+await access(`${mobileDirectory}/src/composition/review/epic-09-exit-review-fixture.ts`);
+for (const evidence of [
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=contribution_mixed_week',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=contribution_zero_week',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=contribution_threshold_edges',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=contribution_read_failure_once',
+  'pixeldoro-us-09-03-', '7 NGÀY GẦN ĐÂY', 'Hôm nay', 'Mức đóng góp',
+  'white border', 'VoiceOver/TalkBack', 'grayscale', 'Reduce Motion',
+  'Airplane mode', 'pixeldoro.db', 'NOT_RUN', '<implementation-sha>',
+  'unset EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE',
+]) {
+  if (!contributionGraphFlow.includes(evidence)) {
+    throw new Error(`Contribution graph device guide is missing: ${evidence}`);
+  }
+}
+for (const evidence of [
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=contribution_zero_week',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=contribution_mixed_week',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=contribution_threshold_edges',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=contribution_cross_midnight',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=contribution_timezone_changed',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=contribution_read_failure_once',
+  'pixeldoro-us-09-03-', '7 NGÀY GẦN ĐÂY', '100+ phút', 'Airplane mode',
+  'VoiceOver/TalkBack', 'Reduce Motion', 'pixeldoro.db', 'NOT_RUN',
+  '<implementation-sha>', 'unset EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE',
+]) {
+  if (!contributionProjectionFlow.includes(evidence)) {
+    throw new Error(`Contribution projection device guide is missing: ${evidence}`);
+  }
+}
+for (const evidence of [
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=history_grouped_21',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=history_equal_end_boundary',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=history_load_more_failure_once',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=history_refresh_failure_once',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=history_new_terminal_on_refresh',
+  'pixeldoro-us-09-02-', '105 phút hoàn thành', '85 phút hoàn thành',
+  'Xem thêm', 'Thử tải lại', 'Thử lại', 'Airplane mode', 'VoiceOver/TalkBack',
+  'Reduce Motion', 'pixeldoro.db', 'NOT_RUN', '<implementation-sha>',
+  'unset EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE',
+]) {
+  if (!focusHistoryPaginationFlow.includes(evidence)) {
+    throw new Error(`Focus history pagination device guide is missing: ${evidence}`);
+  }
+}
+for (const evidence of [
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=history_first_page_empty',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=history_first_page_mixed',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=history_first_page_read_failure_once',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=history_first_page_corrupt',
+  'pixeldoro-us-09-01-', '11/09/2026', 'Hoàn thành', 'Thất bại', 'Đã hủy',
+  'Thử lại', 'Airplane mode', 'VoiceOver/TalkBack', 'Reduce Motion',
+  'pixeldoro.db', 'NOT_RUN', '<implementation-sha>',
+  'unset EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE',
+]) {
+  if (!focusHistoryFirstPageFlow.includes(evidence)) {
+    throw new Error(`Focus history first-page device guide is missing: ${evidence}`);
+  }
+}
 for (const evidence of [
   'EXPO_PUBLIC_EPIC_08_EXIT_REVIEW_FIXTURE=epic_08_fresh_reward_to_room',
   'epic_08_relaunch_committed', 'epic_08_provider_failure',
