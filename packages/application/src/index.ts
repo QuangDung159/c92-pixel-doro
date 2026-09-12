@@ -6,12 +6,18 @@ export {
 export {
   FOCUS_HISTORY_PAGE_SIZE,
   LoadFocusHistoryPageUseCase,
+  type FocusHistoryPageProjection,
   type FocusHistoryFirstPageProjection,
   type FocusHistoryItemProjection,
+  type LoadFocusHistoryPageInput,
   type LoadFocusHistoryPageDependencies,
   type LoadFocusHistoryPageError,
   type LoadFocusHistoryPageErrorCode,
 } from './history/load-focus-history-page.use-case';
+export {
+  buildFocusHistorySections,
+  type FocusHistoryDateSection,
+} from './history/build-focus-history-sections';
 export {
   createHomeProfileProjection,
   type HomeProfileProjection,

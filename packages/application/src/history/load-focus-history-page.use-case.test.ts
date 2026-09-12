@@ -99,6 +99,40 @@ describe('LoadFocusHistoryPageUseCase', () => {
     expect(Object.isFrozen(result.value.nextCursor)).toBe(true);
   });
 
+  it('loads the exact next cursor and rejects rows that do not follow it', async () => {
+    const requested = { endsAt: 8_000_000, id: 'cursor' };
+    const history = query([entry('older', 6_000_000)]);
+    const result = await new LoadFocusHistoryPageUseCase({ history }).execute({
+      cursor: requested,
+    });
+    expect(history.list).toHaveBeenCalledWith({
+      profileId: 1,
+      limit: 20,
+      cursor: requested,
+    });
+    expect(result).toMatchObject({ ok: true });
+
+    const invalid = await new LoadFocusHistoryPageUseCase({
+      history: query([entry('newer', 10_000_000)]),
+    }).execute({ cursor: requested });
+    expect(invalid).toMatchObject({
+      ok: false,
+      error: { code: 'HISTORY_DATA_INVALID' },
+    });
+  });
+
+  it('fails closed before querying for an invalid requested cursor', async () => {
+    const history = query();
+    const result = await new LoadFocusHistoryPageUseCase({ history }).execute({
+      cursor: { endsAt: -1, id: '' },
+    });
+    expect(result).toMatchObject({
+      ok: false,
+      error: { code: 'HISTORY_DATA_INVALID' },
+    });
+    expect(history.list).not.toHaveBeenCalled();
+  });
+
   it.each([
     ['duplicate id', [entry('same', 4_000_000), entry('same', 2_000_000)], null],
     ['wrong order', [entry('older', 2_000_000), entry('newer', 4_000_000)], null],

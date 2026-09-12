@@ -1,4 +1,5 @@
 import {
+  buildFocusHistorySections,
   LoadFocusHistoryPageUseCase,
   type StandardFocusHistoryQuery,
 } from '@pixeldoro/application';
@@ -14,6 +15,7 @@ export const createHistorySlice = (
   dependencies: CreateHistorySliceDependencies,
 ) => {
   const controller = new HistoryController({
+    buildSections: buildFocusHistorySections,
     criticalRecovery: dependencies.criticalRecovery,
     loader: new LoadFocusHistoryPageUseCase({ history: dependencies.history }),
   });

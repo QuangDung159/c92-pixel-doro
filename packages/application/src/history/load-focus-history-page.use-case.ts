@@ -23,9 +23,15 @@ export interface FocusHistoryItemProjection {
   readonly scheduledEndLocalDate: string;
 }
 
-export interface FocusHistoryFirstPageProjection {
+export interface FocusHistoryPageProjection {
   readonly items: readonly FocusHistoryItemProjection[];
   readonly nextCursor: StandardFocusHistoryCursor | null;
+}
+
+export type FocusHistoryFirstPageProjection = FocusHistoryPageProjection;
+
+export interface LoadFocusHistoryPageInput {
+  readonly cursor: StandardFocusHistoryCursor | null;
 }
 
 export type LoadFocusHistoryPageErrorCode =
@@ -84,16 +90,26 @@ const isValidEntry = (entry: StandardFocusHistoryEntry): boolean =>
   entry.scheduledEndUtcOffsetMinutes <= 840;
 
 const isOrderedAfter = (
-  previous: StandardFocusHistoryEntry,
-  current: StandardFocusHistoryEntry,
+  previous: Pick<StandardFocusHistoryEntry, 'endsAt' | 'id'>,
+  current: Pick<StandardFocusHistoryEntry, 'endsAt' | 'id'>,
 ): boolean => previous.endsAt > current.endsAt ||
   (previous.endsAt === current.endsAt && previous.id < current.id);
+
+const isValidCursor = (cursor: StandardFocusHistoryCursor): boolean =>
+  isSafeTimestamp(cursor.endsAt) &&
+  typeof cursor.id === 'string' && cursor.id.trim().length > 0;
 
 const isValidPage = (
   entries: readonly StandardFocusHistoryEntry[],
   nextCursor: StandardFocusHistoryCursor | null,
+  requestedCursor: StandardFocusHistoryCursor | null,
 ): boolean => {
   if (entries.length > FOCUS_HISTORY_PAGE_SIZE) return false;
+  const first = entries[0];
+  if (
+    requestedCursor !== null &&
+    (first === undefined || !isOrderedAfter(requestedCursor, first))
+  ) return false;
   const identities = new Set<string>();
   for (const [index, entry] of entries.entries()) {
     if (!isValidEntry(entry) || identities.has(entry.id)) return false;
@@ -104,15 +120,14 @@ const isValidPage = (
   if (nextCursor === null) return true;
   const last = entries.at(-1);
   return entries.length === FOCUS_HISTORY_PAGE_SIZE && last !== undefined &&
-    isSafeTimestamp(nextCursor.endsAt) &&
-    typeof nextCursor.id === 'string' && nextCursor.id.trim().length > 0 &&
+    isValidCursor(nextCursor) &&
     nextCursor.endsAt === last.endsAt && nextCursor.id === last.id;
 };
 
 const freezeProjection = (
   entries: readonly StandardFocusHistoryEntry[],
   nextCursor: StandardFocusHistoryCursor | null,
-): FocusHistoryFirstPageProjection => {
+): FocusHistoryPageProjection => {
   const items = entries.map((entry): FocusHistoryItemProjection => Object.freeze({
     id: entry.id,
     status: entry.status,
@@ -131,17 +146,20 @@ const freezeProjection = (
 export class LoadFocusHistoryPageUseCase {
   constructor(private readonly dependencies: LoadFocusHistoryPageDependencies) {}
 
-  async execute(): Promise<
-    ApplicationResult<FocusHistoryFirstPageProjection, LoadFocusHistoryPageError>
+  async execute(input: LoadFocusHistoryPageInput = { cursor: null }): Promise<
+    ApplicationResult<FocusHistoryPageProjection, LoadFocusHistoryPageError>
   > {
+    if (input.cursor !== null && !isValidCursor(input.cursor)) {
+      return failure('HISTORY_DATA_INVALID');
+    }
     try {
       const result = await this.dependencies.history.list({
         profileId: MVP_PROFILE_ID,
         limit: FOCUS_HISTORY_PAGE_SIZE,
-        cursor: null,
+        cursor: input.cursor,
       });
       if (!result.ok) return failure(errorCodeFor(result.error));
-      if (!isValidPage(result.value.entries, result.value.nextCursor)) {
+      if (!isValidPage(result.value.entries, result.value.nextCursor, input.cursor)) {
         return failure('HISTORY_DATA_INVALID');
       }
       return {

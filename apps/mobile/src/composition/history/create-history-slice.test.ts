@@ -20,7 +20,7 @@ describe('createHistorySlice', () => {
       limit: 20,
       cursor: null,
     });
-    expect(slice.controller.getSnapshot()).toEqual({ status: 'empty' });
+    expect(slice.controller.getSnapshot()).toEqual({ status: 'empty', refresh: 'idle' });
     expect(criticalRecovery.enterRecovery).not.toHaveBeenCalled();
     slice.dispose();
   });

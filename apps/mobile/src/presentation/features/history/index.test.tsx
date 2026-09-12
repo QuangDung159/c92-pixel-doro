@@ -11,7 +11,12 @@ vi.mock('react-native', () => ({
 }));
 vi.mock('react-native-safe-area-context', () => ({ SafeAreaView: 'SafeAreaView' }));
 
-const onRetry = vi.fn();
+const actions = {
+  onLoadMore: vi.fn(),
+  onRetryInitial: vi.fn(),
+  onRetryLoadMore: vi.fn(),
+  onRetryRefresh: vi.fn(),
+};
 
 const findElement = (
   node: unknown,
@@ -31,14 +36,16 @@ const findElement = (
 
 describe('HistoryScreen', () => {
   it('renders truthful loading, empty and read-error states', () => {
-    expect(JSON.stringify(HistoryScreen({ projection: { status: 'loading' }, onRetry })))
+    expect(JSON.stringify(HistoryScreen({ projection: { status: 'loading' }, ...actions })))
       .toContain('Đang đọc lịch sử Focus');
-    const empty = JSON.stringify(HistoryScreen({ projection: { status: 'empty' }, onRetry }));
+    const empty = JSON.stringify(HistoryScreen({
+      projection: { status: 'empty', refresh: 'idle' }, ...actions,
+    }));
     expect(empty).toContain('Chưa có lịch sử Focus');
     expect(empty).toContain('Trial và phiên nghỉ');
     const error = JSON.stringify(HistoryScreen({
       projection: { status: 'error', code: 'HISTORY_READ_FAILED' },
-      onRetry,
+      ...actions,
     }));
     expect(error).toContain('Các phiên đã lưu không bị thay đổi');
   });
@@ -49,11 +56,17 @@ describe('HistoryScreen', () => {
       configuredDurationMinutes: 25, endsAt: 2_000,
       scheduledEndLocalDate: '2026-09-11',
     }];
+    const sections = [{
+      localDate: '2026-09-11', completedMinutes: 25, items,
+    }];
     const tree = HistoryScreen({
-      projection: { status: 'ready', items, hasMore: true },
-      onRetry,
+      projection: {
+        status: 'ready', sections, refresh: 'idle', pagination: 'idle',
+      },
+      ...actions,
     });
-    expect(findElement(tree, FocusHistoryList)?.props.items).toBe(items);
+    expect(findElement(tree, FocusHistoryList)?.props.sections).toBe(sections);
+    expect(findElement(tree, FocusHistoryList)?.props.pagination).toBe('idle');
     expect(JSON.stringify(tree)).not.toMatch(/Prototype|mock|Contribution|7 ngày/);
   });
 });

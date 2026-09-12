@@ -1,29 +1,32 @@
 ---
 document_id: PIXELDORO_US_09_02_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-09-02 Implementation Plan
-version: 0.1.0
-status: PENDING_OWNER_CONFIRMATION
-implementation_status: NOT_STARTED
+version: 0.3.0
+status: IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE
+implementation_status: CANDIDATE_READY_FOR_OWNER_UI_SMOKE
 date: 2026-09-11
-last_updated: 2026-09-11
+last_updated: 2026-09-12
 owner: Dũng Lư
 reviewer: Dũng Lư
 reviewer_role: Tech Lead/Product Owner
 language: vi
 branch: feats/epic-09
 planning_baseline_sha: 18057fafe478ea95969c43c11b1ad72d9a7faed4
-implementation_start_sha: null
+implementation_start_sha: 18057fafe478ea95969c43c11b1ad72d9a7faed4
+current_candidate_base_sha: 36bd9b003f2eeb04f95fb6bdc56467a1d139df1c
 exact_implementation_sha: null
+candidate_identity: UNCOMMITTED_WORKTREE_ON_CURRENT_CANDIDATE_BASE
 previous_story: US-09-01
 previous_story_status: DONE_OWNER_ACCEPTED
 previous_story_accepted_sha: 18057fafe478ea95969c43c11b1ad72d9a7faed4
 manual_device_status: NOT_RUN
 formal_tester_status: NOT_RUN
-schema_change: NONE_PROPOSED
-dependency_change: NONE_PROPOSED
-native_change: NONE_PROPOSED
-analytics_change: NONE_PROPOSED_IN_THIS_STORY
-next_gate: OWNER_CONFIRM_US0902_CONFIRM_01_TO_06
+schema_change: NONE
+dependency_change: NONE
+native_change: NONE
+analytics_change: NONE_IN_THIS_STORY
+automated_status: PASS_194_FILES_992_TESTS
+next_gate: OWNER_QUICK_UI_SMOKE_AND_ACCEPT_EXACT_COMMITTED_SHA
 scope:
   - mobile_mvp
   - epic_09
@@ -33,7 +36,7 @@ scope:
   - resilient_refresh
   - virtualized_list
   - read_only
-authority: PROPOSED_IMPLEMENTATION_PLAN
+authority: OWNER_APPROVED_IMPLEMENTATION_RECORD
 story_baseline: ./EPIC-09_USER_STORIES.md
 previous_story_plan: ./US-09-01_IMPLEMENTATION_PLAN.md
 previous_story_report: ./US-09-01_IMPLEMENTATION_REPORT.md
@@ -52,8 +55,9 @@ adr_domain_platform_boundary: ../architecture/decisions/ADR-004-domain-and-platf
 
 ## 0. Outcome và gate
 
-Plan này mở Story kế tiếp sau khi US-09-01 được owner quick-UI accepted. Nó chưa cấp quyền coding,
-commit hoặc push.
+Plan này ghi lại Story đã được owner duyệt `US0902-CONFIRM-01→06 Option A` và candidate đã
+implement. Approval cấp quyền coding US-09-02 nhưng không cấp quyền commit hoặc push; candidate hiện
+là uncommitted worktree trên base `36bd9b0...` và đang chờ owner quick UI smoke.
 
 **User outcome:** History được group theo persisted local day, mỗi ngày có tổng số phút Standard Focus
 `completed`; user có thể xem thêm từng page mà không duplicate/mất row, và dữ liệu đã đọc vẫn còn khi
@@ -77,7 +81,7 @@ thuộc US-09-03/04, không được kéo vào Story này.
 | Existing History page | Fixed 20-row first page; validated `nextCursor`; no Load more |
 | Existing SQL | Cursor `(ends_at,id)`, `limit + 1`, order `ends_at DESC,id ASC` đã đúng |
 | Schema/index | Migration `001` và `ix_sessions_history` đủ; không có fact gap |
-| Coding authority | Chưa có; chờ `US0902-CONFIRM-01→06` |
+| Coding authority | Owner approved `US0902-CONFIRM-01→06` Option A ngày 2026-09-11 |
 
 ## 1. Authority và scope
 
@@ -197,7 +201,10 @@ Presentation không tự group/sum/sort.
 ```ts
 export type HistoryControllerProjection =
   | { readonly status: 'idle' | 'loading' }
-  | { readonly status: 'empty' }
+  | {
+      readonly status: 'empty';
+      readonly refresh: 'idle' | 'refreshing' | 'error';
+    }
   | {
       readonly status: 'ready';
       readonly sections: readonly FocusHistoryDateSection[];
@@ -341,12 +348,14 @@ and non-scroll branches.
 ### 7.1. Planned new files
 
 - `packages/application/src/history/build-focus-history-sections.ts` and test.
+- `apps/mobile/src/application/history/history-projection.ts`.
 - `apps/mobile/src/presentation/features/history/history-date-section-header.tsx` and test.
 - `apps/mobile/src/presentation/features/history/history-pagination-footer.tsx` and test.
+- `apps/mobile/src/presentation/features/history/history-refresh-status.tsx` and test.
+- `apps/mobile/src/presentation/components/screen-shell.test.tsx`.
 - `apps/mobile/src/composition/review/history-grouped-review-fixture.ts` and test.
-- `apps/mobile/test/integration/focus-history-pagination.integration.test.ts`.
 - `apps/mobile/test/device/focus-history-pagination-lifecycle-smoke.md`.
-- `docs/planning/US-09-02_IMPLEMENTATION_REPORT.md` only after authorized implementation.
+- `docs/planning/US-09-02_IMPLEMENTATION_REPORT.md`.
 
 ### 7.2. Planned modified files
 
@@ -358,7 +367,7 @@ and non-scroll branches.
 - `ScreenShell` plus a focused common-component test — default-safe non-scroll mode.
 - Root composition/review fixture tests — finite Story-02 fixture selection.
 - Existing SQLite integration/static/device guide validator where evidence requires.
-- EPIC-09 story tracker and this plan/report status at candidate time.
+- Existing SQLite integration/static/device-guide validator and EPIC-09 tracker at candidate time.
 
 ### 7.3. Explicitly unchanged
 
@@ -445,24 +454,25 @@ Valid facts use production boundaries where deterministic. Tie/race behavior may
 query decorator over an isolated database; it cannot touch `pixeldoro.db` or insert corrupt production
 facts.
 
-Planned guide: `apps/mobile/test/device/focus-history-pagination-lifecycle-smoke.md`, initial status
-`NOT_RUN`. It must record exact SHA, platform/device/OS, runtime, timezone, network, a11y settings,
-fixture/database, PASS/FAIL/BLOCKED/NOT_RUN and cleanup/unset steps.
+Implemented guide: `apps/mobile/test/device/focus-history-pagination-lifecycle-smoke.md`, status
+`NOT_RUN` pending owner execution. It records exact SHA, platform/device/OS, runtime, timezone,
+network, a11y settings, fixture/database, PASS/FAIL/BLOCKED/NOT_RUN and cleanup/unset steps.
 
 ## 11. Acceptance và Done gates
 
-- [ ] Date groups use persisted local date and descending stable order.
-- [ ] Day totals sum completed configured minutes only; failed/cancelled remain visible.
-- [ ] Explicit 20-row Load more neither skips nor duplicates equal-timestamp rows.
-- [ ] Append failure retains rows/cursor and Retry uses the same intent.
-- [ ] Refocus/active-foreground refresh coalesces and never publishes a stale generation.
-- [ ] Refresh failure retains committed pages with actionable inline notice.
-- [ ] Successful refresh atomically replaces pages and resets cursor from first page.
-- [ ] Empty is published only after successful empty first-page read.
-- [ ] Invalid page/merge/overflow enters critical Recovery without partial rows or reset.
-- [ ] History has one virtualized scroll owner; default ScreenShell consumers regressions pass.
-- [ ] Offline/relaunch/no-write/a11y/static/platform evidence is recorded honestly.
-- [ ] No contribution, analytics, schema, dependency, native or unrelated prototype drift.
+- [x] Date groups use persisted local date and descending stable order.
+- [x] Day totals sum completed configured minutes only; failed/cancelled remain visible.
+- [x] Explicit 20-row Load more neither skips nor duplicates equal-timestamp rows.
+- [x] Append failure retains rows/cursor and Retry uses the same intent.
+- [x] Refocus/active-foreground refresh coalesces and never publishes a stale generation.
+- [x] Refresh failure retains committed pages with actionable inline notice.
+- [x] Successful refresh atomically replaces pages and resets cursor from first page.
+- [x] Empty is published only after successful empty first-page read.
+- [x] Invalid page/merge/overflow enters critical Recovery without partial rows or reset.
+- [x] History has one virtualized scroll owner; default ScreenShell consumers regressions pass.
+- [x] Automated offline/relaunch/no-write/static/platform-export evidence is recorded honestly;
+  structured device/a11y breadth remains `NOT_RUN`.
+- [x] No contribution, analytics, schema, dependency, native or unrelated prototype drift.
 - [ ] Owner quick UI acceptance is bound to exact committed SHA before Story 02 closes.
 
 ## 12. Owner Confirmation Register
@@ -472,35 +482,35 @@ fixture/database, PASS/FAIL/BLOCKED/NOT_RUN and cleanup/unset steps.
 - **Option A — đề xuất:** `20` rows/page, explicit `Xem thêm`, mỗi lần thêm `20`; hide button khi
   `nextCursor = null`, không cap durable history.
 - **Option B:** load tự động khi gần cuối list.
-- **Status:** `PENDING_OWNER`; blocks page loader/footer acceptance.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-11.
 
 ### US0902-CONFIRM-02 — Date header và day total
 
 - **Option A — đề xuất:** group bằng persisted date; header `DD/MM/YYYY` + `<N> phút hoàn thành`, kể
   cả `0 phút hoàn thành`; failed/cancelled vẫn ở group nhưng không tăng total.
 - **Option B:** relative label Hôm nay/Hôm qua và ẩn total khi bằng 0.
-- **Status:** `PENDING_OWNER`; blocks grouping/copy/a11y.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-11.
 
 ### US0902-CONFIRM-03 — Successful refresh replacement
 
 - **Option A — đề xuất:** refresh thành công atomically thay toàn bộ loaded pages bằng first page mới
   và cursor mới; không ép scroll-to-top. Refresh lỗi giữ nguyên pages/cursor.
 - **Option B:** merge first page mới vào toàn bộ pages cũ và cố giữ pagination depth.
-- **Status:** `PENDING_OWNER`; blocks merge/race contract.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-11.
 
 ### US0902-CONFIRM-04 — Refresh triggers và race priority
 
 - **Option A — đề xuất:** refresh khi tab refocus và khi app foreground trong lúc History focused;
   coalesce pending same intent; refresh ưu tiên và invalidate late append.
 - **Option B:** chỉ refresh khi user bấm nút thủ công.
-- **Status:** `PENDING_OWNER`; blocks controller/route lifecycle.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-11.
 
 ### US0902-CONFIRM-05 — One-scroll-owner architecture
 
 - **Option A — đề xuất:** thêm `ScreenShell scrollable={false}` với default `true` giữ nguyên; History
   dùng một `SectionList` trong existing Panel, không sticky header ở Story 02.
 - **Option B:** giữ ScrollView và render toàn bộ merged rows không virtualization.
-- **Status:** `PENDING_OWNER`; blocks common seam/list implementation.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-11.
 
 ### US0902-CONFIRM-06 — Loading/error visibility
 
@@ -508,7 +518,7 @@ fixture/database, PASS/FAIL/BLOCKED/NOT_RUN and cleanup/unset steps.
   pull-to-refresh, không auto retry, không clear list. Copy dùng `Đang cập nhật…`,
   `Chưa cập nhật được…`, `Đang tải lịch sử…`, `Chưa tải thêm được…`.
 - **Option B:** refresh im lặng và dùng một full-screen Error chung cho mọi failure.
-- **Status:** `PENDING_OWNER`; blocks final controller projection/UI states.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-11.
 
 Owner có thể duyệt gọn:
 
@@ -538,4 +548,6 @@ cleaned after their names are resolved.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.3.0 | 2026-09-12 | Codex | Implemented approved Option A candidate: cursor paging/group totals, resilient refresh/append races, one `SectionList`, isolated fixtures and smoke guide. Full quality passed 194 files/992 tests; iOS/Android exports passed; Doctor 20/21 with known Expo patch drift. Candidate is uncommitted on base `36bd9b0...`; owner UI smoke remains `NOT_RUN`. |
+| 0.2.0 | 2026-09-11 | Codex | Recorded owner approval for `US0902-CONFIRM-01→06` Option A, coding authorization and exact implementation start SHA `18057faf...`. |
 | 0.1.0 | 2026-09-11 | Codex | Audited accepted US-09-01 SHA `18057faf...`, existing cursor SQL, controller/AppVisibility/ScreenShell/UI boundaries; proposed read-only date grouping, explicit 20-row pagination, resilient refresh, one SectionList owner, five isolated fixture scenarios and six owner confirmations. No coding, commit or push. |

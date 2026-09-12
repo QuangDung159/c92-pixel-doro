@@ -143,6 +143,11 @@ import {
   historyFirstPageReviewDatabaseName,
   resolveHistoryFirstPageReviewScenario,
 } from './review/history-first-page-review-fixture';
+import {
+  createHistoryGroupedReviewFixture,
+  historyGroupedReviewDatabaseName,
+  resolveHistoryGroupedReviewScenario,
+} from './review/history-grouped-review-fixture';
 
 const PIXELDORO_DATABASE_NAME = 'pixeldoro.db';
 
@@ -197,6 +202,10 @@ export const createMobileApplication = (
     process.env.EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE,
     reviewFixturesEnabled,
   );
+  const historyGroupedReviewScenario = resolveHistoryGroupedReviewScenario(
+    process.env.EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE,
+    reviewFixturesEnabled,
+  );
   const shopReviewScenario = resolveShopReviewScenario(
     process.env.EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE,
     reviewFixturesEnabled,
@@ -230,7 +239,9 @@ export const createMobileApplication = (
     reviewFixturesEnabled,
   );
   const databaseOwner = new SQLiteDatabaseOwner(
-    options.databaseName ?? (historyFirstPageReviewScenario !== undefined
+    options.databaseName ?? (historyGroupedReviewScenario !== undefined
+      ? historyGroupedReviewDatabaseName(historyGroupedReviewScenario)
+      : historyFirstPageReviewScenario !== undefined
       ? historyFirstPageReviewDatabaseName(historyFirstPageReviewScenario)
       : epic08ExitReviewScenario !== undefined
       ? epic08ExitReviewDatabaseName(epic08ExitReviewScenario)
@@ -253,6 +264,10 @@ export const createMobileApplication = (
   const persistence = createSQLitePersistenceGraph(databaseOwner, transaction);
   const historyFirstPageReviewFixture = createHistoryFirstPageReviewFixture(
     historyFirstPageReviewScenario,
+    persistence.standardFocusHistory,
+  );
+  const historyGroupedReviewFixture = createHistoryGroupedReviewFixture(
+    historyGroupedReviewScenario,
     persistence.standardFocusHistory,
   );
   const epic08ExitReviewFixture = createEpic08ExitReviewFixture(
@@ -543,7 +558,8 @@ export const createMobileApplication = (
   });
   const history = createHistorySlice({
     criticalRecovery: bootstrap,
-    history: historyFirstPageReviewFixture?.history ?? persistence.standardFocusHistory,
+    history: historyGroupedReviewFixture?.history ??
+      historyFirstPageReviewFixture?.history ?? persistence.standardFocusHistory,
   });
   const confirmedReset = new ConfirmedLocalDataReset({
     activeSessions: persistence.sessions,
@@ -1068,6 +1084,23 @@ export const createMobileApplication = (
     boot: async () => {
       await runProbeIfEnabled();
       await bootstrap.boot();
+      if (
+        bootstrap.getSnapshot().status === 'ready' &&
+        historyGroupedReviewFixture !== undefined
+      ) {
+        const changed = await historyGroupedReviewFixture.prepare({
+          coordinator: sessionCommands,
+          installation: persistence.installation,
+          profile: persistence.profile,
+          rewards: persistence.rewards,
+          sessions: persistence.sessions,
+          transaction,
+        });
+        if (changed) {
+          const refreshed = await bootstrap.refreshReadySnapshot();
+          if (!refreshed.ok) bootstrap.enterRecovery('DATABASE_READ_FAILED');
+        }
+      }
       if (
         bootstrap.getSnapshot().status === 'ready' &&
         historyFirstPageReviewFixture !== undefined

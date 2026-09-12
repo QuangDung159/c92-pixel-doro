@@ -1,10 +1,10 @@
 ---
 document_id: PIXELDORO_EPIC_09_USER_STORIES
 title: PixelDoro EPIC-09 — Focus History và Contribution Graph User Stories
-version: 0.2.0
+version: 0.3.0
 status: IMPLEMENTATION_IN_PROGRESS_OWNER_GATED
 date: 2026-09-11
-last_updated: 2026-09-11
+last_updated: 2026-09-12
 owner: Dũng Lư
 language: vi
 scope:
@@ -19,13 +19,13 @@ previous_epic: EPIC-08
 previous_epic_status: DONE_OWNER_ACCEPTED
 previous_epic_accepted_sha: 30adc34be23dca48379b6f2553203fdadb9f9e5b
 previous_epic_closure_commit: 05e3e883e0c6dc3292b3707fd5fe5af65032dc75
-implementation_status: US_09_01_DONE_OWNER_ACCEPTED_US_09_02_PLANNING
+implementation_status: US_09_01_DONE_OWNER_ACCEPTED_US_09_02_CANDIDATE_AWAITING_OWNER_UI
 formal_tester_status: NOT_RUN
 schema_impact: NONE_PROPOSED_EXISTING_SCHEMA_001_SUFFICIENT
 dependency_impact: NONE_PROPOSED
 native_impact: NONE_PROPOSED
 product_gate: OPEN_006_PENDING_OWNER
-next_gate: OWNER_CONFIRM_US0902_IMPLEMENTATION_PLAN
+next_gate: OWNER_SMOKE_US_09_02_EXACT_CANDIDATE
 product_truth: ../PIXELDORO_CORE_TRUTH.md
 epic_baseline: ./MVP_EPICS.md
 data_model: ../architecture/data-model.md
@@ -39,9 +39,9 @@ previous_epic_exit: ./EPIC-08_EXIT_REPORT.md
 ## 0. Mục đích và authority
 
 Tài liệu này audit baseline và theo dõi các vertical slice của `EPIC-09`, với output quan sát được,
-dependency, test, device guide, rollback và owner gate riêng. US-09-01 đã owner accepted; mọi Story
-tiếp theo vẫn cần implementation-plan confirmation riêng. Tài liệu không tự cấp quyền coding, commit
-hoặc push.
+dependency, test, device guide, rollback và owner gate riêng. US-09-01 đã owner accepted; US-09-02 đã
+được duyệt và có candidate chờ UI smoke; các Story sau vẫn cần implementation-plan confirmation
+riêng. Tài liệu không tự cấp quyền commit hoặc push.
 
 Thứ tự authority khi review hoặc triển khai:
 
@@ -54,7 +54,7 @@ Thứ tự authority khi review hoặc triển khai:
    hoặc business authority.
 
 Nếu tài liệu này mâu thuẫn authority cao hơn, authority cao hơn thắng và planning phải được sửa trước
-khi coding. Mọi Option A trong mục 24 chỉ là đề xuất cho tới khi owner xác nhận.
+khi coding. Option A trong mục 24 chỉ có authority khi status ghi owner đã approve/ratify.
 
 ## 1. Git/baseline audit
 
@@ -363,7 +363,7 @@ horizontal “backend-only” slice; Story 03 có neutral semantic day panel tr�
 | Order | Story | User outcome | Priority | Dependencies | Initial status |
 |---:|---|---|---|---|---|
 | 1 | US-09-01 — Truthful Standard Focus History First Page | History tab đọc và hiển thị first page terminal Standard Focus thật từ SQLite | P0 | EPIC-08; confirmations 05/08/10 | DONE_OWNER_ACCEPTED — `18057faf...` |
-| 2 | US-09-02 — Date-grouped Pagination và Resilient Refresh | User xem thêm history theo ngày mà không duplicate/mất dữ liệu khi refresh lỗi | P0 | 01; confirmations 01/02/06 | IMPLEMENTATION_PLAN_PENDING_OWNER_CONFIRMATION |
+| 2 | US-09-02 — Date-grouped Pagination và Resilient Refresh | User xem thêm history theo ngày mà không duplicate/mất dữ liệu khi refresh lỗi | P0 | 01; confirmations 01/02/06 | IMPLEMENTED_AWAITING_OWNER_UI — uncommitted on `36bd9b0...` |
 | 3 | US-09-03 — Stable Daily Contribution Projection | User thấy đủ các ngày trong range và đúng completed minutes/intensity semantics | P0 | 01; confirmations 03/04 | NOT_STARTED |
 | 4 | US-09-04 — Production Contribution Graph và Accessibility | User đọc graph rõ trên small screen, screen reader, largest text và grayscale | P1 | 02/03; `OPEN-006` confirmation 04 | BLOCKED_BY_OWNER_COLOR_GATE |
 | 5 | US-09-05 — Offline Lifecycle, Analytics, Prototype Integrity và Epic Exit | History ổn định qua refocus/relaunch/offline và sẵn sàng exit evidence | P1 | 01→04; confirmations 06/07/09/10 | NOT_STARTED |
@@ -480,27 +480,27 @@ Proposed file: `apps/mobile/test/device/focus-history-first-page-smoke.md`; init
 
 ### 10.1. Acceptance criteria
 
-- [ ] Date groups are descending and preserve row order inside each group.
-- [ ] Completed total per group excludes failed/cancelled while those rows stay visible.
-- [ ] Initial page and every next page use approved page size and existing `(endsAt,id)` cursor.
-- [ ] Equal timestamps across page boundary neither duplicate nor skip stable IDs.
-- [ ] New terminal row appearing before Load more does not corrupt older-page merge.
-- [ ] Load-more failure retains all loaded rows/cursor and provides retry of the same read intent.
-- [ ] End-of-list removes/disables Load more truthfully; no hidden retention cap is implied.
-- [ ] Refocus/foreground refresh is coalesced; late older response cannot replace newer generation.
-- [ ] Refresh failure keeps committed rows with `InlineNotice`; successful retry clears stale notice.
-- [ ] History uses one scroll owner; no virtualized list nested in `ScrollView`.
+- [x] Date groups are descending and preserve row order inside each group.
+- [x] Completed total per group excludes failed/cancelled while those rows stay visible.
+- [x] Initial page and every next page use approved page size and existing `(endsAt,id)` cursor.
+- [x] Equal timestamps across page boundary neither duplicate nor skip stable IDs.
+- [x] New terminal row appearing before Load more does not corrupt older-page merge.
+- [x] Load-more failure retains all loaded rows/cursor and provides retry of the same read intent.
+- [x] End-of-list removes/disables Load more truthfully; no hidden retention cap is implied.
+- [x] Refocus/foreground refresh is coalesced; late older response cannot replace newer generation.
+- [x] Refresh failure keeps committed rows with `InlineNotice`; successful retry clears stale notice.
+- [x] History uses one scroll owner; no virtualized list nested in `ScrollView`.
 
 ### 10.2. Automated tests
 
-- [ ] Pure grouping: mixed statuses, multiple days, page boundary splitting same day, empty input.
-- [ ] Completed-day sum: zero completed with failed/cancelled rows; safe integer overflow fail closed.
-- [ ] Cursor: 20/21/40+ rows, same `endsAt`, duplicate response, new-row-between-pages.
-- [ ] Controller: append single-flight, append vs refresh race, rapid Retry, deactivate/dispose stale drop.
-- [ ] SQLite: MVP-representative retained dataset and query-plan index evidence.
-- [ ] Component: SectionList sections/headers/rows/load-more states, largest-text-shaped props.
-- [ ] ScreenShell regression: default ScrollView consumers unchanged; non-scroll variant lays out History.
-- [ ] Read-only fingerprint across page, failed append, refresh and relaunch.
+- [x] Pure grouping: mixed statuses, multiple days, page boundary splitting same day, empty input.
+- [x] Completed-day sum: zero completed with failed/cancelled rows; safe integer overflow fail closed.
+- [x] Cursor: 20/21/40+ rows, same `endsAt`, duplicate response, new-row-between-pages.
+- [x] Controller: append single-flight, append vs refresh race, rapid Retry, deactivate/dispose stale drop.
+- [x] SQLite: MVP-representative retained dataset and query-plan index evidence.
+- [x] Component: SectionList sections/headers/rows/load-more states, largest-text-shaped props.
+- [x] ScreenShell regression: default ScrollView consumers unchanged; non-scroll variant lays out History.
+- [x] Read-only fingerprint across page, failed append, refresh and relaunch.
 
 ### 10.3. Fixture/data requirements
 
@@ -511,7 +511,8 @@ control would be nondeterministic.
 
 ### 10.4. Manual smoke checklist
 
-Proposed file: `apps/mobile/test/device/focus-history-pagination-lifecycle-smoke.md`; `Status: NOT_RUN`.
+Implemented file: `apps/mobile/test/device/focus-history-pagination-lifecycle-smoke.md`;
+`Status: NOT_RUN` pending owner execution.
 
 - [ ] Record all required metadata, fixture env and isolated DB name.
 - [ ] Verify first page, date headers and completed-day totals for mixed status rows.
@@ -524,10 +525,10 @@ Proposed file: `apps/mobile/test/device/focus-history-pagination-lifecycle-smoke
 
 ### 10.5. DoR / DoD
 
-- [ ] **DoR:** US-09-01 owner accepted; confirmations 01/02/06 approved.
-- [ ] **DoR:** ScreenShell extension API and regression consumers reviewed.
-- [ ] **DoD:** paging/grouping/lifecycle tests and manual guide complete; no write path added.
-- [ ] **DoD:** no component >300 lines; any 240–260 line file has split decision recorded.
+- [x] **DoR:** US-09-01 owner accepted; confirmations 01/02/06 approved.
+- [x] **DoR:** ScreenShell extension API and regression consumers reviewed.
+- [x] **DoD:** paging/grouping/lifecycle automated tests and manual guide complete; no write path added.
+- [x] **DoD:** no component >300 lines; controller projection types were split into a focused file.
 - [ ] **Next gate:** owner accepts Story 02 before Story 04 final list/graph composition.
 
 ## 11. US-09-03 — Stable Daily Contribution Projection
@@ -978,7 +979,7 @@ separate classes.
 - **Option B:** tải tối đa `100` rows một lần và không có Load more trong MVP.
 - **Story bị block:** US-09-01 page input; US-09-02 pagination acceptance.
 - **Impact:** A giữ initial cost nhỏ và dùng capability sẵn có; B đơn giản hơn nhưng tạo UI cap mơ hồ.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — ratified by `US0902-CONFIRM-01`, owner 2026-09-11.
 
 ### US0900-CONFIRM-02 — Date grouping và completed-day summary
 
@@ -988,7 +989,7 @@ separate classes.
 - **Option B:** flat recent list; daily total chỉ xuất hiện ở contribution graph.
 - **Story bị block:** US-09-02.
 - **Impact:** A làm local-day truth dễ hiểu và accessible hơn; B nhỏ hơn nhưng giấu một outcome Product.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — ratified by `US0902-CONFIRM-02`, owner 2026-09-11.
 
 ### US0900-CONFIRM-03 — Contribution range
 
@@ -1031,7 +1032,7 @@ separate classes.
 - **Option B:** chỉ load một lần mỗi app runtime; user phải relaunch để thấy data mới.
 - **Story bị block:** US-09-02/05.
 - **Impact:** A fresh hơn và reuse controller pattern; B ít code nhưng stale sau completed Focus.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — ratified by `US0902-CONFIRM-03/04/06`, owner 2026-09-11.
 
 ### US0900-CONFIRM-07 — `history_viewed` timing/properties
 
@@ -1101,11 +1102,13 @@ không tạo implementation plan Story 01 trong cùng bước này.
 - [ ] MVP retention keeps all product history until confirmed full reset; very-long-term compaction is
   intentionally not designed here.
 - [ ] Scroll position and pagination cursor are transient and need not survive process relaunch.
-- [ ] No test, export, manual/device result or owner acceptance is claimed by this planning document.
+- [x] US-09-02 automated quality and platform export evidence is recorded; owner/manual device status
+  remains explicitly `NOT_RUN` until executed.
 
 ## 26. Change Log
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.3.0 | 2026-09-12 | Codex | Recorded US-09-02 Option A implementation candidate on uncommitted worktree over `36bd9b0...`; full quality passed 194 files/992 tests, iOS/Android exports passed, Doctor remains 20/21 known patch drift, owner UI smoke remains `NOT_RUN`. |
 | 0.2.0 | 2026-09-11 | Codex | Recorded US-09-01 automated PASS and owner quick UI acceptance at exact SHA `18057faf...`; structured/formal breadth remains `NOT_RUN`; opened owner-gated US-09-02 implementation planning. |
 | 0.1.0 | 2026-09-11 | Codex | Audited clean `feats/epic-09` baseline `05e3e883...`, confirmed EPIC-08 `DONE_OWNER_ACCEPTED`, classified production/prototype/missing capabilities, proposed no schema/dependency/native change, created five risk-ordered Stories with complete matrices/guides/DoR/DoD/rollback, and opened ten owner confirmations. No EPIC-09 code, implementation plan, commit or push. |

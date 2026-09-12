@@ -1,29 +1,73 @@
-import type { FocusHistoryItemProjection } from '@pixeldoro/application';
-import { StyleSheet, View } from 'react-native';
+import type {
+  FocusHistoryDateSection,
+  FocusHistoryItemProjection,
+} from '@pixeldoro/application';
+import { SectionList, StyleSheet, View } from 'react-native';
 
 import { Panel, SectionLabel } from '@/presentation/components';
 import { palette } from '@/presentation/theme/palette';
 
 import { FocusHistoryRow } from './focus-history-row';
+import { HistoryDateSectionHeader } from './history-date-section-header';
+import {
+  HistoryPaginationFooter,
+  type HistoryPaginationStatus,
+} from './history-pagination-footer';
+
+interface ListSection {
+  readonly localDate: string;
+  readonly completedMinutes: number;
+  readonly data: readonly FocusHistoryItemProjection[];
+}
 
 export const FocusHistoryList = ({
-  items,
+  onLoadMore,
+  onRetryLoadMore,
+  pagination,
+  sections,
 }: {
-  readonly items: readonly FocusHistoryItemProjection[];
-}) => (
-  <Panel>
-    <SectionLabel>Gần đây</SectionLabel>
-    <View accessibilityRole="list">
-      {items.map((item, index) => (
-        <View key={item.id}>
-          <FocusHistoryRow item={item} />
-          {index === items.length - 1 ? null : <View style={styles.divider} />}
-        </View>
-      ))}
-    </View>
-  </Panel>
-);
+  readonly onLoadMore: () => void;
+  readonly onRetryLoadMore: () => void;
+  readonly pagination: HistoryPaginationStatus;
+  readonly sections: readonly FocusHistoryDateSection[];
+}) => {
+  const listSections: readonly ListSection[] = sections.map((section) => ({
+    localDate: section.localDate,
+    completedMinutes: section.completedMinutes,
+    data: section.items,
+  }));
+  return (
+    <Panel style={styles.panel}>
+      <SectionList
+        accessibilityRole="list"
+        contentContainerStyle={styles.content}
+        ItemSeparatorComponent={() => <View style={styles.divider} />}
+        keyExtractor={(item) => item.id}
+        ListFooterComponent={(
+          <HistoryPaginationFooter
+            onLoadMore={onLoadMore}
+            onRetry={onRetryLoadMore}
+            status={pagination}
+          />
+        )}
+        ListHeaderComponent={<SectionLabel>Gần đây</SectionLabel>}
+        renderItem={({ item }) => <FocusHistoryRow item={item} />}
+        renderSectionHeader={({ section }) => (
+          <HistoryDateSectionHeader
+            completedMinutes={section.completedMinutes}
+            localDate={section.localDate}
+          />
+        )}
+        sections={listSections}
+        showsVerticalScrollIndicator={false}
+        stickySectionHeadersEnabled={false}
+      />
+    </Panel>
+  );
+};
 
 const styles = StyleSheet.create({
+  panel: { flex: 1, minHeight: 0 },
+  content: { paddingBottom: 4 },
   divider: { backgroundColor: palette.border, height: 1, opacity: 0.2 },
 });

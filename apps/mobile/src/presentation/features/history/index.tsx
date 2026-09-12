@@ -9,14 +9,24 @@ import {
 } from '@/presentation/components';
 
 import { FocusHistoryList } from './focus-history-list';
+import { HistoryRefreshStatus } from './history-refresh-status';
 
 export interface HistoryScreenProps {
   readonly projection: HistoryControllerProjection;
-  readonly onRetry: () => void;
+  readonly onLoadMore: () => void;
+  readonly onRetryInitial: () => void;
+  readonly onRetryLoadMore: () => void;
+  readonly onRetryRefresh: () => void;
 }
 
-export const HistoryScreen = ({ projection, onRetry }: HistoryScreenProps) => (
-  <ScreenShell>
+export const HistoryScreen = ({
+  onLoadMore,
+  onRetryInitial,
+  onRetryLoadMore,
+  onRetryRefresh,
+  projection,
+}: HistoryScreenProps) => (
+  <ScreenShell scrollable={false}>
     <ScreenHeader
       description="Nhìn lại những phiên Focus đã lưu trên thiết bị."
       eyebrow="LỊCH SỬ"
@@ -26,22 +36,33 @@ export const HistoryScreen = ({ projection, onRetry }: HistoryScreenProps) => (
       <LoadingState label="Đang đọc lịch sử Focus…" />
     ) : null}
     {projection.status === 'empty' ? (
-      <EmptyState
-        body="Phiên Focus chuẩn đầu tiên sẽ xuất hiện ở đây. Trial và phiên nghỉ không nằm trong lịch sử này."
-        title="Chưa có lịch sử Focus"
-      />
+      <>
+        <HistoryRefreshStatus onRetry={onRetryRefresh} status={projection.refresh} />
+        <EmptyState
+          body="Phiên Focus chuẩn đầu tiên sẽ xuất hiện ở đây. Trial và phiên nghỉ không nằm trong lịch sử này."
+          title="Chưa có lịch sử Focus"
+        />
+      </>
     ) : null}
     {projection.status === 'error' ? (
       <ErrorState
         body={projection.code === 'HISTORY_DATA_INVALID'
           ? 'Dữ liệu lịch sử cần được kiểm tra an toàn trước khi hiển thị.'
           : 'Chưa đọc được lịch sử trên thiết bị. Các phiên đã lưu không bị thay đổi.'}
-        onRetry={onRetry}
+        onRetry={onRetryInitial}
         title="Lịch sử cần thử lại"
       />
     ) : null}
     {projection.status === 'ready' ? (
-      <FocusHistoryList items={projection.items} />
+      <>
+        <HistoryRefreshStatus onRetry={onRetryRefresh} status={projection.refresh} />
+        <FocusHistoryList
+          onLoadMore={onLoadMore}
+          onRetryLoadMore={onRetryLoadMore}
+          pagination={projection.pagination}
+          sections={projection.sections}
+        />
+      </>
     ) : null}
   </ScreenShell>
 );
@@ -49,3 +70,6 @@ export const HistoryScreen = ({ projection, onRetry }: HistoryScreenProps) => (
 export { FocusHistoryList } from './focus-history-list';
 export { FocusHistoryRow, formatHistoryLocalDate } from './focus-history-row';
 export { HistoryStatusBadge, historyStatusLabel } from './history-status-badge';
+export { HistoryDateSectionHeader } from './history-date-section-header';
+export { HistoryPaginationFooter } from './history-pagination-footer';
+export { HistoryRefreshStatus } from './history-refresh-status';

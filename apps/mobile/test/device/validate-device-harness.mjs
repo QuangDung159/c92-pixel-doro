@@ -53,6 +53,24 @@ const epic08ExitFlow = await readFile(
 const focusHistoryFirstPageFlow = await readFile(
   `${deviceDirectory}focus-history-first-page-smoke.md`, 'utf8',
 );
+const focusHistoryPaginationFlow = await readFile(
+  `${deviceDirectory}focus-history-pagination-lifecycle-smoke.md`, 'utf8',
+);
+for (const evidence of [
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=history_grouped_21',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=history_equal_end_boundary',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=history_load_more_failure_once',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=history_refresh_failure_once',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=history_new_terminal_on_refresh',
+  'pixeldoro-us-09-02-', '105 phút hoàn thành', '85 phút hoàn thành',
+  'Xem thêm', 'Thử tải lại', 'Thử lại', 'Airplane mode', 'VoiceOver/TalkBack',
+  'Reduce Motion', 'pixeldoro.db', 'NOT_RUN', '<implementation-sha>',
+  'unset EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE',
+]) {
+  if (!focusHistoryPaginationFlow.includes(evidence)) {
+    throw new Error(`Focus history pagination device guide is missing: ${evidence}`);
+  }
+}
 for (const evidence of [
   'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=history_first_page_empty',
   'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=history_first_page_mixed',

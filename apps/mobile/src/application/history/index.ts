@@ -1,5 +1,9 @@
 export {
   HistoryController,
   type HistoryControllerDependencies,
-  type HistoryControllerProjection,
 } from './history.controller';
+export {
+  type HistoryControllerProjection,
+  type HistoryPaginationState,
+  type HistoryRefreshState,
+} from './history-projection';

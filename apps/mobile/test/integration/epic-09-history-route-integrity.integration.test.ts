@@ -13,6 +13,8 @@ describe('EPIC-09 production History integrity', () => {
     expect(route).toContain('useHistoryProjection');
     expect(route).toContain('useHistoryActions');
     expect(route).toContain('useFocusEffect');
+    expect(route).toContain('useAppVisibility');
+    expect(route).toContain("previous !== 'active'");
     expect(route).not.toMatch(/from ['"].*(prototype|repository|sqlite|domain)/i);
   });
 
@@ -22,6 +24,9 @@ describe('EPIC-09 production History integrity', () => {
       read('apps/mobile/src/presentation/features/history/focus-history-list.tsx'),
       read('apps/mobile/src/presentation/features/history/focus-history-row.tsx'),
       read('apps/mobile/src/presentation/features/history/history-status-badge.tsx'),
+      read('apps/mobile/src/presentation/features/history/history-date-section-header.tsx'),
+      read('apps/mobile/src/presentation/features/history/history-pagination-footer.tsx'),
+      read('apps/mobile/src/presentation/features/history/history-refresh-status.tsx'),
     ].join('\n');
     expect(feature).toContain('FocusHistoryList');
     expect(feature).toContain('scheduledEndLocalDate');
@@ -36,9 +41,22 @@ describe('EPIC-09 production History integrity', () => {
       'apps/mobile/src/presentation/features/history/focus-history-list.tsx',
       'apps/mobile/src/presentation/features/history/focus-history-row.tsx',
       'apps/mobile/src/presentation/features/history/history-status-badge.tsx',
+      'apps/mobile/src/presentation/features/history/history-date-section-header.tsx',
+      'apps/mobile/src/presentation/features/history/history-pagination-footer.tsx',
+      'apps/mobile/src/presentation/features/history/history-refresh-status.tsx',
     ]) {
       expect(read(path).split('\n').length, path).toBeLessThan(300);
     }
+  });
+
+  it('uses one virtualized History scroll owner without changing the shell default', () => {
+    const screen = read('apps/mobile/src/presentation/features/history/index.tsx');
+    const list = read('apps/mobile/src/presentation/features/history/focus-history-list.tsx');
+    const shell = read('apps/mobile/src/presentation/components/screen-shell.tsx');
+    expect(screen).toContain('scrollable={false}');
+    expect(list).toContain('SectionList');
+    expect(list).not.toContain('ScrollView');
+    expect(shell).toContain('scrollable = true');
   });
 
   it('preserves the later-owner Settings prototype and root provider', () => {

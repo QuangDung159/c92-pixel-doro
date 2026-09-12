@@ -213,7 +213,11 @@ export const useHistoryActions = () => {
   return {
     activate: history.activate,
     deactivate: history.deactivate,
-    retry: history.retry,
+    loadMore: history.loadMore,
+    refresh: history.refresh,
+    retryInitial: history.retryInitial,
+    retryLoadMore: history.retryLoadMore,
+    retryRefresh: history.retryRefresh,
   };
 };
 

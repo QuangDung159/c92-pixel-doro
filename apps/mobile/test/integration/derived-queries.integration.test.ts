@@ -13,10 +13,12 @@ import type {
   AnalyticsEventRecord,
 } from '@/application';
 import {
+  buildFocusHistorySections,
   LoadFocusHistoryPageUseCase,
   SessionCommandCoordinator,
 } from '@pixeldoro/application';
 import { createHistoryFirstPageReviewFixture } from '@/composition/review/history-first-page-review-fixture';
+import { createHistoryGroupedReviewFixture } from '@/composition/review/history-grouped-review-fixture';
 import { MigrationRunner } from '@/infrastructure/database/migration-runner';
 import { productionMigrationRegistry } from '@/infrastructure/database/migrations/migration-registry';
 import { createSQLitePersistenceGraph } from '@/infrastructure/database/persistence-graph';
@@ -609,6 +611,74 @@ describe('US-02-06 derived durable queries', () => {
       'us0901-standard-failed',
       'us0901-standard-completed',
     ]);
+    await reopened.owner.close();
+  });
+
+  it('paginates and groups the isolated 21-row History fixture without durable writes', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'pixeldoro-us0902-history-fixture-'));
+    temporaryDirectories.push(directory);
+    const driver = new HostSQLiteDriver(directory);
+    const databaseName = 'history-grouped-fixture.db';
+    const database = await createDatabase(driver, databaseName);
+    const fixture = createHistoryGroupedReviewFixture(
+      'history_grouped_21',
+      database.graph.standardFocusHistory,
+    );
+    if (fixture === undefined) throw new Error('grouped history fixture missing');
+    const dependencies = {
+      coordinator: new SessionCommandCoordinator(),
+      installation: database.graph.installation,
+      profile: database.graph.profile,
+      rewards: database.graph.rewards,
+      sessions: database.graph.sessions,
+      transaction: database.transaction,
+    };
+    expect(await fixture.prepare(dependencies)).toBe(true);
+    expect(await fixture.prepare(dependencies)).toBe(false);
+
+    const fingerprint = (): Promise<string> => database.owner.withConnection(async (connection) =>
+      JSON.stringify({
+        sessions: await connection.getAllAsync<unknown>('SELECT * FROM sessions ORDER BY id', []),
+        rewards: await connection.getAllAsync<unknown>(
+          'SELECT * FROM reward_transactions ORDER BY id', [],
+        ),
+        profile: await connection.getAllAsync<unknown>(
+          'SELECT * FROM pet_profiles ORDER BY id', [],
+        ),
+        settings: await connection.getAllAsync<unknown>(
+          'SELECT * FROM app_settings ORDER BY id', [],
+        ),
+      }));
+    const before = await fingerprint();
+    const loader = new LoadFocusHistoryPageUseCase({ history: fixture.history });
+    const firstPage = await loader.execute({ cursor: null });
+    expect(firstPage).toMatchObject({ ok: true, value: { items: { length: 20 } } });
+    if (!firstPage.ok || firstPage.value.nextCursor === null) {
+      throw new Error('expected grouped first-page cursor');
+    }
+    const nextPage = await loader.execute({ cursor: firstPage.value.nextCursor });
+    expect(nextPage).toMatchObject({ ok: true, value: { items: { length: 1 }, nextCursor: null } });
+    if (!nextPage.ok) throw new Error('expected grouped next page');
+    const sections = buildFocusHistorySections([
+      ...firstPage.value.items,
+      ...nextPage.value.items,
+    ]);
+    expect(sections).toMatchObject({
+      ok: true,
+      value: [
+        { localDate: '2026-09-11', completedMinutes: 105, items: { length: 7 } },
+        { localDate: '2026-09-10', completedMinutes: 85, items: { length: 7 } },
+        { localDate: '2026-09-09', completedMinutes: 105, items: { length: 7 } },
+      ],
+    });
+    expect(await fingerprint()).toBe(before);
+    await database.owner.close();
+
+    const reopened = await createDatabase(driver, databaseName);
+    const reopenedPage = await new LoadFocusHistoryPageUseCase({
+      history: reopened.graph.standardFocusHistory,
+    }).execute({ cursor: null });
+    expect(reopenedPage).toMatchObject({ ok: true, value: { items: { length: 20 } } });
     await reopened.owner.close();
   });
 
