@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_EPIC_09_USER_STORIES
 title: PixelDoro EPIC-09 — Focus History và Contribution Graph User Stories
-version: 1.2.0
-status: IMPLEMENTED_CANDIDATE_AWAITING_OWNER_EXIT_ACCEPTANCE
+version: 1.3.0
+status: ALL_STORIES_OWNER_ACCEPTED_AWAITING_EXPLICIT_EPIC_EXIT
 date: 2026-09-11
 last_updated: 2026-09-12
 owner: Dũng Lư
@@ -19,13 +19,13 @@ previous_epic: EPIC-08
 previous_epic_status: DONE_OWNER_ACCEPTED
 previous_epic_accepted_sha: 30adc34be23dca48379b6f2553203fdadb9f9e5b
 previous_epic_closure_commit: 05e3e883e0c6dc3292b3707fd5fe5af65032dc75
-implementation_status: US_09_01_TO_04_DONE_OWNER_ACCEPTED_US_09_05_CANDIDATE
+implementation_status: US_09_01_TO_05_DONE_OWNER_ACCEPTED
 formal_tester_status: NOT_RUN
 schema_impact: NONE_PROPOSED_EXISTING_SCHEMA_001_SUFFICIENT
 dependency_impact: NONE_PROPOSED
 native_impact: NONE_PROPOSED
 product_gate: OPEN_006_RESOLVED_OPTION_A
-next_gate: US_09_05_OWNER_QUICK_UI_AND_EXACT_SHA_EPIC_EXIT_ACCEPTANCE
+next_gate: EXPLICIT_EPIC_09_EXIT_CLOSURE_AUTHORIZATION
 product_truth: ../PIXELDORO_CORE_TRUTH.md
 epic_baseline: ./MVP_EPICS.md
 data_model: ../architecture/data-model.md
@@ -40,7 +40,8 @@ previous_epic_exit: ./EPIC-08_EXIT_REPORT.md
 
 Tài liệu này audit baseline và theo dõi các vertical slice của `EPIC-09`, với output quan sát được,
 dependency, test, device guide, rollback và owner gate riêng. US-09-01→04 đã owner accepted;
-US-09-05 đã có uncommitted implementation candidate và đang chờ owner quick UI/exact-SHA exit gate. Tài liệu không
+US-09-05 đã owner accepted tại exact committed/pushed SHA `a1abf5f...`; cả năm Stories đã accepted.
+EPIC-09 vẫn chờ explicit owner exit authorization và tài liệu này không
 tự cấp quyền coding, commit hoặc push.
 
 Thứ tự authority khi review hoặc triển khai:
@@ -366,7 +367,7 @@ horizontal “backend-only” slice; Story 03 có neutral semantic day panel tr�
 | 2 | US-09-02 — Date-grouped Pagination và Resilient Refresh | User xem thêm history theo ngày mà không duplicate/mất dữ liệu khi refresh lỗi | P0 | 01; confirmations 01/02/06 | DONE_OWNER_ACCEPTED — `91d0612...` |
 | 3 | US-09-03 — Stable Daily Contribution Projection | User thấy đủ các ngày trong range và đúng completed minutes/intensity semantics | P0 | 01; confirmations 03/04 | DONE_OWNER_ACCEPTED — `c0291ec...` |
 | 4 | US-09-04 — Production Contribution Graph và Accessibility | User đọc graph rõ trên small screen, screen reader, largest text và grayscale | P1 | 02/03; `OPEN-006` confirmation 04 | DONE_OWNER_ACCEPTED — `cdce571...` |
-| 5 | US-09-05 — Offline Lifecycle, Analytics, Prototype Integrity và Epic Exit | History ổn định qua refocus/relaunch/offline và sẵn sàng exit evidence | P1 | 01→04; confirmations 06/07/09/10 | IMPLEMENTED CANDIDATE — owner smoke/exit pending |
+| 5 | US-09-05 — Offline Lifecycle, Analytics, Prototype Integrity và Epic Exit | History ổn định qua refocus/relaunch/offline và sẵn sàng exit evidence | P1 | 01→04; confirmations 06/07/09/10 | DONE_OWNER_ACCEPTED — `a1abf5f...` |
 
 ## 9. US-09-01 — Truthful Standard Focus History First Page
 
@@ -729,7 +730,7 @@ Implemented file: `apps/mobile/test/device/contribution-graph-accessibility-smok
 - [x] Fixture is finite, `__DEV__`, default-absent and can never select/mutate `pixeldoro.db`.
 - [x] No schema/migration/dependency/native/provider drift.
 - [x] Typecheck/lint/tests/boundary/hygiene/device validator/JS exports/diff check are evidenced, not assumed.
-- [ ] Exact implementation SHA, owner quick UI/formal status and deferred items are recorded honestly.
+- [x] Exact implementation SHA, owner quick UI/formal status and deferred items are recorded honestly.
 
 ### 13.2. Automated tests
 
@@ -769,11 +770,11 @@ Proposed file: `apps/mobile/test/device/epic-09-exit-smoke.md`; `Status: NOT_RUN
 
 ### 13.5. DoR / DoD
 
-- [ ] **DoR:** Stories 01→04 owner accepted; confirmations 06/07/09/10 approved.
-- [ ] **DoR:** exit commands, fixtures, rollback and manual evidence owner are reviewed.
-- [ ] **DoD:** all Story and Epic acceptance/tests pass with exact counts/output and SHA.
-- [ ] **DoD:** manual/owner/formal evidence status is explicit; no unchecked case labeled PASS.
-- [ ] **DoD:** implementation report and EPIC-09 Exit Report candidate exist only after implementation.
+- [x] **DoR:** Stories 01→04 owner accepted; confirmations 06/07/09/10 approved.
+- [x] **DoR:** exit commands, fixtures, rollback and manual evidence owner are reviewed.
+- [x] **DoD:** all Story acceptance/tests pass with exact counts/output and SHA.
+- [x] **DoD:** manual/owner/formal evidence status is explicit; no unchecked case labeled PASS.
+- [x] **DoD:** implementation report and EPIC-09 Exit Report candidate exist only after implementation.
 - [ ] **Exit gate:** owner explicitly accepts exact candidate and authorizes EPIC-09 closure/EPIC-10
   planning; no implicit next-Epic coding.
 
@@ -919,7 +920,7 @@ settings, fixture env, dedicated isolated database, cleanup/reset and env-unset 
 | US-09-02 | `apps/mobile/test/device/focus-history-pagination-lifecycle-smoke.md` | group/page/append failure/refocus/small screen | PASS_OWNER_QUICK_UI at `91d0612...`; structured breadth NOT_RUN |
 | US-09-03 | `apps/mobile/test/device/contribution-projection-smoke.md` | zero/mixed/range/local-day/timezone/error | PASS_OWNER_QUICK_UI at `c0291ec...`; structured breadth NOT_RUN |
 | US-09-04 | `apps/mobile/test/device/contribution-graph-accessibility-smoke.md` | final colors, VoiceOver/TalkBack, largest text, grayscale, Reduce Motion | PASS_OWNER_QUICK_UI at `cdce571...`; structured breadth NOT_RUN |
-| US-09-05 | `apps/mobile/test/device/epic-09-exit-smoke.md` | aggregate offline/relaunch/lifecycle/analytics/prototype integrity | CANDIDATE_READY; owner/manual NOT_RUN |
+| US-09-05 | `apps/mobile/test/device/epic-09-exit-smoke.md` | aggregate offline/relaunch/lifecycle/analytics/prototype integrity | PASS_OWNER_QUICK_UI at `a1abf5f...`; structured breadth NOT_RUN |
 
 Race, corrupt and destructive scenarios remain automated when UI reproduction cannot be deterministic.
 JS export is not physical-device evidence. Owner quick smoke and formal tester evidence are recorded as
@@ -929,46 +930,46 @@ separate classes.
 
 ### 22.1. Shared Definition of Ready
 
-- [ ] Previous Story exact candidate is owner accepted.
-- [ ] Breakdown plus every confirmation affecting the Story is explicitly approved; Option A is not assumed.
-- [ ] User outcome, scope, durable reads/writes, layer owner and read boundary are named.
-- [ ] Loading/empty/error/retry/stale/offline/navigation/a11y states are reviewable.
-- [ ] Common reuse, feature-local creation and regression consumers are identified.
-- [ ] Fixture cannot select normal DB; guide starts `NOT_RUN` with complete metadata/cleanup.
-- [ ] Schema/dependency/native verdict is re-audited; no contrary proof exists.
-- [ ] `OPEN-006` is resolved before Story 04 final visual work.
+- [x] Previous Story exact candidate is owner accepted.
+- [x] Breakdown plus every confirmation affecting the Story is explicitly approved; Option A is not assumed.
+- [x] User outcome, scope, durable reads/writes, layer owner and read boundary are named.
+- [x] Loading/empty/error/retry/stale/offline/navigation/a11y states are reviewable.
+- [x] Common reuse, feature-local creation and regression consumers are identified.
+- [x] Fixture cannot select normal DB; guide started `NOT_RUN` with complete metadata/cleanup.
+- [x] Schema/dependency/native verdict is re-audited; no contrary proof exists.
+- [x] `OPEN-006` is resolved before Story 04 final visual work.
 
 ### 22.2. Shared Definition of Done
 
-- [ ] Story acceptance and automated checklists pass with exact evidence.
-- [ ] Relevant real SQLite, read-only fingerprint, race and relaunch tests pass.
-- [ ] Output is observable on Development Build; owner/formal status is honest.
-- [ ] Screen/component contains no SQL, inclusion rule, aggregation, timezone or analytics identity.
-- [ ] No component exceeds 300 lines; 240–260 line split review is documented.
-- [ ] Common changes pass every existing consumer regression.
-- [ ] No Product OPEN, mock, deferred scope or later-Epic owner is promoted.
-- [ ] No schema/dependency/native/provider change unless separately proven and approved.
-- [ ] Implementation report, exact SHA, commands and device evidence status are recorded.
-- [ ] `git diff --check`, quality, boundaries, hygiene, guide validator and platform exports pass.
+- [x] Story acceptance and automated checklists pass with exact evidence.
+- [x] Relevant real SQLite, read-only fingerprint, race and relaunch tests pass.
+- [x] Output is observable on Development Build; owner/formal status is honest.
+- [x] Screen/component contains no SQL, inclusion rule, aggregation, timezone or analytics identity.
+- [x] No component exceeds 300 lines; 240–260 line split review is documented.
+- [x] Common changes pass every existing consumer regression.
+- [x] No Product OPEN, mock, deferred scope or later-Epic owner is promoted.
+- [x] No schema/dependency/native/provider change unless separately proven and approved.
+- [x] Implementation report, exact SHA, commands and device evidence status are recorded.
+- [x] `git diff --check`, quality, boundaries, hygiene, guide validator and platform exports pass.
 
 ## 23. EPIC-09 Exit Checklist
 
-- [ ] EPIC-08 remains `DONE_OWNER_ACCEPTED`; no predecessor behavior regresses.
-- [ ] History shows only terminal Standard Focus in stable order with duration/tag/status.
-- [ ] Running Focus, onboarding trial and every Break are absent.
-- [ ] Failed/cancelled remain visible but contribute zero minutes.
-- [ ] Completed daily minutes use configured duration only.
-- [ ] Date grouping and graph use immutable scheduled-end local day across cross-midnight/DST/timezone.
-- [ ] Pagination/refresh/retry/lifecycle cannot duplicate, drop or overwrite with stale data.
-- [ ] Empty/loading/error/stale states are production, recoverable and contain no mock fallback.
-- [ ] Contribution range, thresholds and final colors match owner-resolved decisions.
-- [ ] Graph/list remain meaningful without color/motion and pass accessibility checks with honest status.
-- [ ] Full feature works offline and reconstructs from SQLite after cold relaunch.
-- [ ] `history_viewed` is local, typed, deduped, opt-out aware and cannot block UI.
-- [ ] History production route has no prototype authority; later-owner prototype remains intact.
-- [ ] Schema `001`, dependencies, lockfile and native config have no unauthorized drift.
-- [ ] Full automated/static/platform gates pass on exact candidate.
-- [ ] Five Story reports/guides and exact accepted SHAs are recorded.
+- [x] EPIC-08 remains `DONE_OWNER_ACCEPTED`; no predecessor behavior regresses.
+- [x] History shows only terminal Standard Focus in stable order with duration/tag/status.
+- [x] Running Focus, onboarding trial and every Break are absent.
+- [x] Failed/cancelled remain visible but contribute zero minutes.
+- [x] Completed daily minutes use configured duration only.
+- [x] Date grouping and graph use immutable scheduled-end local day across cross-midnight/DST/timezone.
+- [x] Pagination/refresh/retry/lifecycle cannot duplicate, drop or overwrite with stale data.
+- [x] Empty/loading/error/stale states are production, recoverable and contain no mock fallback.
+- [x] Contribution range, thresholds and final colors match owner-resolved decisions.
+- [x] Graph/list remain meaningful without color/motion; structured accessibility breadth remains honestly NOT_RUN.
+- [x] Full feature works offline and reconstructs from SQLite after cold relaunch.
+- [x] `history_viewed` is local, typed, deduped, opt-out aware and cannot block UI.
+- [x] History production route has no prototype authority; later-owner prototype remains intact.
+- [x] Schema `001`, dependencies, lockfile and native config have no unauthorized drift.
+- [x] Full automated/static/platform gates pass on exact candidate.
+- [x] Five Story reports/guides and exact accepted SHAs are recorded.
 - [ ] Owner explicitly accepts EPIC-09 exact candidate and authorizes closure/EPIC-10 planning.
 
 ## 24. Owner Confirmation Register
@@ -1106,8 +1107,8 @@ không tạo implementation plan Story 01 trong cùng bước này.
 - [ ] MVP retention keeps all product history until confirmed full reset; very-long-term compaction is
   intentionally not designed here.
 - [ ] Scroll position and pagination cursor are transient and need not survive process relaunch.
-- [x] US-09-02 automated quality and platform export evidence is recorded; owner/manual device status
-  remains explicitly `NOT_RUN` until executed.
+- [x] US-09-02 automated quality/platform evidence and owner quick UI PASS are recorded; structured
+  device/accessibility breadth remains explicitly `NOT_RUN`.
 - [x] US-09-03 automated quality and platform export evidence is recorded; owner/manual device status
   includes quick UI PASS at exact SHA `c0291ec...`; structured/formal breadth remains `NOT_RUN`.
 
@@ -1115,6 +1116,7 @@ không tạo implementation plan Story 01 trong cùng bước này.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 1.3.0 | 2026-09-12 | Codex | Bound US-09-05 owner quick UI PASS to exact committed/pushed SHA `a1abf5f...`: no crash and expected behavior. All five Stories are `DONE_OWNER_ACCEPTED`; explicit EPIC-09 closure/EPIC-10 planning authorization remains pending and structured/formal breadth remains `NOT_RUN`. |
 | 1.2.0 | 2026-09-12 | Codex | Recorded the US-09-05 uncommitted candidate: exact local view analytics, six exit fixtures, real-SQLite aggregate/reopen/failure proof, static/device gates and candidate reports. Quality passed 206 files/1,056 tests and both exports; owner quick UI and explicit Epic exit acceptance remain pending. |
 | 1.1.0 | 2026-09-12 | Codex | Recorded owner approval for `US0905-CONFIRM-01→06 Option A`; opened Story-05 coding on exact start SHA `0a84afe...`. No commit/push or Epic closure authority. |
 | 1.0.0 | 2026-09-12 | Codex | Bound US-09-04 owner quick visual UI PASS to exact committed/pushed SHA `cdce571...`; no crash and expected behavior. Structured/formal breadth remains `NOT_RUN`; closed Story 04 and opened owner-gated US-09-05 implementation planning. |

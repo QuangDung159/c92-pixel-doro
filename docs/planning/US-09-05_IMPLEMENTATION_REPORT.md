@@ -1,18 +1,18 @@
 ---
 document_id: PIXELDORO_US_09_05_IMPLEMENTATION_REPORT
 title: PixelDoro Mobile MVP — US-09-05 Implementation Report
-version: 0.1.0
-status: IMPLEMENTED_CANDIDATE_AWAITING_OWNER_SMOKE
+version: 0.2.0
+status: DONE_OWNER_ACCEPTED
 date: 2026-09-12
 owner: Dũng Lư
 branch: feats/epic-09
 implementation_start_sha: 0a84afeb7ddf5bb1a33f1c9b6c56dfdfa4a8122b
-current_candidate_base_sha: 0a84afeb7ddf5bb1a33f1c9b6c56dfdfa4a8122b
-exact_implementation_sha: null
-candidate_identity: UNCOMMITTED_WORKTREE_ON_APPROVED_START_SHA
+current_candidate_base_sha: a1abf5fecea6f27483de024bc64df2f2b2bfe0b5
+exact_implementation_sha: a1abf5fecea6f27483de024bc64df2f2b2bfe0b5
+candidate_identity: EXACT_COMMITTED_PUSHED_OWNER_ACCEPTED_SHA
 automated_status: PASS_206_FILES_1056_TESTS
-owner_smoke_status: NOT_RUN
-manual_device_status: NOT_RUN
+owner_smoke_status: PASS_OWNER_QUICK_UI
+manual_device_status: OWNER_QUICK_UI_SMOKE_REPORTED
 formal_tester_status: NOT_RUN_DEFERRED_UNLESS_EXECUTED
 schema_change: NONE
 dependency_change: NONE
@@ -29,8 +29,9 @@ episode ghi tối đa một local bounded `history_viewed` event khi analytics o
 Retry, Load more, render và Contribution không ghi event. Mọi ID/clock/settings/queue failure đều
 best-effort và không đổi UI, Recovery, navigation hoặc product facts.
 
-Candidate hiện là uncommitted worktree trên approved start SHA `0a84afe...`. Owner quick UI, exact
-committed/pushed SHA và explicit EPIC-09 exit acceptance chưa có nên Story/Epic chưa được ghi DONE.
+Owner đã xác nhận quick UI smoke ngày 2026-09-12 trên exact committed/pushed SHA `a1abf5f...`: app
+không crash và behavior hoạt động như kỳ vọng. US-09-05 là `DONE_OWNER_ACCEPTED`; explicit EPIC-09
+exit acceptance vẫn là gate riêng nên Epic chưa được ghi DONE.
 
 ## 2. Implemented behavior
 
@@ -54,7 +55,7 @@ committed/pushed SHA và explicit EPIC-09 exit acceptance chưa có nên Story/E
 | Android Expo export | PASS — 1,952 modules; `/tmp/pixeldoro-us0905-android-20260912` |
 | Expo Doctor online | 20/21 — same known 9 Expo SDK-57 patch-version drifts; no upgrade performed |
 | `git diff --check` | PASS |
-| Owner quick UI | `NOT_RUN` |
+| Owner quick UI | PASS — no crash, behavior worked as expected at exact SHA `a1abf5f...` |
 | Structured device/accessibility matrix | `NOT_RUN` / deferred unless executed |
 
 The first sandboxed Doctor run reached 19/21 because network metadata was unavailable. Online rerun
@@ -66,10 +67,15 @@ No migration/schema/index/trigger, package/lockfile, native config, permission, 
 product-history write was added. Analytics stays inside the existing bounded local queue. Normal
 `pixeldoro.db` is not selected by any exit fixture.
 
-## 5. Pending owner gate
+## 5. Remaining Epic gate
 
-- Run the quick UI guide at `apps/mobile/test/device/epic-09-exit-smoke.md`.
-- Record no-crash/expected behavior against the later exact committed/pushed implementation SHA.
-- Explicitly accept Story 05 and authorize EPIC-09 closure; this report does not infer either action.
+- Story 05 quick UI and exact-SHA acceptance are complete.
+- Explicit owner authorization is still required to close EPIC-09; this report does not infer it.
 - Formal iOS/Android physical-device and full accessibility breadth remains `NOT_RUN` unless executed.
 
+## 6. Change log
+
+| Version | Date | Author | Change |
+|---|---|---|---|
+| 0.2.0 | 2026-09-12 | Codex | Bound owner quick UI PASS to exact committed/pushed SHA `a1abf5f...`; no crash and expected behavior. Closed US-09-05 as `DONE_OWNER_ACCEPTED`; formal breadth and explicit Epic closure remain pending. |
+| 0.1.0 | 2026-09-12 | Codex | Recorded the implemented candidate, automated/platform evidence and honest pre-smoke status. |

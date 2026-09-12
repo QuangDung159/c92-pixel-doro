@@ -1,7 +1,10 @@
 # EPIC-09 / US-09-05 quick UI smoke
 
-Status: `NOT_RUN`
-Implementation SHA: `<implementation-sha>`
+Status: `PASS_OWNER_QUICK_UI`
+Implementation SHA: `a1abf5fecea6f27483de024bc64df2f2b2bfe0b5`
+
+Owner result (2026-09-12): no crash; behavior worked as expected. Đây là quick UI acceptance trên
+exact committed/pushed SHA; các structured platform/accessibility rows chưa chạy vẫn giữ `NOT_RUN`.
 
 Guide này kiểm tra exit candidate của History/Contribution. Mỗi fixture dùng database riêng với prefix
 `pixeldoro-us-09-05-`; không đọc, reset hoặc ghi vào database thường `pixeldoro.db`.
@@ -65,6 +68,7 @@ pnpm start --clear
 
 | Platform/device/OS | Fixture/settings | Result | Artifact/notes |
 |---|---|---|---|
+| `Owner available UI environment; metadata not recorded` | `Quick UI smoke` | `PASS_OWNER_QUICK_UI` | 2026-09-12 at `a1abf5f...`: no crash, behavior worked as expected |
 | `<fill>` | `epic_09_empty` | `NOT_RUN` | `<implementation-sha>` |
 | `<fill>` | `epic_09_mixed_40` | `NOT_RUN` | `<fill>` |
 | `<fill>` | `epic_09_offline_relaunch` + Airplane mode | `NOT_RUN` | `<fill>` |

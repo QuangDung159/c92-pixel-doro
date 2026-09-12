@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_09_05_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-09-05 Implementation Plan
-version: 0.3.0
-status: IMPLEMENTED_CANDIDATE_AWAITING_OWNER_SMOKE
-implementation_status: IMPLEMENTED_UNCOMMITTED_WORKTREE_CANDIDATE
+version: 0.4.0
+status: DONE_OWNER_ACCEPTED
+implementation_status: DONE_OWNER_ACCEPTED
 date: 2026-09-12
 last_updated: 2026-09-12
 owner: Dũng Lư
@@ -13,20 +13,20 @@ language: vi
 branch: feats/epic-09
 planning_baseline_sha: cdce571d7f61e088d7f48c297d32a9373e7f0a99
 implementation_start_sha: 0a84afeb7ddf5bb1a33f1c9b6c56dfdfa4a8122b
-current_candidate_base_sha: 0a84afeb7ddf5bb1a33f1c9b6c56dfdfa4a8122b
-exact_implementation_sha: null
-candidate_identity: UNCOMMITTED_WORKTREE_ON_APPROVED_START_SHA
+current_candidate_base_sha: a1abf5fecea6f27483de024bc64df2f2b2bfe0b5
+exact_implementation_sha: a1abf5fecea6f27483de024bc64df2f2b2bfe0b5
+candidate_identity: EXACT_COMMITTED_PUSHED_OWNER_ACCEPTED_SHA
 previous_story: US-09-04
 previous_story_status: DONE_OWNER_ACCEPTED
 previous_story_accepted_sha: cdce571d7f61e088d7f48c297d32a9373e7f0a99
-manual_device_status: NOT_RUN
+manual_device_status: PASS_OWNER_QUICK_UI
 formal_tester_status: NOT_RUN
 automated_status: PASS_206_FILES_1056_TESTS
 schema_change: NONE_PROPOSED
 dependency_change: NONE_PROPOSED
 native_change: NONE_PROPOSED
 analytics_change: ADD_EXISTING_ALLOWLIST_EVENT_HOOK_ONLY
-next_gate: OWNER_QUICK_UI_SMOKE_THEN_EXACT_SHA_EXIT_ACCEPTANCE
+next_gate: EXPLICIT_EPIC_09_EXIT_CLOSURE_AUTHORIZATION
 scope:
   - mobile_mvp
   - epic_09
@@ -327,15 +327,16 @@ analytics debug panel; manual smoke verifies that enabled/disabled/failure paths
 
 ## 8. Manual smoke and evidence policy
 
-Proposed guide: `apps/mobile/test/device/epic-09-exit-smoke.md`; initial `Status: NOT_RUN`.
+Guide: `apps/mobile/test/device/epic-09-exit-smoke.md`; current `Status: PASS_OWNER_QUICK_UI` at exact
+committed/pushed SHA `a1abf5f...`.
 
 Owner quick UI covers observable end-to-end behavior: empty/mixed two pages, graph/colors, Retry states,
 tab switch, foreground, offline, relaunch and no prototype in History. Analytics enabled/disabled/failure
 must be invisible to UI; exact queue evidence belongs to automated SQLite tests, not a debug screen.
 
 Structured iOS/Android physical device, full VoiceOver/TalkBack, largest text, grayscale and Reduce
-Motion remain `NOT_RUN_DEFERRED_TO_EPIC_12_UNLESS_EXECUTED` under proposed Option A. Final Story/Epic
-acceptance still needs an explicit owner quick smoke on the exact committed/pushed SHA.
+Motion remain `NOT_RUN_DEFERRED_TO_EPIC_12_UNLESS_EXECUTED` under approved Option A. Story acceptance
+is complete; only the separate explicit Epic closure authorization remains pending.
 
 ## 9. Acceptance và Done gates
 
@@ -349,7 +350,8 @@ acceptance still needs an explicit owner quick smoke on the exact committed/push
 - [x] No schema/dependency/native/provider or unauthorized product-data write drift.
 - [x] Automated/static/platform evidence and manual/formal statuses are recorded honestly.
 - [x] Story report and Epic Exit Report candidate exist without premature DONE claim.
-- [ ] Owner accepts exact committed SHA and separately authorizes EPIC-09 closure before EPIC-10 planning.
+- [x] Owner accepts exact committed SHA through quick UI smoke.
+- [ ] Owner separately authorizes EPIC-09 closure before EPIC-10 planning.
 
 ## 10. Owner Confirmation Register
 
@@ -423,6 +425,7 @@ retention/reset policy; never delete product data or normal `pixeldoro.db` durin
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.4.0 | 2026-09-12 | Codex | Bound owner quick UI PASS to exact committed/pushed SHA `a1abf5f...`: no crash and expected behavior. US-09-05 is `DONE_OWNER_ACCEPTED`; structured/formal breadth remains `NOT_RUN`; explicit EPIC-09 closure authorization remains pending. |
 | 0.3.0 | 2026-09-12 | Codex | Implemented the approved local `history_viewed` focus-episode hook, six isolated exit fixtures, real-SQLite aggregate/reopen/failure evidence, static/device gates and candidate reports. Quality passed 206 files/1,056 tests; iOS/Android exports passed; Doctor 20/21 with the same 9 SDK-57 patch drifts. Owner/manual smoke remains `NOT_RUN`; no commit/push or Epic closure claim. |
 | 0.2.0 | 2026-09-12 | Codex | Recorded owner approval for `US0905-CONFIRM-01→06 Option A`, opened coding and bound exact implementation start SHA `0a84afe...`. No commit/push or Epic closure authority. |
 | 0.1.0 | 2026-09-12 | Codex | Audited accepted US-09-01→04, History/Contribution lifecycle, Shop analytics precedent, bounded queue/settings/ID/clock, prototype boundary and exit requirements; proposed exact once-per-focus event, aggregate fixtures/evidence and six owner confirmations. No coding, commit or push. |
