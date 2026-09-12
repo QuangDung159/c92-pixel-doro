@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import type { AppDefaultMode, SettingsProjection } from '@/application';
+import type { AppDefaultMode, AppSettingsRecord, SettingsProjection } from '@/application';
 import {
   ConfirmationDialog,
   ErrorState,
@@ -16,6 +16,16 @@ import {
   PreferenceSection,
   SettingsIssueBanner,
 } from './settings-sections';
+
+type BackgroundSettingsDraft = Partial<Pick<
+  AppSettingsRecord,
+  | 'focusDurationMinutes'
+  | 'defaultMode'
+  | 'soundEnabled'
+  | 'hapticsEnabled'
+  | 'notificationsEnabled'
+  | 'analyticsEnabled'
+>>;
 
 export interface SettingsScreenProps {
   readonly projection: SettingsProjection;
@@ -49,6 +59,8 @@ export const SettingsScreen = ({
   onSetSound,
 }: SettingsScreenProps) => {
   const [confirmingReset, setConfirmingReset] = useState(false);
+  const [draft, setDraft] = useState<BackgroundSettingsDraft>({});
+
   if (projection.status === 'idle' || projection.status === 'loading') {
     return <ScreenShell><LoadingState label="Đang đọc cài đặt…" /></ScreenShell>;
   }
@@ -66,6 +78,18 @@ export const SettingsScreen = ({
 
   const busy = (key: typeof projection.busy[number]) => projection.busy.includes(key);
   const resetBusy = busy('reset');
+  const current = <Key extends keyof BackgroundSettingsDraft>(
+    key: Key,
+  ): AppSettingsRecord[Key] => {
+    const draftValue = draft[key];
+    return busy(key) && draftValue !== undefined
+      ? draftValue as AppSettingsRecord[Key]
+      : projection.settings[key];
+  };
+  const stage = (
+    key: keyof BackgroundSettingsDraft,
+    value: BackgroundSettingsDraft[keyof BackgroundSettingsDraft],
+  ) => setDraft((current) => ({ ...current, [key]: value }));
   return (
     <ScreenShell>
       <ScreenHeader
@@ -82,33 +106,45 @@ export const SettingsScreen = ({
         />
       )}
       <FocusDefaultsSection
-        busyDuration={busy('focusDurationMinutes')}
-        busyMode={busy('defaultMode')}
-        duration={projection.settings.focusDurationMinutes}
-        mode={projection.settings.defaultMode}
-        onSetDuration={onSetDuration}
-        onSetMode={onSetMode}
+        duration={current('focusDurationMinutes')}
+        mode={current('defaultMode')}
+        onSetDuration={(minutes) => {
+          onSetDuration(minutes);
+          stage('focusDurationMinutes', minutes);
+        }}
+        onSetMode={(mode) => {
+          onSetMode(mode);
+          stage('defaultMode', mode);
+        }}
       />
       <PreferenceSection
-        hapticsBusy={busy('hapticsEnabled')}
-        hapticsEnabled={projection.settings.hapticsEnabled}
-        onSetHaptics={onSetHaptics}
-        onSetSound={onSetSound}
-        soundBusy={busy('soundEnabled')}
-        soundEnabled={projection.settings.soundEnabled}
+        hapticsEnabled={current('hapticsEnabled')}
+        onSetHaptics={(enabled) => {
+          onSetHaptics(enabled);
+          stage('hapticsEnabled', enabled);
+        }}
+        onSetSound={(enabled) => {
+          onSetSound(enabled);
+          stage('soundEnabled', enabled);
+        }}
+        soundEnabled={current('soundEnabled')}
       />
       <NotificationSection
-        busy={busy('notificationsEnabled')}
-        enabled={projection.settings.notificationsEnabled}
-        onChange={onSetNotifications}
+        enabled={current('notificationsEnabled')}
+        onChange={(enabled) => {
+          onSetNotifications(enabled);
+          stage('notificationsEnabled', enabled);
+        }}
         onOpenSystemSettings={onOpenSystemSettings}
         permission={projection.notificationPermission}
       />
       <DataControlSection
-        analyticsBusy={busy('analyticsEnabled')}
-        analyticsEnabled={projection.settings.analyticsEnabled}
+        analyticsEnabled={current('analyticsEnabled')}
         onRequestReset={() => setConfirmingReset(true)}
-        onSetAnalytics={onSetAnalytics}
+        onSetAnalytics={(enabled) => {
+          onSetAnalytics(enabled);
+          stage('analyticsEnabled', enabled);
+        }}
         resetBusy={resetBusy}
       />
       <ConfirmationDialog

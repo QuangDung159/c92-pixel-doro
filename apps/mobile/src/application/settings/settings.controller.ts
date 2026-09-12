@@ -403,15 +403,15 @@ export class SettingsController {
 
   private startOperation(key: SettingKey, work: () => Promise<boolean>): Promise<boolean> {
     if (this.disposed) return Promise.resolve(false);
-    const existing = this.operations.get(key);
-    if (existing !== undefined) return existing;
     this.setBusy(key, true);
     const operation = this.commandTail.then(work, work).catch(() => {
       this.fail('SETTINGS_WRITE_FAILED', () => this.startOperation(key, work));
       return false;
     }).finally(() => {
-      if (this.operations.get(key) === operation) this.operations.delete(key);
-      this.setBusy(key, false);
+      if (this.operations.get(key) === operation) {
+        this.operations.delete(key);
+        this.setBusy(key, false);
+      }
     });
     this.commandTail = operation.then(() => undefined, () => undefined);
     this.operations.set(key, operation);

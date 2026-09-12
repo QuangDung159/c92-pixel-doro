@@ -48,42 +48,38 @@ export const SettingsIssueBanner = ({
 );
 
 export const FocusDefaultsSection = ({
-  duration, mode, busyDuration, busyMode, onSetDuration, onSetMode,
+  duration, mode, onSetDuration, onSetMode,
 }: {
   readonly duration: number;
   readonly mode: AppDefaultMode;
-  readonly busyDuration: boolean;
-  readonly busyMode: boolean;
   readonly onSetDuration: (minutes: number) => void;
   readonly onSetMode: (mode: AppDefaultMode) => void;
 }) => (
   <PixelPanel>
     <SectionLabel>Focus mặc định</SectionLabel>
     <Text style={styles.help}>Áp dụng khi mở một Focus Setup mới; không đổi phiên đang chạy.</Text>
-    <DurationControl disabled={busyDuration} max={120} min={15} onChange={onSetDuration}
+    <DurationControl max={120} min={15} onChange={onSetDuration}
       quickValues={[15, 25, 50]} step={5} value={duration} />
     <View accessibilityRole="radiogroup" style={styles.column}>
-      <ChoiceChip disabled={busyMode} label="Relax · có thể rời app" onPress={() => onSetMode('relax')} selected={mode === 'relax'} />
-      <ChoiceChip disabled={busyMode} label="Strict · grace 10 giây" onPress={() => onSetMode('strict')} selected={mode === 'strict'} />
+      <ChoiceChip label="Relax · có thể rời app" onPress={() => onSetMode('relax')} selected={mode === 'relax'} />
+      <ChoiceChip label="Strict · grace 10 giây" onPress={() => onSetMode('strict')} selected={mode === 'strict'} />
     </View>
   </PixelPanel>
 );
 
 export const PreferenceSection = ({
-  soundEnabled, hapticsEnabled, soundBusy, hapticsBusy, onSetSound, onSetHaptics,
+  soundEnabled, hapticsEnabled, onSetSound, onSetHaptics,
 }: {
   readonly soundEnabled: boolean;
   readonly hapticsEnabled: boolean;
-  readonly soundBusy: boolean;
-  readonly hapticsBusy: boolean;
   readonly onSetSound: (enabled: boolean) => void;
   readonly onSetHaptics: (enabled: boolean) => void;
 }) => (
   <PixelPanel>
     <SectionLabel>Phản hồi nhẹ</SectionLabel>
-    <ToggleRow body="Âm báo ngắn khi hoàn tất và nhận thưởng mới." busy={soundBusy} label="Âm thanh" onValueChange={onSetSound} value={soundEnabled} />
+    <ToggleRow body="Âm báo ngắn khi hoàn tất và nhận thưởng mới." label="Âm thanh" onValueChange={onSetSound} value={soundEnabled} />
     <View style={styles.divider} />
-    <ToggleRow body="Rung nhẹ cho hành động quan trọng; nội dung không phụ thuộc vào rung." busy={hapticsBusy} label="Rung phản hồi" onValueChange={onSetHaptics} value={hapticsEnabled} />
+    <ToggleRow body="Rung nhẹ cho hành động quan trọng; nội dung không phụ thuộc vào rung." label="Rung phản hồi" onValueChange={onSetHaptics} value={hapticsEnabled} />
   </PixelPanel>
 );
 
@@ -96,17 +92,16 @@ const permissionCopy = (permission: FocusNotificationPermission | 'checking' | '
 };
 
 export const NotificationSection = ({
-  enabled, busy, permission, onChange, onOpenSystemSettings,
+  enabled, permission, onChange, onOpenSystemSettings,
 }: {
   readonly enabled: boolean;
-  readonly busy: boolean;
   readonly permission: FocusNotificationPermission | 'checking' | 'unavailable';
   readonly onChange: (enabled: boolean) => void;
   readonly onOpenSystemSettings: () => void;
 }) => (
   <PixelPanel>
     <SectionLabel>Thông báo</SectionLabel>
-    <ToggleRow body="Nhắc khi Focus hoặc Break kết thúc." busy={busy} label="Nhắc kết thúc phiên" onValueChange={onChange} value={enabled} />
+    <ToggleRow body="Nhắc khi Focus hoặc Break kết thúc." label="Nhắc kết thúc phiên" onValueChange={onChange} value={enabled} />
     <Text accessibilityLiveRegion="polite" style={styles.status}>{permissionCopy(permission)}</Text>
     {permission === 'denied' ? (
       <SecondaryButton label="Mở Cài đặt hệ thống" onPress={onOpenSystemSettings} />
@@ -115,17 +110,16 @@ export const NotificationSection = ({
 );
 
 export const DataControlSection = ({
-  analyticsEnabled, analyticsBusy, resetBusy, onSetAnalytics, onRequestReset,
+  analyticsEnabled, resetBusy, onSetAnalytics, onRequestReset,
 }: {
   readonly analyticsEnabled: boolean;
-  readonly analyticsBusy: boolean;
   readonly resetBusy: boolean;
   readonly onSetAnalytics: (enabled: boolean) => void;
   readonly onRequestReset: () => void;
 }) => (
   <PixelPanel tone="strong">
     <SectionLabel>Quyền riêng tư & dữ liệu</SectionLabel>
-    <ToggleRow body="Dữ liệu sử dụng ẩn danh, không có tài khoản. Tắt sẽ dừng capture, xóa hàng đợi và đổi mã ẩn danh." busy={analyticsBusy} label="Anonymous analytics" onValueChange={onSetAnalytics} value={analyticsEnabled} />
+    <ToggleRow body="Dữ liệu sử dụng ẩn danh, không có tài khoản. Tắt sẽ dừng capture, xóa hàng đợi và đổi mã ẩn danh." label="Anonymous analytics" onValueChange={onSetAnalytics} value={analyticsEnabled} />
     <View style={styles.divider} />
     <Text style={styles.dangerTitle}>Vùng nguy hiểm</Text>
     <Text style={styles.help}>Xóa lịch sử, tiến trình, Coin, vật phẩm và tùy chọn local; catalog và schema hợp lệ được giữ lại.</Text>

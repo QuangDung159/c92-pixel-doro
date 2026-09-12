@@ -25,8 +25,8 @@ Mở Development Build hiện có. Nếu database mới đi qua First Use, hoàn
 
 - [ ] Settings không còn badge/copy prototype; có Focus mặc định, phản hồi, thông báo, analytics và
   vùng xóa dữ liệu.
-- [ ] Chọn `50 phút` và `Strict`; phần chữ của từng hàng giảm opacity ngắn khi lưu, không đổi chiều
-  cao hoặc nháy label, rồi trở lại bình thường.
+- [ ] Chọn `50 phút` và `Strict`; UI phản hồi ngay, không hiện `Đang lưu…`, không giảm opacity/gray,
+  không khóa control và không nháy label trong lúc SQLite lưu nền.
 - [ ] Tắt/bật `Âm thanh` và `Rung phản hồi`; hàng còn lại không bị đổi theo.
 - [ ] Rời tab rồi quay lại: các giá trị vẫn đúng.
 - [ ] Mở một Focus Setup mới: mặc định là `50 phút / Strict / Lập trình`; phiên đang chạy không đổi.

@@ -117,6 +117,25 @@ describe('SettingsController', () => {
     });
   });
 
+  it('persists the latest value when a local setting is changed repeatedly', async () => {
+    const fixture = harness();
+    await fixture.controller.activate();
+
+    await Promise.all([
+      fixture.controller.setSoundEnabled(false),
+      fixture.controller.setSoundEnabled(true),
+    ]);
+
+    expect(fixture.record().soundEnabled).toBe(true);
+    expect(fixture.dependencies.settings.patch).toHaveBeenNthCalledWith(
+      1, expect.objectContaining({ soundEnabled: false }),
+    );
+    expect(fixture.dependencies.settings.patch).toHaveBeenNthCalledWith(
+      2, expect.objectContaining({ soundEnabled: true }),
+    );
+    expect(fixture.controller.getSnapshot()).toMatchObject({ busy: [] });
+  });
+
   it('commits analytics off before clearing and rotating identity', async () => {
     const fixture = harness();
     await fixture.controller.activate();

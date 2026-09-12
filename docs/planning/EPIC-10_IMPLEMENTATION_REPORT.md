@@ -62,7 +62,7 @@ Validated on Node `22.23.2` / pnpm `11.24.0`:
 
 - [x] Workspace TypeScript typecheck.
 - [x] ESLint.
-- [x] 212 Vitest files / 1,076 tests in the final worktree quality run.
+- [x] 212 Vitest files / 1,078 tests in the final worktree quality run.
 - [x] Real SQLite settings patch/reopen and confirmed-reset regression.
 - [x] Settings controller save ordering, privacy off/cleanup/retry, permission denial and reset.
 - [x] Focus Setup durable defaults and no notification prompt during relaunch reconciliation.

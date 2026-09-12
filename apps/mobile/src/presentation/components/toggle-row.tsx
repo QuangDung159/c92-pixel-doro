@@ -8,7 +8,6 @@ export interface ToggleRowProps {
   readonly value: boolean;
   readonly onValueChange: (value: boolean) => void;
   readonly disabled?: boolean;
-  readonly busy?: boolean;
 }
 
 export const ToggleRow = ({
@@ -17,18 +16,17 @@ export const ToggleRow = ({
   value,
   onValueChange,
   disabled = false,
-  busy = false,
 }: ToggleRowProps) => (
   <View style={styles.row}>
-    <View style={[styles.copy, busy && styles.copyBusy]}>
+    <View style={styles.copy}>
       <Text style={styles.title}>{label}</Text>
       <Text style={styles.body}>{body}</Text>
     </View>
     <Switch
       accessibilityHint={body}
       accessibilityLabel={label}
-      accessibilityState={{ busy, disabled: disabled || busy, checked: value }}
-      disabled={disabled || busy}
+      accessibilityState={{ disabled, checked: value }}
+      disabled={disabled}
       onValueChange={onValueChange}
       thumbColor={palette.white}
       trackColor={{ false: palette.textSecondary, true: palette.accentDark }}
@@ -46,7 +44,6 @@ const styles = StyleSheet.create({
     minHeight: 64,
   },
   copy: { flex: 1, gap: 3 },
-  copyBusy: { opacity: 0.5 },
   title: { color: palette.textPrimary, fontSize: 16, fontWeight: '900' },
   body: { color: palette.textSecondary, fontSize: 12, lineHeight: 18 },
 });

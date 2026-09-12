@@ -29,20 +29,19 @@ const serializedText = (node: unknown): string => {
 };
 
 describe('ToggleRow', () => {
-  it('exposes label, checked state and busy lock to assistive technology', () => {
+  it('exposes label and checked state without a local-save visual state', () => {
     const onValueChange = vi.fn();
     const tree = ToggleRow({
       label: 'Âm thanh', body: 'Âm báo ngắn.', value: true,
-      busy: true, onValueChange,
+      onValueChange,
     });
     expect(findSwitch(tree)?.props).toMatchObject({
       accessibilityLabel: 'Âm thanh',
       accessibilityHint: 'Âm báo ngắn.',
-      accessibilityState: { busy: true, checked: true, disabled: true },
-      disabled: true,
+      accessibilityState: { checked: true, disabled: false },
+      disabled: false,
       value: true,
     });
     expect(serializedText(tree)).toBe('Âm thanhÂm báo ngắn.');
-    expect(tree.props.children[0].props.style).toContainEqual({ opacity: 0.5 });
   });
 });

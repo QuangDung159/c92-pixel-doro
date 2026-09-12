@@ -1,8 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
 
+import { RoomDecorationThumbnail } from '@/presentation/room/room-decoration-thumbnail';
 import { ItemTile } from './item-tile';
 
 vi.mock('react-native', () => ({
+  Image: 'Image',
   StyleSheet: { create: <TValue,>(styles: TValue): TValue => styles },
   Text: 'Text',
   View: 'View',
@@ -20,7 +22,16 @@ describe('ItemTile', () => {
     const serialized = JSON.stringify(tree);
     expect(serialized).toContain(label);
     expect(serialized).toContain(`Cốc trên bàn, 5 Coin, ${label}`);
+    expect(serialized).toContain('desk-mug');
+    expect(serialized).not.toContain('◆');
     expect(serialized).not.toMatch(/onPress|button/);
+  });
+
+  it('crops the matching catalog sprite from the approved atlas', () => {
+    const tree = RoomDecorationThumbnail({ itemId: 'tiny-plant' });
+    const serialized = JSON.stringify(tree);
+    expect(serialized).toContain('item-sprite-tiny-plant');
+    expect(serialized).toContain('Image');
   });
 
   it('renders an optional explicit purchase action', () => {
