@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_MVP_EPIC_BREAKDOWN
 title: PixelDoro Mobile MVP — Epic Breakdown
-version: 2.7.0
-status: EPIC_01_TO_09_DONE_EPIC_10_PLANNING_READY
+version: 2.8.0
+status: EPIC_01_TO_09_DONE_EPIC_10_IMPLEMENTED_PENDING_OWNER_SMOKE
 last_updated: 2026-09-12
 owner: Dũng Lư
 reviewer: Dũng Lư
@@ -147,10 +147,11 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 | `EPIC-07` | `DONE_OWNER_ACCEPTED` | Exact candidate `f6c7b92`; Break/cadence lifecycle, notification/analytics and owner quick UI pass. Formal device/accessibility matrix deferred. |
 | `EPIC-08` | `DONE_OWNER_ACCEPTED` | US-08-01→05 owner accepted; exact candidate `30adc34...`; Exit Report closed by owner authorization. |
 | `EPIC-09` | `DONE_OWNER_ACCEPTED` | US-09-01→05 owner accepted; exact behavior candidate `a1abf5f...`; History/Contribution exit closed by owner authorization. |
+| `EPIC-10` | `IMPLEMENTED_UNCOMMITTED_PENDING_OWNER_QUICK_UI` | US1000 confirmations approved Option A; automated suite green in worktree; exact implementation SHA and owner device smoke pending. |
 
-Chín Epic đầu đã `DONE_OWNER_ACCEPTED`. EPIC-10 dependency/planning gate is open for the owner's separate
-thread, but its implementation has not started implicitly; EPIC-10–12 retain execution order. History và
-Contribution đã production-ready theo accepted scope; Settings, provider analytics và Beta Readiness chưa hoàn tất.
+Chín Epic đầu đã `DONE_OWNER_ACCEPTED`. EPIC-10 implementation đã hoàn tất trong worktree nhưng chưa
+được owner smoke/accept và chưa có exact implementation commit SHA; EPIC-11 chưa được mở. Provider
+analytics và Beta Readiness vẫn thuộc EPIC-11/12.
 
 ## 3. Critical path và delivery gates
 
@@ -662,15 +663,15 @@ matrix tiếp tục `DEFERRED_TO_LATER_PHASE` và được carry sang later vali
 
 **Epic completion checklist:**
 
-- [ ] Sound và haptic có thể tắt hoàn toàn.
-- [ ] Notification preference không bị coi là OS permission truth.
-- [ ] Permission denial không làm hỏng Start/Complete/Recovery.
-- [ ] Settings mutation validate range và commit atomically.
-- [ ] Analytics opt-out dừng capture, clear queue và rotate anonymous ID.
-- [ ] Full reset có warning/confirmation và block concurrent core command.
-- [ ] Reset thành công clear product data/projection nhưng giữ schema/catalog hợp lệ.
-- [ ] Reset failure rollback và không hiển thị success giả.
-- [ ] Không có partial XP/Coin/history/inventory reset.
+- [x] Sound và haptic có thể tắt hoàn toàn.
+- [x] Notification preference không bị coi là OS permission truth.
+- [x] Permission denial không làm hỏng Start/Complete/Recovery.
+- [x] Settings mutation validate range và commit atomically.
+- [x] Analytics opt-out dừng capture, clear queue và rotate anonymous ID.
+- [x] Full reset có warning/confirmation và block concurrent core command.
+- [x] Reset thành công clear product data/projection nhưng giữ schema/catalog hợp lệ.
+- [x] Reset failure rollback và không hiển thị success giả.
+- [x] Không có partial XP/Coin/history/inventory reset.
 
 **Out of scope:** Account deletion trên server, cloud backup, configurable advanced audio mixer và remote notification.
 
@@ -870,6 +871,13 @@ Story hoặc implementation tương lai.
 - [x] Không estimate deadline trước khi Story refinement hoàn tất.
 
 ## 10. Change log
+
+### 2.8.0 — 2026-09-12
+
+- Owner approved `US1000-CONFIRM-01→07` Option A and authorized full EPIC-10 implementation.
+- Implemented all five Settings/Data Control slices in the worktree with automated evidence and an
+  isolated quick UI guide; kept Epic closure pending exact commit SHA and owner device smoke.
+- EPIC-11 remains closed until separate EPIC-10 owner acceptance.
 
 ### 2.7.0 — 2026-09-12
 

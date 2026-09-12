@@ -21,6 +21,7 @@ export type {
 export type {
   AppDefaultMode,
   AppSettingsRecord,
+  AppSettingsPatch,
   AppSettingsRepository,
   ReplaceAppSettingsInput,
 } from './settings.repository';

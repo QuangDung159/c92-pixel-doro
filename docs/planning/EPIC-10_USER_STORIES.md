@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_EPIC_10_USER_STORIES
 title: PixelDoro EPIC-10 — Settings & Data Control User Stories
-version: 0.1.0
-status: DRAFT_PENDING_OWNER_CONFIRMATION
+version: 0.2.0
+status: IMPLEMENTED_UNCOMMITTED_PENDING_OWNER_QUICK_UI
 date: 2026-09-12
 owner: Dũng Lư
 branch: feats/epic-10
@@ -12,12 +12,12 @@ baseline_identity: EXACT_COMMITTED_PUSHED_SHA
 worktree_at_audit: DIRTY_PREEXISTING_DOCUMENTATION_ONLY
 previous_epic: EPIC-09
 previous_epic_status: DONE_OWNER_ACCEPTED_IN_PREEXISTING_UNCOMMITTED_CLOSURE_RECORDS
-implementation_status: NOT_STARTED
+implementation_status: IMPLEMENTED_UNCOMMITTED
 manual_device_status: NOT_RUN
 formal_tester_status: NOT_RUN
 schema_change: NONE_PROPOSED_SCHEMA_001_SUFFICIENT
-dependency_change: PENDING_OWNER_CONFIRMATION_FOR_AUDIO_HAPTIC_ONLY
-native_change: PENDING_OWNER_CONFIRMATION_FOR_AUDIO_HAPTIC_ONLY
+dependency_change: APPROVED_OPTION_A_EXPO_AUDIO_HAPTICS
+native_change: APPROVED_OPTION_A_EXPO_AUTOLINK_AND_AUDIO_CONFIG
 authority: PLANNING
 product_truth: ../PIXELDORO_CORE_TRUTH.md
 epic_baseline: ./MVP_EPICS.md
@@ -244,7 +244,7 @@ permission và sensory feedback. Không Story nào chỉ là UI/database/refacto
   Focus Setup EPIC-06; approved EPIC-03 hierarchy.
 - **Prerequisite gate:** owner duyệt `US1000-CONFIRM-01` và `US1000-CONFIRM-02`; record exact
   implementation-start SHA; worktree changes được re-audit.
-- **Owner confirmation before coding:** `[ ] PENDING_OWNER_CONFIRMATION`.
+- **Owner confirmation before coding:** `[x] APPROVED_OPTION_A_2026-09-12`.
 
 ### 7.2. Scope, rules và output
 
@@ -367,7 +367,7 @@ statuses; `[ ]` owner accepts exact committed SHA; `[ ]` US-10-02 coding remains
 - **Priority/order:** P0 privacy/data, Story 2.
 - **Dependencies:** US-10-01 accepted; local queue/event hooks and installation/settings repositories.
 - **Prerequisite gate:** `US1000-CONFIRM-03` approved; exact prior Story SHA and start SHA recorded.
-- **Owner confirmation before coding:** `[ ] PENDING_OWNER_CONFIRMATION`.
+- **Owner confirmation before coding:** `[x] APPROVED_OPTION_A_2026-09-12`.
 
 ### 8.2. Scope, rules và output
 
@@ -467,7 +467,7 @@ exact committed SHA; `[ ]` no provider delivery implemented; `[ ]` US-10-03 rema
 - **Dependencies:** US-10-01/02 accepted; existing `ConfirmedLocalDataReset`, SQLite reset adapter,
   bootstrap/readiness/recovery and notification cleanup.
 - **Prerequisite gate:** `US1000-CONFIRM-04` approved; before fingerprint and exact start SHA captured.
-- **Owner confirmation before coding:** `[ ] PENDING_OWNER_CONFIRMATION`.
+- **Owner confirmation before coding:** `[x] APPROVED_OPTION_A_2026-09-12`.
 
 ### 9.2. Scope, rules và output
 
@@ -583,7 +583,7 @@ committed SHA; `[ ]` no partial reset/account/cloud scope; `[ ]` US-10-04 remain
 - **Priority/order:** P1 platform reliability, Story 4.
 - **Dependencies:** US-10-01 accepted; existing Focus/Break notification coordinators/adapters.
 - **Prerequisite gate:** `US1000-CONFIRM-05` approved; permission matrix/start SHA recorded.
-- **Owner confirmation before coding:** `[ ] PENDING_OWNER_CONFIRMATION`.
+- **Owner confirmation before coding:** `[x] APPROVED_OPTION_A_2026-09-12`.
 
 ### 10.2. Scope, rules và output
 
@@ -686,7 +686,7 @@ request-failure-once, ensure/cancel-failure-once, active-focus, active-break, to
 - **Dependencies:** US-10-01→04 accepted; existing commit-first side-effect boundaries and Reduced Motion.
 - **Prerequisite gate:** `US1000-CONFIRM-06` (feedback matrix/assets/dependencies) and
   `US1000-CONFIRM-07` (exit/evidence) approved; exact start SHA recorded.
-- **Owner confirmation before coding:** `[ ] PENDING_OWNER_CONFIRMATION`.
+- **Owner confirmation before coding:** `[x] APPROVED_OPTION_A_2026-09-12`.
 
 ### 11.2. Scope, rules và output
 
@@ -986,7 +986,7 @@ can be sent in one line: `Duyệt US1000-CONFIRM-01→07 theo Option A`.
   larger blast radius and weak independent acceptance/rollback.
 - **Option C:** split final exit-only Story. More gate overhead and risks creating a testing-only Story.
 - **Blocked:** all US-10-01→05 coding.
-- **Status:** `PENDING_OWNER_CONFIRMATION`.
+- **Status:** `APPROVED_OPTION_A_2026-09-12`.
 
 ### US1000-CONFIRM-02 — Save interaction và Focus-default consumption
 
@@ -998,7 +998,7 @@ can be sent in one line: `Duyệt US1000-CONFIRM-01→07 theo Option A`.
   unsaved draft/back-discard semantics and larger stale overwrite surface.
 - **Option C:** commit on leaving screen. Least visible, hardest to explain/retry, and unsafe on kill.
 - **Blocked:** US-10-01 and all later toggle Stories.
-- **Status:** `PENDING_OWNER_CONFIRMATION`.
+- **Status:** `APPROVED_OPTION_A_2026-09-12`.
 
 ### US1000-CONFIRM-03 — Analytics cleanup failure UX
 
@@ -1009,7 +1009,7 @@ can be sent in one line: `Duyệt US1000-CONFIRM-01→07 theo Option A`.
   flow for a side-effect privacy cleanup.
 - **Option C:** silently retry later. Lower friction but weak user assurance and less observable failure.
 - **Blocked:** US-10-02.
-- **Status:** `PENDING_OWNER_CONFIRMATION`.
+- **Status:** `APPROVED_OPTION_A_2026-09-12`.
 
 ### US1000-CONFIRM-04 — Reset placement và active-session edge
 
@@ -1022,7 +1022,7 @@ can be sent in one line: `Duyệt US1000-CONFIRM-01→07 theo Option A`.
 - **Option C:** require typed confirmation text. Strong friction but adds an input component and is heavy
   for local no-account MVP.
 - **Blocked:** US-10-03.
-- **Status:** `PENDING_OWNER_CONFIRMATION`.
+- **Status:** `APPROVED_OPTION_A_2026-09-12`.
 
 ### US1000-CONFIRM-05 — Enabling notification when OS permission is not allowed
 
@@ -1035,7 +1035,7 @@ can be sent in one line: `Duyệt US1000-CONFIRM-01→07 theo Option A`.
 - **Option C:** revert preference Off when OS denies. Simpler appearance but incorrectly couples app
   preference to OS truth and loses user intent.
 - **Blocked:** US-10-04.
-- **Status:** `PENDING_OWNER_CONFIRMATION`.
+- **Status:** `APPROVED_OPTION_A_2026-09-12`.
 
 ### US1000-CONFIRM-06 — Minimal in-app sound/haptic feedback set
 
@@ -1048,7 +1048,7 @@ can be sent in one line: `Duyệt US1000-CONFIRM-01→07 theo Option A`.
 - **Option C:** sound/haptic on every button plus all listed moments. Richer retro feel but noisy, higher
   test/asset/accessibility cost and contrary to restraint.
 - **Blocked:** US-10-05; any dependency/native config/audio asset addition.
-- **Status:** `PENDING_OWNER_CONFIRMATION`.
+- **Status:** `APPROVED_OPTION_A_2026-09-12`.
 
 ### US1000-CONFIRM-07 — Story/Epic owner evidence gate
 
@@ -1061,10 +1061,11 @@ can be sent in one line: `Duyệt US1000-CONFIRM-01→07 theo Option A`.
 - **Option C:** require full formal device/accessibility matrix now. Strongest evidence but absorbs
   EPIC-12 scope and delays feature closure.
 - **Blocked:** US-10-05 exit gate and EPIC-10 closure.
-- **Status:** `PENDING_OWNER_CONFIRMATION`.
+- **Status:** `APPROVED_OPTION_A_2026-09-12`.
 
 ## 23. Change log
 
 | Version | Date | Author | Change |
 |---|---|---|---|
 | 0.1.0 | 2026-09-12 | Codex | Audited exact Git baseline, pre-existing EPIC-09 closure edits, full documentation/manual-guide corpus and current code/component capability. Drafted five dependency/risk-ordered vertical Stories with scope, ownership, transactions, UI/lifecycle/privacy/a11y states, tests, isolated fixtures, manual guides, reuse matrices, honest exit/deferred checklists and seven pending owner confirmations. No implementation, commit or push. |
+| 0.2.0 | 2026-09-12 | Codex | Owner approved `US1000-CONFIRM-01→07` Option A. Implemented all five slices in the worktree with production Settings UI/controller, column-safe persistence, Focus defaults, privacy cleanup gate, permission reconciliation, confirmed reset, sound/haptic adapters, tests and quick UI guide. Manual evidence remains `NOT_RUN`; implementation SHA remains unavailable until commit. |

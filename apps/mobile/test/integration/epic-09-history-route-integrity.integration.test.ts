@@ -92,9 +92,9 @@ describe('EPIC-09 production History integrity', () => {
     expect(graph).not.toMatch(/numberOfLines|adjustsFontSizeToFit|minimumFontScale/);
   });
 
-  it('preserves the later-owner Settings prototype and root provider', () => {
+  it('allows EPIC-10 to replace Settings while preserving still-used prototype routes', () => {
     expect(read('apps/mobile/src/presentation/features/settings/index.tsx'))
-      .toContain('PrototypeBadge');
+      .not.toContain('PrototypeBadge');
     expect(read('apps/mobile/src/app/_layout.tsx')).toContain('PrototypeProvider');
   });
 

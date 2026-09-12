@@ -98,6 +98,7 @@ export * from './break';
 export * from './shop';
 export * from './room';
 export * from './history';
+export * from './settings';
 export {
   OnboardingTrialRunningController,
   type OnboardingTrialRunningControllerDependencies,
@@ -145,6 +146,7 @@ export type {
   AnalyticsPropertyValue,
   ApprovedAnalyticsEventName,
   AppDefaultMode,
+  AppSettingsPatch,
   AppSettingsRecord,
   AppSettingsRepository,
   InstallationRecord,

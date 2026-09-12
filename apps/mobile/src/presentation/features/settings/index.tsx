@@ -1,98 +1,134 @@
 import { useState } from 'react';
-import { StyleSheet, Switch, Text, View } from 'react-native';
+
+import type { AppDefaultMode, SettingsProjection } from '@/application';
+import {
+  ConfirmationDialog,
+  ErrorState,
+  LoadingState,
+  ScreenHeader,
+  ScreenShell,
+} from '@/presentation/components';
 
 import {
-  ChoiceChip,
-  PixelPanel,
-  PrototypeScreen,
-  ScreenHeader,
-  SecondaryButton,
-  SectionLabel,
-} from '@/presentation/components';
-import { PrototypeBadge } from '@/presentation/prototype/components';
-import type { BreakKind } from '@/presentation/prototype/prototype-state';
-import { palette } from '@/presentation/theme/palette';
+  DataControlSection,
+  FocusDefaultsSection,
+  NotificationSection,
+  PreferenceSection,
+  SettingsIssueBanner,
+} from './settings-sections';
 
-const SettingRow = ({
-  label,
-  body,
-  value,
-  onValueChange,
-}: {
-  readonly label: string;
-  readonly body: string;
-  readonly value: boolean;
-  readonly onValueChange: (value: boolean) => void;
-}) => (
-  <View style={styles.settingRow}>
-    <View style={styles.settingCopy}>
-      <Text style={styles.settingTitle}>{label}</Text>
-      <Text style={styles.settingBody}>{body}</Text>
-    </View>
-    <Switch
-      accessibilityLabel={label}
-      onValueChange={onValueChange}
-      thumbColor={palette.white}
-      trackColor={{ false: palette.textSecondary, true: palette.accentDark }}
-      value={value}
-    />
-  </View>
-);
+export interface SettingsScreenProps {
+  readonly projection: SettingsProjection;
+  readonly onActivateRetry: () => void;
+  readonly onDismissIssue: () => void;
+  readonly onOpenSystemSettings: () => void;
+  readonly onReset: () => Promise<boolean>;
+  readonly onResetComplete: () => void;
+  readonly onRetry: () => void;
+  readonly onSetAnalytics: (enabled: boolean) => void;
+  readonly onSetDuration: (minutes: number) => void;
+  readonly onSetHaptics: (enabled: boolean) => void;
+  readonly onSetMode: (mode: AppDefaultMode) => void;
+  readonly onSetNotifications: (enabled: boolean) => void;
+  readonly onSetSound: (enabled: boolean) => void;
+}
 
 export const SettingsScreen = ({
-  nextBreakKind,
-  onSetNextBreakKind,
-  onOpenFeedback,
-}: {
-  readonly nextBreakKind: BreakKind;
-  readonly onSetNextBreakKind: (kind: BreakKind) => void;
-  readonly onOpenFeedback: () => void;
-}) => {
-  const [sound, setSound] = useState(true);
-  const [haptic, setHaptic] = useState(true);
-  const [notifications, setNotifications] = useState(false);
+  projection,
+  onActivateRetry,
+  onDismissIssue,
+  onOpenSystemSettings,
+  onReset,
+  onResetComplete,
+  onRetry,
+  onSetAnalytics,
+  onSetDuration,
+  onSetHaptics,
+  onSetMode,
+  onSetNotifications,
+  onSetSound,
+}: SettingsScreenProps) => {
+  const [confirmingReset, setConfirmingReset] = useState(false);
+  if (projection.status === 'idle' || projection.status === 'loading') {
+    return <ScreenShell><LoadingState label="Đang đọc cài đặt…" /></ScreenShell>;
+  }
+  if (projection.status === 'error') {
+    return (
+      <ScreenShell>
+        <ErrorState
+          body="Dữ liệu hiện tại chưa được thay đổi. Hãy thử đọc lại."
+          onRetry={onActivateRetry}
+          title="Chưa thể mở Cài đặt"
+        />
+      </ScreenShell>
+    );
+  }
 
+  const busy = (key: typeof projection.busy[number]) => projection.busy.includes(key);
+  const resetBusy = busy('reset');
   return (
-    <PrototypeScreen>
-      <PrototypeBadge />
+    <ScreenShell>
       <ScreenHeader
-        description="Các control dưới đây chỉ đổi presentation state trong memory."
+        description="Các lựa chọn được lưu trên thiết bị và vẫn có hiệu lực khi mở lại ứng dụng."
         eyebrow="SETTINGS"
-        title="Giữ PixelDoro vừa đủ với bạn."
+        title="Cài PixelDoro theo nhịp của bạn."
       />
-      <PixelPanel>
-        <SettingRow body="Âm thanh nhẹ khi bắt đầu và kết thúc." label="Âm thanh" onValueChange={setSound} value={sound} />
-        <View style={styles.divider} />
-        <SettingRow body="Phản hồi chạm cho CTA quan trọng." label="Rung phản hồi" onValueChange={setHaptic} value={haptic} />
-        <View style={styles.divider} />
-        <SettingRow body="Nhắc khi Focus hoặc Break kết thúc." label="Thông báo" onValueChange={setNotifications} value={notifications} />
-      </PixelPanel>
-      <PixelPanel>
-        <SectionLabel>Reviewer shortcut · Break suggestion</SectionLabel>
-        <View style={styles.breakChoices}>
-          <ChoiceChip label="Short · 5 phút" onPress={() => onSetNextBreakKind('short')} selected={nextBreakKind === 'short'} />
-          <ChoiceChip label="Long · 15 phút" onPress={() => onSetNextBreakKind('long')} selected={nextBreakKind === 'long'} />
-        </View>
-        <Text style={styles.boundaryCopy}>Chỉ đổi gợi ý mock; không implement production cadence.</Text>
-      </PixelPanel>
-      <PixelPanel tone="strong">
-        <Text style={styles.feedbackTitle}>Có điều gì làm bạn mất nhịp?</Text>
-        <Text style={styles.feedbackBody}>Gửi góp ý cho PixelDoro. Đây không phải đánh giá App Store hoặc Google Play.</Text>
-        <SecondaryButton label="Góp ý cho PixelDoro" onPress={onOpenFeedback} />
-      </PixelPanel>
-      <Text style={styles.boundaryCopy}>Các lựa chọn này không được persist và reset local data chưa được nối.</Text>
-    </PrototypeScreen>
+      {projection.issue === null ? null : (
+        <SettingsIssueBanner
+          issue={projection.issue}
+          onDismiss={onDismissIssue}
+          onOpenSystemSettings={onOpenSystemSettings}
+          onRetry={onRetry}
+        />
+      )}
+      <FocusDefaultsSection
+        busyDuration={busy('focusDurationMinutes')}
+        busyMode={busy('defaultMode')}
+        duration={projection.settings.focusDurationMinutes}
+        mode={projection.settings.defaultMode}
+        onSetDuration={onSetDuration}
+        onSetMode={onSetMode}
+      />
+      <PreferenceSection
+        hapticsBusy={busy('hapticsEnabled')}
+        hapticsEnabled={projection.settings.hapticsEnabled}
+        onSetHaptics={onSetHaptics}
+        onSetSound={onSetSound}
+        soundBusy={busy('soundEnabled')}
+        soundEnabled={projection.settings.soundEnabled}
+      />
+      <NotificationSection
+        busy={busy('notificationsEnabled')}
+        enabled={projection.settings.notificationsEnabled}
+        onChange={onSetNotifications}
+        onOpenSystemSettings={onOpenSystemSettings}
+        permission={projection.notificationPermission}
+      />
+      <DataControlSection
+        analyticsBusy={busy('analyticsEnabled')}
+        analyticsEnabled={projection.settings.analyticsEnabled}
+        onRequestReset={() => setConfirmingReset(true)}
+        onSetAnalytics={onSetAnalytics}
+        resetBusy={resetBusy}
+      />
+      <ConfirmationDialog
+        body="Lịch sử, XP, Coin, vật phẩm và mọi tùy chọn trên thiết bị sẽ bị xóa. Không thể hoàn tác."
+        busy={resetBusy}
+        busyLabel="Đang xóa dữ liệu…"
+        confirmLabel="Xóa toàn bộ dữ liệu"
+        dismissLabel="Giữ dữ liệu"
+        onConfirm={() => {
+          void onReset().then((ok) => {
+            if (ok) {
+              setConfirmingReset(false);
+              onResetComplete();
+            }
+          });
+        }}
+        onDismiss={() => setConfirmingReset(false)}
+        title="Xóa toàn bộ dữ liệu local?"
+        visible={confirmingReset}
+      />
+    </ScreenShell>
   );
 };
-
-const styles = StyleSheet.create({
-  settingRow: { alignItems: 'center', flexDirection: 'row', gap: 16, justifyContent: 'space-between' },
-  settingCopy: { flex: 1, gap: 3 },
-  settingTitle: { color: palette.textPrimary, fontSize: 16, fontWeight: '900' },
-  settingBody: { color: palette.textSecondary, fontSize: 12, lineHeight: 18 },
-  divider: { backgroundColor: palette.border, height: 1, opacity: 0.2 },
-  breakChoices: { gap: 8 },
-  boundaryCopy: { color: palette.textSecondary, fontSize: 11, lineHeight: 17, textAlign: 'center' },
-  feedbackTitle: { color: palette.textPrimary, fontSize: 19, fontWeight: '900' },
-  feedbackBody: { color: palette.textSecondary, fontSize: 14, lineHeight: 21 },
-});

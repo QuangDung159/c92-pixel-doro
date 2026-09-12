@@ -34,6 +34,7 @@ import type { StandardFocusNotificationNavigationController } from './notificati
 import type { ShopController } from './shop';
 import type { RoomDecorationsController } from './room';
 import type { ContributionController, HistoryController } from './history';
+import type { SettingsController } from './settings';
 import type { PetVisualDiagnostic } from './ports/pet-visual-diagnostics.port';
 import type {
   CompleteFirstUseHandoffOutcome,
@@ -62,6 +63,7 @@ export interface MobileApplicationFacade {
   readonly roomDecorations: RoomDecorationsController;
   readonly history: HistoryController;
   readonly historyContribution: ContributionController;
+  readonly settings: SettingsController;
   readonly standardFocusReviewResetAvailable: boolean;
   readonly onboardingTrialRunning: OnboardingTrialRunningController;
   readonly onboardingTrialCompletion: OnboardingTrialCompletionController;

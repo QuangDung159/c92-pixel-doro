@@ -36,3 +36,13 @@ and any required attribution text.
 - SHA-256:
   - contact sheet: `ccb8d07187456131505ca8f71051783647b2aaca7f5b869f416649cfe957bcf9`.
   - empty backdrop: `d22ae4d4198a8aa15a50ef442eff337f83db6c7d9af50f9b235fe8e5a9ed06c5`.
+
+## EPIC-10 completion chime
+
+- Asset ID: `epic-10-completion-chime-v1`.
+- Runtime form: embedded 100 ms mono 8-bit WAV data URI in
+  `src/infrastructure/platform/sensory/expo-sensory-feedback.adapter.ts`.
+- Source: generated mathematically for PixelDoro from two square-wave tones; no sampled or
+  third-party source material.
+- Use: fresh Focus/Break completion and fresh reward/unlock only.
+- Attribution requirement: none.

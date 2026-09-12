@@ -98,6 +98,56 @@ export class SQLiteAppSettingsRepository implements AppSettingsRepository {
       readMappedOne(executor, 'app_settings', settingsSelect, [], mapSettingsRow));
   }
 
+  patch(input: Parameters<AppSettingsRepository['patch']>[0]): ReturnType<AppSettingsRepository['patch']> {
+    const fields = [
+      input.focusDurationMinutes,
+      input.defaultMode,
+      input.soundEnabled,
+      input.hapticsEnabled,
+      input.notificationsEnabled,
+      input.analyticsEnabled,
+    ];
+    const supplied = fields.filter((value) => value !== undefined).length;
+    const validDuration = input.focusDurationMinutes === undefined || (
+      Number.isSafeInteger(input.focusDurationMinutes) &&
+      input.focusDurationMinutes >= 15 && input.focusDurationMinutes <= 120 &&
+      input.focusDurationMinutes % 5 === 0
+    );
+    const validMode = input.defaultMode === undefined ||
+      input.defaultMode === 'relax' || input.defaultMode === 'strict';
+    const validBooleans = [input.soundEnabled, input.hapticsEnabled,
+      input.notificationsEnabled, input.analyticsEnabled]
+      .every((value) => value === undefined || typeof value === 'boolean');
+    if (
+      supplied !== 1 || !validDuration || !validMode || !validBooleans ||
+      !isSafeTimestamp(input.updatedAt)
+    ) {
+      return Promise.resolve({
+        ok: false,
+        error: persistenceError('PERSISTENCE_WRITE_FAILED', 'app_settings', 'patch_input'),
+      });
+    }
+
+    const assignment = input.focusDurationMinutes !== undefined
+      ? ['focus_duration_minutes', input.focusDurationMinutes] as const
+      : input.defaultMode !== undefined
+        ? ['default_mode', input.defaultMode] as const
+        : input.soundEnabled !== undefined
+          ? ['sound_enabled', input.soundEnabled ? 1 : 0] as const
+          : input.hapticsEnabled !== undefined
+            ? ['haptics_enabled', input.hapticsEnabled ? 1 : 0] as const
+            : input.notificationsEnabled !== undefined
+              ? ['notifications_enabled', input.notificationsEnabled ? 1 : 0] as const
+              : ['analytics_enabled', input.analyticsEnabled ? 1 : 0] as const;
+    return writeWithOwner(this.owner, 'app_settings', async (executor) => {
+      const result = await executor.run(
+        `UPDATE app_settings SET ${assignment[0]} = ?, updated_at = ? WHERE id = 1`,
+        [assignment[1], input.updatedAt],
+      );
+      return { ok: true, value: result.changes === 1 ? 'updated' : 'not_updated' };
+    });
+  }
+
   replace(input: Parameters<AppSettingsRepository['replace']>[0]): ReturnType<AppSettingsRepository['replace']> {
     const valid = Number.isSafeInteger(input.focusDurationMinutes) &&
       input.focusDurationMinutes >= 15 && input.focusDurationMinutes <= 120 &&

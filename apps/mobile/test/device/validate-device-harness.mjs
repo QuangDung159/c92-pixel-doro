@@ -65,6 +65,22 @@ const contributionGraphFlow = await readFile(
 const epic09ExitFlow = await readFile(
   `${deviceDirectory}epic-09-exit-smoke.md`, 'utf8',
 );
+const epic10QuickUiFlow = await readFile(
+  `${deviceDirectory}epic-10-quick-ui-smoke.md`, 'utf8',
+);
+for (const evidence of [
+  'EXPO_PUBLIC_EPIC_10_REVIEW_FIXTURE=epic_10_quick',
+  'EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE=standard_completion_fast_clock',
+  'pixeldoro-us-10-epic-10-quick.db', 'pixeldoro.db', 'Airplane mode',
+  'VoiceOver/TalkBack', 'Reduce Motion', 'Mở Cài đặt hệ thống',
+  'Xóa toàn bộ dữ liệu local', 'PASS', 'FAIL', 'BLOCKED', 'NOT_RUN',
+  '<implementation-sha>', 'unset EXPO_PUBLIC_EPIC_10_REVIEW_FIXTURE',
+]) {
+  if (!epic10QuickUiFlow.includes(evidence)) {
+    throw new Error(`EPIC-10 quick UI guide is missing: ${evidence}`);
+  }
+}
+await access(`${mobileDirectory}/src/composition/review/settings-review-fixture.ts`);
 for (const evidence of [
   'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=epic_09_empty',
   'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=epic_09_mixed_40',
