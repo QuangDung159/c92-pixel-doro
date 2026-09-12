@@ -153,6 +153,11 @@ import {
   createContributionReviewFixture,
   resolveContributionReviewScenario,
 } from './review/contribution-review-fixture';
+import {
+  createEpic09ExitReviewFixture,
+  epic09ExitReviewDatabaseName,
+  resolveEpic09ExitReviewScenario,
+} from './review/epic-09-exit-review-fixture';
 
 const PIXELDORO_DATABASE_NAME = 'pixeldoro.db';
 
@@ -215,6 +220,10 @@ export const createMobileApplication = (
     process.env.EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE,
     reviewFixturesEnabled,
   );
+  const epic09ExitReviewScenario = resolveEpic09ExitReviewScenario(
+    process.env.EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE,
+    reviewFixturesEnabled,
+  );
   const shopReviewScenario = resolveShopReviewScenario(
     process.env.EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE,
     reviewFixturesEnabled,
@@ -248,7 +257,9 @@ export const createMobileApplication = (
     reviewFixturesEnabled,
   );
   const databaseOwner = new SQLiteDatabaseOwner(
-    options.databaseName ?? (contributionReviewScenario !== undefined
+    options.databaseName ?? (epic09ExitReviewScenario !== undefined
+      ? epic09ExitReviewDatabaseName(epic09ExitReviewScenario)
+      : contributionReviewScenario !== undefined
       ? contributionReviewDatabaseName(contributionReviewScenario)
       : historyGroupedReviewScenario !== undefined
       ? historyGroupedReviewDatabaseName(historyGroupedReviewScenario)
@@ -283,6 +294,14 @@ export const createMobileApplication = (
   );
   const contributionReviewFixture = createContributionReviewFixture(
     contributionReviewScenario,
+  );
+  const epic09ExitReviewFixture = createEpic09ExitReviewFixture(
+    epic09ExitReviewScenario,
+    {
+      analyticsQueue: persistence.analyticsQueue,
+      contribution: persistence.contribution,
+      history: persistence.standardFocusHistory,
+    },
   );
   const epic08ExitReviewFixture = createEpic08ExitReviewFixture(
     epic08ExitReviewScenario,
@@ -388,7 +407,7 @@ export const createMobileApplication = (
     ),
   };
   const sideEffectAnalyticsQueue =
-    epic08ExitReviewFixture?.analyticsQueue ??
+    epic09ExitReviewFixture?.analyticsQueue ?? epic08ExitReviewFixture?.analyticsQueue ??
     standardFocusSideEffectReviewFixture?.analyticsQueue ?? persistence.analyticsQueue;
   const coordinatedSideEffectAnalyticsQueue = {
     enqueueBounded: (
@@ -571,12 +590,16 @@ export const createMobileApplication = (
     }),
   });
   const history = createHistorySlice({
-    calendar: contributionReviewFixture?.calendar ?? localCalendar,
-    clock: contributionReviewFixture?.clock ?? clock,
-    contribution: contributionReviewFixture?.contribution ?? persistence.contribution,
+    analyticsQueue: coordinatedSideEffectAnalyticsQueue,
+    calendar: epic09ExitReviewFixture?.calendar ?? contributionReviewFixture?.calendar ?? localCalendar,
+    clock: epic09ExitReviewFixture?.clock ?? contributionReviewFixture?.clock ?? clock,
+    contribution: epic09ExitReviewFixture?.contribution ??
+      contributionReviewFixture?.contribution ?? persistence.contribution,
     criticalRecovery: bootstrap,
-    history: historyGroupedReviewFixture?.history ??
+    history: epic09ExitReviewFixture?.history ?? historyGroupedReviewFixture?.history ??
       historyFirstPageReviewFixture?.history ?? persistence.standardFocusHistory,
+    id,
+    readBootstrap: bootstrap.getSnapshot,
   });
   const confirmedReset = new ConfirmedLocalDataReset({
     activeSessions: persistence.sessions,
@@ -1102,6 +1125,23 @@ export const createMobileApplication = (
     boot: async () => {
       await runProbeIfEnabled();
       await bootstrap.boot();
+      if (
+        bootstrap.getSnapshot().status === 'ready' &&
+        epic09ExitReviewFixture !== undefined
+      ) {
+        const changed = await epic09ExitReviewFixture.prepare({
+          coordinator: sessionCommands,
+          installation: persistence.installation,
+          profile: persistence.profile,
+          rewards: persistence.rewards,
+          sessions: persistence.sessions,
+          transaction,
+        });
+        if (changed) {
+          const refreshed = await bootstrap.refreshReadySnapshot();
+          if (!refreshed.ok) bootstrap.enterRecovery('DATABASE_READ_FAILED');
+        }
+      }
       if (
         bootstrap.getSnapshot().status === 'ready' &&
         contributionReviewFixture !== undefined

@@ -62,6 +62,26 @@ const contributionProjectionFlow = await readFile(
 const contributionGraphFlow = await readFile(
   `${deviceDirectory}contribution-graph-accessibility-smoke.md`, 'utf8',
 );
+const epic09ExitFlow = await readFile(
+  `${deviceDirectory}epic-09-exit-smoke.md`, 'utf8',
+);
+for (const evidence of [
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=epic_09_empty',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=epic_09_mixed_40',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=epic_09_offline_relaunch',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=epic_09_read_failure_once',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=epic_09_analytics_failure_once',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=epic_09_timezone_changed',
+  'pixeldoro-us-09-05-', 'history_viewed:<focusEpisodeId>', 'Xem thêm',
+  'Thử lại', 'Airplane mode', 'VoiceOver/TalkBack', 'Reduce Motion',
+  'pixeldoro.db', 'NOT_RUN', '<implementation-sha>',
+  'unset EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE',
+]) {
+  if (!epic09ExitFlow.includes(evidence)) {
+    throw new Error(`EPIC-09 exit device guide is missing: ${evidence}`);
+  }
+}
+await access(`${mobileDirectory}/src/composition/review/epic-09-exit-review-fixture.ts`);
 for (const evidence of [
   'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=contribution_mixed_week',
   'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=contribution_zero_week',

@@ -10,7 +10,9 @@ describe('createHistorySlice', () => {
     }));
     const criticalRecovery = { enterRecovery: vi.fn() };
     const listRange = vi.fn(async () => ({ ok: true as const, value: [] }));
+    const enqueueBounded = vi.fn(async () => ({ ok: true as const, value: 'enqueued' as const }));
     const slice = createHistorySlice({
+      analyticsQueue: { enqueueBounded },
       calendar: { snapshot: () => ({
         ok: true,
         value: { localDate: '2026-09-12', utcOffsetMinutes: 420 },
@@ -19,6 +21,11 @@ describe('createHistorySlice', () => {
       contribution: { listRange },
       criticalRecovery,
       history: { list },
+      id: { nextId: () => 'history-episode-1' },
+      readBootstrap: () => ({
+        status: 'ready',
+        snapshot: { settings: { analyticsEnabled: true } },
+      } as never),
     });
 
     await Promise.all([slice.controller.activate(), slice.contribution.activate()]);
@@ -38,6 +45,11 @@ describe('createHistorySlice', () => {
       value: { days: [{ completedMinutes: 0 }, {}, {}, {}, {}, {}, {}] },
     });
     expect(criticalRecovery.enterRecovery).not.toHaveBeenCalled();
+    expect(enqueueBounded).toHaveBeenCalledWith(expect.objectContaining({
+      eventId: 'history_viewed:history-episode-1',
+      eventName: 'history_viewed',
+      properties: {},
+    }), 1_000);
     slice.dispose();
   });
 });

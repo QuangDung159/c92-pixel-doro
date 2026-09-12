@@ -97,4 +97,18 @@ describe('EPIC-09 production History integrity', () => {
       .toContain('PrototypeBadge');
     expect(read('apps/mobile/src/app/_layout.tsx')).toContain('PrototypeProvider');
   });
+
+  it('owns history_viewed at the controller boundary without route or presentation coupling', () => {
+    const controller = read('apps/mobile/src/application/history/history.controller.ts');
+    const recorder = read('apps/mobile/src/application/history/history-analytics.recorder.ts');
+    const routeAndPresentation = [
+      read('apps/mobile/src/app/(tabs)/history.tsx'),
+      read('apps/mobile/src/presentation/features/history/index.tsx'),
+    ].join('\n');
+    expect(controller).toContain('recordViewedBestEffort');
+    expect(recorder).toContain("eventName: 'history_viewed'");
+    expect(recorder).toContain('ANALYTICS_EVENT_TTL_MS');
+    expect(routeAndPresentation).not.toContain('history_viewed');
+    expect(routeAndPresentation).not.toContain('analyticsQueue');
+  });
 });

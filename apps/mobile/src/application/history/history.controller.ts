@@ -1,14 +1,17 @@
 import type {
   ApplicationResult,
+  ClockPort,
   FocusHistoryDateSection,
   FocusHistoryItemProjection,
   FocusHistoryPageProjection,
   LoadFocusHistoryPageError,
   LoadFocusHistoryPageInput,
+  IdPort,
   StandardFocusHistoryCursor,
 } from '@pixeldoro/application';
 
 import type { CriticalRecoveryPort } from '../recovery';
+import type { HistoryAnalyticsRecorderPort } from './history-analytics.recorder';
 import {
   sameHistoryItem,
   type HistoryControllerProjection,
@@ -29,8 +32,11 @@ type HistorySectionResult = ApplicationResult<
 type OperationKind = 'initial' | 'refresh' | 'append';
 
 export interface HistoryControllerDependencies {
+  readonly analytics: HistoryAnalyticsRecorderPort;
   readonly buildSections: (items: readonly FocusHistoryItemProjection[]) => HistorySectionResult;
+  readonly clock: ClockPort;
   readonly criticalRecovery: CriticalRecoveryPort;
+  readonly id: IdPort;
   readonly loader: HistoryPageLoader;
 }
 
@@ -60,6 +66,7 @@ export class HistoryController {
     if (this.disposed) return Promise.resolve();
     if (this.active) return this.operationPromise ?? Promise.resolve();
     this.active = true;
+    this.recordViewedBestEffort();
     return this.committedItems === undefined ? this.startInitial() : this.startRefresh();
   };
 
@@ -247,6 +254,17 @@ export class HistoryController {
       this.publishCommitted('idle', this.paginationIdle());
     }
     this.dependencies.criticalRecovery.enterRecovery('DURABLE_DATA_CORRUPT');
+  }
+
+  private recordViewedBestEffort(): void {
+    try {
+      const episodeId = this.dependencies.id.nextId();
+      const occurredAt = this.dependencies.clock.nowMs();
+      void this.dependencies.analytics.recordViewed(episodeId, occurredAt)
+        .catch(() => undefined);
+    } catch {
+      // Analytics is optional and cannot alter History projection truth.
+    }
   }
 
   private paginationIdle(): HistoryPaginationState {

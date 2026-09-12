@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_09_05_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-09-05 Implementation Plan
-version: 0.1.0
-status: DRAFT_AWAITING_OWNER_CONFIRMATION
-implementation_status: NOT_STARTED
+version: 0.3.0
+status: IMPLEMENTED_CANDIDATE_AWAITING_OWNER_SMOKE
+implementation_status: IMPLEMENTED_UNCOMMITTED_WORKTREE_CANDIDATE
 date: 2026-09-12
 last_updated: 2026-09-12
 owner: Dũng Lư
@@ -12,20 +12,21 @@ reviewer_role: Tech Lead/Product Owner
 language: vi
 branch: feats/epic-09
 planning_baseline_sha: cdce571d7f61e088d7f48c297d32a9373e7f0a99
-implementation_start_sha: null
-current_candidate_base_sha: cdce571d7f61e088d7f48c297d32a9373e7f0a99
+implementation_start_sha: 0a84afeb7ddf5bb1a33f1c9b6c56dfdfa4a8122b
+current_candidate_base_sha: 0a84afeb7ddf5bb1a33f1c9b6c56dfdfa4a8122b
 exact_implementation_sha: null
-candidate_identity: PLANNING_ONLY_ON_CLEAN_ACCEPTED_BASELINE
+candidate_identity: UNCOMMITTED_WORKTREE_ON_APPROVED_START_SHA
 previous_story: US-09-04
 previous_story_status: DONE_OWNER_ACCEPTED
 previous_story_accepted_sha: cdce571d7f61e088d7f48c297d32a9373e7f0a99
 manual_device_status: NOT_RUN
 formal_tester_status: NOT_RUN
+automated_status: PASS_206_FILES_1056_TESTS
 schema_change: NONE_PROPOSED
 dependency_change: NONE_PROPOSED
 native_change: NONE_PROPOSED
 analytics_change: ADD_EXISTING_ALLOWLIST_EVENT_HOOK_ONLY
-next_gate: OWNER_CONFIRM_US0905_CONFIRM_01_TO_06
+next_gate: OWNER_QUICK_UI_SMOKE_THEN_EXACT_SHA_EXIT_ACCEPTANCE
 scope:
   - mobile_mvp
   - epic_09
@@ -35,7 +36,7 @@ scope:
   - offline_relaunch
   - prototype_integrity
   - epic_09_exit_candidate
-authority: OWNER_GATED_IMPLEMENTATION_PLAN
+authority: OWNER_APPROVED_IMPLEMENTATION_PLAN
 story_baseline: ./EPIC-09_USER_STORIES.md
 previous_story_plan: ./US-09-04_IMPLEMENTATION_PLAN.md
 previous_story_report: ./US-09-04_IMPLEMENTATION_REPORT.md
@@ -61,15 +62,16 @@ và analytics failure không bao giờ ảnh hưởng UI hay product facts.
 
 **Priority/order:** `P1 / 5`, Story cuối của EPIC-09.
 
-Owner cần duyệt `US0905-CONFIRM-01→06` trước coding. Approval chỉ mở implementation candidate; không
-tự cấp quyền commit/push, đánh dấu EPIC-09 `DONE`, tạo closure accepted hay mở EPIC-10 coding.
+Owner đã duyệt `US0905-CONFIRM-01→06 Option A` và cấp quyền coding ngày 2026-09-12. Approval chỉ mở
+implementation candidate; không tự cấp quyền commit/push, đánh dấu EPIC-09 `DONE`, tạo closure accepted
+hay mở EPIC-10 coding.
 
 ### 0.1. Baseline audit
 
 | Fact | Kết quả |
 |---|---|
 | Repository/branch | `/Users/dunglu/Documents/Working/c92-pixel-doro` / `feats/epic-09` |
-| Planning HEAD | `cdce571d7f61e088d7f48c297d32a9373e7f0a99` |
+| Planning HEAD | `cdce571d7f61e088d7f48c297d32a9373e7f0a99`; implementation starts after planning-doc commit `0a84afe...` |
 | Origin alignment | Local và `origin/feats/epic-09` cùng exact SHA tại audit |
 | Worktree trước doc update | Clean |
 | US-09-01 | `DONE_OWNER_ACCEPTED` — `18057faf...` |
@@ -337,16 +339,16 @@ acceptance still needs an explicit owner quick smoke on the exact committed/push
 
 ## 9. Acceptance và Done gates
 
-- [ ] Owner approves `US0905-CONFIRM-01→06 Option A` and authorizes Story-05 coding.
-- [ ] Exact once-per-focus-episode event semantics and ID/properties/TTL are implemented.
-- [ ] Opt-out/invalid/queue failure or throw cannot affect History/Contribution state.
-- [ ] Refocus/foreground/retry/load-more/render/relaunch semantics match approved matrix.
-- [ ] Aggregate SQLite/offline/reopen tests prove complete EPIC-09 product truth and allowed side effect.
-- [ ] History remains prototype-free; Settings/root later-owner prototype remains intact.
-- [ ] Fixture family is finite, isolated and cannot select normal database.
-- [ ] No schema/dependency/native/provider or unauthorized product-data write drift.
-- [ ] Automated/static/platform evidence and manual/formal statuses are recorded honestly.
-- [ ] Story report and Epic Exit Report candidate exist without premature DONE claim.
+- [x] Owner approves `US0905-CONFIRM-01→06 Option A` and authorizes Story-05 coding.
+- [x] Exact once-per-focus-episode event semantics and ID/properties/TTL are implemented.
+- [x] Opt-out/invalid/queue failure or throw cannot affect History/Contribution state.
+- [x] Refocus/foreground/retry/load-more/render/relaunch semantics match approved matrix.
+- [x] Aggregate SQLite/offline/reopen tests prove complete EPIC-09 product truth and allowed side effect.
+- [x] History remains prototype-free; Settings/root later-owner prototype remains intact.
+- [x] Fixture family is finite, isolated and cannot select normal database.
+- [x] No schema/dependency/native/provider or unauthorized product-data write drift.
+- [x] Automated/static/platform evidence and manual/formal statuses are recorded honestly.
+- [x] Story report and Epic Exit Report candidate exist without premature DONE claim.
 - [ ] Owner accepts exact committed SHA and separately authorizes EPIC-09 closure before EPIC-10 planning.
 
 ## 10. Owner Confirmation Register
@@ -356,42 +358,42 @@ acceptance still needs an explicit owner quick smoke on the exact committed/push
 - **Option A — đề xuất:** one event cho mỗi inactive→active History focus; initial/refocus có event,
   foreground refresh/Retry/Load more/render không có event.
 - **Option B:** foreground khi History active cũng tạo một event mới.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-12.
 
 ### US0905-CONFIRM-02 — Event identity/properties
 
 - **Option A — đề xuất:** `history_viewed:<IdPort.nextId()>`, exact `{}`, injected clock, existing 7-day
   TTL/capacity/dedupe; disabled thì skip và không backfill.
 - **Option B:** stable daily ID hoặc thêm page/row/count properties.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-12.
 
 ### US0905-CONFIRM-03 — Lifecycle owner và failure
 
 - **Option A — đề xuất:** `HistoryController.activate` sở hữu best-effort hook theo Shop precedent;
   contribution không record; ID/clock/settings/queue failure không đổi UI/Recovery.
 - **Option B:** route React effect trực tiếp enqueue analytics.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-12.
 
 ### US0905-CONFIRM-04 — Exit fixtures
 
 - **Option A — đề xuất:** six finite `epic_09_*` scenarios, prefix `pixeldoro-us-09-05-`, valid facts qua
   production commands; read/analytics failure bằng scoped decorators.
 - **Option B:** chỉ reuse rời rạc các Story fixture cũ, không có aggregate exit dataset.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-12.
 
 ### US0905-CONFIRM-05 — Analytics manual evidence
 
 - **Option A — đề xuất:** exact event/count/opt-out/failure được chứng minh bằng automated SQLite;
   manual chỉ xác nhận UI không bị ảnh hưởng, không thêm debug analytics UI.
 - **Option B:** thêm dev-only analytics inspector vào History screen.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-12.
 
 ### US0905-CONFIRM-06 — Formal/closure gate
 
 - **Option A — đề xuất:** quality + exports + owner quick UI trên exact SHA đủ đóng Story/Epic; structured
   physical-device/a11y breadth giữ deferred/NOT_RUN; Epic closure vẫn cần explicit owner authorization.
 - **Option B:** bắt buộc full formal iOS/Android/a11y matrix trước khi tạo Exit Report.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — owner 2026-09-12.
 
 Owner có thể duyệt gọn:
 
@@ -421,4 +423,6 @@ retention/reset policy; never delete product data or normal `pixeldoro.db` durin
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.3.0 | 2026-09-12 | Codex | Implemented the approved local `history_viewed` focus-episode hook, six isolated exit fixtures, real-SQLite aggregate/reopen/failure evidence, static/device gates and candidate reports. Quality passed 206 files/1,056 tests; iOS/Android exports passed; Doctor 20/21 with the same 9 SDK-57 patch drifts. Owner/manual smoke remains `NOT_RUN`; no commit/push or Epic closure claim. |
+| 0.2.0 | 2026-09-12 | Codex | Recorded owner approval for `US0905-CONFIRM-01→06 Option A`, opened coding and bound exact implementation start SHA `0a84afe...`. No commit/push or Epic closure authority. |
 | 0.1.0 | 2026-09-12 | Codex | Audited accepted US-09-01→04, History/Contribution lifecycle, Shop analytics precedent, bounded queue/settings/ID/clock, prototype boundary and exit requirements; proposed exact once-per-focus event, aggregate fixtures/evidence and six owner confirmations. No coding, commit or push. |

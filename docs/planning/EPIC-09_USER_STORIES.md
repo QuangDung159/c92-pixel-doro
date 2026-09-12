@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_EPIC_09_USER_STORIES
 title: PixelDoro EPIC-09 — Focus History và Contribution Graph User Stories
-version: 1.0.0
-status: IMPLEMENTATION_IN_PROGRESS_OWNER_GATED
+version: 1.2.0
+status: IMPLEMENTED_CANDIDATE_AWAITING_OWNER_EXIT_ACCEPTANCE
 date: 2026-09-11
 last_updated: 2026-09-12
 owner: Dũng Lư
@@ -19,13 +19,13 @@ previous_epic: EPIC-08
 previous_epic_status: DONE_OWNER_ACCEPTED
 previous_epic_accepted_sha: 30adc34be23dca48379b6f2553203fdadb9f9e5b
 previous_epic_closure_commit: 05e3e883e0c6dc3292b3707fd5fe5af65032dc75
-implementation_status: US_09_01_TO_04_DONE_OWNER_ACCEPTED_US_09_05_PLANNING_OWNER_GATED
+implementation_status: US_09_01_TO_04_DONE_OWNER_ACCEPTED_US_09_05_CANDIDATE
 formal_tester_status: NOT_RUN
 schema_impact: NONE_PROPOSED_EXISTING_SCHEMA_001_SUFFICIENT
 dependency_impact: NONE_PROPOSED
 native_impact: NONE_PROPOSED
 product_gate: OPEN_006_RESOLVED_OPTION_A
-next_gate: OWNER_CONFIRM_US_09_05_IMPLEMENTATION_PLAN
+next_gate: US_09_05_OWNER_QUICK_UI_AND_EXACT_SHA_EPIC_EXIT_ACCEPTANCE
 product_truth: ../PIXELDORO_CORE_TRUTH.md
 epic_baseline: ./MVP_EPICS.md
 data_model: ../architecture/data-model.md
@@ -40,7 +40,7 @@ previous_epic_exit: ./EPIC-08_EXIT_REPORT.md
 
 Tài liệu này audit baseline và theo dõi các vertical slice của `EPIC-09`, với output quan sát được,
 dependency, test, device guide, rollback và owner gate riêng. US-09-01→04 đã owner accepted;
-US-09-05 đang ở implementation-plan confirmation gate. Tài liệu không
+US-09-05 đã có uncommitted implementation candidate và đang chờ owner quick UI/exact-SHA exit gate. Tài liệu không
 tự cấp quyền coding, commit hoặc push.
 
 Thứ tự authority khi review hoặc triển khai:
@@ -366,7 +366,7 @@ horizontal “backend-only” slice; Story 03 có neutral semantic day panel tr�
 | 2 | US-09-02 — Date-grouped Pagination và Resilient Refresh | User xem thêm history theo ngày mà không duplicate/mất dữ liệu khi refresh lỗi | P0 | 01; confirmations 01/02/06 | DONE_OWNER_ACCEPTED — `91d0612...` |
 | 3 | US-09-03 — Stable Daily Contribution Projection | User thấy đủ các ngày trong range và đúng completed minutes/intensity semantics | P0 | 01; confirmations 03/04 | DONE_OWNER_ACCEPTED — `c0291ec...` |
 | 4 | US-09-04 — Production Contribution Graph và Accessibility | User đọc graph rõ trên small screen, screen reader, largest text và grayscale | P1 | 02/03; `OPEN-006` confirmation 04 | DONE_OWNER_ACCEPTED — `cdce571...` |
-| 5 | US-09-05 — Offline Lifecycle, Analytics, Prototype Integrity và Epic Exit | History ổn định qua refocus/relaunch/offline và sẵn sàng exit evidence | P1 | 01→04; confirmations 06/07/09/10 | PLANNING_AWAITING_OWNER_CONFIRMATION |
+| 5 | US-09-05 — Offline Lifecycle, Analytics, Prototype Integrity và Epic Exit | History ổn định qua refocus/relaunch/offline và sẵn sàng exit evidence | P1 | 01→04; confirmations 06/07/09/10 | IMPLEMENTED CANDIDATE — owner smoke/exit pending |
 
 ## 9. US-09-01 — Truthful Standard Focus History First Page
 
@@ -718,30 +718,30 @@ Implemented file: `apps/mobile/test/device/contribution-graph-accessibility-smok
 
 ### 13.1. Acceptance criteria
 
-- [ ] Initial focus, tab refocus and foreground requests are coalesced per approved lifecycle policy.
-- [ ] Background/unmount/dispose drops late completions and releases listeners.
-- [ ] Cold relaunch/offline returns identical durable list/group/contribution facts.
-- [ ] `history_viewed` timing/ID/properties exactly match confirmation 07.
-- [ ] Analytics disabled, queue rejection or thrown error changes no History state/navigation/facts.
-- [ ] No duplicate/backfill event from Retry, Load more, graph render, accessibility focus or stale refresh.
-- [ ] History route/screen has no prototype/mock fallback or direct repository/SQL/business rule.
-- [ ] Settings and other later-owner prototype code remains intact; root provider is not removed.
-- [ ] Fixture is finite, `__DEV__`, default-absent and can never select/mutate `pixeldoro.db`.
-- [ ] No schema/migration/dependency/native/provider drift.
-- [ ] Typecheck/lint/tests/boundary/hygiene/device validator/JS exports/diff check are evidenced, not assumed.
+- [x] Initial focus, tab refocus and foreground requests are coalesced per approved lifecycle policy.
+- [x] Background/unmount/dispose drops late completions and releases listeners.
+- [x] Cold relaunch/offline returns identical durable list/group/contribution facts.
+- [x] `history_viewed` timing/ID/properties exactly match confirmation 07.
+- [x] Analytics disabled, queue rejection or thrown error changes no History state/navigation/facts.
+- [x] No duplicate/backfill event from Retry, Load more, graph render, accessibility focus or stale refresh.
+- [x] History route/screen has no prototype/mock fallback or direct repository/SQL/business rule.
+- [x] Settings and other later-owner prototype code remains intact; root provider is not removed.
+- [x] Fixture is finite, `__DEV__`, default-absent and can never select/mutate `pixeldoro.db`.
+- [x] No schema/migration/dependency/native/provider drift.
+- [x] Typecheck/lint/tests/boundary/hygiene/device validator/JS exports/diff check are evidenced, not assumed.
 - [ ] Exact implementation SHA, owner quick UI/formal status and deferred items are recorded honestly.
 
 ### 13.2. Automated tests
 
-- [ ] Controller lifecycle: focus/refocus/background/foreground/unmount/dispose and race permutations.
-- [ ] Analytics: deterministic one-per-focus episode, `{}`, enabled/disabled, dedupe, queue failure/throw.
-- [ ] Real SQLite aggregate: mixed retained history, paging, graph, timezone/relaunch, analytics isolation.
-- [ ] Fingerprint before/after every read/render/retry proves only expected analytics side-effect may differ.
-- [ ] Route integrity: production facade only; no prototype/mock/repository/SQL.
-- [ ] Prototype ownership: Settings and remaining later-Epic branches still compile and test.
-- [ ] Common-component regressions, max-lines audit and stable-key scan.
-- [ ] Fresh database, MVP-representative large dataset, corrupt/read failure and recovery.
-- [ ] iOS JS export, Android JS export, typecheck, lint, Vitest, boundaries, repository hygiene,
+- [x] Controller lifecycle: focus/refocus/background/foreground/unmount/dispose and race permutations.
+- [x] Analytics: deterministic one-per-focus episode, `{}`, enabled/disabled, dedupe, queue failure/throw.
+- [x] Real SQLite aggregate: mixed retained history, paging, graph, timezone/relaunch, analytics isolation.
+- [x] Fingerprint before/after read/reopen/analytics failure proves only expected analytics side-effect may differ.
+- [x] Route integrity: production facade only; no prototype/mock/repository/SQL.
+- [x] Prototype ownership: Settings and remaining later-Epic branches still compile and test.
+- [x] Common-component regressions, max-lines audit and stable-key scan.
+- [x] Fresh database, MVP-representative large dataset, corrupt/read failure and recovery.
+- [x] iOS JS export, Android JS export, typecheck, lint, Vitest, boundaries, repository hygiene,
   device-guide validator and `git diff --check` at candidate SHA.
 
 ### 13.3. Fixture/data requirements
@@ -919,7 +919,7 @@ settings, fixture env, dedicated isolated database, cleanup/reset and env-unset 
 | US-09-02 | `apps/mobile/test/device/focus-history-pagination-lifecycle-smoke.md` | group/page/append failure/refocus/small screen | PASS_OWNER_QUICK_UI at `91d0612...`; structured breadth NOT_RUN |
 | US-09-03 | `apps/mobile/test/device/contribution-projection-smoke.md` | zero/mixed/range/local-day/timezone/error | PASS_OWNER_QUICK_UI at `c0291ec...`; structured breadth NOT_RUN |
 | US-09-04 | `apps/mobile/test/device/contribution-graph-accessibility-smoke.md` | final colors, VoiceOver/TalkBack, largest text, grayscale, Reduce Motion | PASS_OWNER_QUICK_UI at `cdce571...`; structured breadth NOT_RUN |
-| US-09-05 | `apps/mobile/test/device/epic-09-exit-smoke.md` | aggregate offline/relaunch/lifecycle/analytics/prototype integrity | NOT_RUN |
+| US-09-05 | `apps/mobile/test/device/epic-09-exit-smoke.md` | aggregate offline/relaunch/lifecycle/analytics/prototype integrity | CANDIDATE_READY; owner/manual NOT_RUN |
 
 Race, corrupt and destructive scenarios remain automated when UI reproduction cannot be deterministic.
 JS export is not physical-device evidence. Owner quick smoke and formal tester evidence are recorded as
@@ -1115,6 +1115,8 @@ không tạo implementation plan Story 01 trong cùng bước này.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 1.2.0 | 2026-09-12 | Codex | Recorded the US-09-05 uncommitted candidate: exact local view analytics, six exit fixtures, real-SQLite aggregate/reopen/failure proof, static/device gates and candidate reports. Quality passed 206 files/1,056 tests and both exports; owner quick UI and explicit Epic exit acceptance remain pending. |
+| 1.1.0 | 2026-09-12 | Codex | Recorded owner approval for `US0905-CONFIRM-01→06 Option A`; opened Story-05 coding on exact start SHA `0a84afe...`. No commit/push or Epic closure authority. |
 | 1.0.0 | 2026-09-12 | Codex | Bound US-09-04 owner quick visual UI PASS to exact committed/pushed SHA `cdce571...`; no crash and expected behavior. Structured/formal breadth remains `NOT_RUN`; closed Story 04 and opened owner-gated US-09-05 implementation planning. |
 | 0.9.0 | 2026-09-12 | Codex | Recorded approved US-09-04 Option A implementation candidate on uncommitted worktree over `c0291ec...`: exact palette/contrast mapping, static seven-cell strip, retained accessible rows, today marker, exact legend and smoke guide. Quality passed 203 files/1,044 tests; platform exports passed; owner visual smoke remains `NOT_RUN`. |
 | 0.8.0 | 2026-09-12 | Codex | Recorded owner approval for `US0904-CONFIRM-01→06 Option A`; opened US-09-04 coding on exact start SHA `c0291ec...`. No commit/push authority. |

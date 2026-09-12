@@ -43,13 +43,48 @@ const createDependencies = () => {
     async () => success(),
   );
   return {
+    analytics: { recordViewed: vi.fn(async () => ({
+      ok: true as const,
+      value: { outcome: 'enqueued' as const, eventId: 'history_viewed:episode-1' },
+    })) },
     buildSections: buildFocusHistorySections,
+    clock: { nowMs: vi.fn(() => 1_000) },
     criticalRecovery: { enterRecovery: vi.fn() },
+    id: { nextId: vi.fn(() => 'episode-1') },
     loader: { execute },
   };
 };
 
 describe('HistoryController', () => {
+  it('records once per focus episode and never for refresh, retry or load more', async () => {
+    const dependencies = createDependencies();
+    const controller = new HistoryController(dependencies);
+    await controller.activate();
+    await controller.activate();
+    await controller.refresh();
+    await controller.loadMore();
+    expect(dependencies.analytics.recordViewed).toHaveBeenCalledExactlyOnceWith('episode-1', 1_000);
+
+    controller.deactivate();
+    await controller.activate();
+    expect(dependencies.analytics.recordViewed).toHaveBeenCalledTimes(2);
+  });
+
+  it('isolates analytics rejection and dependency throws from History loading', async () => {
+    const rejected = createDependencies();
+    rejected.analytics.recordViewed.mockRejectedValueOnce(new Error('analytics'));
+    const first = new HistoryController(rejected);
+    await expect(first.activate()).resolves.toBeUndefined();
+    expect(first.getSnapshot().status).toBe('ready');
+
+    const thrown = createDependencies();
+    thrown.id.nextId.mockImplementationOnce(() => { throw new Error('id'); });
+    const second = new HistoryController(thrown);
+    await expect(second.activate()).resolves.toBeUndefined();
+    expect(second.getSnapshot().status).toBe('ready');
+    expect(thrown.analytics.recordViewed).not.toHaveBeenCalled();
+  });
+
   it('loads grouped committed history and keeps cursor private', async () => {
     const dependencies = createDependencies();
     const controller = new HistoryController(dependencies);
