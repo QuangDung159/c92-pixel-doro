@@ -1,13 +1,13 @@
 ---
 document_id: PIXELDORO_EPIC_10_IMPLEMENTATION_REPORT
 title: PixelDoro EPIC-10 — Settings & Data Control Implementation Report
-version: 0.2.0
-status: OWNER_ACCEPTED_CLOSURE_READY_PENDING_EXACT_SHA
+version: 1.0.0
+status: DONE_OWNER_ACCEPTED
 date: 2026-09-12
 owner: Dũng Lư
-branch: feats/epic-10
+branch: dev
 start_sha: 744c1ab
-implementation_sha: 573cd8d_BASE_PLUS_UNCOMMITTED_CLOSURE_FIXES
+implementation_sha: bee029a12576af8d8470668c1fa2ce8d8502ac4b
 manual_device_status: PASS_OWNER_QUICK_UI_NO_CRASH_2026_09_12
 formal_tester_status: NOT_RUN
 schema_change: NONE
@@ -20,18 +20,18 @@ schema_change: NONE
 Owner approved `US1000-CONFIRM-01→07` Option A, completed quick UI testing without a crash, and
 requested the EPIC-10 closure review. The review found and fixed two final edge cases: notification Off
 no longer reads an unnecessary OS permission, and confirmed reset remains single-flight while ordinary
-local settings retain last-intent-wins behavior. No code blocker remains. Closure still needs one exact
-commit SHA because the reviewed edge-case fixes are newer than committed base `573cd8d`.
+local settings retain last-intent-wins behavior. No code blocker remains. The reviewed implementation
+was merged through PR #13 and owner accepted at exact SHA `bee029a12576af8d8470668c1fa2ce8d8502ac4b`.
 
 ## 2. Implemented slices
 
 | Story | Worktree outcome | Status |
 |---|---|---|
-| `US-10-01` | Production Settings route/controller, single-column durable patches, saved duration/mode consumed by every fresh Focus Setup | `OWNER_ACCEPTED_PENDING_EXACT_SHA` |
-| `US-10-02` | Immediate capture gate, durable Off before cleanup, bounded queue clear, anonymous ID rotation, retryable cleanup and clean opt-in | `OWNER_ACCEPTED_PENDING_EXACT_SHA` |
-| `US-10-03` | User-facing irreversible confirmation, global command serialization, existing atomic reset/rebootstrap and safe First Use return | `OWNER_ACCEPTED_PENDING_EXACT_SHA` |
-| `US-10-04` | Separate app preference/live OS status, explicit request policy, denied-system-settings action, active schedule cancel/ensure and relaunch no-prompt behavior | `OWNER_ACCEPTED_PENDING_EXACT_SHA` |
-| `US-10-05` | Independent sound/haptic settings, Expo adapters, fresh-only dedupe, lifecycle pause/dispose and restrained Start/completion/reward feedback | `OWNER_ACCEPTED_PENDING_EXACT_SHA` |
+| `US-10-01` | Production Settings route/controller, single-column durable patches, saved duration/mode consumed by every fresh Focus Setup | `DONE_OWNER_ACCEPTED` |
+| `US-10-02` | Immediate capture gate, durable Off before cleanup, bounded queue clear, anonymous ID rotation, retryable cleanup and clean opt-in | `DONE_OWNER_ACCEPTED` |
+| `US-10-03` | User-facing irreversible confirmation, global command serialization, existing atomic reset/rebootstrap and safe First Use return | `DONE_OWNER_ACCEPTED` |
+| `US-10-04` | Separate app preference/live OS status, explicit request policy, denied-system-settings action, active schedule cancel/ensure and relaunch no-prompt behavior | `DONE_OWNER_ACCEPTED` |
+| `US-10-05` | Independent sound/haptic settings, Expo adapters, fresh-only dedupe, lifecycle pause/dispose and restrained Start/completion/reward feedback | `DONE_OWNER_ACCEPTED` |
 
 ## 3. Architecture and data integrity
 
@@ -85,13 +85,12 @@ forbids touching `pixeldoro.db`.
 Owner summary evidence is recorded as PASS without fabricating unreported permission/silent-mode/
 accessibility subcases. Formal breadth remains explicitly deferred.
 
-## 7. Remaining gates
+## 7. Closure result
 
-- [ ] Create the exact closure-candidate commit only with separate owner authorization; replace the
-  uncommitted candidate identity with its SHA. Push remains separately gated.
+- [x] Exact reviewed implementation is merged at `bee029a12576af8d8470668c1fa2ce8d8502ac4b`.
 - [x] Owner quick UI smoke completed without crash; unreported formal subcases remain deferred.
 - [x] Owner accepted US-10-01→05 outcome and explicitly requested EPIC-10 closure review.
-- [ ] Only after closure may EPIC-11 planning start.
+- [x] Owner explicitly confirmed closure; EPIC-11 planning gate is open but implementation is not started.
 
 ## 8. Rollback
 

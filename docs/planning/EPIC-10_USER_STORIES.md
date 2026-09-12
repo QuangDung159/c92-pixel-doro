@@ -1,18 +1,19 @@
 ---
 document_id: PIXELDORO_EPIC_10_USER_STORIES
 title: PixelDoro EPIC-10 — Settings & Data Control User Stories
-version: 0.3.0
-status: OWNER_ACCEPTED_CLOSURE_READY_PENDING_EXACT_SHA
+version: 1.0.0
+status: DONE_OWNER_ACCEPTED
 date: 2026-09-12
 owner: Dũng Lư
-branch: feats/epic-10
-upstream: origin/feats/epic-10
+branch: dev
+upstream: origin/dev
 baseline_sha: e55a2e00ddb6f5804b53fffd9df367e1902a42e5
 baseline_identity: EXACT_COMMITTED_PUSHED_SHA
 worktree_at_audit: DIRTY_PREEXISTING_DOCUMENTATION_ONLY
 previous_epic: EPIC-09
 previous_epic_status: DONE_OWNER_ACCEPTED_IN_PREEXISTING_UNCOMMITTED_CLOSURE_RECORDS
-implementation_status: REVIEW_PASS_UNCOMMITTED_AFTER_4FA1EF3
+implementation_status: COMMITTED_MERGED_OWNER_ACCEPTED
+accepted_sha: bee029a12576af8d8470668c1fa2ce8d8502ac4b
 manual_device_status: PASS_OWNER_QUICK_UI_NO_CRASH_2026_09_12
 formal_tester_status: NOT_RUN
 schema_change: NONE_PROPOSED_SCHEMA_001_SUFFICIENT
@@ -31,9 +32,10 @@ data_model: ../architecture/data-model.md
 Owner reported quick UI testing complete without a crash and requested EPIC-10 closure review on
 2026-09-12. All five Story outcomes are owner accepted at the reviewed worktree. Automated quality is
 green at 212 files / 1,080 tests, final iOS/Android JS exports pass, and the iOS Development Build was
-rebuilt with ExpoAudio/ExpoHaptics and opened successfully. The only closure blocker is binding the
-reviewed fixes after `573cd8d` to an exact commit SHA under separate commit authorization. Formal
-cross-platform/accessibility breadth remains deferred and is not relabeled PASS.
+rebuilt with ExpoAudio/ExpoHaptics and opened successfully. The implementation, including the reviewed
+fixes after `573cd8d`, was merged through PR #13 at exact SHA
+`bee029a12576af8d8470668c1fa2ce8d8502ac4b`. Owner explicitly confirmed closure. Formal cross-platform/
+accessibility breadth remains deferred and is not relabeled PASS.
 
 ## 0. Outcome, document boundary và authority
 
@@ -933,7 +935,8 @@ Planning/audit evidence completed in this task:
 
 Closure review evidence:
 
-- [ ] US-10-01→05 each satisfy DoR/DoD and are owner accepted at exact committed SHAs.
+- [x] US-10-01→05 satisfy the agreed DoD and are owner accepted at exact merged SHA
+  `bee029a12576af8d8470668c1fa2ce8d8502ac4b`.
 - [x] Production Settings has no prototype authority, reviewer shortcut or fake local state.
 - [x] Saved duration/mode drive fresh Focus Setup without modifying active session or work-tag policy.
 - [x] Sound and haptic can each be fully disabled and remain so after relaunch.
@@ -945,8 +948,8 @@ Closure review evidence:
 - [x] Common component consumer regressions and component-size gates pass.
 - [x] Isolated fixture databases prove no access/mutation/deletion of normal `pixeldoro.db`.
 - [x] No provider feedback/analytics/store review (EPIC-11) or beta release scope (EPIC-12) is absorbed.
-- [ ] EPIC-10 exit candidate and exact evidence SHA are reviewed.
-- [x] Owner requested EPIC-10 closure after review; EPIC-11 planning does not start before exact SHA.
+- [x] EPIC-10 exit candidate and exact evidence SHA are reviewed.
+- [x] Owner explicitly confirmed EPIC-10 closure; EPIC-11 planning gate is open but not started here.
 
 ## 20. Risks và rollback
 
@@ -1077,6 +1080,7 @@ can be sent in one line: `Duyệt US1000-CONFIRM-01→07 theo Option A`.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 1.0.0 | 2026-09-12 | Codex | Bound all accepted Stories to merge SHA `bee029a12576af8d8470668c1fa2ce8d8502ac4b`, recorded explicit owner closure and marked EPIC-10 `DONE_OWNER_ACCEPTED`; formal device/accessibility breadth remains deferred. |
 | 0.3.0 | 2026-09-12 | Codex | Recorded owner quick UI PASS/no crash and closure request. Closure review found and fixed notification-Off permission and reset single-flight edges; final quality reached 212/1,080 and both platform exports passed. Kept exact-SHA and formal deferred evidence honest. |
 | 0.2.0 | 2026-09-12 | Codex | Owner approved `US1000-CONFIRM-01→07` Option A. Implemented all five slices in the worktree with production Settings UI/controller, column-safe persistence, Focus defaults, privacy cleanup gate, permission reconciliation, confirmed reset, sound/haptic adapters, tests and quick UI guide. Manual evidence remains `NOT_RUN`; implementation SHA remains unavailable until commit. |
 | 0.1.0 | 2026-09-12 | Codex | Audited exact Git baseline, pre-existing EPIC-09 closure edits, full documentation/manual-guide corpus and current code/component capability. Drafted five dependency/risk-ordered vertical Stories with scope, ownership, transactions, UI/lifecycle/privacy/a11y states, tests, isolated fixtures, manual guides, reuse matrices, honest exit/deferred checklists and seven pending owner confirmations. No implementation, commit or push. |

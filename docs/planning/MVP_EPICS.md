@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_MVP_EPIC_BREAKDOWN
 title: PixelDoro Mobile MVP — Epic Breakdown
-version: 2.9.0
-status: EPIC_01_TO_09_DONE_EPIC_10_CLOSURE_READY_PENDING_EXACT_SHA
+version: 3.0.0
+status: EPIC_01_TO_10_DONE_OWNER_ACCEPTED_EPIC_11_NOT_STARTED
 last_updated: 2026-09-12
 owner: Dũng Lư
 reviewer: Dũng Lư
@@ -130,7 +130,7 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 - [x] `07 / EPIC-07 / W3` — Break & Cadence — `DONE_OWNER_ACCEPTED` 2026-09-10.
 - [x] `08 / EPIC-08 / W3` — Progression & Shop.
 - [x] `09 / EPIC-09 / W3` — History & Contribution — `DONE_OWNER_ACCEPTED` 2026-09-12.
-- [ ] `10 / EPIC-10 / W3` — Settings & Data Control.
+- [x] `10 / EPIC-10 / W3` — Settings & Data Control — `DONE_OWNER_ACCEPTED` 2026-09-12.
 - [ ] `11 / EPIC-11 / W3` — Analytics, Feedback & Store Review.
 - [ ] `12 / EPIC-12 / W4` — Beta Readiness.
 
@@ -147,11 +147,12 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 | `EPIC-07` | `DONE_OWNER_ACCEPTED` | Exact candidate `f6c7b92`; Break/cadence lifecycle, notification/analytics and owner quick UI pass. Formal device/accessibility matrix deferred. |
 | `EPIC-08` | `DONE_OWNER_ACCEPTED` | US-08-01→05 owner accepted; exact candidate `30adc34...`; Exit Report closed by owner authorization. |
 | `EPIC-09` | `DONE_OWNER_ACCEPTED` | US-09-01→05 owner accepted; exact behavior candidate `a1abf5f...`; History/Contribution exit closed by owner authorization. |
-| `EPIC-10` | `CLOSURE_READY_PENDING_EXACT_SHA` | Five Stories owner accepted after quick UI PASS/no crash; review and automated/native/export gates pass; exact reviewed commit SHA remains. |
+| `EPIC-10` | `DONE_OWNER_ACCEPTED` | US-10-01→05 owner accepted; exact merged candidate `bee029a12576af8d8470668c1fa2ce8d8502ac4b`; quick UI PASS/no crash and review/automated/native/export gates pass. |
 
-Chín Epic đầu đã `DONE_OWNER_ACCEPTED`. EPIC-10 không còn code blocker và đã được owner quick-smoke/
-accept; closure record đang chờ exact commit SHA của reviewed worktree. EPIC-11 chưa được mở. Provider
-analytics và Beta Readiness vẫn thuộc EPIC-11/12.
+Mười Epic đầu đã `DONE_OWNER_ACCEPTED`. EPIC-10 được đóng tại exact merged SHA
+`bee029a12576af8d8470668c1fa2ce8d8502ac4b` sau owner quick-smoke/accept và xác nhận closure.
+EPIC-11 chỉ được mở planning gate, chưa bắt đầu implementation. Provider analytics và Beta Readiness
+vẫn thuộc EPIC-11/12.
 
 ## 3. Critical path và delivery gates
 
@@ -642,7 +643,7 @@ matrix tiếp tục `DEFERRED_TO_LATER_PHASE` và được carry sang later vali
 
 **Loại:** Product
 
-- **Status:** `CLOSURE_READY_PENDING_EXACT_SHA`
+- **Status:** `DONE_OWNER_ACCEPTED` — exact merged SHA `bee029a12576af8d8470668c1fa2ce8d8502ac4b`
 - **MVP priority:** `MUST`
 - **Delivery wave:** `W3_VERTICAL_MVP`
 - **Execution order:** `10`
@@ -872,6 +873,15 @@ Story hoặc implementation tương lai.
 - [x] Không estimate deadline trước khi Story refinement hoàn tất.
 
 ## 10. Change log
+
+### 3.0.0 — 2026-09-12
+
+- Closed EPIC-10 as `DONE_OWNER_ACCEPTED` at exact merged SHA
+  `bee029a12576af8d8470668c1fa2ce8d8502ac4b` after explicit owner confirmation.
+- Marked all five Stories accepted and opened only the EPIC-11 planning gate; EPIC-11 implementation
+  is not started by this closure.
+- Kept unreported Android-device and formal accessibility breadth explicitly deferred to the owning
+  validation phase rather than relabeling it PASS.
 
 ### 2.9.0 — 2026-09-12
 

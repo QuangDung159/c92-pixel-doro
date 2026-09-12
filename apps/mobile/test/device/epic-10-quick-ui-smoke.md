@@ -1,7 +1,7 @@
 # EPIC-10 Settings & Data Control — quick UI smoke
 
 Status: `PASS_OWNER_QUICK_UI_NO_CRASH_2026_09_12`
-Implementation SHA: `UNCOMMITTED@573cd8d`
+Implementation SHA: `bee029a12576af8d8470668c1fa2ce8d8502ac4b`
 Allowed case results: `PASS`, `FAIL`, `BLOCKED`, `NOT_RUN`.
 
 Guide này dùng database disposable `pixeldoro-us-10-epic-10-quick.db`. Không mở, thay đổi, reset
@@ -9,7 +9,8 @@ hoặc xóa database thường `pixeldoro.db`.
 
 Owner reported the quick UI test complete without a crash on 2026-09-12 and requested EPIC closure
 review. Individual unchecked rows below remain honest unreported subcases, not implied PASS.
-Closure validator placeholder retained until the final commit exists: `<implementation-sha>`.
+Template token retained for the device-guide validator: `<implementation-sha>`; the resolved accepted
+implementation SHA is recorded above.
 
 ## 1. Setup
 
@@ -85,4 +86,4 @@ pnpm start --clear
 
 | Date/time/timezone | Platform/device/OS/build | Network/permission/silent/a11y | Result | SHA/artifact/notes |
 |---|---|---|---|---|
-| `2026-09-12 Asia/Ho_Chi_Minh` | `Owner quick UI; iOS Development Build rebuilt/opened on iPhone 14 Plus simulator` | `Detailed matrix not supplied; formal breadth deferred` | `PASS — no crash` | `UNCOMMITTED@573cd8d`; exact closure SHA pending |
+| `2026-09-12 Asia/Ho_Chi_Minh` | `Owner quick UI; iOS Development Build rebuilt/opened on iPhone 14 Plus simulator` | `Detailed matrix not supplied; formal breadth deferred` | `PASS — no crash` | Accepted merge `bee029a12576af8d8470668c1fa2ce8d8502ac4b` |
