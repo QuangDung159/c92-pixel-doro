@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_MVP_EPIC_BREAKDOWN
 title: PixelDoro Mobile MVP — Epic Breakdown
-version: 2.8.0
-status: EPIC_01_TO_09_DONE_EPIC_10_IMPLEMENTED_PENDING_OWNER_SMOKE
+version: 2.9.0
+status: EPIC_01_TO_09_DONE_EPIC_10_CLOSURE_READY_PENDING_EXACT_SHA
 last_updated: 2026-09-12
 owner: Dũng Lư
 reviewer: Dũng Lư
@@ -147,10 +147,10 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 | `EPIC-07` | `DONE_OWNER_ACCEPTED` | Exact candidate `f6c7b92`; Break/cadence lifecycle, notification/analytics and owner quick UI pass. Formal device/accessibility matrix deferred. |
 | `EPIC-08` | `DONE_OWNER_ACCEPTED` | US-08-01→05 owner accepted; exact candidate `30adc34...`; Exit Report closed by owner authorization. |
 | `EPIC-09` | `DONE_OWNER_ACCEPTED` | US-09-01→05 owner accepted; exact behavior candidate `a1abf5f...`; History/Contribution exit closed by owner authorization. |
-| `EPIC-10` | `IMPLEMENTED_UNCOMMITTED_PENDING_OWNER_QUICK_UI` | US1000 confirmations approved Option A; automated suite green in worktree; exact implementation SHA and owner device smoke pending. |
+| `EPIC-10` | `CLOSURE_READY_PENDING_EXACT_SHA` | Five Stories owner accepted after quick UI PASS/no crash; review and automated/native/export gates pass; exact reviewed commit SHA remains. |
 
-Chín Epic đầu đã `DONE_OWNER_ACCEPTED`. EPIC-10 implementation đã hoàn tất trong worktree nhưng chưa
-được owner smoke/accept và chưa có exact implementation commit SHA; EPIC-11 chưa được mở. Provider
+Chín Epic đầu đã `DONE_OWNER_ACCEPTED`. EPIC-10 không còn code blocker và đã được owner quick-smoke/
+accept; closure record đang chờ exact commit SHA của reviewed worktree. EPIC-11 chưa được mở. Provider
 analytics và Beta Readiness vẫn thuộc EPIC-11/12.
 
 ## 3. Critical path và delivery gates
@@ -642,6 +642,7 @@ matrix tiếp tục `DEFERRED_TO_LATER_PHASE` và được carry sang later vali
 
 **Loại:** Product
 
+- **Status:** `CLOSURE_READY_PENDING_EXACT_SHA`
 - **MVP priority:** `MUST`
 - **Delivery wave:** `W3_VERTICAL_MVP`
 - **Execution order:** `10`
@@ -871,6 +872,15 @@ Story hoặc implementation tương lai.
 - [x] Không estimate deadline trước khi Story refinement hoàn tất.
 
 ## 10. Change log
+
+### 2.9.0 — 2026-09-12
+
+- Recorded EPIC-10 owner quick UI PASS/no crash and explicit closure-review request.
+- Closure review fixed notification-Off permission and destructive-reset single-flight edges; final
+  quality is 212 files / 1,080 tests, both platform exports pass, and the compatible iOS Development
+  Build contains ExpoAudio/ExpoHaptics.
+- Added `EPIC-10_EXIT_REPORT.md`; kept the master Epic checkbox open only until the reviewed worktree
+  receives an exact commit SHA. EPIC-11 remains closed.
 
 ### 2.8.0 — 2026-09-12
 

@@ -189,6 +189,21 @@ describe('SettingsController', () => {
     });
   });
 
+  it('turns notifications off without reading or requesting OS permission', async () => {
+    const fixture = harness();
+    await fixture.controller.activate();
+    await Promise.resolve();
+    fixture.readPermission.mockClear();
+    fixture.requestPermission.mockClear();
+
+    expect(await fixture.controller.setNotificationsEnabled(false)).toBe(true);
+
+    expect(fixture.record().notificationsEnabled).toBe(false);
+    expect(fixture.readPermission).not.toHaveBeenCalled();
+    expect(fixture.requestPermission).not.toHaveBeenCalled();
+    expect(fixture.dependencies.notifications.cancelKnownSession).toHaveBeenCalledOnce();
+  });
+
   it('ignores a permission read that finishes after the screen deactivates', async () => {
     const fixture = harness();
     let resolvePermission!: (value: { ok: true; value: 'allowed' }) => void;
@@ -217,5 +232,17 @@ describe('SettingsController', () => {
     expect(fixture.dependencies.sensory.emit).toHaveBeenCalledWith(
       'destructive_confirmation', expect.anything(), expect.stringMatching(/^reset:/),
     );
+  });
+
+  it('keeps destructive reset single-flight', async () => {
+    const fixture = harness();
+    await fixture.controller.activate();
+
+    const first = fixture.controller.resetAllLocalData();
+    const duplicate = fixture.controller.resetAllLocalData();
+
+    expect(duplicate).toBe(first);
+    expect(await first).toBe(true);
+    expect(fixture.dependencies.reset).toHaveBeenCalledOnce();
   });
 });

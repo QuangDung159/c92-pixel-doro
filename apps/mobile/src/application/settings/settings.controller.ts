@@ -300,8 +300,8 @@ export class SettingsController {
       return false;
     }
     if (!await this.reloadAfterCommit(() => this.setNotificationsEnabled(enabled))) return false;
-    const permission = await this.readPermission(enabled);
     if (!enabled) return this.cancelActiveNotification();
+    const permission = await this.readPermission(true);
     if (permission !== 'allowed') {
       if (permission === 'denied') this.fail('NOTIFICATION_OS_BLOCKED');
       return true;
@@ -403,6 +403,10 @@ export class SettingsController {
 
   private startOperation(key: SettingKey, work: () => Promise<boolean>): Promise<boolean> {
     if (this.disposed) return Promise.resolve(false);
+    if (key === 'reset') {
+      const existing = this.operations.get(key);
+      if (existing !== undefined) return existing;
+    }
     this.setBusy(key, true);
     const operation = this.commandTail.then(work, work).catch(() => {
       this.fail('SETTINGS_WRITE_FAILED', () => this.startOperation(key, work));

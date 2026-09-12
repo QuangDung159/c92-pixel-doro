@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_EPIC_10_USER_STORIES
 title: PixelDoro EPIC-10 — Settings & Data Control User Stories
-version: 0.2.0
-status: IMPLEMENTED_UNCOMMITTED_PENDING_OWNER_QUICK_UI
+version: 0.3.0
+status: OWNER_ACCEPTED_CLOSURE_READY_PENDING_EXACT_SHA
 date: 2026-09-12
 owner: Dũng Lư
 branch: feats/epic-10
@@ -12,8 +12,8 @@ baseline_identity: EXACT_COMMITTED_PUSHED_SHA
 worktree_at_audit: DIRTY_PREEXISTING_DOCUMENTATION_ONLY
 previous_epic: EPIC-09
 previous_epic_status: DONE_OWNER_ACCEPTED_IN_PREEXISTING_UNCOMMITTED_CLOSURE_RECORDS
-implementation_status: IMPLEMENTED_UNCOMMITTED
-manual_device_status: NOT_RUN
+implementation_status: REVIEW_PASS_UNCOMMITTED_AFTER_4FA1EF3
+manual_device_status: PASS_OWNER_QUICK_UI_NO_CRASH_2026_09_12
 formal_tester_status: NOT_RUN
 schema_change: NONE_PROPOSED_SCHEMA_001_SUFFICIENT
 dependency_change: APPROVED_OPTION_A_EXPO_AUDIO_HAPTICS
@@ -25,6 +25,15 @@ data_model: ../architecture/data-model.md
 ---
 
 # EPIC-10 — Settings & Data Control
+
+## Closure review update
+
+Owner reported quick UI testing complete without a crash and requested EPIC-10 closure review on
+2026-09-12. All five Story outcomes are owner accepted at the reviewed worktree. Automated quality is
+green at 212 files / 1,080 tests, final iOS/Android JS exports pass, and the iOS Development Build was
+rebuilt with ExpoAudio/ExpoHaptics and opened successfully. The only closure blocker is binding the
+reviewed fixes after `573cd8d` to an exact commit SHA under separate commit authorization. Formal
+cross-platform/accessibility breadth remains deferred and is not relabeled PASS.
 
 ## 0. Outcome, document boundary và authority
 
@@ -922,21 +931,22 @@ Planning/audit evidence completed in this task:
 - [x] Prototype, production/reusable, missing, deprecated and deferred capabilities separated.
 - [x] Five vertical Stories, reuse/data/UI/fixture/test/manual matrices and owner register drafted.
 
-Implementation/acceptance evidence not yet completed:
+Closure review evidence:
 
 - [ ] US-10-01→05 each satisfy DoR/DoD and are owner accepted at exact committed SHAs.
-- [ ] Production Settings has no prototype authority, reviewer shortcut or fake local state.
-- [ ] Saved duration/mode drive fresh Focus Setup without modifying active session or work-tag policy.
-- [ ] Sound and haptic can each be fully disabled and remain so after relaunch.
-- [ ] Notification preference remains distinct from live OS permission; denial never breaks core flow.
-- [ ] Analytics opt-out stops capture, clears queue, rotates identity and never backfills.
-- [ ] Full reset is confirmed, barriered and atomic; defaults/schema/catalog/relaunch truth pass.
-- [ ] Error/retry/stale/background/offline/accessibility behaviors pass at the right test layers.
-- [ ] Common component consumer regressions and component-size gates pass.
-- [ ] Isolated fixture databases prove no access/mutation/deletion of normal `pixeldoro.db`.
-- [ ] No provider feedback/analytics/store review (EPIC-11) or beta release scope (EPIC-12) is absorbed.
+- [x] Production Settings has no prototype authority, reviewer shortcut or fake local state.
+- [x] Saved duration/mode drive fresh Focus Setup without modifying active session or work-tag policy.
+- [x] Sound and haptic can each be fully disabled and remain so after relaunch.
+- [x] Notification preference remains distinct from live OS permission; denial never breaks core flow.
+- [x] Analytics opt-out stops capture, clears queue, rotates identity and never backfills.
+- [x] Full reset is confirmed, barriered and atomic; defaults/schema/catalog/relaunch truth pass.
+- [x] Error/retry/stale/background/offline behaviors pass at the appropriate automated layers; formal
+  device/accessibility breadth remains explicitly deferred.
+- [x] Common component consumer regressions and component-size gates pass.
+- [x] Isolated fixture databases prove no access/mutation/deletion of normal `pixeldoro.db`.
+- [x] No provider feedback/analytics/store review (EPIC-11) or beta release scope (EPIC-12) is absorbed.
 - [ ] EPIC-10 exit candidate and exact evidence SHA are reviewed.
-- [ ] Owner separately authorizes EPIC-10 closure; EPIC-11 planning does not start implicitly.
+- [x] Owner requested EPIC-10 closure after review; EPIC-11 planning does not start before exact SHA.
 
 ## 20. Risks và rollback
 
@@ -1067,5 +1077,6 @@ can be sent in one line: `Duyệt US1000-CONFIRM-01→07 theo Option A`.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
-| 0.1.0 | 2026-09-12 | Codex | Audited exact Git baseline, pre-existing EPIC-09 closure edits, full documentation/manual-guide corpus and current code/component capability. Drafted five dependency/risk-ordered vertical Stories with scope, ownership, transactions, UI/lifecycle/privacy/a11y states, tests, isolated fixtures, manual guides, reuse matrices, honest exit/deferred checklists and seven pending owner confirmations. No implementation, commit or push. |
+| 0.3.0 | 2026-09-12 | Codex | Recorded owner quick UI PASS/no crash and closure request. Closure review found and fixed notification-Off permission and reset single-flight edges; final quality reached 212/1,080 and both platform exports passed. Kept exact-SHA and formal deferred evidence honest. |
 | 0.2.0 | 2026-09-12 | Codex | Owner approved `US1000-CONFIRM-01→07` Option A. Implemented all five slices in the worktree with production Settings UI/controller, column-safe persistence, Focus defaults, privacy cleanup gate, permission reconciliation, confirmed reset, sound/haptic adapters, tests and quick UI guide. Manual evidence remains `NOT_RUN`; implementation SHA remains unavailable until commit. |
+| 0.1.0 | 2026-09-12 | Codex | Audited exact Git baseline, pre-existing EPIC-09 closure edits, full documentation/manual-guide corpus and current code/component capability. Drafted five dependency/risk-ordered vertical Stories with scope, ownership, transactions, UI/lifecycle/privacy/a11y states, tests, isolated fixtures, manual guides, reuse matrices, honest exit/deferred checklists and seven pending owner confirmations. No implementation, commit or push. |
