@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_09_USER_STORIES
 title: PixelDoro EPIC-09 — Focus History và Contribution Graph User Stories
-version: 0.3.0
+version: 0.6.0
 status: IMPLEMENTATION_IN_PROGRESS_OWNER_GATED
 date: 2026-09-11
 last_updated: 2026-09-12
@@ -19,13 +19,13 @@ previous_epic: EPIC-08
 previous_epic_status: DONE_OWNER_ACCEPTED
 previous_epic_accepted_sha: 30adc34be23dca48379b6f2553203fdadb9f9e5b
 previous_epic_closure_commit: 05e3e883e0c6dc3292b3707fd5fe5af65032dc75
-implementation_status: US_09_01_DONE_OWNER_ACCEPTED_US_09_02_CANDIDATE_AWAITING_OWNER_UI
+implementation_status: US_09_01_AND_02_DONE_OWNER_ACCEPTED_US_09_03_CANDIDATE_AWAITING_OWNER_UI
 formal_tester_status: NOT_RUN
 schema_impact: NONE_PROPOSED_EXISTING_SCHEMA_001_SUFFICIENT
 dependency_impact: NONE_PROPOSED
 native_impact: NONE_PROPOSED
-product_gate: OPEN_006_PENDING_OWNER
-next_gate: OWNER_SMOKE_US_09_02_EXACT_CANDIDATE
+product_gate: OPEN_006_RESOLVED_OPTION_A
+next_gate: OWNER_SMOKE_US_09_03_EXACT_CANDIDATE
 product_truth: ../PIXELDORO_CORE_TRUTH.md
 epic_baseline: ./MVP_EPICS.md
 data_model: ../architecture/data-model.md
@@ -39,9 +39,10 @@ previous_epic_exit: ./EPIC-08_EXIT_REPORT.md
 ## 0. Mục đích và authority
 
 Tài liệu này audit baseline và theo dõi các vertical slice của `EPIC-09`, với output quan sát được,
-dependency, test, device guide, rollback và owner gate riêng. US-09-01 đã owner accepted; US-09-02 đã
-được duyệt và có candidate chờ UI smoke; các Story sau vẫn cần implementation-plan confirmation
-riêng. Tài liệu không tự cấp quyền commit hoặc push.
+dependency, test, device guide, rollback và owner gate riêng. US-09-01/02 đã owner accepted; US-09-03
+đã có implementation candidate chờ owner UI smoke và các Story sau vẫn cần implementation-plan
+confirmation riêng. Tài liệu không
+tự cấp quyền coding, commit hoặc push.
 
 Thứ tự authority khi review hoặc triển khai:
 
@@ -363,8 +364,8 @@ horizontal “backend-only” slice; Story 03 có neutral semantic day panel tr�
 | Order | Story | User outcome | Priority | Dependencies | Initial status |
 |---:|---|---|---|---|---|
 | 1 | US-09-01 — Truthful Standard Focus History First Page | History tab đọc và hiển thị first page terminal Standard Focus thật từ SQLite | P0 | EPIC-08; confirmations 05/08/10 | DONE_OWNER_ACCEPTED — `18057faf...` |
-| 2 | US-09-02 — Date-grouped Pagination và Resilient Refresh | User xem thêm history theo ngày mà không duplicate/mất dữ liệu khi refresh lỗi | P0 | 01; confirmations 01/02/06 | IMPLEMENTED_AWAITING_OWNER_UI — uncommitted on `36bd9b0...` |
-| 3 | US-09-03 — Stable Daily Contribution Projection | User thấy đủ các ngày trong range và đúng completed minutes/intensity semantics | P0 | 01; confirmations 03/04 | NOT_STARTED |
+| 2 | US-09-02 — Date-grouped Pagination và Resilient Refresh | User xem thêm history theo ngày mà không duplicate/mất dữ liệu khi refresh lỗi | P0 | 01; confirmations 01/02/06 | DONE_OWNER_ACCEPTED — `91d0612...` |
+| 3 | US-09-03 — Stable Daily Contribution Projection | User thấy đủ các ngày trong range và đúng completed minutes/intensity semantics | P0 | 01; confirmations 03/04 | IMPLEMENTED_AWAITING_OWNER_UI — uncommitted on `91d0612...` |
 | 4 | US-09-04 — Production Contribution Graph và Accessibility | User đọc graph rõ trên small screen, screen reader, largest text và grayscale | P1 | 02/03; `OPEN-006` confirmation 04 | BLOCKED_BY_OWNER_COLOR_GATE |
 | 5 | US-09-05 — Offline Lifecycle, Analytics, Prototype Integrity và Epic Exit | History ổn định qua refocus/relaunch/offline và sẵn sàng exit evidence | P1 | 01→04; confirmations 06/07/09/10 | NOT_STARTED |
 
@@ -529,7 +530,7 @@ Implemented file: `apps/mobile/test/device/focus-history-pagination-lifecycle-sm
 - [x] **DoR:** ScreenShell extension API and regression consumers reviewed.
 - [x] **DoD:** paging/grouping/lifecycle automated tests and manual guide complete; no write path added.
 - [x] **DoD:** no component >300 lines; controller projection types were split into a focused file.
-- [ ] **Next gate:** owner accepts Story 02 before Story 04 final list/graph composition.
+- [x] **Next gate:** owner accepted Story 02 at exact SHA `91d0612...`; Story 03 planning is open.
 
 ## 11. US-09-03 — Stable Daily Contribution Projection
 
@@ -559,27 +560,27 @@ Implemented file: `apps/mobile/test/device/focus-history-pagination-lifecycle-sm
 
 ### 11.1. Acceptance criteria
 
-- [ ] Range has exactly the owner-approved consecutive local dates ending on current local day.
-- [ ] Sparse SQL result is zero-filled; duplicate/out-of-range/unsorted/corrupt facts fail closed.
-- [ ] Daily total equals sum of configured duration for completed standard sessions only.
-- [ ] Failed/cancelled/trial/running/Break never affects minutes, count or band.
-- [ ] Cross-midnight session appears on persisted scheduled-end date.
-- [ ] Delayed reconciliation, DST boundary and timezone change do not regroup stored session day.
-- [ ] Intensity thresholds are fixed, deterministic and not persisted.
-- [ ] Zero and non-zero days have explicit numeric/text meaning independent of color.
-- [ ] Aggregate or date arithmetic overflow/corruption enters typed error; no clamp/mock fallback.
-- [ ] Empty history produces all zero days, not a missing/short graph.
+- [x] Range has exactly the owner-approved consecutive local dates ending on current local day.
+- [x] Sparse SQL result is zero-filled; duplicate/out-of-range/unsorted/corrupt facts fail closed.
+- [x] Daily total equals sum of configured duration for completed standard sessions only.
+- [x] Failed/cancelled/trial/running/Break never affects minutes, count or band.
+- [x] Cross-midnight session appears on persisted scheduled-end date.
+- [x] Delayed reconciliation, DST boundary and timezone change do not regroup stored session day.
+- [x] Intensity thresholds are fixed, deterministic and not persisted.
+- [x] Zero and non-zero days have explicit numeric/text meaning independent of color.
+- [x] Aggregate or date arithmetic overflow/corruption enters typed error; no clamp/mock fallback.
+- [x] Empty history produces all zero days, not a missing/short graph.
 
 ### 11.2. Automated tests
 
-- [ ] Pure date-range generation across month/year/leap day and DST-adjacent calendar dates.
-- [ ] Zero fill/order for sparse rows and exact inclusive endpoints.
-- [ ] Band boundaries at every approved threshold ±1; large safe integer and overflow rejection.
-- [ ] Included/excluded session matrix and configured-duration aggregation.
-- [ ] SQLite cross-midnight, timezone/offset change, delayed reconciliation and reopen.
-- [ ] Controller independent list/contribution loading/error/retry and stale completion drop.
-- [ ] Neutral panel component exposes numeric minutes, count and stable day key.
-- [ ] Fingerprint proves contribution reads never mutate sessions/rewards/profile.
+- [x] Pure date-range generation across month/year/leap day and DST-adjacent calendar dates.
+- [x] Zero fill/order for sparse rows and exact inclusive endpoints.
+- [x] Band boundaries at every approved threshold ±1; large safe integer and overflow rejection.
+- [x] Included/excluded session matrix and configured-duration aggregation.
+- [x] SQLite cross-midnight, timezone/offset change, delayed reconciliation and reopen.
+- [x] Controller independent list/contribution loading/error/retry and stale completion drop.
+- [x] Neutral panel component exposes numeric minutes, count and stable day key.
+- [x] Fingerprint proves contribution reads never mutate sessions/rewards/profile.
 
 ### 11.3. Fixture/data requirements
 
@@ -590,7 +591,8 @@ cannot reproduce them deterministically.
 
 ### 11.4. Manual smoke checklist
 
-Proposed file: `apps/mobile/test/device/contribution-projection-smoke.md`; `Status: NOT_RUN`.
+Implemented file: `apps/mobile/test/device/contribution-projection-smoke.md`; `Status: NOT_RUN`
+pending owner execution.
 
 - [ ] Record implementation SHA/device/build/timezone/network/a11y/env/database.
 - [ ] Empty fixture shows exact zero days and zero-minute labels.
@@ -603,11 +605,11 @@ Proposed file: `apps/mobile/test/device/contribution-projection-smoke.md`; `Stat
 
 ### 11.5. DoR / DoD
 
-- [ ] **DoR:** Story 01 accepted; confirmations 03/04 approved.
-- [ ] **DoR:** exact range/bands/palette fallback are traceable to owner decision.
-- [ ] **DoD:** domain/application/SQLite/component tests and neutral panel pass.
-- [ ] **DoD:** no contribution aggregate/color/level stored in SQLite/Zustand authority.
-- [ ] **Next gate:** Story 04 opens only after `OPEN-006` exact visual decision is approved.
+- [x] **DoR:** Story 01 accepted; confirmations 03/04 approved.
+- [x] **DoR:** exact range/bands/palette fallback are traceable to owner decision.
+- [x] **DoD:** domain/application/SQLite/component tests and neutral panel pass.
+- [x] **DoD:** no contribution aggregate/color/level stored in SQLite/Zustand authority.
+- [ ] **Next gate:** owner quick UI accepts exact committed US-09-03 candidate before Story 04 planning.
 
 ## 12. US-09-04 — Production Contribution Graph và Accessibility
 
@@ -914,7 +916,7 @@ settings, fixture env, dedicated isolated database, cleanup/reset and env-unset 
 | Story | Proposed guide | Primary manual evidence | Initial status |
 |---|---|---|---|
 | US-09-01 | `apps/mobile/test/device/focus-history-first-page-smoke.md` | empty/mixed/exclusions/error/Retry/relaunch/a11y | PASS_OWNER_QUICK_UI at `18057faf...`; structured breadth NOT_RUN |
-| US-09-02 | `apps/mobile/test/device/focus-history-pagination-lifecycle-smoke.md` | group/page/append failure/refocus/small screen | NOT_RUN |
+| US-09-02 | `apps/mobile/test/device/focus-history-pagination-lifecycle-smoke.md` | group/page/append failure/refocus/small screen | PASS_OWNER_QUICK_UI at `91d0612...`; structured breadth NOT_RUN |
 | US-09-03 | `apps/mobile/test/device/contribution-projection-smoke.md` | zero/mixed/range/local-day/timezone/error | NOT_RUN |
 | US-09-04 | `apps/mobile/test/device/contribution-graph-accessibility-smoke.md` | final colors, VoiceOver/TalkBack, largest text, grayscale, Reduce Motion | NOT_RUN |
 | US-09-05 | `apps/mobile/test/device/epic-09-exit-smoke.md` | aggregate offline/relaunch/lifecycle/analytics/prototype integrity | NOT_RUN |
@@ -999,7 +1001,7 @@ separate classes.
 - **Option B:** current calendar month với 28–31 cells và month navigation.
 - **Story bị block:** US-09-03/04.
 - **Impact:** A khớp approved prototype, small-screen và scope nhỏ; B tăng breadth/layout/date-nav tests.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — ratified by `US0903-CONFIRM-01`, owner 2026-09-12.
 
 ### US0900-CONFIRM-04 — `OPEN-006` intensity thresholds và color palette
 
@@ -1011,7 +1013,8 @@ separate classes.
 - **Story bị block:** US-09-03 intensity acceptance; US-09-04 toàn bộ final visual acceptance.
 - **Impact:** A align default 25-minute rhythm, không dependency/schema và có neutral fallback; B cho
   Design control cao hơn nhưng cần exact values trước implementation.
-- **Status:** `PENDING_OWNER`; chỉ owner approval mới resolve `OPEN-006`.
+- **Status:** `APPROVED_OPTION_A` — ratified by `US0903-CONFIRM-03/04`, owner 2026-09-12;
+  `OPEN-006` resolved, final contrast acceptance remains US-09-04.
 
 ### US0900-CONFIRM-05 — History row content breadth
 
@@ -1021,7 +1024,7 @@ separate classes.
 - **Option B:** thêm mode, time-of-day và committed reward cho completed rows.
 - **Story bị block:** US-09-01 visual contract.
 - **Impact:** A là scope nhỏ nhất và tránh biến History thành reward audit; B cần thêm copy/layout/a11y.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — ratified by `US0901-CONFIRM-02`, owner 2026-09-11.
 
 ### US0900-CONFIRM-06 — Refresh và stale-data policy
 
@@ -1054,7 +1057,8 @@ separate classes.
 - **Story bị block:** US-09-01/02/03.
 - **Impact:** A giữ app usable khi lỗi tạm thời nhưng fail closed cho corruption; B nhất quán đơn giản
   hơn nhưng quá rộng cho lỗi đọc một panel.
-- **Status:** `PENDING_OWNER`.
+- **Status:** `APPROVED_OPTION_A` — ratified by `US0901-CONFIRM-04` and
+  `US0903-CONFIRM-06`, owner reaffirmed 2026-09-12.
 
 ### US0900-CONFIRM-09 — Manual/formal evidence gate
 
@@ -1104,11 +1108,15 @@ không tạo implementation plan Story 01 trong cùng bước này.
 - [ ] Scroll position and pagination cursor are transient and need not survive process relaunch.
 - [x] US-09-02 automated quality and platform export evidence is recorded; owner/manual device status
   remains explicitly `NOT_RUN` until executed.
+- [x] US-09-03 automated quality and platform export evidence is recorded; owner/manual device status
+  remains explicitly `NOT_RUN` until executed.
 
 ## 26. Change Log
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.6.0 | 2026-09-12 | Codex | Recorded approved US-09-03 Option A implementation candidate on uncommitted worktree over `91d0612...`: seven-day zero-filled contribution projection, semantic bands, independent resilient controller, neutral text-first panel, fixtures and smoke guide. Automated quality passed 200 files/1,038 tests; platform exports passed; owner UI remains `NOT_RUN`. |
+| 0.4.0 | 2026-09-12 | Codex | Bound US-09-02 owner quick UI PASS to exact committed/pushed SHA `91d0612...`; no crash and expected behavior. Structured/formal breadth remains `NOT_RUN`; opened owner-gated US-09-03 implementation planning. |
 | 0.3.0 | 2026-09-12 | Codex | Recorded US-09-02 Option A implementation candidate on uncommitted worktree over `36bd9b0...`; full quality passed 194 files/992 tests, iOS/Android exports passed, Doctor remains 20/21 known patch drift, owner UI smoke remains `NOT_RUN`. |
 | 0.2.0 | 2026-09-11 | Codex | Recorded US-09-01 automated PASS and owner quick UI acceptance at exact SHA `18057faf...`; structured/formal breadth remains `NOT_RUN`; opened owner-gated US-09-02 implementation planning. |
 | 0.1.0 | 2026-09-11 | Codex | Audited clean `feats/epic-09` baseline `05e3e883...`, confirmed EPIC-08 `DONE_OWNER_ACCEPTED`, classified production/prototype/missing capabilities, proposed no schema/dependency/native change, created five risk-ordered Stories with complete matrices/guides/DoR/DoD/rollback, and opened ten owner confirmations. No EPIC-09 code, implementation plan, commit or push. |

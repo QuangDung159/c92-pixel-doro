@@ -2,6 +2,7 @@ import type {
   FocusHistoryDateSection,
   FocusHistoryItemProjection,
 } from '@pixeldoro/application';
+import type { ReactElement, ReactNode } from 'react';
 import { SectionList, StyleSheet, View } from 'react-native';
 
 import { Panel, SectionLabel } from '@/presentation/components';
@@ -21,11 +22,15 @@ interface ListSection {
 }
 
 export const FocusHistoryList = ({
+  contributionHeader,
+  emptyState,
   onLoadMore,
   onRetryLoadMore,
   pagination,
   sections,
 }: {
+  readonly contributionHeader?: ReactNode;
+  readonly emptyState?: ReactElement | null;
   readonly onLoadMore: () => void;
   readonly onRetryLoadMore: () => void;
   readonly pagination: HistoryPaginationStatus;
@@ -50,7 +55,13 @@ export const FocusHistoryList = ({
             status={pagination}
           />
         )}
-        ListHeaderComponent={<SectionLabel>Gần đây</SectionLabel>}
+        ListEmptyComponent={emptyState}
+        ListHeaderComponent={(
+          <View style={styles.header}>
+            {contributionHeader}
+            <SectionLabel>Gần đây</SectionLabel>
+          </View>
+        )}
         renderItem={({ item }) => <FocusHistoryRow item={item} />}
         renderSectionHeader={({ section }) => (
           <HistoryDateSectionHeader
@@ -70,4 +81,5 @@ const styles = StyleSheet.create({
   panel: { flex: 1, minHeight: 0 },
   content: { paddingBottom: 4 },
   divider: { backgroundColor: palette.border, height: 1, opacity: 0.2 },
+  header: { gap: 18 },
 });

@@ -56,6 +56,24 @@ const focusHistoryFirstPageFlow = await readFile(
 const focusHistoryPaginationFlow = await readFile(
   `${deviceDirectory}focus-history-pagination-lifecycle-smoke.md`, 'utf8',
 );
+const contributionProjectionFlow = await readFile(
+  `${deviceDirectory}contribution-projection-smoke.md`, 'utf8',
+);
+for (const evidence of [
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=contribution_zero_week',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=contribution_mixed_week',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=contribution_threshold_edges',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=contribution_cross_midnight',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=contribution_timezone_changed',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=contribution_read_failure_once',
+  'pixeldoro-us-09-03-', '7 NGÀY GẦN ĐÂY', '100+ phút', 'Airplane mode',
+  'VoiceOver/TalkBack', 'Reduce Motion', 'pixeldoro.db', 'NOT_RUN',
+  '<implementation-sha>', 'unset EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE',
+]) {
+  if (!contributionProjectionFlow.includes(evidence)) {
+    throw new Error(`Contribution projection device guide is missing: ${evidence}`);
+  }
+}
 for (const evidence of [
   'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=history_grouped_21',
   'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=history_equal_end_boundary',

@@ -148,6 +148,11 @@ import {
   historyGroupedReviewDatabaseName,
   resolveHistoryGroupedReviewScenario,
 } from './review/history-grouped-review-fixture';
+import {
+  contributionReviewDatabaseName,
+  createContributionReviewFixture,
+  resolveContributionReviewScenario,
+} from './review/contribution-review-fixture';
 
 const PIXELDORO_DATABASE_NAME = 'pixeldoro.db';
 
@@ -206,6 +211,10 @@ export const createMobileApplication = (
     process.env.EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE,
     reviewFixturesEnabled,
   );
+  const contributionReviewScenario = resolveContributionReviewScenario(
+    process.env.EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE,
+    reviewFixturesEnabled,
+  );
   const shopReviewScenario = resolveShopReviewScenario(
     process.env.EXPO_PUBLIC_EPIC_08_REVIEW_FIXTURE,
     reviewFixturesEnabled,
@@ -239,7 +248,9 @@ export const createMobileApplication = (
     reviewFixturesEnabled,
   );
   const databaseOwner = new SQLiteDatabaseOwner(
-    options.databaseName ?? (historyGroupedReviewScenario !== undefined
+    options.databaseName ?? (contributionReviewScenario !== undefined
+      ? contributionReviewDatabaseName(contributionReviewScenario)
+      : historyGroupedReviewScenario !== undefined
       ? historyGroupedReviewDatabaseName(historyGroupedReviewScenario)
       : historyFirstPageReviewScenario !== undefined
       ? historyFirstPageReviewDatabaseName(historyFirstPageReviewScenario)
@@ -269,6 +280,9 @@ export const createMobileApplication = (
   const historyGroupedReviewFixture = createHistoryGroupedReviewFixture(
     historyGroupedReviewScenario,
     persistence.standardFocusHistory,
+  );
+  const contributionReviewFixture = createContributionReviewFixture(
+    contributionReviewScenario,
   );
   const epic08ExitReviewFixture = createEpic08ExitReviewFixture(
     epic08ExitReviewScenario,
@@ -557,6 +571,9 @@ export const createMobileApplication = (
     }),
   });
   const history = createHistorySlice({
+    calendar: contributionReviewFixture?.calendar ?? localCalendar,
+    clock: contributionReviewFixture?.clock ?? clock,
+    contribution: contributionReviewFixture?.contribution ?? persistence.contribution,
     criticalRecovery: bootstrap,
     history: historyGroupedReviewFixture?.history ??
       historyFirstPageReviewFixture?.history ?? persistence.standardFocusHistory,
@@ -1066,6 +1083,7 @@ export const createMobileApplication = (
     shop: shop.shop,
     roomDecorations: roomDecorations.controller,
     history: history.controller,
+    historyContribution: history.contribution,
     standardFocusReviewResetAvailable: reviewFixturesEnabled,
     onboardingTrialRunning,
     onboardingTrialCompletion,
@@ -1084,6 +1102,18 @@ export const createMobileApplication = (
     boot: async () => {
       await runProbeIfEnabled();
       await bootstrap.boot();
+      if (
+        bootstrap.getSnapshot().status === 'ready' &&
+        contributionReviewFixture !== undefined
+      ) {
+        const changed = await contributionReviewFixture.prepare({
+          installation: persistence.installation,
+        });
+        if (changed) {
+          const refreshed = await bootstrap.refreshReadySnapshot();
+          if (!refreshed.ok) bootstrap.enterRecovery('DATABASE_READ_FAILED');
+        }
+      }
       if (
         bootstrap.getSnapshot().status === 'ready' &&
         historyGroupedReviewFixture !== undefined

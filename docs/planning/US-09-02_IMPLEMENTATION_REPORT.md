@@ -1,19 +1,19 @@
 ---
 document_id: PIXELDORO_US_09_02_IMPLEMENTATION_REPORT
 title: PixelDoro Mobile MVP — US-09-02 Implementation Report
-version: 0.1.0
-status: CANDIDATE_AWAITING_OWNER_UI_ACCEPTANCE
+version: 0.2.0
+status: DONE_OWNER_ACCEPTED
 date: 2026-09-12
 owner: Dũng Lư
 branch: feats/epic-09
 implementation_start_sha: 18057fafe478ea95969c43c11b1ad72d9a7faed4
-current_candidate_base_sha: 36bd9b003f2eeb04f95fb6bdc56467a1d139df1c
-exact_implementation_sha: null
-candidate_identity: UNCOMMITTED_WORKTREE_ON_CURRENT_CANDIDATE_BASE
+current_candidate_base_sha: 91d0612975c9532d0d860be7dcd9995584cde96b
+exact_implementation_sha: 91d0612975c9532d0d860be7dcd9995584cde96b
+candidate_identity: EXACT_COMMITTED_OWNER_ACCEPTED_SHA
 automated_status: PASS
-owner_smoke_status: NOT_RUN
-manual_device_status: NOT_RUN
-formal_tester_status: NOT_RUN
+owner_smoke_status: PASS_OWNER_QUICK_UI
+manual_device_status: OWNER_QUICK_UI_SMOKE_REPORTED
+formal_tester_status: NOT_RUN_DEFERRED_UNLESS_EXECUTED
 ---
 
 # US-09-02 — Implementation Report
@@ -24,9 +24,9 @@ US-09-02 đã được implement theo `US0902-CONFIRM-01→06 Option A`. History
 Standard Focus theo persisted local date, hiển thị completed minutes từng ngày, tải tiếp từng page 20
 rows bằng explicit `Xem thêm`, và giữ committed rows khi append/refresh gặp technical failure.
 
-Candidate hiện là uncommitted worktree trên base `36bd9b0...`; chưa có exact implementation SHA và
-chưa được commit/push. Automated gates và platform exports đã pass. Owner quick UI, structured device
-và formal tester vẫn `NOT_RUN`, nên Story chưa đóng.
+Owner đã xác nhận quick UI smoke ngày 2026-09-12 trên exact committed/pushed SHA `91d0612...`: app
+không crash và behavior hoạt động như kỳ vọng. Automated gates và platform exports đã pass. Story là
+`DONE_OWNER_ACCEPTED`; structured device/accessibility breadth và formal tester vẫn `NOT_RUN`.
 
 ## 2. Implemented behavior
 
@@ -76,7 +76,7 @@ contribution graph hoặc production durable-write change.
 | iOS Expo export | PASS — 1,846 modules, disposable output `/tmp/pixeldoro-us0902-ios-final-20260912` |
 | Android Expo export | PASS — 1,941 modules, disposable output `/tmp/pixeldoro-us0902-android-final-20260912` |
 | Expo Doctor online | 20/21 — chỉ known patch-version drift của 9 Expo packages; dependency upgrade ngoài scope |
-| Owner quick UI smoke | `NOT_RUN` |
+| Owner quick UI smoke | PASS — no crash, behavior worked as expected tại exact SHA `91d0612...` |
 | Structured device/accessibility matrix | `NOT_RUN` |
 
 Expo Doctor trong sandbox ban đầu chỉ hoàn thành 20 checks do network; lần online hoàn tất cả checks
@@ -87,10 +87,10 @@ và xác nhận kết quả 20/21 nêu trên. Không có dependency nào đượ
 - Contribution range/intensity/graph/colors vẫn thuộc US-09-03/04; analytics `history_viewed` thuộc
   US-09-05.
 - Không có pull-to-refresh, infinite scroll, auto retry, persisted cursor hoặc scroll restoration.
-- Candidate chưa có exact committed SHA. Sau khi code được commit, owner smoke phải ghi đúng SHA đó;
-  acceptance không được gắn vào base SHA `36bd9b0...` vì base chưa chứa implementation worktree.
-- Next gate: chạy owner quick UI theo smoke guide, báo PASS/FAIL và exact SHA. Structured a11y/platform
-  cases chưa chạy phải tiếp tục giữ `NOT_RUN`.
+- Owner quick UI đã PASS tại exact SHA `91d0612...`; structured a11y/platform cases chưa chạy phải
+  tiếp tục giữ `NOT_RUN`.
+- Next gate: US-09-03 implementation planning và owner confirmation; Story 03 coding chưa được mở bởi
+  acceptance của Story 02.
 
 Smoke guide: `apps/mobile/test/device/focus-history-pagination-lifecycle-smoke.md`.
 
@@ -98,4 +98,5 @@ Smoke guide: `apps/mobile/test/device/focus-history-pagination-lifecycle-smoke.m
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.2.0 | 2026-09-12 | Codex | Bound owner quick UI PASS to exact committed/pushed SHA `91d0612...`: no crash and expected behavior. US-09-02 is `DONE_OWNER_ACCEPTED`; structured/formal breadth remains `NOT_RUN`; US-09-03 planning is open. |
 | 0.1.0 | 2026-09-12 | Codex | Recorded implemented US-09-02 Option A candidate, automated gates, platform exports, Doctor drift and honest pre-smoke status. No commit or push. |

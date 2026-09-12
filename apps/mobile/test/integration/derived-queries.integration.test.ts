@@ -14,6 +14,7 @@ import type {
 } from '@/application';
 import {
   buildFocusHistorySections,
+  LoadDailyContributionUseCase,
   LoadFocusHistoryPageUseCase,
   SessionCommandCoordinator,
 } from '@pixeldoro/application';
@@ -514,6 +515,96 @@ describe('US-02-06 derived durable queries', () => {
       ok: true,
       value: [{ scheduledEndLocalDate: '2026-08-29', totalCompletedMinutes: 50 }],
     });
+    await reopened.owner.close();
+  });
+
+  it('builds an immutable seven-day Contribution projection from real SQLite facts without writes', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'pixeldoro-us0903-contribution-'));
+    temporaryDirectories.push(directory);
+    const driver = new HostSQLiteDriver(directory);
+    const databaseName = 'contribution-projection.db';
+    const database = await createDatabase(driver, databaseName);
+    const common = {
+      sessionType: 'focus' as const,
+      focusVariant: 'standard' as const,
+      mode: 'relax' as const,
+      workTag: 'coding' as const,
+    };
+    const fixtures: readonly SessionFixture[] = [
+      { ...common, id: 'us0903-completed-a', status: 'completed', durationMinutes: 25,
+        startedAt: BASE_TIMESTAMP, resolvedAt: BASE_TIMESTAMP + 25 * 60_000,
+        localDate: '2026-09-08' },
+      { ...common, id: 'us0903-completed-b', status: 'completed', durationMinutes: 50,
+        startedAt: BASE_TIMESTAMP + DAY_MS, resolvedAt: BASE_TIMESTAMP + DAY_MS + 50 * 60_000,
+        localDate: '2026-09-12', utcOffsetMinutes: -300 },
+      { ...common, id: 'us0903-failed', status: 'failed', durationMinutes: 25,
+        startedAt: BASE_TIMESTAMP + 2 * DAY_MS, resolvedAt: BASE_TIMESTAMP + 2 * DAY_MS + 1_000,
+        localDate: '2026-09-12' },
+      { ...common, id: 'us0903-running', status: 'running', durationMinutes: 25,
+        startedAt: BASE_TIMESTAMP + 3 * DAY_MS, resolvedAt: null, localDate: '2026-09-12' },
+      { id: 'us0903-trial', sessionType: 'focus', focusVariant: 'onboarding_trial', mode: 'relax',
+        status: 'completed', workTag: null, durationMinutes: 5,
+        startedAt: BASE_TIMESTAMP + 4 * DAY_MS,
+        resolvedAt: BASE_TIMESTAMP + 4 * DAY_MS + 5 * 60_000, localDate: '2026-09-12' },
+      { id: 'us0903-break', sessionType: 'short_break', focusVariant: null, mode: null,
+        status: 'completed', workTag: null, durationMinutes: 5,
+        startedAt: BASE_TIMESTAMP + 5 * DAY_MS,
+        resolvedAt: BASE_TIMESTAMP + 5 * DAY_MS + 5 * 60_000, localDate: '2026-09-12' },
+    ];
+    for (const fixture of fixtures) await insertSession(database.owner, fixture);
+
+    const fingerprint = (): Promise<string> => database.owner.withConnection(async (connection) =>
+      JSON.stringify({
+        sessions: await connection.getAllAsync<unknown>('SELECT * FROM sessions ORDER BY id', []),
+        rewards: await connection.getAllAsync<unknown>(
+          'SELECT * FROM reward_transactions ORDER BY id', [],
+        ),
+        profile: await connection.getAllAsync<unknown>(
+          'SELECT * FROM pet_profiles ORDER BY id', [],
+        ),
+      }));
+    const before = await fingerprint();
+    const load = (contribution = database.graph.contribution) =>
+      new LoadDailyContributionUseCase({
+        calendar: { snapshot: () => ({
+          ok: true,
+          value: { localDate: '2026-09-12', utcOffsetMinutes: 420 },
+        }) },
+        clock: { nowMs: () => BASE_TIMESTAMP + 6 * DAY_MS },
+        contribution,
+      }).execute();
+    const result = await load();
+    expect(result).toMatchObject({
+      ok: true,
+      value: {
+        startLocalDate: '2026-09-06',
+        endLocalDate: '2026-09-12',
+        days: [
+          { localDate: '2026-09-06', completedMinutes: 0, intensity: 'zero' },
+          { localDate: '2026-09-07', completedMinutes: 0 },
+          { localDate: '2026-09-08', completedMinutes: 25, completedSessionCount: 1,
+            intensity: 'medium' },
+          { localDate: '2026-09-09', completedMinutes: 0 },
+          { localDate: '2026-09-10', completedMinutes: 0 },
+          { localDate: '2026-09-11', completedMinutes: 0 },
+          { localDate: '2026-09-12', completedMinutes: 50, completedSessionCount: 1,
+            intensity: 'high' },
+        ],
+      },
+    });
+    expect(await fingerprint()).toBe(before);
+
+    await database.owner.close();
+    const reopened = await createDatabase(driver, databaseName);
+    const reopenedResult = await new LoadDailyContributionUseCase({
+      calendar: { snapshot: () => ({
+        ok: true,
+        value: { localDate: '2026-09-12', utcOffsetMinutes: -300 },
+      }) },
+      clock: { nowMs: () => BASE_TIMESTAMP + 6 * DAY_MS },
+      contribution: reopened.graph.contribution,
+    }).execute();
+    expect(reopenedResult).toEqual(result);
     await reopened.owner.close();
   });
 

@@ -12,13 +12,14 @@ describe('EPIC-09 production History integrity', () => {
     const route = read('apps/mobile/src/app/(tabs)/history.tsx');
     expect(route).toContain('useHistoryProjection');
     expect(route).toContain('useHistoryActions');
+    expect(route).toContain('useHistoryContributionActions');
     expect(route).toContain('useFocusEffect');
     expect(route).toContain('useAppVisibility');
     expect(route).toContain("previous !== 'active'");
     expect(route).not.toMatch(/from ['"].*(prototype|repository|sqlite|domain)/i);
   });
 
-  it('keeps production History presentation free of mock, graph and durable access', () => {
+  it('keeps production History presentation free of mock, final graph and durable access', () => {
     const feature = [
       read('apps/mobile/src/presentation/features/history/index.tsx'),
       read('apps/mobile/src/presentation/features/history/focus-history-list.tsx'),
@@ -27,10 +28,13 @@ describe('EPIC-09 production History integrity', () => {
       read('apps/mobile/src/presentation/features/history/history-date-section-header.tsx'),
       read('apps/mobile/src/presentation/features/history/history-pagination-footer.tsx'),
       read('apps/mobile/src/presentation/features/history/history-refresh-status.tsx'),
+      read('apps/mobile/src/presentation/features/history/contribution-panel.tsx'),
+      read('apps/mobile/src/presentation/features/history/contribution-day-row.tsx'),
     ].join('\n');
     expect(feature).toContain('FocusHistoryList');
     expect(feature).toContain('scheduledEndLocalDate');
-    expect(feature).not.toMatch(/Prototype|mock|sample|contribution|repository|sqlite/i);
+    expect(feature).toContain('7 ngày gần đây');
+    expect(feature).not.toMatch(/Prototype|mock|sample|repository|sqlite/i);
     expect(feature).not.toMatch(/XP|Coin|new Date\(/);
   });
 
@@ -44,6 +48,8 @@ describe('EPIC-09 production History integrity', () => {
       'apps/mobile/src/presentation/features/history/history-date-section-header.tsx',
       'apps/mobile/src/presentation/features/history/history-pagination-footer.tsx',
       'apps/mobile/src/presentation/features/history/history-refresh-status.tsx',
+      'apps/mobile/src/presentation/features/history/contribution-panel.tsx',
+      'apps/mobile/src/presentation/features/history/contribution-day-row.tsx',
     ]) {
       expect(read(path).split('\n').length, path).toBeLessThan(300);
     }

@@ -1,7 +1,10 @@
 # US-09-02 — Focus history pagination/lifecycle UI smoke
 
-Status: `NOT_RUN`. Chỉ ghi PASS sau khi chạy trên exact `<implementation-sha>`. Các fixture dev-only
-dùng database riêng prefix `pixeldoro-us-09-02-`; không đụng production database `pixeldoro.db`.
+Status: `OWNER_QUICK_UI_SMOKE_REPORTED_PASS`. Owner xác nhận ngày 2026-09-12 tại exact committed/
+pushed SHA `91d0612975c9532d0d860be7dcd9995584cde96b`: không crash và behavior hoạt động như kỳ vọng.
+Đây là quick UI acceptance; structured fixture/platform/accessibility rows vẫn `NOT_RUN`. Các fixture
+dev-only dùng database riêng prefix `pixeldoro-us-09-02-`; không đụng production database
+`pixeldoro.db`.
 
 ## 1. Setup và primary flow
 
@@ -68,6 +71,7 @@ BLOCKED, screenshot/recording và notes; case chưa chạy giữ `NOT_RUN`.
 
 | Platform/device/OS | Fixture | Network/a11y | Result | Artifact/notes |
 |---|---|---|---|---|
+| `Owner available UI environment; metadata not recorded` | `Quick UI smoke` | `Not recorded` | `PASS_OWNER_QUICK_UI` | 2026-09-12 at `91d0612...`: no crash, behavior worked as expected |
 | `<fill>` | `history_grouped_21` | `<fill>` | `NOT_RUN` | `<implementation-sha>` |
 | `<fill>` | `history_equal_end_boundary` | `<fill>` | `NOT_RUN` | `<fill>` |
 | `<fill>` | `history_load_more_failure_once` | `<fill>` | `NOT_RUN` | `<fill>` |

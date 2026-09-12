@@ -7,3 +7,11 @@ export {
   type HistoryPaginationState,
   type HistoryRefreshState,
 } from './history-projection';
+export {
+  ContributionController,
+  type ContributionControllerDependencies,
+} from './contribution.controller';
+export type {
+  ContributionControllerProjection,
+  ContributionRefreshState,
+} from './contribution-projection';

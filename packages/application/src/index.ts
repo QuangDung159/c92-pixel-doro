@@ -19,6 +19,22 @@ export {
   type FocusHistoryDateSection,
 } from './history/build-focus-history-sections';
 export {
+  buildContributionRangeProjection,
+  contributionIntensityFor,
+  CONTRIBUTION_RANGE_DAYS,
+  type BuildContributionRangeInput,
+  type ContributionIntensityBand,
+  type ContributionProjectionError,
+  type ContributionRangeProjection,
+  type DailyContributionProjection,
+} from './history/build-contribution-range-projection';
+export {
+  LoadDailyContributionUseCase,
+  type LoadDailyContributionDependencies,
+  type LoadDailyContributionError,
+  type LoadDailyContributionErrorCode,
+} from './history/load-daily-contribution.use-case';
+export {
   createHomeProfileProjection,
   type HomeProfileProjection,
 } from './home/create-home-profile.projection';

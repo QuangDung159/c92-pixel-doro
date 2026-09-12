@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_09_02_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-09-02 Implementation Plan
-version: 0.3.0
-status: IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE
-implementation_status: CANDIDATE_READY_FOR_OWNER_UI_SMOKE
+version: 0.4.0
+status: DONE_OWNER_ACCEPTED
+implementation_status: DONE_OWNER_ACCEPTED
 date: 2026-09-11
 last_updated: 2026-09-12
 owner: Dũng Lư
@@ -13,20 +13,21 @@ language: vi
 branch: feats/epic-09
 planning_baseline_sha: 18057fafe478ea95969c43c11b1ad72d9a7faed4
 implementation_start_sha: 18057fafe478ea95969c43c11b1ad72d9a7faed4
-current_candidate_base_sha: 36bd9b003f2eeb04f95fb6bdc56467a1d139df1c
-exact_implementation_sha: null
-candidate_identity: UNCOMMITTED_WORKTREE_ON_CURRENT_CANDIDATE_BASE
+current_candidate_base_sha: 91d0612975c9532d0d860be7dcd9995584cde96b
+exact_implementation_sha: 91d0612975c9532d0d860be7dcd9995584cde96b
+candidate_identity: EXACT_COMMITTED_OWNER_ACCEPTED_SHA
 previous_story: US-09-01
 previous_story_status: DONE_OWNER_ACCEPTED
 previous_story_accepted_sha: 18057fafe478ea95969c43c11b1ad72d9a7faed4
-manual_device_status: NOT_RUN
+owner_smoke_status: PASS_OWNER_QUICK_UI
+manual_device_status: OWNER_QUICK_UI_SMOKE_REPORTED
 formal_tester_status: NOT_RUN
 schema_change: NONE
 dependency_change: NONE
 native_change: NONE
 analytics_change: NONE_IN_THIS_STORY
 automated_status: PASS_194_FILES_992_TESTS
-next_gate: OWNER_QUICK_UI_SMOKE_AND_ACCEPT_EXACT_COMMITTED_SHA
+next_gate: US_09_03_IMPLEMENTATION_PLANNING
 scope:
   - mobile_mvp
   - epic_09
@@ -55,9 +56,9 @@ adr_domain_platform_boundary: ../architecture/decisions/ADR-004-domain-and-platf
 
 ## 0. Outcome và gate
 
-Plan này ghi lại Story đã được owner duyệt `US0902-CONFIRM-01→06 Option A` và candidate đã
-implement. Approval cấp quyền coding US-09-02 nhưng không cấp quyền commit hoặc push; candidate hiện
-là uncommitted worktree trên base `36bd9b0...` và đang chờ owner quick UI smoke.
+Plan này ghi lại Story đã được owner duyệt `US0902-CONFIRM-01→06 Option A`, implement và owner
+quick-UI accepted tại exact committed/pushed SHA `91d0612...`. Owner báo không crash và behavior hoạt
+động như kỳ vọng. Structured device/accessibility breadth và formal tester vẫn `NOT_RUN`.
 
 **User outcome:** History được group theo persisted local day, mỗi ngày có tổng số phút Standard Focus
 `completed`; user có thể xem thêm từng page mà không duplicate/mất row, và dữ liệu đã đọc vẫn còn khi
@@ -473,7 +474,7 @@ network, a11y settings, fixture/database, PASS/FAIL/BLOCKED/NOT_RUN and cleanup/
 - [x] Automated offline/relaunch/no-write/static/platform-export evidence is recorded honestly;
   structured device/a11y breadth remains `NOT_RUN`.
 - [x] No contribution, analytics, schema, dependency, native or unrelated prototype drift.
-- [ ] Owner quick UI acceptance is bound to exact committed SHA before Story 02 closes.
+- [x] Owner quick UI acceptance is bound to exact committed SHA `91d0612...`; Story 02 closed.
 
 ## 12. Owner Confirmation Register
 
@@ -548,6 +549,7 @@ cleaned after their names are resolved.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.4.0 | 2026-09-12 | Codex | Bound owner quick UI PASS to exact committed/pushed SHA `91d0612...`: no crash and expected behavior. Closed US-09-02 as `DONE_OWNER_ACCEPTED`; structured/formal breadth remains `NOT_RUN`; opened US-09-03 planning. |
 | 0.3.0 | 2026-09-12 | Codex | Implemented approved Option A candidate: cursor paging/group totals, resilient refresh/append races, one `SectionList`, isolated fixtures and smoke guide. Full quality passed 194 files/992 tests; iOS/Android exports passed; Doctor 20/21 with known Expo patch drift. Candidate is uncommitted on base `36bd9b0...`; owner UI smoke remains `NOT_RUN`. |
 | 0.2.0 | 2026-09-11 | Codex | Recorded owner approval for `US0902-CONFIRM-01→06` Option A, coding authorization and exact implementation start SHA `18057faf...`. |
 | 0.1.0 | 2026-09-11 | Codex | Audited accepted US-09-01 SHA `18057faf...`, existing cursor SQL, controller/AppVisibility/ScreenShell/UI boundaries; proposed read-only date grouping, explicit 20-row pagination, resilient refresh, one SectionList owner, five isolated fixture scenarios and six owner confirmations. No coding, commit or push. |
