@@ -2,6 +2,8 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { ContributionPanel } from './contribution-panel';
 import { ContributionDayRow } from './contribution-day-row';
+import { ContributionGraphStrip } from './contribution-graph-strip';
+import { ContributionLegend } from './contribution-legend';
 
 vi.mock('react-native', () => ({
   StyleSheet: { create: <TValue,>(styles: TValue): TValue => styles },
@@ -29,7 +31,7 @@ const findAll = (
 };
 
 describe('ContributionPanel', () => {
-  it('renders seven ready days and refresh state without final colors', () => {
+  it('renders the final graph, seven ready days, today marker and exact legend', () => {
     const days = Array.from({ length: 7 }, (_, index) => ({
       localDate: `2026-09-${String(index + 6).padStart(2, '0')}`,
       completedMinutes: index === 6 ? 25 : 0,
@@ -46,7 +48,10 @@ describe('ContributionPanel', () => {
     });
     expect(JSON.stringify(tree)).toContain('7 ngày gần đây');
     expect(JSON.stringify(tree)).toContain('Đang cập nhật đóng góp');
+    expect(findAll(tree, ContributionGraphStrip)).toHaveLength(1);
     expect(findAll(tree, ContributionDayRow)).toHaveLength(7);
+    expect(findAll(tree, ContributionDayRow)[6]?.props.isToday).toBe(true);
+    expect(findAll(tree, ContributionLegend)).toHaveLength(1);
   });
 
   it('keeps initial and stale errors local with the correct Retry intent', () => {
@@ -56,6 +61,8 @@ describe('ContributionPanel', () => {
     });
     expect(JSON.stringify(initial)).toContain('Chưa đọc được đóng góp theo ngày');
     expect(findAll(initial, 'SecondaryButton')[0]?.props.onPress).toBe(actions.onRetryInitial);
+    expect(findAll(initial, ContributionGraphStrip)).toHaveLength(0);
+    expect(findAll(initial, ContributionLegend)).toHaveLength(0);
 
     const stale = ContributionPanel({
       ...actions,
@@ -67,5 +74,7 @@ describe('ContributionPanel', () => {
     });
     expect(JSON.stringify(stale)).toContain('Chưa cập nhật được đóng góp mới nhất');
     expect(findAll(stale, 'SecondaryButton')[0]?.props.onPress).toBe(actions.onRetryRefresh);
+    expect(findAll(stale, ContributionGraphStrip)).toHaveLength(1);
+    expect(findAll(stale, ContributionLegend)).toHaveLength(1);
   });
 });

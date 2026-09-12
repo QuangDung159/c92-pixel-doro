@@ -1,18 +1,18 @@
 ---
 document_id: PIXELDORO_US_09_03_IMPLEMENTATION_REPORT
 title: PixelDoro Mobile MVP — US-09-03 Implementation Report
-version: 0.1.0
-status: CANDIDATE_AWAITING_OWNER_UI_ACCEPTANCE
+version: 0.2.0
+status: DONE_OWNER_ACCEPTED
 date: 2026-09-12
 owner: Dũng Lư
 branch: feats/epic-09
 implementation_start_sha: 91d0612975c9532d0d860be7dcd9995584cde96b
-current_candidate_base_sha: 91d0612975c9532d0d860be7dcd9995584cde96b
-exact_implementation_sha: null
-candidate_identity: UNCOMMITTED_WORKTREE_ON_CURRENT_CANDIDATE_BASE
+current_candidate_base_sha: c0291ece7a905e4048889bd96a99f2fd39a3db28
+exact_implementation_sha: c0291ece7a905e4048889bd96a99f2fd39a3db28
+candidate_identity: EXACT_COMMITTED_OWNER_ACCEPTED_SHA
 automated_status: PASS_200_FILES_1038_TESTS
-owner_smoke_status: NOT_RUN
-manual_device_status: NOT_RUN
+owner_smoke_status: PASS_OWNER_QUICK_UI
+manual_device_status: OWNER_QUICK_UI_SMOKE_REPORTED
 formal_tester_status: NOT_RUN_DEFERRED_UNLESS_EXECUTED
 schema_change: NONE
 dependency_change: NONE
@@ -28,9 +28,9 @@ US-09-03 đã được implement theo `US0903-CONFIRM-01→06 Option A`. History
 `7 ngày gần đây`, luôn tạo đúng bảy local calendar days từ ngày hiện tại, zero-fill ngày thiếu và hiển
 thị exact completed Standard Focus minutes/count cùng semantic intensity range.
 
-Candidate hiện là uncommitted worktree trên base `91d0612...`; không có commit hoặc push. Automated
-gates và platform exports đã pass. Owner UI smoke, structured device/accessibility breadth và formal
-tester vẫn `NOT_RUN`, nên Story chưa được ghi `DONE_OWNER_ACCEPTED`.
+Owner đã xác nhận quick UI smoke ngày 2026-09-12 trên exact committed/pushed SHA `c0291ec...`: app
+không crash và behavior hoạt động như kỳ vọng. Automated gates và platform exports đã pass. Story là
+`DONE_OWNER_ACCEPTED`; structured device/accessibility breadth và formal tester vẫn `NOT_RUN`.
 
 ## 2. Implemented behavior
 
@@ -76,7 +76,7 @@ write change.
 | iOS Expo export | PASS — 1,852 modules; disposable output `/tmp/pixeldoro-us0903-ios-final-20260912` |
 | Android Expo export | PASS — 1,947 modules; disposable output `/tmp/pixeldoro-us0903-android-final-20260912` |
 | Expo Doctor online | 20/21 — known patch-version drift của 9 Expo packages; upgrade ngoài scope |
-| Owner quick UI smoke | `NOT_RUN` |
+| Owner quick UI smoke | PASS — no crash, behavior worked as expected tại exact SHA `c0291ec...` |
 | Structured device/accessibility matrix | `NOT_RUN` |
 
 Final quality và cả hai platform exports đã được chạy lại trên current worktree sau adjustment cuối
@@ -88,8 +88,9 @@ của fixture/composition; output trên là evidence của candidate hiện tạ
   US-09-04; Story 03 chủ ý là neutral text-first panel.
 - Không có navigation theo tuần/tháng, custom range, streak, tooltip, share/export hoặc analytics event.
 - Structured VoiceOver/TalkBack/largest-text/physical-device breadth chưa chạy và không được xem là PASS.
-- Next gate: owner chạy quick UI guide trên exact committed candidate, xác nhận no crash/expected
-  behavior; sau đó mới bind accepted SHA và mở US-09-04 planning.
+- Owner quick UI đã PASS tại exact SHA `c0291ec...`; structured breadth chưa chạy tiếp tục giữ `NOT_RUN`.
+- Next gate: US-09-04 implementation planning và owner confirmation; acceptance US-09-03 không tự cấp
+  quyền coding Story 04.
 
 Smoke guide: `apps/mobile/test/device/contribution-projection-smoke.md`.
 
@@ -97,4 +98,5 @@ Smoke guide: `apps/mobile/test/device/contribution-projection-smoke.md`.
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.2.0 | 2026-09-12 | Codex | Bound owner quick UI PASS to exact committed/pushed SHA `c0291ec...`: no crash and expected behavior. US-09-03 is `DONE_OWNER_ACCEPTED`; structured/formal breadth remains `NOT_RUN`; US-09-04 planning is open. |
 | 0.1.0 | 2026-09-12 | Codex | Recorded approved Option A implementation candidate, automated/platform evidence and honest pre-smoke status. No commit or push. |

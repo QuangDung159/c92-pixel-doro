@@ -104,3 +104,6 @@ export { HistoryPaginationFooter } from './history-pagination-footer';
 export { HistoryRefreshStatus } from './history-refresh-status';
 export { ContributionPanel } from './contribution-panel';
 export { ContributionDayRow, contributionRangeLabels } from './contribution-day-row';
+export { ContributionGraphStrip } from './contribution-graph-strip';
+export { ContributionLegend } from './contribution-legend';
+export { contributionVisualTokens } from './contribution-visual-tokens';

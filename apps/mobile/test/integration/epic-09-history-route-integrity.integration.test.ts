@@ -19,7 +19,7 @@ describe('EPIC-09 production History integrity', () => {
     expect(route).not.toMatch(/from ['"].*(prototype|repository|sqlite|domain)/i);
   });
 
-  it('keeps production History presentation free of mock, final graph and durable access', () => {
+  it('keeps production History presentation free of mock and durable access', () => {
     const feature = [
       read('apps/mobile/src/presentation/features/history/index.tsx'),
       read('apps/mobile/src/presentation/features/history/focus-history-list.tsx'),
@@ -30,6 +30,9 @@ describe('EPIC-09 production History integrity', () => {
       read('apps/mobile/src/presentation/features/history/history-refresh-status.tsx'),
       read('apps/mobile/src/presentation/features/history/contribution-panel.tsx'),
       read('apps/mobile/src/presentation/features/history/contribution-day-row.tsx'),
+      read('apps/mobile/src/presentation/features/history/contribution-graph-strip.tsx'),
+      read('apps/mobile/src/presentation/features/history/contribution-legend.tsx'),
+      read('apps/mobile/src/presentation/features/history/contribution-visual-tokens.ts'),
     ].join('\n');
     expect(feature).toContain('FocusHistoryList');
     expect(feature).toContain('scheduledEndLocalDate');
@@ -50,6 +53,9 @@ describe('EPIC-09 production History integrity', () => {
       'apps/mobile/src/presentation/features/history/history-refresh-status.tsx',
       'apps/mobile/src/presentation/features/history/contribution-panel.tsx',
       'apps/mobile/src/presentation/features/history/contribution-day-row.tsx',
+      'apps/mobile/src/presentation/features/history/contribution-graph-strip.tsx',
+      'apps/mobile/src/presentation/features/history/contribution-legend.tsx',
+      'apps/mobile/src/presentation/features/history/contribution-visual-tokens.ts',
     ]) {
       expect(read(path).split('\n').length, path).toBeLessThan(300);
     }
@@ -63,6 +69,27 @@ describe('EPIC-09 production History integrity', () => {
     expect(list).toContain('SectionList');
     expect(list).not.toContain('ScrollView');
     expect(shell).toContain('scrollable = true');
+  });
+
+  it('keeps the contribution graph static, decorative and free of raw color authority', () => {
+    const graph = read(
+      'apps/mobile/src/presentation/features/history/contribution-graph-strip.tsx',
+    );
+    const legend = read(
+      'apps/mobile/src/presentation/features/history/contribution-legend.tsx',
+    );
+    const visualTokens = read(
+      'apps/mobile/src/presentation/features/history/contribution-visual-tokens.ts',
+    );
+    expect(graph).toContain('accessibilityElementsHidden');
+    expect(graph).toContain('no-hide-descendants');
+    expect(legend).toContain('accessibilityRole="text"');
+    expect(visualTokens).toContain('palette.accentDark');
+    expect(visualTokens).toContain('palette.white');
+    expect([graph, legend, visualTokens].join('\n')).not.toMatch(
+      /#[0-9a-f]{3,8}|onPress|Pressable|Touchable|ScrollView|Animated|repository|sqlite/i,
+    );
+    expect(graph).not.toMatch(/numberOfLines|adjustsFontSizeToFit|minimumFontScale/);
   });
 
   it('preserves the later-owner Settings prototype and root provider', () => {

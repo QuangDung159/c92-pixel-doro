@@ -9,6 +9,8 @@ import {
 import { palette } from '@/presentation/theme/palette';
 
 import { ContributionDayRow } from './contribution-day-row';
+import { ContributionGraphStrip } from './contribution-graph-strip';
+import { ContributionLegend } from './contribution-legend';
 
 export const ContributionPanel = ({
   onRetryInitial,
@@ -41,11 +43,17 @@ export const ContributionPanel = ({
             <SecondaryButton label="Thử lại" onPress={onRetryRefresh} />
           </View>
         ) : null}
-        <View accessibilityRole="list">
+        <ContributionGraphStrip days={projection.value.days} />
+        <View accessibilityRole="list" style={styles.days}>
           {projection.value.days.map((day) => (
-            <ContributionDayRow day={day} key={day.localDate} />
+            <ContributionDayRow
+              day={day}
+              isToday={day.localDate === projection.value.endLocalDate}
+              key={day.localDate}
+            />
           ))}
         </View>
+        <ContributionLegend />
       </>
     ) : null}
   </View>
@@ -60,5 +68,6 @@ const styles = StyleSheet.create({
     gap: 10,
     padding: 14,
   },
+  days: { gap: 0 },
   notice: { gap: 8 },
 });

@@ -15,10 +15,11 @@ describe('ContributionDayRow', () => {
       completedMinutes: 50,
       completedSessionCount: 2,
       intensity: 'high',
-    } });
+    }, isToday: true });
     expect(tree.props.accessibilityLabel)
-      .toBe('12/09/2026, 50 phút Focus hoàn thành, 2 phiên hoàn thành, mức 50–99 phút');
+      .toBe('12/09/2026, Hôm nay, 50 phút Focus hoàn thành, 2 phiên hoàn thành, mức 50–99 phút');
     expect(JSON.stringify(tree)).toContain('12/09');
+    expect(JSON.stringify(tree)).toContain('Hôm nay');
     expect(JSON.stringify(tree)).toContain('50 phút');
     expect(JSON.stringify(tree)).toContain('2 phiên hoàn thành');
     expect(contributionRangeLabels).toEqual({
@@ -28,5 +29,16 @@ describe('ContributionDayRow', () => {
       high: '50–99 phút',
       peak: '100+ phút',
     });
+  });
+
+  it('does not add a today marker to older days', () => {
+    const tree = ContributionDayRow({ day: {
+      localDate: '2026-09-11',
+      completedMinutes: 0,
+      completedSessionCount: 0,
+      intensity: 'zero',
+    } });
+    expect(tree.props.accessibilityLabel).not.toContain('Hôm nay');
+    expect(JSON.stringify(tree)).not.toContain('Hôm nay');
   });
 });

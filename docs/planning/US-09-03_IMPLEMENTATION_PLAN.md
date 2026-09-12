@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_US_09_03_IMPLEMENTATION_PLAN
 title: PixelDoro Mobile MVP — US-09-03 Implementation Plan
-version: 0.3.0
-status: IMPLEMENTED_AWAITING_OWNER_ACCEPTANCE
-implementation_status: CANDIDATE_READY_FOR_OWNER_UI_SMOKE
+version: 0.4.0
+status: DONE_OWNER_ACCEPTED
+implementation_status: DONE_OWNER_ACCEPTED
 date: 2026-09-12
 last_updated: 2026-09-12
 owner: Dũng Lư
@@ -13,13 +13,13 @@ language: vi
 branch: feats/epic-09
 planning_baseline_sha: 91d0612975c9532d0d860be7dcd9995584cde96b
 implementation_start_sha: 91d0612975c9532d0d860be7dcd9995584cde96b
-current_candidate_base_sha: 91d0612975c9532d0d860be7dcd9995584cde96b
-exact_implementation_sha: null
-candidate_identity: UNCOMMITTED_WORKTREE_ON_CURRENT_CANDIDATE_BASE
+current_candidate_base_sha: c0291ece7a905e4048889bd96a99f2fd39a3db28
+exact_implementation_sha: c0291ece7a905e4048889bd96a99f2fd39a3db28
+candidate_identity: EXACT_COMMITTED_OWNER_ACCEPTED_SHA
 previous_story: US-09-02
 previous_story_status: DONE_OWNER_ACCEPTED
 previous_story_accepted_sha: 91d0612975c9532d0d860be7dcd9995584cde96b
-manual_device_status: NOT_RUN
+manual_device_status: OWNER_QUICK_UI_SMOKE_REPORTED_PASS
 formal_tester_status: NOT_RUN
 schema_change: NONE
 dependency_change: NONE
@@ -27,7 +27,7 @@ native_change: NONE
 analytics_change: NONE_IN_THIS_STORY
 product_decision: OPEN_006_RESOLVED_OPTION_A
 automated_status: PASS_200_FILES_1038_TESTS
-next_gate: OWNER_QUICK_UI_SMOKE_AND_ACCEPT_EXACT_COMMITTED_SHA
+next_gate: US_09_04_IMPLEMENTATION_PLAN_CONFIRMATION
 scope:
   - mobile_mvp
   - epic_09
@@ -413,7 +413,7 @@ SHA, device/OS/runtime, timezone, network, a11y, fixture/database, result/artifa
 - [x] Automated offline/relaunch/read-only/static/platform-export evidence is recorded honestly;
   structured device/a11y breadth remains `NOT_RUN`.
 - [x] No schema, dependency, native, analytics, final graph or unrelated drift.
-- [ ] Owner quick UI acceptance is bound to exact committed SHA before Story 03 closes.
+- [x] Owner quick UI acceptance is bound to exact committed SHA `c0291ec...`; Story 03 closed.
 
 ## 11. Owner Confirmation Register
 
@@ -491,6 +491,7 @@ History composition. No database rollback or data deletion is required. Never re
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.4.0 | 2026-09-12 | Codex | Bound owner quick UI PASS to exact committed/pushed SHA `c0291ec...`: no crash and expected behavior. Closed US-09-03 as `DONE_OWNER_ACCEPTED`; structured/formal breadth remains `NOT_RUN`; opened US-09-04 planning. |
 | 0.3.0 | 2026-09-12 | Codex | Implemented approved Option A candidate: seven-day civil range, sparse zero-fill, semantic bands, read-only use case, independent resilient controller, neutral SectionList-header panel, isolated fixtures and smoke guide. Full quality passed 200 files/1,038 tests; iOS/Android exports passed; Doctor 20/21 known patch drift. Candidate is uncommitted on base `91d0612...`; owner UI smoke remains `NOT_RUN`. |
 | 0.2.0 | 2026-09-12 | Codex | Recorded owner approval for `US0903-CONFIRM-01→06 Option A`, resolved `OPEN-006`, opened coding and bound implementation start SHA `91d0612...`. No commit/push authority. |
 | 0.1.0 | 2026-09-12 | Codex | Audited accepted US-09-02 SHA `91d0612...`, existing contribution SQL/index/clock/calendar/History scroll architecture and unresolved `OPEN-006`; proposed rolling seven-day immutable projection, zero-fill, exact semantic bands/palette authority, independent controller, neutral SectionList-header panel, isolated fixtures and six owner confirmations. No coding, test claim, commit or push. |

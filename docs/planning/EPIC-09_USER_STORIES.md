@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_09_USER_STORIES
 title: PixelDoro EPIC-09 — Focus History và Contribution Graph User Stories
-version: 0.6.0
+version: 0.9.0
 status: IMPLEMENTATION_IN_PROGRESS_OWNER_GATED
 date: 2026-09-11
 last_updated: 2026-09-12
@@ -19,13 +19,13 @@ previous_epic: EPIC-08
 previous_epic_status: DONE_OWNER_ACCEPTED
 previous_epic_accepted_sha: 30adc34be23dca48379b6f2553203fdadb9f9e5b
 previous_epic_closure_commit: 05e3e883e0c6dc3292b3707fd5fe5af65032dc75
-implementation_status: US_09_01_AND_02_DONE_OWNER_ACCEPTED_US_09_03_CANDIDATE_AWAITING_OWNER_UI
+implementation_status: US_09_01_TO_03_DONE_OWNER_ACCEPTED_US_09_04_CANDIDATE_AWAITING_OWNER_UI
 formal_tester_status: NOT_RUN
 schema_impact: NONE_PROPOSED_EXISTING_SCHEMA_001_SUFFICIENT
 dependency_impact: NONE_PROPOSED
 native_impact: NONE_PROPOSED
 product_gate: OPEN_006_RESOLVED_OPTION_A
-next_gate: OWNER_SMOKE_US_09_03_EXACT_CANDIDATE
+next_gate: OWNER_VISUAL_SMOKE_US_09_04_EXACT_CANDIDATE
 product_truth: ../PIXELDORO_CORE_TRUTH.md
 epic_baseline: ./MVP_EPICS.md
 data_model: ../architecture/data-model.md
@@ -39,9 +39,8 @@ previous_epic_exit: ./EPIC-08_EXIT_REPORT.md
 ## 0. Mục đích và authority
 
 Tài liệu này audit baseline và theo dõi các vertical slice của `EPIC-09`, với output quan sát được,
-dependency, test, device guide, rollback và owner gate riêng. US-09-01/02 đã owner accepted; US-09-03
-đã có implementation candidate chờ owner UI smoke và các Story sau vẫn cần implementation-plan
-confirmation riêng. Tài liệu không
+dependency, test, device guide, rollback và owner gate riêng. US-09-01→03 đã owner accepted;
+US-09-04 đang ở implementation-plan confirmation gate và Story sau vẫn cần gate riêng. Tài liệu không
 tự cấp quyền coding, commit hoặc push.
 
 Thứ tự authority khi review hoặc triển khai:
@@ -365,8 +364,8 @@ horizontal “backend-only” slice; Story 03 có neutral semantic day panel tr�
 |---:|---|---|---|---|---|
 | 1 | US-09-01 — Truthful Standard Focus History First Page | History tab đọc và hiển thị first page terminal Standard Focus thật từ SQLite | P0 | EPIC-08; confirmations 05/08/10 | DONE_OWNER_ACCEPTED — `18057faf...` |
 | 2 | US-09-02 — Date-grouped Pagination và Resilient Refresh | User xem thêm history theo ngày mà không duplicate/mất dữ liệu khi refresh lỗi | P0 | 01; confirmations 01/02/06 | DONE_OWNER_ACCEPTED — `91d0612...` |
-| 3 | US-09-03 — Stable Daily Contribution Projection | User thấy đủ các ngày trong range và đúng completed minutes/intensity semantics | P0 | 01; confirmations 03/04 | IMPLEMENTED_AWAITING_OWNER_UI — uncommitted on `91d0612...` |
-| 4 | US-09-04 — Production Contribution Graph và Accessibility | User đọc graph rõ trên small screen, screen reader, largest text và grayscale | P1 | 02/03; `OPEN-006` confirmation 04 | BLOCKED_BY_OWNER_COLOR_GATE |
+| 3 | US-09-03 — Stable Daily Contribution Projection | User thấy đủ các ngày trong range và đúng completed minutes/intensity semantics | P0 | 01; confirmations 03/04 | DONE_OWNER_ACCEPTED — `c0291ec...` |
+| 4 | US-09-04 — Production Contribution Graph và Accessibility | User đọc graph rõ trên small screen, screen reader, largest text và grayscale | P1 | 02/03; `OPEN-006` confirmation 04 | IMPLEMENTED_AWAITING_OWNER_UI — uncommitted on `c0291ec...` |
 | 5 | US-09-05 — Offline Lifecycle, Analytics, Prototype Integrity và Epic Exit | History ổn định qua refocus/relaunch/offline và sẵn sàng exit evidence | P1 | 01→04; confirmations 06/07/09/10 | NOT_STARTED |
 
 ## 9. US-09-01 — Truthful Standard Focus History First Page
@@ -591,8 +590,8 @@ cannot reproduce them deterministically.
 
 ### 11.4. Manual smoke checklist
 
-Implemented file: `apps/mobile/test/device/contribution-projection-smoke.md`; `Status: NOT_RUN`
-pending owner execution.
+Implemented file: `apps/mobile/test/device/contribution-projection-smoke.md`;
+`Status: OWNER_QUICK_UI_SMOKE_REPORTED_PASS` at `c0291ec...`. Structured rows remain `NOT_RUN`.
 
 - [ ] Record implementation SHA/device/build/timezone/network/a11y/env/database.
 - [ ] Empty fixture shows exact zero days and zero-minute labels.
@@ -609,7 +608,7 @@ pending owner execution.
 - [x] **DoR:** exact range/bands/palette fallback are traceable to owner decision.
 - [x] **DoD:** domain/application/SQLite/component tests and neutral panel pass.
 - [x] **DoD:** no contribution aggregate/color/level stored in SQLite/Zustand authority.
-- [ ] **Next gate:** owner quick UI accepts exact committed US-09-03 candidate before Story 04 planning.
+- [x] **Next gate:** owner accepted Story 03 at exact SHA `c0291ec...`; Story 04 planning is open.
 
 ## 12. US-09-04 — Production Contribution Graph và Accessibility
 
@@ -631,32 +630,33 @@ pending owner execution.
 - **Analytics:** no graph-interaction event.
 - **Accessibility:** chronological order; full day/date/minutes/count/band label; visible numeric fallback;
   legend has text ranges; decorative color is hidden from duplicate focus; no required motion.
-- **Owner approval gate:** exact `OPEN-006` Option A/B selection plus Story 03 acceptance.
+- **Owner approval gate:** Story 03 is accepted and `OPEN-006` is resolved; Story-04 visual/a11y
+  implementation still requires approval of its dedicated plan confirmations.
 - **Rollback notes:** revert visual component to accepted neutral Story-03 panel; never alter facts/query.
 
 ### 12.1. Acceptance criteria
 
-- [ ] Final swatches and thresholds exactly match resolved `OPEN-006`; no prototype color authority.
-- [ ] Seven/date-range cells render in chronological order with stable keys and zero-day cells.
-- [ ] Cell/legend meaning remains clear in grayscale and without color.
-- [ ] Screen reader announces one concise label per day in logical order without duplicate decorative focus.
+- [x] Final swatches and thresholds exactly match resolved `OPEN-006`; no prototype color authority.
+- [x] Seven/date-range cells render in chronological order with stable keys and zero-day cells.
+- [x] Cell/legend contains exact numeric/text meaning independent of color.
+- [x] Screen-reader props expose one concise label per day without duplicate decorative focus.
 - [ ] Largest text wraps labels/legend without clipping; small portrait can scroll without horizontal loss.
-- [ ] Touch-target rule is not falsely applied to non-interactive cells; no affordance suggests tap.
-- [ ] Reduce Motion changes no meaning; graph has no required animation.
-- [ ] Loading/error/retry/stale behavior does not hide valid History list.
-- [ ] Long Vietnamese labels and locale date copy remain readable.
-- [ ] Graph/list/screen modules respect responsibility and line limits.
+- [x] Touch-target rule is not falsely applied to non-interactive cells; no affordance suggests tap.
+- [x] Reduce Motion changes no meaning; graph has no animation.
+- [x] Loading/error/retry/stale behavior does not hide valid History list.
+- [ ] Long Vietnamese labels and locale date copy remain readable at largest device text.
+- [x] Graph/list/screen modules respect responsibility and line limits.
 
 ### 12.2. Automated tests
 
-- [ ] Component snapshot/structure for every band, zero/mixed/full range and stable order.
-- [ ] Accessibility labels, roles, hidden decorative children and reading order.
-- [ ] Contrast token/static assertions where deterministic; device visual contrast remains manual.
-- [ ] Largest-text-shaped long labels and small-width layout contract.
-- [ ] No animation/gesture/network/repository import.
-- [ ] Loading/error/stale panel does not replace ready list.
-- [ ] Common ScreenShell/Panel/State/InlineNotice regressions for every current consumer.
-- [ ] Static graph semantics remain derived and non-persisted.
+- [x] Component structure for every band, zero/mixed/full range and stable order.
+- [x] Accessibility labels, roles, hidden decorative children and reading order.
+- [x] Contrast token/static assertions; device visual contrast remains manual.
+- [x] No truncation/downscale API and no horizontal-scroll layout contract; device largest text remains manual.
+- [x] No animation/gesture/network/repository import.
+- [x] Loading/error/stale panel does not replace ready list.
+- [x] Common ScreenShell/Panel/State/InlineNotice regressions pass in full suite.
+- [x] Static graph semantics remain derived and non-persisted.
 
 ### 12.3. Fixture/data requirements
 
@@ -665,7 +665,7 @@ prefix `pixeldoro-us-09-04-`. Palette/fallback is bundled and deterministic; no 
 
 ### 12.4. Manual smoke checklist
 
-Proposed file: `apps/mobile/test/device/contribution-graph-accessibility-smoke.md`; `Status: NOT_RUN`.
+Implemented file: `apps/mobile/test/device/contribution-graph-accessibility-smoke.md`; `Status: NOT_RUN`.
 
 - [ ] Record exact metadata and owner-approved `OPEN-006` decision reference.
 - [ ] Compare all-zero, all bands and mixed-status fixtures against expected minutes/ranges.
@@ -678,9 +678,9 @@ Proposed file: `apps/mobile/test/device/contribution-graph-accessibility-smoke.m
 
 ### 12.5. DoR / DoD
 
-- [ ] **DoR:** Stories 02/03 accepted and `OPEN-006` resolved explicitly.
-- [ ] **DoR:** final palette/threshold/legend copy reviewed by Product/Design.
-- [ ] **DoD:** component/a11y/static tests pass; manual status is recorded, never inferred.
+- [x] **DoR:** Stories 02/03 accepted and `OPEN-006` resolved explicitly.
+- [x] **DoR:** final palette/threshold/legend copy approved through `US0904-CONFIRM-01→06 Option A`.
+- [x] **DoD:** component/a11y/static tests pass; manual status is recorded, never inferred.
 - [ ] **DoD:** final visual owner acceptance bound to exact SHA before Story 05 exit.
 
 ## 13. US-09-05 — Offline Lifecycle, Analytics, Prototype Integrity và Epic Exit
@@ -917,7 +917,7 @@ settings, fixture env, dedicated isolated database, cleanup/reset and env-unset 
 |---|---|---|---|
 | US-09-01 | `apps/mobile/test/device/focus-history-first-page-smoke.md` | empty/mixed/exclusions/error/Retry/relaunch/a11y | PASS_OWNER_QUICK_UI at `18057faf...`; structured breadth NOT_RUN |
 | US-09-02 | `apps/mobile/test/device/focus-history-pagination-lifecycle-smoke.md` | group/page/append failure/refocus/small screen | PASS_OWNER_QUICK_UI at `91d0612...`; structured breadth NOT_RUN |
-| US-09-03 | `apps/mobile/test/device/contribution-projection-smoke.md` | zero/mixed/range/local-day/timezone/error | NOT_RUN |
+| US-09-03 | `apps/mobile/test/device/contribution-projection-smoke.md` | zero/mixed/range/local-day/timezone/error | PASS_OWNER_QUICK_UI at `c0291ec...`; structured breadth NOT_RUN |
 | US-09-04 | `apps/mobile/test/device/contribution-graph-accessibility-smoke.md` | final colors, VoiceOver/TalkBack, largest text, grayscale, Reduce Motion | NOT_RUN |
 | US-09-05 | `apps/mobile/test/device/epic-09-exit-smoke.md` | aggregate offline/relaunch/lifecycle/analytics/prototype integrity | NOT_RUN |
 
@@ -1109,12 +1109,15 @@ không tạo implementation plan Story 01 trong cùng bước này.
 - [x] US-09-02 automated quality and platform export evidence is recorded; owner/manual device status
   remains explicitly `NOT_RUN` until executed.
 - [x] US-09-03 automated quality and platform export evidence is recorded; owner/manual device status
-  remains explicitly `NOT_RUN` until executed.
+  includes quick UI PASS at exact SHA `c0291ec...`; structured/formal breadth remains `NOT_RUN`.
 
 ## 26. Change Log
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 0.9.0 | 2026-09-12 | Codex | Recorded approved US-09-04 Option A implementation candidate on uncommitted worktree over `c0291ec...`: exact palette/contrast mapping, static seven-cell strip, retained accessible rows, today marker, exact legend and smoke guide. Quality passed 203 files/1,044 tests; platform exports passed; owner visual smoke remains `NOT_RUN`. |
+| 0.8.0 | 2026-09-12 | Codex | Recorded owner approval for `US0904-CONFIRM-01→06 Option A`; opened US-09-04 coding on exact start SHA `c0291ec...`. No commit/push authority. |
+| 0.7.0 | 2026-09-12 | Codex | Bound US-09-03 owner quick UI PASS to exact committed/pushed SHA `c0291ec...`; no crash and expected behavior. Structured/formal breadth remains `NOT_RUN`; closed Story 03 and opened owner-gated US-09-04 implementation planning. |
 | 0.6.0 | 2026-09-12 | Codex | Recorded approved US-09-03 Option A implementation candidate on uncommitted worktree over `91d0612...`: seven-day zero-filled contribution projection, semantic bands, independent resilient controller, neutral text-first panel, fixtures and smoke guide. Automated quality passed 200 files/1,038 tests; platform exports passed; owner UI remains `NOT_RUN`. |
 | 0.4.0 | 2026-09-12 | Codex | Bound US-09-02 owner quick UI PASS to exact committed/pushed SHA `91d0612...`; no crash and expected behavior. Structured/formal breadth remains `NOT_RUN`; opened owner-gated US-09-03 implementation planning. |
 | 0.3.0 | 2026-09-12 | Codex | Recorded US-09-02 Option A implementation candidate on uncommitted worktree over `36bd9b0...`; full quality passed 194 files/992 tests, iOS/Android exports passed, Doctor remains 20/21 known patch drift, owner UI smoke remains `NOT_RUN`. |

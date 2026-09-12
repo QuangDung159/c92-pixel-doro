@@ -15,19 +15,25 @@ const rangeLabels: Record<DailyContributionProjection['intensity'], string> = {
 
 export const ContributionDayRow = ({
   day,
+  isToday = false,
 }: {
   readonly day: DailyContributionProjection;
+  readonly isToday?: boolean;
 }) => {
   const date = formatHistoryLocalDate(day.localDate);
   const range = rangeLabels[day.intensity];
+  const todayLabel = isToday ? ', Hôm nay' : '';
   return (
     <View
       accessible
-      accessibilityLabel={`${date}, ${day.completedMinutes} phút Focus hoàn thành, ${day.completedSessionCount} phiên hoàn thành, mức ${range}`}
+      accessibilityLabel={`${date}${todayLabel}, ${day.completedMinutes} phút Focus hoàn thành, ${day.completedSessionCount} phiên hoàn thành, mức ${range}`}
       accessibilityRole="text"
       style={styles.row}
     >
-      <Text style={styles.date}>{date.slice(0, 5)}</Text>
+      <View style={styles.dateGroup}>
+        <Text style={styles.date}>{date.slice(0, 5)}</Text>
+        {isToday ? <Text style={styles.today}>Hôm nay</Text> : null}
+      </View>
       <View style={styles.value}>
         <Text style={styles.minutes}>{day.completedMinutes} phút</Text>
         <Text style={styles.sessions}>{day.completedSessionCount} phiên hoàn thành</Text>
@@ -48,7 +54,9 @@ const styles = StyleSheet.create({
     minHeight: 54,
     paddingVertical: 8,
   },
-  date: { color: palette.textPrimary, fontSize: 14, fontWeight: '900', minWidth: 44 },
+  dateGroup: { gap: 2, minWidth: 72 },
+  date: { color: palette.textPrimary, fontSize: 14, fontWeight: '900' },
+  today: { color: palette.textSecondary, fontSize: 11, fontWeight: '800', lineHeight: 16 },
   value: { flex: 1, minWidth: 135 },
   minutes: { color: palette.textPrimary, fontSize: 15, fontWeight: '900', lineHeight: 21 },
   sessions: { color: palette.textSecondary, fontSize: 12, lineHeight: 17 },

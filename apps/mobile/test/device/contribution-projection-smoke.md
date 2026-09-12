@@ -1,7 +1,9 @@
 # US-09-03 — Daily contribution projection UI smoke
 
-Status: `NOT_RUN`. Chỉ ghi PASS sau khi chạy trên exact `<implementation-sha>`. Fixture dùng database
-riêng prefix `pixeldoro-us-09-03-`; không đụng production database `pixeldoro.db`.
+Status: `OWNER_QUICK_UI_SMOKE_REPORTED_PASS`. Owner xác nhận ngày 2026-09-12 tại exact committed/
+pushed SHA `c0291ece7a905e4048889bd96a99f2fd39a3db28`: không crash và behavior hoạt động như kỳ vọng.
+Đây là quick UI acceptance; structured fixture/platform/accessibility rows vẫn `NOT_RUN`. Fixture dùng
+database riêng prefix `pixeldoro-us-09-03-`; không đụng production database `pixeldoro.db`.
 
 ## 1. Setup và flow chính
 
@@ -63,6 +65,7 @@ BLOCKED, screenshot/recording và notes; case chưa chạy giữ `NOT_RUN`.
 
 | Platform/device/OS | Fixture | Network/a11y | Result | Artifact/notes |
 |---|---|---|---|---|
+| `Owner available UI environment; metadata not recorded` | `Quick UI smoke` | `Not recorded` | `PASS_OWNER_QUICK_UI` | 2026-09-12 at `c0291ec...`: no crash, behavior worked as expected |
 | `<fill>` | `contribution_mixed_week` | `<fill>` | `NOT_RUN` | `<implementation-sha>` |
 | `<fill>` | `contribution_zero_week` | `<fill>` | `NOT_RUN` | `<fill>` |
 | `<fill>` | `contribution_threshold_edges` | `<fill>` | `NOT_RUN` | `<fill>` |

@@ -59,6 +59,23 @@ const focusHistoryPaginationFlow = await readFile(
 const contributionProjectionFlow = await readFile(
   `${deviceDirectory}contribution-projection-smoke.md`, 'utf8',
 );
+const contributionGraphFlow = await readFile(
+  `${deviceDirectory}contribution-graph-accessibility-smoke.md`, 'utf8',
+);
+for (const evidence of [
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=contribution_mixed_week',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=contribution_zero_week',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=contribution_threshold_edges',
+  'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=contribution_read_failure_once',
+  'pixeldoro-us-09-03-', '7 NGÀY GẦN ĐÂY', 'Hôm nay', 'Mức đóng góp',
+  'white border', 'VoiceOver/TalkBack', 'grayscale', 'Reduce Motion',
+  'Airplane mode', 'pixeldoro.db', 'NOT_RUN', '<implementation-sha>',
+  'unset EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE',
+]) {
+  if (!contributionGraphFlow.includes(evidence)) {
+    throw new Error(`Contribution graph device guide is missing: ${evidence}`);
+  }
+}
 for (const evidence of [
   'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=contribution_zero_week',
   'EXPO_PUBLIC_EPIC_09_REVIEW_FIXTURE=contribution_mixed_week',
