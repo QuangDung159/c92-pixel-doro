@@ -212,7 +212,12 @@ export const runTypedRepositoriesProbe = async (
     const analyticsWrite = await first.persistence.analyticsQueue.enqueueBounded({
       eventId: 'repository-event-1',
       eventName: 'focus_session_completed',
-      properties: { mode: 'strict', durationMinutes: 25 },
+      properties: {
+        mode: 'strict',
+        durationMinutes: 25,
+        workTag: 'coding',
+        terminalStatus: 'completed',
+      },
       occurredAt: RESOLVED_AT + 2,
       expiresAt: RESOLVED_AT + 2 + 604_800_000,
       deliveryState: 'pending',

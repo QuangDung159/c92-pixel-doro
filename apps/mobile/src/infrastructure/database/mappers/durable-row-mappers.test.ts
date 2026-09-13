@@ -180,19 +180,23 @@ describe('durable row mappers', () => {
     })).toMatchObject({ ok: true, value: { appVersion: '0.1.0' } });
     expect(mapAnalyticsEventRow({
       event_id: 'event-1', event_name: 'focus_session_started',
-      properties_json: '{"mode":"strict","durationMinutes":25}', occurred_at: timestamp,
+      properties_json: '{"mode":"strict","workTag":"coding","durationMinutes":25}',
+      occurred_at: timestamp,
       expires_at: timestamp + 604_800_000, delivery_state: 'pending', attempt_count: 0,
       next_attempt_at: null, created_at: timestamp,
     })).toMatchObject({
       ok: true,
-      value: { properties: { mode: 'strict', durationMinutes: 25 }, nextAttemptAt: null },
+      value: {
+        properties: { mode: 'strict', workTag: 'coding', durationMinutes: 25 },
+        nextAttemptAt: null,
+      },
     });
-    expect(serializeAnalyticsProperties({
+    expect(serializeAnalyticsProperties('focus_session_started', {
       focusVariant: null,
       isFirstSession: true,
       durationMinutes: 25,
-    })).toMatchObject({ ok: true });
-    expect(serializeAnalyticsProperties({
+    } as never)).toEqual({ ok: false, field: 'properties' });
+    expect(serializeAnalyticsProperties('item_unlocked', {
       itemId: 'desk-mug',
       pricePaidCoins: 5,
     })).toEqual({
@@ -217,14 +221,20 @@ describe('durable row mappers', () => {
       ok: false,
       field: 'properties_json',
     });
-    expect(serializeAnalyticsProperties({ nested: { bad: true } } as never)).toEqual({
+    expect(serializeAnalyticsProperties(
+      'history_viewed',
+      { nested: { bad: true } } as never,
+    )).toEqual({
       ok: false,
       field: 'properties',
     });
-    expect(serializeAnalyticsProperties(Object.fromEntries(
+    expect(serializeAnalyticsProperties('history_viewed', Object.fromEntries(
       Array.from({ length: 21 }, (_, index) => [`p${index}`, index]),
     ))).toEqual({ ok: false, field: 'properties' });
-    expect(serializeAnalyticsProperties({ text: 'x'.repeat(2_100) })).toEqual({
+    expect(serializeAnalyticsProperties(
+      'history_viewed',
+      { text: 'x'.repeat(2_100) },
+    )).toEqual({
       ok: false,
       field: 'properties',
     });

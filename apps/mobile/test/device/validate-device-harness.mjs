@@ -68,6 +68,31 @@ const epic09ExitFlow = await readFile(
 const epic10QuickUiFlow = await readFile(
   `${deviceDirectory}epic-10-quick-ui-smoke.md`, 'utf8',
 );
+const epic11QuickUiFlow = await readFile(
+  `${deviceDirectory}epic-11-quick-ui-smoke.md`, 'utf8',
+);
+for (const evidence of [
+  'READY_FOR_OWNER_QUICK_UI',
+  'EXPO_PUBLIC_EPIC_11_REVIEW_FIXTURE=epic_11_quick',
+  'EXPO_PUBLIC_EPIC_11_REVIEW_FIXTURE=epic_11_feedback_failure_once',
+  'EXPO_PUBLIC_EPIC_11_REVIEW_FIXTURE=epic_11_review_cooldown',
+  'EXPO_PUBLIC_EPIC_11_REVIEW_FIXTURE=epic_11_review_unavailable',
+  'EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE=first_use_returning',
+  'EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE=standard_completion_fast_clock',
+  'pixeldoro-us-11-epic-11-quick.db', 'Góp ý cho PixelDoro',
+  'Kết quả đã làm sạch: requested', 'ineligible', 'unavailable',
+  'VoiceOver/TalkBack', 'Reduce Motion', 'pixeldoro.db',
+  'PASS', 'FAIL', 'BLOCKED', 'NOT_RUN', '<implementation-sha>',
+  'unset EXPO_PUBLIC_EPIC_11_REVIEW_FIXTURE',
+  'unset EXPO_PUBLIC_EPIC_05_REVIEW_FIXTURE',
+  'unset EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE',
+]) {
+  if (!epic11QuickUiFlow.includes(evidence)) {
+    throw new Error(`EPIC-11 quick UI guide is missing: ${evidence}`);
+  }
+}
+await access(`${mobileDirectory}/src/composition/review/epic-11-review-fixture.ts`);
+await access(`${mobileDirectory}/src/presentation/features/feedback/index.tsx`);
 for (const evidence of [
   'EXPO_PUBLIC_EPIC_10_REVIEW_FIXTURE=epic_10_quick',
   'EXPO_PUBLIC_EPIC_06_REVIEW_FIXTURE=standard_completion_fast_clock',

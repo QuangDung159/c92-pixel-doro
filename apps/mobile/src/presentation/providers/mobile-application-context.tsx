@@ -68,6 +68,18 @@ export const useRecoveryRetry = (): (() => Promise<void>) => {
   return retryRecovery;
 };
 
+export const useRecordFocusSetupViewed = (): (() => void) =>
+  useMobileApplication().recordFocusSetupViewed;
+
+export const useRequestStoreReviewAtHome = () =>
+  useMobileApplication().requestStoreReviewAtHome;
+
+export const useEpic11ReviewFixtureAvailable = (): boolean =>
+  useMobileApplication().epic11ReviewFixtureAvailable;
+
+export const useEpic11ReviewFixtureLabel = (): string | null =>
+  useMobileApplication().epic11ReviewFixtureLabel;
+
 export const useFirstUseEntryProjection = (): FirstUseEntryProjection => {
   const { firstUseEntry } = useMobileApplication();
   return useSyncExternalStore(

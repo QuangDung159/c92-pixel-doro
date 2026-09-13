@@ -1,5 +1,6 @@
-import { useCallback } from 'react';
-import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useRef, useState } from 'react';
+import type { StoreReviewRequestOutcome } from '@/application';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 
 import { HomeScreen } from '@/presentation/features/home';
 import {
@@ -9,12 +10,24 @@ import {
   usePetVisualProjection,
   useRoomDecorationsActions,
   useRoomDecorationsProjection,
+  useEpic11ReviewFixtureAvailable,
+  useEpic11ReviewFixtureLabel,
+  useRequestStoreReviewAtHome,
 } from '@/presentation/providers/mobile-application-context';
 
 import { PetRouteVisibility } from '../pet-route-visibility';
 
 export default function HomeRoute() {
   const router = useRouter();
+  const { reviewToken } = useLocalSearchParams<{
+    readonly reviewToken?: string | string[];
+  }>();
+  const requestStoreReview = useRequestStoreReviewAtHome();
+  const reviewFixtureAvailable = useEpic11ReviewFixtureAvailable();
+  const reviewFixtureLabel = useEpic11ReviewFixtureLabel();
+  const [reviewFixtureOutcome, setReviewFixtureOutcome] =
+    useState<StoreReviewRequestOutcome | null>(null);
+  const lastReviewToken = useRef<string | null>(null);
   const profile = useHomeProfileProjection();
   const pet = usePetVisualProjection();
   const refreshPet = usePetCompanionRefresh();
@@ -28,10 +41,30 @@ export default function HomeRoute() {
 
   useFocusEffect(
     useCallback(() => {
+      let focused = true;
       void refreshPet();
       void activateRoom();
-      return deactivateRoom;
-    }, [activateRoom, deactivateRoom, refreshPet]),
+      if (
+        typeof reviewToken === 'string' && reviewToken.trim() &&
+        lastReviewToken.current !== reviewToken
+      ) {
+        lastReviewToken.current = reviewToken;
+        void requestStoreReview(reviewToken).then((outcome) => {
+          if (focused && reviewFixtureAvailable) setReviewFixtureOutcome(outcome);
+        });
+      }
+      return () => {
+        focused = false;
+        deactivateRoom();
+      };
+    }, [
+      activateRoom,
+      deactivateRoom,
+      refreshPet,
+      requestStoreReview,
+      reviewFixtureAvailable,
+      reviewToken,
+    ]),
   );
 
   return (
@@ -42,6 +75,8 @@ export default function HomeRoute() {
         onRetryPet={() => void refreshPet()}
         pet={pet}
         profile={profile}
+        {...(reviewFixtureAvailable ? { reviewFixtureOutcome } : {})}
+        {...(reviewFixtureLabel === null ? {} : { reviewFixtureLabel })}
         room={room}
         onRetryRoom={() => void retryRoom()}
       />

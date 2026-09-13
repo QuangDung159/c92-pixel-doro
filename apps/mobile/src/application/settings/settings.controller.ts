@@ -183,12 +183,14 @@ export class SettingsController {
     this.startOperation('reset', async () => {
       const current = this.currentSettings();
       if (current === null) return false;
+      this.dependencies.analyticsGate.block();
       await this.dependencies.sensory.emit(
         'destructive_confirmation', current, `reset:${this.dependencies.clock.nowMs()}`,
       ).catch(() => undefined);
       const result = await this.dependencies.coordinator.run(this.dependencies.reset)
         .catch(() => null);
       if (result === null || !result.ok) {
+        if (current.analyticsEnabled) this.dependencies.analyticsGate.allow();
         this.fail('RESET_FAILED', () => this.resetAllLocalData());
         return false;
       }

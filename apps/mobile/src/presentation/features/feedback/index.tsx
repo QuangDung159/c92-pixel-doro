@@ -1,97 +1,171 @@
-import { useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
+import type { FeedbackIssueCode, FeedbackProjection } from '@/application';
+import { FEEDBACK_COMMENT_MAX_CODE_POINTS } from '@/application';
 import {
   ChoiceChip,
-  ErrorState,
-  LoadingState,
+  InlineNotice,
   PixelPanel,
   PrimaryButton,
-  PrototypeScreen,
   ScreenHeader,
+  ScreenShell,
   SecondaryButton,
   SectionLabel,
 } from '@/presentation/components';
-import { PrototypeBadge } from '@/presentation/prototype/components';
 import { palette } from '@/presentation/theme/palette';
 
-type SubmitState = 'idle' | 'submitting' | 'success' | 'error';
+const issueCopy: Record<FeedbackIssueCode, string> = {
+  SCORE_REQUIRED: 'Chọn từ 1 đến 5 sao trước khi gửi.',
+  COMMENT_TOO_LONG: 'Lời nhắn vượt quá giới hạn cho phép. Hãy rút gọn rồi thử lại.',
+  NETWORK_REQUIRED: 'Chưa gửi được góp ý. Kiểm tra kết nối rồi thử lại.',
+  SUBMISSION_REJECTED: 'Dịch vụ chưa thể nhận góp ý này. Bạn có thể chỉnh sửa rồi thử lại.',
+  PROVIDER_UNAVAILABLE: 'Kênh góp ý chưa được cấu hình cho build này.',
+};
 
-export const FeedbackScreen = ({ onBack }: { readonly onBack: () => void }) => {
-  const [score, setScore] = useState<number | null>(null);
-  const [comment, setComment] = useState('');
-  const [submitState, setSubmitState] = useState<SubmitState>('idle');
+export interface FeedbackScreenProps {
+  readonly projection: FeedbackProjection;
+  readonly onBack: () => void;
+  readonly onCloseSuccess: () => void;
+  readonly onSetComment: (comment: string) => void;
+  readonly onSetScore: (score: number) => void;
+  readonly onSubmit: () => void;
+}
 
-  if (submitState === 'submitting') {
+const FeedbackRatingGroup = ({
+  disabled,
+  onSelect,
+  score,
+}: {
+  readonly disabled: boolean;
+  readonly onSelect: (score: number) => void;
+  readonly score: number | null;
+}) => (
+  <View accessibilityRole="radiogroup" style={styles.scoreRow}>
+    {[1, 2, 3, 4, 5].map((value) => (
+      <ChoiceChip
+        disabled={disabled}
+        key={value}
+        label={`${value} sao`}
+        onPress={() => onSelect(value)}
+        selected={score === value}
+      />
+    ))}
+  </View>
+);
+
+const FeedbackCommentField = ({
+  disabled,
+  onChange,
+  value,
+}: {
+  readonly disabled: boolean;
+  readonly onChange: (value: string) => void;
+  readonly value: string;
+}) => (
+  <>
+    <TextInput
+      accessibilityLabel="Nội dung góp ý tùy chọn"
+      editable={!disabled}
+      multiline
+      onChangeText={onChange}
+      placeholder="Điều gì giúp hoặc làm bạn mất nhịp?"
+      placeholderTextColor={palette.textSecondary}
+      style={styles.input}
+      textAlignVertical="top"
+      value={value}
+    />
+    <Text accessibilityLiveRegion="polite" style={styles.counter}>
+      {Array.from(value).length}/{FEEDBACK_COMMENT_MAX_CODE_POINTS} ký tự
+    </Text>
+  </>
+);
+
+export const FeedbackScreen = ({
+  projection,
+  onBack,
+  onCloseSuccess,
+  onSetComment,
+  onSetScore,
+  onSubmit,
+}: FeedbackScreenProps) => {
+  if (projection.status === 'idle') return <ScreenShell />;
+  if (projection.status === 'success') {
     return (
-      <PrototypeScreen>
-        <PrototypeBadge />
-        <LoadingState label="Đang gửi góp ý mock…" />
-        <SecondaryButton label="Mô phỏng lỗi mạng" onPress={() => setSubmitState('error')} />
-        <PrimaryButton label="Mô phỏng thành công" onPress={() => setSubmitState('success')} />
-      </PrototypeScreen>
-    );
-  }
-
-  if (submitState === 'error') {
-    return (
-      <PrototypeScreen>
-        <PrototypeBadge />
-        <ErrorState body="Core focus loop vẫn dùng được. Nội dung mock được giữ trong memory để bạn thử lại." onRetry={() => setSubmitState('submitting')} title="Chưa gửi được góp ý" />
-        <SecondaryButton label="Quay lại chỉnh sửa" onPress={() => setSubmitState('idle')} />
-      </PrototypeScreen>
-    );
-  }
-
-  if (submitState === 'success') {
-    return (
-      <PrototypeScreen>
-        <PrototypeBadge />
-        <ScreenHeader description="Không có request mạng thật nào được gửi." eyebrow="FEEDBACK SENT · MOCK" title="Cảm ơn bạn đã giúp PixelDoro tốt hơn." />
+      <ScreenShell>
+        <ScreenHeader
+          description="Góp ý đã được gửi riêng cho team sản phẩm, không phải đánh giá trên cửa hàng."
+          eyebrow="FEEDBACK · SENT"
+          title="Cảm ơn bạn đã giúp PixelDoro tốt hơn."
+        />
         <PixelPanel tone="strong">
-          <Text style={styles.successGlyph}>✓</Text>
-          <Text style={styles.successCopy}>Góp ý mock đã hoàn thành. Đây không phải rating trên cửa hàng ứng dụng.</Text>
+          <Text accessibilityRole="alert" style={styles.success}>✓ Đã gửi góp ý</Text>
         </PixelPanel>
-        <PrimaryButton label="Về Cài đặt" onPress={onBack} />
-      </PrototypeScreen>
+        <PrimaryButton label="Về Cài đặt" onPress={onCloseSuccess} />
+      </ScreenShell>
     );
   }
 
+  const busy = projection.status === 'submitting';
+  const invalidComment = projection.issue === 'COMMENT_TOO_LONG';
   return (
-    <PrototypeScreen>
-      <PrototypeBadge />
-      <ScreenHeader description="Phản hồi này dành cho team PixelDoro, không phải App Store hay Google Play." eyebrow="FEEDBACK" title="Nhịp hôm nay thế nào?" />
+    <ScreenShell>
+      <ScreenHeader
+        description="Phản hồi này dành cho team PixelDoro, không phải App Store hay Google Play."
+        eyebrow="FEEDBACK"
+        title="Nhịp hôm nay thế nào?"
+      />
+      {projection.issue === null ? null : (
+        <InlineNotice announce>{issueCopy[projection.issue]}</InlineNotice>
+      )}
       <PixelPanel>
         <SectionLabel>Điểm trải nghiệm</SectionLabel>
-        <View accessibilityRole="radiogroup" style={styles.scoreRow}>
-          {[1, 2, 3, 4, 5].map((value) => (
-            <ChoiceChip key={value} label={`${value}★`} onPress={() => setScore(value)} selected={score === value} />
-          ))}
-        </View>
+        <FeedbackRatingGroup
+          disabled={busy}
+          onSelect={onSetScore}
+          score={projection.score}
+        />
       </PixelPanel>
       <PixelPanel>
         <SectionLabel>Điều bạn muốn kể thêm · tùy chọn</SectionLabel>
-        <TextInput
-          accessibilityLabel="Nội dung góp ý tùy chọn"
-          multiline
-          onChangeText={setComment}
-          placeholder="Điều gì giúp hoặc làm bạn mất nhịp?"
-          placeholderTextColor={palette.textSecondary}
-          style={styles.input}
-          value={comment}
+        <FeedbackCommentField
+          disabled={busy}
+          onChange={onSetComment}
+          value={projection.comment}
         />
       </PixelPanel>
-      {score === null ? <Text accessibilityRole="alert" style={styles.validation}>Chọn từ 1 đến 5 sao để gửi feedback mock.</Text> : null}
-      <PrimaryButton disabled={score === null} label="Gửi góp ý mock" onPress={() => setSubmitState('submitting')} />
-      <SecondaryButton label="Về Cài đặt" onPress={onBack} />
-    </PrototypeScreen>
+      <PrimaryButton
+        accessibilityLabel={projection.score === null
+          ? 'Gửi góp ý, cần chọn điểm trải nghiệm trước'
+          : 'Gửi góp ý'}
+        busy={busy}
+        disabled={projection.score === null || invalidComment}
+        label={busy
+          ? 'Đang gửi góp ý…'
+          : projection.status === 'failure' ? 'Thử gửi lại' : 'Gửi góp ý'}
+        onPress={onSubmit}
+      />
+      <SecondaryButton disabled={busy} label="Về Cài đặt" onPress={onBack} />
+    </ScreenShell>
   );
 };
 
 const styles = StyleSheet.create({
   scoreRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 7 },
-  input: { borderColor: palette.border, borderRadius: 5, borderWidth: 2, color: palette.textPrimary, fontSize: 15, minHeight: 130, padding: 12, textAlignVertical: 'top' },
-  validation: { color: palette.accentRed, fontSize: 12, fontWeight: '800', textAlign: 'center' },
-  successGlyph: { color: palette.accentDark, fontSize: 52, fontWeight: '900', textAlign: 'center' },
-  successCopy: { color: palette.textPrimary, fontSize: 15, lineHeight: 22, textAlign: 'center' },
+  input: {
+    borderColor: palette.border,
+    borderRadius: 5,
+    borderWidth: 2,
+    color: palette.textPrimary,
+    fontSize: 16,
+    lineHeight: 23,
+    minHeight: 130,
+    padding: 12,
+  },
+  counter: { color: palette.textSecondary, fontSize: 12, textAlign: 'right' },
+  success: {
+    color: palette.accentDark,
+    fontSize: 20,
+    fontWeight: '900',
+    textAlign: 'center',
+  },
 });

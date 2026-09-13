@@ -31,6 +31,7 @@ export default function SettingsRoute() {
       onActivateRetry={() => { void actions.activate(); }}
       onDismissIssue={actions.dismissIssue}
       onOpenSystemSettings={() => { void actions.openSystemSettings(); }}
+      onOpenFeedback={() => router.push('/feedback')}
       onReset={actions.resetAllLocalData}
       onResetComplete={() => router.replace('/')}
       onRetry={() => { void actions.retry(); }}

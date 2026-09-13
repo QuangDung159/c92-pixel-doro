@@ -431,7 +431,11 @@ describe('SQLite repository durable round trip', () => {
     })).toMatchObject({ ok: true });
     expect(await first.graph.analyticsQueue.enqueueBounded({
       eventId: 'host-event-1', eventName: 'focus_session_completed',
-      properties: { mode: 'strict', durationMinutes: 25 }, occurredAt: resolvedAt + 2,
+      properties: {
+        mode: 'strict', workTag: 'coding', durationMinutes: 25,
+        terminalStatus: 'completed',
+      },
+      occurredAt: resolvedAt + 2,
       expiresAt: resolvedAt + 2 + 604_800_000, deliveryState: 'pending', attemptCount: 0,
       nextAttemptAt: null, createdAt: resolvedAt + 2,
     }, resolvedAt + 2)).toMatchObject({ ok: true });

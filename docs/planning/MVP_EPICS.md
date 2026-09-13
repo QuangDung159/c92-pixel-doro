@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_MVP_EPIC_BREAKDOWN
 title: PixelDoro Mobile MVP — Epic Breakdown
-version: 3.0.0
-status: EPIC_01_TO_10_DONE_OWNER_ACCEPTED_EPIC_11_NOT_STARTED
-last_updated: 2026-09-12
+version: 3.2.0
+status: EPIC_01_TO_10_DONE_OWNER_ACCEPTED_EPIC_11_IMPLEMENTATION_IN_PROGRESS
+last_updated: 2026-09-13
 owner: Dũng Lư
 reviewer: Dũng Lư
 reviewer_role: Tech Lead
@@ -148,11 +148,14 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 | `EPIC-08` | `DONE_OWNER_ACCEPTED` | US-08-01→05 owner accepted; exact candidate `30adc34...`; Exit Report closed by owner authorization. |
 | `EPIC-09` | `DONE_OWNER_ACCEPTED` | US-09-01→05 owner accepted; exact behavior candidate `a1abf5f...`; History/Contribution exit closed by owner authorization. |
 | `EPIC-10` | `DONE_OWNER_ACCEPTED` | US-10-01→05 owner accepted; exact merged candidate `bee029a12576af8d8470668c1fa2ce8d8502ac4b`; quick UI PASS/no crash and review/automated/native/export gates pass. |
+| `EPIC-11` | `IMPLEMENTATION_IN_PROGRESS` | Owner approved `US1100-CONFIRM-01→10=A`; code and automated evidence are in the worktree, owner quick UI/external provider/native exact-SHA gates remain open. |
+| `EPIC-12` | `NOT_OPENED` | Start gate remains `EPIC-11 DONE`; no beta-readiness/release work has started. |
 
 Mười Epic đầu đã `DONE_OWNER_ACCEPTED`. EPIC-10 được đóng tại exact merged SHA
 `bee029a12576af8d8470668c1fa2ce8d8502ac4b` sau owner quick-smoke/accept và xác nhận closure.
-EPIC-11 chỉ được mở planning gate, chưa bắt đầu implementation. Provider analytics và Beta Readiness
-vẫn thuộc EPIC-11/12.
+EPIC-11 đang `IMPLEMENTATION_IN_PROGRESS`; master checkbox vẫn mở cho tới exact-SHA acceptance.
+Provider credentials và native/device evidence vẫn thuộc EPIC-11; full Beta Readiness vẫn thuộc
+EPIC-12 và chưa được mở.
 
 ## 3. Critical path và delivery gates
 
@@ -683,6 +686,7 @@ matrix tiếp tục `DEFERRED_TO_LATER_PHASE` và được carry sang later vali
 
 **Loại:** Product/Operational
 
+- **Status:** `IMPLEMENTATION_IN_PROGRESS` — owner quick UI/external gates pending; master checkbox vẫn mở.
 - **MVP priority:** `MUST`
 - **Delivery wave:** `W3_VERTICAL_MVP`
 - **Execution order:** `11`
@@ -873,6 +877,22 @@ Story hoặc implementation tương lai.
 - [x] Không estimate deadline trước khi Story refinement hoàn tất.
 
 ## 10. Change log
+
+### 3.2.0 — 2026-09-13
+
+- Recorded owner approval for `US1100-CONFIRM-01→10=A` and EPIC-11 implementation start.
+- Kept the EPIC-11 master checkbox open while exact-SHA quick UI, native build and external provider
+  evidence remain pending; EPIC-12 stays `NOT_OPENED`.
+
+### 3.1.0 — 2026-09-12
+
+- Recorded EPIC-11 as `PLANNING / USER_STORIES_DRAFTED` at exact audit baseline
+  `a8dd7eb21dc978884994a46230fb9837d8d74f68`; implementation remains `NOT_STARTED` and its master
+  completion checkbox remains unchecked.
+- Kept EPIC-10 `DONE_OWNER_ACCEPTED` at accepted SHA
+  `bee029a12576af8d8470668c1fa2ce8d8502ac4b` and kept EPIC-12 `NOT_OPENED`.
+- Linked planning state to six owner-reviewable vertical slices without approving provider/native/schema
+  changes or beginning implementation.
 
 ### 3.0.0 — 2026-09-12
 
