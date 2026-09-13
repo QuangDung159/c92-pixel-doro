@@ -2,6 +2,7 @@
 
 - **Status:** `ACCEPTED_ARCHITECTURE_ROLLOUT_DEFERRED`
 - **Date:** 2026-08-26
+- **Rollout amended:** 2026-09-13
 - **Owners:** Engineering/Product
 
 ## Context

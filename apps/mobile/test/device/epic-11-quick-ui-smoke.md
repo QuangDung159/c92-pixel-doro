@@ -1,17 +1,16 @@
 # EPIC-11 Analytics, Feedback & Store Review — quick UI smoke
 
-Status: `PASS_OWNER_QUICK_UI_NO_CRASH_2026_09_13_WORKTREE`
+Status: `PASS_OWNER_QUICK_UI_NO_CRASH_2026_09_13_EXACT_SHA_RECORDED`
 
-Implementation SHA: `<implementation-sha>`
+Implementation SHA: `deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0`
 
 Allowed case results: `PASS`, `FAIL`, `BLOCKED`, `NOT_RUN`.
 Individual case result remains `NOT_RUN` unless explicitly reported below.
 
-Guide này chạy trên implementation worktree sau planning baseline
-`a8dd7eb21dc978884994a46230fb9837d8d74f68`. Vì thay đổi chưa được commit, `<implementation-sha>`
-phải giữ nguyên cho tới khi owner yêu cầu commit. Owner reported the quick UI test complete on
-2026-09-13: no crash and behavior worked as expected. This is aggregate worktree evidence, not an
-exact-SHA or unreported platform/accessibility claim.
+Owner reported the quick UI test complete on 2026-09-13: no crash and behavior worked as expected.
+The resulting implementation is committed and pushed at
+`deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0`. This is aggregate owner evidence, not a claim that the
+unreported platform/accessibility matrix was executed.
 
 Chỉ dùng các database disposable có prefix chính xác `pixeldoro-us-11-`; quick path dùng các suffix
 `epic-11-quick`, `epic-11-feedback-failure-once`, `epic-11-review-cooldown`. Không được mở, đọc, sửa,
@@ -19,8 +18,7 @@ reset hoặc xóa database thường `pixeldoro.db`. Không dùng wildcard/glob 
 
 ## 1. Run record và prerequisites
 
-- [ ] Thay `<implementation-sha>` bằng output exact của `git rev-parse HEAD`; build, Metro và artifact
-  phải cùng SHA.
+- [x] Implementation được khóa tại exact SHA `deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0`.
 - [ ] Xác nhận worktree/branch/build type; không suy diễn PASS từ SHA khác.
 - [ ] Có Development Build tương thích native dependency của Story 05; Expo Go/OTA-only không đủ.
 - [ ] Fixture `EXPO_PUBLIC_EPIC_11_REVIEW_FIXTURE=epic_11_quick` tồn tại, dev-only và báo đúng database.
@@ -34,7 +32,7 @@ reset hoặc xóa database thường `pixeldoro.db`. Không dùng wildcard/glob 
 |---|---|
 | Date/time/timezone | `<fill>` |
 | Branch | `feats/epic-11` or `<fill>` |
-| Exact implementation SHA | `<implementation-sha>` |
+| Exact implementation SHA | `deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0` |
 | Platform | `iOS` / `Android` / `<fill>` |
 | Device/simulator/emulator | `<fill>` |
 | OS version | `<fill>` |
@@ -219,11 +217,11 @@ pnpm start --clear
 
 | Case/date/timezone | Platform/device/OS/build | Network/app/a11y state | Result | Exact SHA | Artifact/notes |
 |---|---|---|---|---|---|
-| `E11-Q01→Q07` / `2026-09-13 Asia/Ho_Chi_Minh` | `Owner quick UI; platform/device/build details not supplied` | `Detailed matrix not supplied` | `PASS — no crash, worked as expected` | `Uncommitted worktree after baseline a8dd7eb21dc978884994a46230fb9837d8d74f68` | Owner aggregate report; individual subcases below remain unreported. |
+| `E11-Q01→Q07` / `2026-09-13 Asia/Ho_Chi_Minh` | `Owner quick UI; platform/device/build details not supplied` | `Detailed matrix not supplied` | `PASS — no crash, worked as expected` | `deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0` | Owner aggregate report; individual subcases below remain unreported. |
 | `E11-01→03` / `<fill>` | `<fill>` | `<fill>` | `NOT_RUN` | `<implementation-sha>` | `<fill>` |
 | `E11-04→08` / `<fill>` | `<fill>` | `<fill>` | `NOT_RUN` | `<implementation-sha>` | `<fill>` |
 | `E11-09→13` / `<fill>` | `<fill>` | `<fill>` | `NOT_RUN` | `<implementation-sha>` | `<fill>` |
-| `E11-LIVE-01` / `<fill>` | `<fill>` | Provider prerequisite `<fill>` | `NOT_RUN` | `<implementation-sha>` | `<fill or BLOCKED reason>` |
+| `E11-LIVE-01` / `2026-09-13` | `N/A` | Live provider intentionally disabled | `BLOCKED` | `deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0` | Owner deferred live PostHog because of cost; no key is configured and the adapter remains fail-closed. |
 | `E11-14→19` / `<fill>` | `<fill>` | `<fill>` | `NOT_RUN` | `<implementation-sha>` | `<fill>` |
 | `E11-20→26` / `<fill>` | `<fill>` | `<fill>` | `NOT_RUN` | `<implementation-sha>` | `<fill>` |
 | `E11-NATIVE-01` / `<fill>` | `<fill>` | Native prerequisite `<fill>` | `NOT_RUN` | `<implementation-sha>` | `<fill or BLOCKED reason>` |

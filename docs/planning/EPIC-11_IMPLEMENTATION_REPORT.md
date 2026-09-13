@@ -1,13 +1,13 @@
 ---
 document_id: PIXELDORO_EPIC_11_IMPLEMENTATION_REPORT
 title: PixelDoro EPIC-11 — Analytics, Feedback & Store Review Implementation Report
-version: 0.1.0
-status: IMPLEMENTED_OWNER_QUICK_UI_PASS_AWAITING_EXACT_SHA
+version: 0.2.0
+status: IMPLEMENTED_OWNER_QUICK_UI_PASS_CLOSURE_REVIEW_PENDING
 date: 2026-09-13
 owner: Dũng Lư
 branch: feats/epic-11
 start_sha: a8dd7eb21dc978884994a46230fb9837d8d74f68
-implementation_sha: PENDING_UNCOMMITTED_WORKTREE
+implementation_sha: deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0
 manual_device_status: PASS_OWNER_QUICK_UI_NO_CRASH_WORKED_AS_EXPECTED_2026_09_13
 formal_tester_status: NOT_RUN_DEFERRED_TO_EPIC_12
 schema_change: NONE
@@ -20,8 +20,9 @@ posthog_rollout: DEFERRED_BY_OWNER_FOR_COST_FAIL_CLOSED
 
 Owner approved `US1100-CONFIRM-01→10=A`, authorized implementation and reported the quick UI test
 complete on 2026-09-13: no crash and behavior worked as expected. Analytics, feedback and store-review
-boundaries are implemented without changing schema `001`. The worktree is not committed, so this report
-does not claim exact-SHA closure or start EPIC-12.
+boundaries are implemented without changing schema `001`. The resulting implementation is committed and
+pushed at `deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0`; owner closure review remains open and EPIC-12 has not
+started.
 
 Live PostHog is intentionally hidden during internal test because of cost. No project key is configured,
 the adapter remains fail-closed and external analytics is not an EPIC-11 closure prerequisite under this
@@ -73,13 +74,15 @@ Platform/device/build/accessibility details were not supplied, so individual row
 formal iOS/Android physical-device, VoiceOver/TalkBack, Largest Text and Reduce Motion breadth is not
 fabricated. That breadth remains EPIC-12 scope.
 
-## 6. Remaining closure gates
+## 6. Closure and deferred activation
 
 - [x] Approved implementation behavior is present and automated gates pass.
 - [x] Owner aggregate quick UI passes without crash.
 - [x] Owner explicitly defers live PostHog for cost; delivery remains fail-closed.
-- [ ] Feedback HTTPS endpoint is supplied before collecting feedback from real internal testers.
-- [ ] Reviewed worktree is committed and bound to an exact implementation SHA.
+- [x] Feedback endpoint may remain unset during core-only internal testing; it must be supplied before
+  collecting real tester submissions.
+- [x] Reviewed implementation is committed and bound to exact SHA
+  `deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0`.
 - [ ] Owner explicitly accepts EPIC-11 closure at that exact SHA.
 - [ ] EPIC-12 starts only after EPIC-11 closure.
 
@@ -88,3 +91,10 @@ fabricated. That breadth remains EPIC-12 scope.
 Disable feedback/review triggers and external adapter composition in a forward change while preserving
 schema `001`, privacy cleanup and durable attempt history. Live PostHog is already disabled by missing
 configuration. Never restore cleared analytics events, old anonymous IDs or feedback drafts.
+
+## 8. Change log
+
+| Version | Date | Change |
+|---|---|---|
+| `0.2.0` | 2026-09-13 | Bound the implementation and owner quick UI PASS to pushed exact SHA `deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0`; recorded provider activation deferrals and retained explicit owner closure review. |
+| `0.1.0` | 2026-09-13 | Initial implementation, automated evidence, aggregate quick UI result and remaining-gates report. |

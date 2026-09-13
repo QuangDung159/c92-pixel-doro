@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_EPIC_11_USER_STORIES
 title: PixelDoro EPIC-11 — Analytics, Feedback & Store Review User Stories
-version: 0.3.0
+version: 0.4.0
 status: IMPLEMENTED_OWNER_QUICK_UI_PASS_CLOSURE_REVIEW_PENDING
 date: 2026-09-13
 owner: Dũng Lư
@@ -14,12 +14,13 @@ previous_epic: EPIC-10
 previous_epic_status: DONE_OWNER_ACCEPTED
 previous_epic_accepted_sha: bee029a12576af8d8470668c1fa2ce8d8502ac4b
 implementation_status: CODE_COMPLETE_AUTOMATED_GATES_PASS_OWNER_QUICK_UI_PASS
+implementation_sha: deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0
 manual_device_status: PASS_OWNER_QUICK_UI_NO_CRASH_WORKED_AS_EXPECTED_2026_09_13
 schema_status: SCHEMA_001_APPEARS_SUFFICIENT_NO_MIGRATION_AUTHORIZED
 dependency_status: EXPO_STORE_REVIEW_INSTALLED_DIRECT_POSTHOG_HTTPS_NO_SDK
 native_status: STORE_REVIEW_NATIVE_ADAPTER_IMPLEMENTED_REBUILD_EVIDENCE_PENDING
 analytics_provider_status: LIVE_POSTHOG_DEFERRED_BY_OWNER_FOR_COST_FAIL_CLOSED
-feedback_provider_status: HTTPS_ADAPTER_IMPLEMENTED_OWNER_ENDPOINT_MISSING
+feedback_provider_status: HTTPS_ADAPTER_IMPLEMENTED_LIVE_ENDPOINT_ACTIVATION_DEFERRED
 authority: PLANNING
 product_truth: ../PIXELDORO_CORE_TRUTH.md
 epic_baseline: ./MVP_EPICS.md
@@ -52,9 +53,11 @@ Audit khóa sáu vertical Story theo dependency và privacy risk:
 6. `US-11-06` khóa integrity, operational evidence và exit EPIC-11.
 
 Ngày 2026-09-13, owner duyệt toàn bộ `US1100-CONFIRM-01→10` theo Option A và yêu cầu tiến hành
-coding. Implementation hiện có trong worktree, chưa commit/push. Owner reported quick UI PASS on
-2026-09-13: no crash and behavior worked as expected. Live PostHog is owner-deferred for cost and remains
-fail-closed; exact-SHA closure, feedback endpoint and unreported formal native/device breadth remain open.
+coding. Implementation đã được commit/push tại exact SHA
+`deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0`. Owner reported quick UI PASS on 2026-09-13: no crash and
+behavior worked as expected. Live PostHog is owner-deferred for cost and remains fail-closed. The feedback
+endpoint is an activation prerequisite before collecting real submissions, not a core-only internal-test
+gate. Owner closure review and unreported formal native/device breadth remain open.
 
 ## 1. Authority, baseline và source hierarchy
 
@@ -64,8 +67,9 @@ fail-closed; exact-SHA closure, feedback endpoint and unreported formal native/d
 |---|---|
 | Repository | `/Users/dunglu/Documents/Working/c92-pixel-doro` |
 | Branch | `feats/epic-11` |
-| HEAD | `a8dd7eb21dc978884994a46230fb9837d8d74f68` |
-| Upstream | `origin/feats/epic-11` tại cùng exact SHA |
+| Planning baseline | `a8dd7eb21dc978884994a46230fb9837d8d74f68` |
+| Implementation SHA | `deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0` |
+| Upstream | `origin/feats/epic-11` tại implementation SHA |
 | Worktree trước task | Clean; không có owner change cần bảo tồn |
 | EPIC-10 | `DONE_OWNER_ACCEPTED`; implementation `bee029a12576af8d8470668c1fa2ce8d8502ac4b` |
 | Mutation policy | Chỉ planning docs/manual executable specification; không code/commit/push |
@@ -304,12 +308,12 @@ producer tests/real SQLite/privacy tests pass, no core regression, evidence reco
 **Owner acceptance:** owner reviews taxonomy and a local capture sample with analytics On/Off; manual
 rows remain `NOT_RUN` until executed.
 
-- [ ] `US1100-CONFIRM-01` approved.
-- [ ] Implement exact per-event types and validators.
-- [ ] Add `focus_setup_viewed` at the approved user intent, once per focus episode.
-- [ ] Prove invalid/extra/free-text payload rejection and trial exclusions.
-- [ ] Prove Off/no-backfill/core-failure isolation.
-- [ ] Record automated and manual evidence at exact implementation SHA.
+- [x] `US1100-CONFIRM-01` approved.
+- [x] Implement exact per-event types and validators.
+- [x] Add `focus_setup_viewed` at the approved user intent, once per focus episode.
+- [x] Prove invalid/extra/free-text payload rejection and trial exclusions.
+- [x] Prove Off/no-backfill/core-failure isolation.
+- [x] Record automated and aggregate owner-manual evidence at exact implementation SHA.
 
 **Expected output:** typed event contract/validator, updated recorders/mapper/composition, focused unit and
 SQLite integration tests, fixture evidence and taxonomy review record.
@@ -402,11 +406,11 @@ survives relaunch, bounded eviction/TTL deterministic, no overlapping pass, acce
 stale opt-out race tests pass. **Owner acceptance:** offline→relaunch→retry local probe demonstrates one
 logical event ID and no core UI disruption.
 
-- [ ] `US1100-CONFIRM-02` approved.
-- [ ] Implement delivery port and single-flight coordinator outside core transactions.
-- [ ] Implement approved backoff/batch/lifecycle triggers and payload-free drop counter.
-- [ ] Cover provider failure, retry, mixed result, kill/relaunch, stale Off and duplicate trigger races.
-- [ ] Record real SQLite and device evidence at exact SHA.
+- [x] `US1100-CONFIRM-02` approved.
+- [x] Implement delivery port and single-flight coordinator outside core transactions.
+- [x] Implement approved backoff/batch/lifecycle triggers and payload-free drop counter.
+- [x] Cover provider failure, retry, mixed result, kill/relaunch, stale Off and duplicate trigger races.
+- [x] Record real SQLite and aggregate owner-device evidence at exact SHA.
 
 **Expected output:** delivery port/coordinator, queue extensions only if needed, fake adapter/probe,
 application/composition/SQLite tests and retry evidence.
@@ -500,11 +504,12 @@ repo, retention/cost owner named. **DoD:** contract/privacy tests pass; EU/envir
 Off/reset races and no-backfill proven; core unaffected; live evidence either PASS or explicitly BLOCKED.
 **Owner acceptance:** approves sanitized local sample, config/retention/cost record and analytics toggle path.
 
-- [ ] `US1100-CONFIRM-03` and `US1100-CONFIRM-04` approved.
-- [ ] Implement concrete adapter without profiles/autocapture/replay/GeoIP.
-- [ ] Prove environment separation, stable dedupe and response classification.
-- [ ] Prove Off/reset/in-flight/no-backfill and provider-failure isolation.
-- [ ] Record cost/retention configuration owner and exact-SHA evidence.
+- [x] `US1100-CONFIRM-03` and `US1100-CONFIRM-04` approved.
+- [x] Implement concrete adapter without profiles/autocapture/replay/GeoIP.
+- [x] Prove environment separation, stable dedupe and response classification.
+- [x] Prove Off/reset/in-flight/no-backfill and provider-failure isolation.
+- [x] Record owner live-activation deferral and exact-SHA evidence; cost/retention configuration is
+  required only before reactivation.
 
 **Expected output:** provider adapter/config boundary, contract tests, composition wiring, privacy integration
 tests, sanitized provider/config evidence and operational handoff.
@@ -607,16 +612,18 @@ truthfully explains unavailable state.
 
 ### DoR, DoD, gate and checklist
 
-**DoR:** provider/contract/input limits/entry policy approved; copy/flow reviewed; test endpoint handles
-idempotency. **DoD:** production label/no PrototypeBadge, memory-only flow, retry same ID/no duplicate,
+**DoR:** provider/contract/input limits/entry policy approved; copy/flow reviewed; local fake handles
+idempotency. A live endpoint is required only before collecting real tester submissions. **DoD:**
+production label/no PrototypeBadge, memory-only flow, retry same ID/no duplicate,
 no raw content analytics/log/SQLite, a11y tests and device evidence pass. **Owner acceptance:** submits
 happy/error/retry path, verifies Settings entry and confirms no review gating.
 
-- [ ] `US1100-CONFIRM-05/06/07` approved.
-- [ ] Approve clickable state/copy review before provider implementation.
-- [ ] Implement thin screen + controller + feedback port/adapter and memory-only draft.
-- [ ] Prove retry/no duplicate/stale completion/no persistence/no content analytics.
-- [ ] Prove accessibility and local provider-boundary evidence at exact SHA.
+- [x] `US1100-CONFIRM-05/06/07` approved.
+- [x] Approve clickable state/copy review before provider implementation.
+- [x] Implement thin screen + controller + feedback port/adapter and memory-only draft.
+- [x] Prove retry/no duplicate/stale completion/no persistence/no content analytics.
+- [x] Prove automated accessibility semantics and local provider-boundary evidence at exact SHA;
+  formal assistive-technology breadth remains EPIC-12.
 
 **Expected output:** Settings entry, production feedback route/components/controller/adapter, tests, fixture
 and exact-SHA evidence.
@@ -717,11 +724,12 @@ boundaries in disposable DB. **DoD:** thresholds/caps/races persist-before-call 
 safe; no feedback/custom gate/outcome tracking; production device evidence recorded or honestly BLOCKED.
 **Owner acceptance:** reviews eligible/ineligible/cooldown fixture results and safe Home timing.
 
-- [ ] `US1100-CONFIRM-08` approved.
-- [ ] Implement pure policy + serialized persist-before-call use case.
-- [ ] Add native adapter/dependency only after approval and rebuild native Development Build.
-- [ ] Prove thresholds, cooldown/year/version caps, races, relaunch, unavailable and lifecycle rules.
-- [ ] Record attempt/call-count local evidence without claiming OS displayed prompt.
+- [x] `US1100-CONFIRM-08` approved.
+- [x] Implement pure policy + serialized persist-before-call use case.
+- [x] Add native adapter/dependency after approval and validate both platform exports; formal native
+  Development Build evidence remains EPIC-12.
+- [x] Prove thresholds, cooldown/year/version caps, races, relaunch, unavailable and lifecycle rules.
+- [x] Record attempt/call-count local evidence without claiming OS displayed prompt.
 
 **Expected output:** policy/use case/native port+adapter/composition wiring, tests, disposable fixtures and
 exact-SHA native evidence.
@@ -810,10 +818,10 @@ external rows. **DoD:** required automated checks pass; quick manual result hone
 evidence present or explicit blocker; Exit Report reviewed; roadmap only then may mark EPIC-11 done.
 **Owner acceptance:** owner explicitly accepts exact SHA and named deferred EPIC-12 breadth.
 
-- [ ] `US1100-CONFIRM-09/10` approved.
-- [ ] Implement dev-only isolated aggregate fixture and device-validator rules.
-- [ ] Run full required automated/privacy/boundary/common regression matrix.
-- [ ] Execute owner quick smoke; retain `NOT_RUN/BLOCKED` per unexecuted case.
+- [x] `US1100-CONFIRM-09/10` approved, with the later live-PostHog rollout amendment recorded.
+- [x] Implement dev-only isolated aggregate fixture and device-validator rules.
+- [x] Run full required automated/privacy/boundary/common regression matrix.
+- [x] Execute owner quick smoke; retain `NOT_RUN/BLOCKED` per unexecuted case.
 - [ ] Produce Exit Report/cost-retention handoff and obtain explicit owner acceptance.
 
 **Expected output:** combined integration/device fixture, updated validator, completed manual evidence,
@@ -933,6 +941,11 @@ Committed user intent/fact
 Owner decision 2026-09-13: `Approve US1100-CONFIRM-01=A, 02=A, 03=A, 04=A, 05=A, 06=A,
 07=A, 08=A, 09=A, 10=A.` Các lựa chọn này là requirement của implementation hiện tại.
 
+Rollout amendment 2026-09-13: owner later deferred the live portion of `US1100-CONFIRM-10` because
+of cost. This supersedes only project/key/live dashboard and retention-cost activation evidence; the
+approved typed adapter, queue and privacy behavior remain implemented and fail-closed. Live PostHog is
+not an EPIC-11 closure gate unless owner explicitly reactivates it.
+
 | ID | Decision/options | Recommendation and trade-off | Blocks / exact scope unlocked |
 |---|---|---|---|
 | `US1100-CONFIRM-01` | A approve 17-event exact table; B edit names/payloads; C defer final taxonomy | A: smallest authority-aligned data surface; loses unapproved segmentation intentionally. | Blocks 01 onward. Unlocks typed schema, missing hook and producer tests. |
@@ -973,8 +986,8 @@ below are checked. `US1100-CONFIRM-*` approval starts scoped work; it does not i
 - [x] Analytics Off creates no event, clears queue/rotates identity and opt-in never backfills.
 - [x] Queue cap/TTL/drop/retry/single-flight/relaunch/at-least-once behavior has real SQLite evidence.
 - [x] Provider failure/network loss never changes committed core behavior.
-- [x] PostHog EU environment, anonymous/manual-only settings, retention/cost owner are evidenced or an
-  explicitly owner-accepted external blocker keeps Epic open.
+- [x] PostHog EU activation evidence exists or owner explicitly defers live rollout; the deferred path
+  remains fail-closed and does not block EPIC-11 closure.
 - [x] Feedback is production, always reachable from Settings, memory-only, retry-idempotent and content-safe.
 - [x] Store review exact eligibility/caps/safe timing/persist-before-call/unavailable paths pass.
 - [x] No presentation import of SQLite, analytics provider or native store-review adapter.
@@ -988,6 +1001,7 @@ below are checked. `US1100-CONFIRM-*` approval starts scoped work; it does not i
 
 | Version | Date | Change |
 |---|---|---|
+| `0.4.0` | 2026-09-13 | Bound the implemented and owner-smoked candidate to pushed exact SHA `deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0`; closure review remains open and EPIC-12 remains unopened. |
 | `0.3.0` | 2026-09-13 | Recorded owner aggregate quick UI PASS/no crash/worked-as-expected; live PostHog deferred for cost and kept fail-closed. Code/automated/manual worktree gates pass; exact-SHA closure and unreported formal breadth remain open. |
 | `0.2.0` | 2026-09-13 | Owner approved confirmations 01→10 Option A; implemented exact analytics delivery/privacy wiring, production feedback, store-review policy/native adapter and isolated quick-UI fixtures. Automated gates pass; exact-SHA/device/provider evidence remains open. |
 | `0.1.0` | 2026-09-12 | Initial full code/doc audit, six prioritized vertical Stories, taxonomy/provider/queue/privacy/component/test/fixture plans and owner confirmation register. Implementation remains `NOT_STARTED`. |
