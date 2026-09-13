@@ -1,16 +1,17 @@
 # EPIC-11 Analytics, Feedback & Store Review — quick UI smoke
 
-Status: `READY_FOR_OWNER_QUICK_UI`
+Status: `PASS_OWNER_QUICK_UI_NO_CRASH_2026_09_13_WORKTREE`
 
 Implementation SHA: `<implementation-sha>`
 
 Allowed case results: `PASS`, `FAIL`, `BLOCKED`, `NOT_RUN`.
-Initial result for every case: `NOT_RUN`.
+Individual case result remains `NOT_RUN` unless explicitly reported below.
 
 Guide này chạy trên implementation worktree sau planning baseline
 `a8dd7eb21dc978884994a46230fb9837d8d74f68`. Vì thay đổi chưa được commit, `<implementation-sha>`
-phải giữ nguyên cho tới khi owner yêu cầu commit; quick UI hiện tại là kiểm tra local, chưa phải bằng chứng
-acceptance exact-SHA.
+phải giữ nguyên cho tới khi owner yêu cầu commit. Owner reported the quick UI test complete on
+2026-09-13: no crash and behavior worked as expected. This is aggregate worktree evidence, not an
+exact-SHA or unreported platform/accessibility claim.
 
 Chỉ dùng các database disposable có prefix chính xác `pixeldoro-us-11-`; quick path dùng các suffix
 `epic-11-quick`, `epic-11-feedback-failure-once`, `epic-11-review-cooldown`. Không được mở, đọc, sửa,
@@ -142,7 +143,7 @@ Optional live provider prerequisite row:
 
 | Case | Prerequisite | Expected | Initial result | Evidence |
 |---|---|---|---|---|
-| `E11-LIVE-01` | Owner-supplied PostHog Cloud EU test project/key, retention <=12 months, manual-only config | One synthetic non-content event arrives with dedupe ID and no automatic/profile/location properties. | `NOT_RUN` | `<fill or BLOCKED reason>` |
+| `E11-LIVE-01` | Owner-supplied PostHog Cloud EU test project/key, retention <=12 months, manual-only config | One synthetic non-content event arrives with dedupe ID and no automatic/profile/location properties. | `BLOCKED` | Owner deferred live PostHog on 2026-09-13 due cost; adapter remains fail-closed. |
 
 - [ ] Redact project key, anonymous ID and provider request/response body from screenshots/logs.
 - [ ] Do not use live dashboard absence/presence alone to override local adapter-boundary evidence.
@@ -218,7 +219,7 @@ pnpm start --clear
 
 | Case/date/timezone | Platform/device/OS/build | Network/app/a11y state | Result | Exact SHA | Artifact/notes |
 |---|---|---|---|---|---|
-| `E11-Q01→Q09` / `<fill>` | `<fill>` | `<fill>` | `NOT_RUN` | `<implementation-sha>` | `<fill>` |
+| `E11-Q01→Q07` / `2026-09-13 Asia/Ho_Chi_Minh` | `Owner quick UI; platform/device/build details not supplied` | `Detailed matrix not supplied` | `PASS — no crash, worked as expected` | `Uncommitted worktree after baseline a8dd7eb21dc978884994a46230fb9837d8d74f68` | Owner aggregate report; individual subcases below remain unreported. |
 | `E11-01→03` / `<fill>` | `<fill>` | `<fill>` | `NOT_RUN` | `<implementation-sha>` | `<fill>` |
 | `E11-04→08` / `<fill>` | `<fill>` | `<fill>` | `NOT_RUN` | `<implementation-sha>` | `<fill>` |
 | `E11-09→13` / `<fill>` | `<fill>` | `<fill>` | `NOT_RUN` | `<implementation-sha>` | `<fill>` |
@@ -232,6 +233,7 @@ pnpm start --clear
 ## 12. Exit honesty
 
 - [ ] Attach exact-SHA automated output separately; do not copy its PASS into this manual table.
+- [x] Owner aggregate quick UI report recorded: PASS, no crash, worked as expected on 2026-09-13.
 - [ ] Any crash, privacy leak, duplicate logical feedback, repeated review call or core-flow corruption is FAIL.
 - [ ] Missing test project/account/native build/device is BLOCKED for that row and keeps required gate open.
 - [ ] Full physical-device/platform/accessibility breadth and release artifact remain EPIC-12; this guide

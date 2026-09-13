@@ -1,6 +1,6 @@
 # ADR-008: PostHog analytics và cost guardrails
 
-- **Status:** `ACCEPTED`
+- **Status:** `ACCEPTED_ARCHITECTURE_ROLLOUT_DEFERRED`
 - **Date:** 2026-08-26
 - **Owners:** Engineering/Product
 
@@ -11,6 +11,16 @@ PixelDoro cần đo activation, completion, retention và core focus loop trong 
 ## Decision
 
 Dùng PostHog Cloud EU cho Mobile MVP, tích hợp qua application-owned analytics port/adapter. Chỉ capture các anonymous core product events trong allowlist đã review. Không self-host trong MVP.
+
+### Rollout update — 2026-09-13
+
+Do ưu tiên chi phí và trải nghiệm core trong internal test, owner quyết định tạm ẩn live PostHog.
+Adapter/typed contract/queue/privacy boundary được giữ để tránh làm lại kiến trúc, nhưng không cấp project
+key, không bật external delivery và không dùng live analytics làm gate đóng EPIC-11. Thiếu config phải
+tiếp tục fail-closed, không tạo request hoặc chi phí.
+
+Việc bật lại PostHog cần quyết định owner mới, project EU riêng, retention/cost owner và billing alerts
+theo guardrail bên dưới. Quyết định này không thay đổi các giới hạn privacy/data minimization.
 
 Cấu hình bắt buộc:
 

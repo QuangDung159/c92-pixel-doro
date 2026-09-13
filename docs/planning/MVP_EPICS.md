@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_MVP_EPIC_BREAKDOWN
 title: PixelDoro Mobile MVP — Epic Breakdown
-version: 3.2.0
-status: EPIC_01_TO_10_DONE_OWNER_ACCEPTED_EPIC_11_IMPLEMENTATION_IN_PROGRESS
+version: 3.3.0
+status: EPIC_01_TO_10_DONE_OWNER_ACCEPTED_EPIC_11_CLOSURE_REVIEW_PENDING
 last_updated: 2026-09-13
 owner: Dũng Lư
 reviewer: Dũng Lư
@@ -148,14 +148,14 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 | `EPIC-08` | `DONE_OWNER_ACCEPTED` | US-08-01→05 owner accepted; exact candidate `30adc34...`; Exit Report closed by owner authorization. |
 | `EPIC-09` | `DONE_OWNER_ACCEPTED` | US-09-01→05 owner accepted; exact behavior candidate `a1abf5f...`; History/Contribution exit closed by owner authorization. |
 | `EPIC-10` | `DONE_OWNER_ACCEPTED` | US-10-01→05 owner accepted; exact merged candidate `bee029a12576af8d8470668c1fa2ce8d8502ac4b`; quick UI PASS/no crash and review/automated/native/export gates pass. |
-| `EPIC-11` | `IMPLEMENTATION_IN_PROGRESS` | Owner approved `US1100-CONFIRM-01→10=A`; code and automated evidence are in the worktree, owner quick UI/external provider/native exact-SHA gates remain open. |
+| `EPIC-11` | `IMPLEMENTED / OWNER_QUICK_UI_PASS` | `EPIC-11_IMPLEMENTATION_REPORT.md`; automated gates pass and owner reports no crash/worked as expected. Live PostHog is deferred for cost and fail-closed; exact-SHA closure remains open. |
 | `EPIC-12` | `NOT_OPENED` | Start gate remains `EPIC-11 DONE`; no beta-readiness/release work has started. |
 
 Mười Epic đầu đã `DONE_OWNER_ACCEPTED`. EPIC-10 được đóng tại exact merged SHA
 `bee029a12576af8d8470668c1fa2ce8d8502ac4b` sau owner quick-smoke/accept và xác nhận closure.
-EPIC-11 đang `IMPLEMENTATION_IN_PROGRESS`; master checkbox vẫn mở cho tới exact-SHA acceptance.
-Provider credentials và native/device evidence vẫn thuộc EPIC-11; full Beta Readiness vẫn thuộc
-EPIC-12 và chưa được mở.
+EPIC-11 đã implementation và owner quick UI PASS; master checkbox vẫn mở cho tới exact-SHA acceptance.
+Live PostHog được owner tạm ẩn vì chi phí, không còn là live gate của internal test. Formal device/native
+breadth và full Beta Readiness vẫn thuộc EPIC-12 và chưa được mở.
 
 ## 3. Critical path và delivery gates
 
@@ -686,7 +686,7 @@ matrix tiếp tục `DEFERRED_TO_LATER_PHASE` và được carry sang later vali
 
 **Loại:** Product/Operational
 
-- **Status:** `IMPLEMENTATION_IN_PROGRESS` — owner quick UI/external gates pending; master checkbox vẫn mở.
+- **Status:** `IMPLEMENTED / OWNER_QUICK_UI_PASS` — exact-SHA closure pending; master checkbox vẫn mở.
 - **MVP priority:** `MUST`
 - **Delivery wave:** `W3_VERTICAL_MVP`
 - **Execution order:** `11`
@@ -698,7 +698,7 @@ matrix tiếp tục `DEFERRED_TO_LATER_PHASE` và được carry sang later vali
 
 **In scope:**
 
-- PostHog Cloud EU adapter với anonymous installation ID.
+- PostHog Cloud EU adapter với anonymous installation ID, giữ fail-closed; live rollout tạm ẩn vì chi phí.
 - Manual typed event allowlist và property/payload limits.
 - Bounded offline queue 1.000 events, TTL 7 ngày, drop-oldest.
 - Core MVP analytics events và trial exclusions.
@@ -706,24 +706,24 @@ matrix tiếp tục `DEFERRED_TO_LATER_PHASE` và được carry sang later vali
 - Feedback không persist local và comment không vào analytics/log.
 - Native store-review eligibility, frequency cap và persisted attempts.
 - Feedback/store-review separation và no-review-gating enforcement.
-- Cost/retention operational guardrails.
+- Cost/retention operational guardrails chỉ trở thành activation gate khi owner bật lại live PostHog.
 
 **Epic completion checklist:**
 
-- [ ] Không person profile, autocapture, session replay, GeoIP hoặc advertising identifier.
-- [ ] Không development/test analytics; preview chỉ dùng dataset tách biệt khi cần.
-- [ ] Event/property/payload chỉ đi qua typed allowlist.
-- [ ] Queue cap/TTL/retry chạy ngoài core transaction.
-- [ ] Analytics failure không block core flow.
-- [ ] Trial chỉ phát onboarding events và không phát standard Focus/reward events.
-- [ ] Feedback comment không persist, không log và không gửi analytics.
-- [ ] Feedback submit failure cho Retry tại chỗ và không ảnh hưởng core loop.
-- [ ] Store review chỉ xét production tại Home sau completed reward/celebration.
-- [ ] Eligibility dùng 7 ngày, 5 completed Standard Focus và 3 active local days.
-- [ ] Cooldown 120 ngày, tối đa 3 attempts/365 ngày và một attempt/app version.
-- [ ] Attempt persist trước native call và vẫn tính khi prompt không hiển thị.
-- [ ] Feedback score/comment/history không tham gia store-review eligibility.
-- [ ] Chỉ capture `store_review_requested`, không suy diễn review outcome.
+- [x] Không person profile, autocapture, session replay, GeoIP hoặc advertising identifier.
+- [x] Không development/test analytics; preview chỉ dùng dataset tách biệt khi cần.
+- [x] Event/property/payload chỉ đi qua typed allowlist.
+- [x] Queue cap/TTL/retry chạy ngoài core transaction.
+- [x] Analytics failure không block core flow.
+- [x] Trial chỉ phát onboarding events và không phát standard Focus/reward events.
+- [x] Feedback comment không persist, không log và không gửi analytics.
+- [x] Feedback submit failure cho Retry tại chỗ và không ảnh hưởng core loop.
+- [x] Store review chỉ xét production tại Home sau completed reward/celebration.
+- [x] Eligibility dùng 7 ngày, 5 completed Standard Focus và 3 active local days.
+- [x] Cooldown 120 ngày, tối đa 3 attempts/365 ngày và một attempt/app version.
+- [x] Attempt persist trước native call và vẫn tính khi prompt không hiển thị.
+- [x] Feedback score/comment/history không tham gia store-review eligibility.
+- [x] Chỉ capture `store_review_requested`, không suy diễn review outcome.
 
 **Out of scope:** Review gating, custom store prompt, incentive, feedback outbox, session replay, user profile và server-side analytics identity.
 
@@ -877,6 +877,13 @@ Story hoặc implementation tương lai.
 - [x] Không estimate deadline trước khi Story refinement hoàn tất.
 
 ## 10. Change log
+
+### 3.3.0 — 2026-09-13
+
+- Recorded EPIC-11 owner quick UI PASS: no crash and behavior worked as expected.
+- Recorded the owner cost decision to keep live PostHog hidden/fail-closed during internal test while
+  retaining the adapter and privacy-safe architecture.
+- Kept the EPIC-11 master checkbox open for exact-SHA closure; EPIC-12 remains `NOT_OPENED`.
 
 ### 3.2.0 — 2026-09-13
 

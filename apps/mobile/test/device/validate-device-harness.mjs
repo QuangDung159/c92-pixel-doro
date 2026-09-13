@@ -72,7 +72,7 @@ const epic11QuickUiFlow = await readFile(
   `${deviceDirectory}epic-11-quick-ui-smoke.md`, 'utf8',
 );
 for (const evidence of [
-  'READY_FOR_OWNER_QUICK_UI',
+  'PASS_OWNER_QUICK_UI_NO_CRASH_2026_09_13_WORKTREE',
   'EXPO_PUBLIC_EPIC_11_REVIEW_FIXTURE=epic_11_quick',
   'EXPO_PUBLIC_EPIC_11_REVIEW_FIXTURE=epic_11_feedback_failure_once',
   'EXPO_PUBLIC_EPIC_11_REVIEW_FIXTURE=epic_11_review_cooldown',

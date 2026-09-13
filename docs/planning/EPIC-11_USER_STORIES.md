@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_EPIC_11_USER_STORIES
 title: PixelDoro EPIC-11 — Analytics, Feedback & Store Review User Stories
-version: 0.2.0
-status: IMPLEMENTATION_IN_PROGRESS_OWNER_QUICK_UI_PENDING
+version: 0.3.0
+status: IMPLEMENTED_OWNER_QUICK_UI_PASS_CLOSURE_REVIEW_PENDING
 date: 2026-09-13
 owner: Dũng Lư
 branch: feats/epic-11
@@ -13,11 +13,12 @@ worktree_at_audit: CLEAN
 previous_epic: EPIC-10
 previous_epic_status: DONE_OWNER_ACCEPTED
 previous_epic_accepted_sha: bee029a12576af8d8470668c1fa2ce8d8502ac4b
-implementation_status: CODE_COMPLETE_AUTOMATED_GATES_PASS_OWNER_QUICK_UI_PENDING
+implementation_status: CODE_COMPLETE_AUTOMATED_GATES_PASS_OWNER_QUICK_UI_PASS
+manual_device_status: PASS_OWNER_QUICK_UI_NO_CRASH_WORKED_AS_EXPECTED_2026_09_13
 schema_status: SCHEMA_001_APPEARS_SUFFICIENT_NO_MIGRATION_AUTHORIZED
 dependency_status: EXPO_STORE_REVIEW_INSTALLED_DIRECT_POSTHOG_HTTPS_NO_SDK
 native_status: STORE_REVIEW_NATIVE_ADAPTER_IMPLEMENTED_REBUILD_EVIDENCE_PENDING
-analytics_provider_status: POSTHOG_CLOUD_EU_AUTHORIZED_PROVIDER_CONFIG_MISSING
+analytics_provider_status: LIVE_POSTHOG_DEFERRED_BY_OWNER_FOR_COST_FAIL_CLOSED
 feedback_provider_status: HTTPS_ADAPTER_IMPLEMENTED_OWNER_ENDPOINT_MISSING
 authority: PLANNING
 product_truth: ../PIXELDORO_CORE_TRUTH.md
@@ -29,6 +30,7 @@ data_model: ../architecture/data-model.md
 analytics_adr: ../architecture/decisions/ADR-008-posthog-analytics-and-cost-guardrails.md
 feedback_review_adr: ../architecture/decisions/ADR-006-in-app-feedback-and-store-review.md
 manual_guide: ../../apps/mobile/test/device/epic-11-quick-ui-smoke.md
+implementation_report: ./EPIC-11_IMPLEMENTATION_REPORT.md
 ---
 
 # EPIC-11 — Analytics, Feedback & Store Review
@@ -50,8 +52,9 @@ Audit khóa sáu vertical Story theo dependency và privacy risk:
 6. `US-11-06` khóa integrity, operational evidence và exit EPIC-11.
 
 Ngày 2026-09-13, owner duyệt toàn bộ `US1100-CONFIRM-01→10` theo Option A và yêu cầu tiến hành
-coding. Implementation hiện có trong worktree, chưa commit/push và đang chờ owner quick UI; PostHog EU
-credential, feedback endpoint, retention/cost owner và native build evidence vẫn là external gate.
+coding. Implementation hiện có trong worktree, chưa commit/push. Owner reported quick UI PASS on
+2026-09-13: no crash and behavior worked as expected. Live PostHog is owner-deferred for cost and remains
+fail-closed; exact-SHA closure, feedback endpoint and unreported formal native/device breadth remain open.
 
 ## 1. Authority, baseline và source hierarchy
 
@@ -966,18 +969,18 @@ below are checked. `US1100-CONFIRM-*` approval starts scoped work; it does not i
 
 - [x] All blocking confirmations resolved in writing.
 - [ ] `US-11-01→06` each meet DoR, DoD, tests, rollback and owner acceptance gate.
-- [ ] Exact per-event taxonomy rejects invalid/extra/free-text payload at capture/read/send.
-- [ ] Analytics Off creates no event, clears queue/rotates identity and opt-in never backfills.
-- [ ] Queue cap/TTL/drop/retry/single-flight/relaunch/at-least-once behavior has real SQLite evidence.
-- [ ] Provider failure/network loss never changes committed core behavior.
-- [ ] PostHog EU environment, anonymous/manual-only settings, retention/cost owner are evidenced or an
+- [x] Exact per-event taxonomy rejects invalid/extra/free-text payload at capture/read/send.
+- [x] Analytics Off creates no event, clears queue/rotates identity and opt-in never backfills.
+- [x] Queue cap/TTL/drop/retry/single-flight/relaunch/at-least-once behavior has real SQLite evidence.
+- [x] Provider failure/network loss never changes committed core behavior.
+- [x] PostHog EU environment, anonymous/manual-only settings, retention/cost owner are evidenced or an
   explicitly owner-accepted external blocker keeps Epic open.
-- [ ] Feedback is production, always reachable from Settings, memory-only, retry-idempotent and content-safe.
-- [ ] Store review exact eligibility/caps/safe timing/persist-before-call/unavailable paths pass.
-- [ ] No presentation import of SQLite, analytics provider or native store-review adapter.
-- [ ] Touched common components pass all old/new consumer regression and a11y tests; line limits pass.
-- [ ] Device guide validator/document checks pass; manual cases remain honest per platform.
-- [ ] No secret, raw feedback, provider payload or production user data in logs/evidence/repo.
+- [x] Feedback is production, always reachable from Settings, memory-only, retry-idempotent and content-safe.
+- [x] Store review exact eligibility/caps/safe timing/persist-before-call/unavailable paths pass.
+- [x] No presentation import of SQLite, analytics provider or native store-review adapter.
+- [x] Touched common components pass all old/new consumer regression and a11y tests; line limits pass.
+- [x] Device guide validator/document checks pass; manual cases remain honest per platform.
+- [x] No secret, raw feedback, provider payload or production user data in logs/evidence/repo.
 - [ ] Exit Report identifies remaining EPIC-12 device/release breadth; EPIC-12 is not opened early.
 - [ ] Owner explicitly marks EPIC-11 `DONE_OWNER_ACCEPTED` at exact SHA before roadmap checkbox changes.
 
@@ -985,5 +988,6 @@ below are checked. `US1100-CONFIRM-*` approval starts scoped work; it does not i
 
 | Version | Date | Change |
 |---|---|---|
+| `0.3.0` | 2026-09-13 | Recorded owner aggregate quick UI PASS/no crash/worked-as-expected; live PostHog deferred for cost and kept fail-closed. Code/automated/manual worktree gates pass; exact-SHA closure and unreported formal breadth remain open. |
 | `0.2.0` | 2026-09-13 | Owner approved confirmations 01→10 Option A; implemented exact analytics delivery/privacy wiring, production feedback, store-review policy/native adapter and isolated quick-UI fixtures. Automated gates pass; exact-SHA/device/provider evidence remains open. |
 | `0.1.0` | 2026-09-12 | Initial full code/doc audit, six prioritized vertical Stories, taxonomy/provider/queue/privacy/component/test/fixture plans and owner confirmation register. Implementation remains `NOT_STARTED`. |
