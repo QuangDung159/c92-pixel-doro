@@ -4,6 +4,9 @@ Status: `PASS_OWNER_QUICK_UI_NO_CRASH_2026_09_13_EXACT_SHA_RECORDED`
 
 Implementation SHA: `deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0`
 
+Owner closure: `DONE_OWNER_ACCEPTED_2026_09_14` at accepted candidate
+`6a0fa42860a9134c1374867a33aa0d8b16d9bb89`.
+
 Allowed case results: `PASS`, `FAIL`, `BLOCKED`, `NOT_RUN`.
 Individual case result remains `NOT_RUN` unless explicitly reported below.
 

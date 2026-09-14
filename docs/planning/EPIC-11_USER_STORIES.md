@@ -1,9 +1,10 @@
 ---
 document_id: PIXELDORO_EPIC_11_USER_STORIES
 title: PixelDoro EPIC-11 — Analytics, Feedback & Store Review User Stories
-version: 0.4.0
-status: IMPLEMENTED_OWNER_QUICK_UI_PASS_CLOSURE_REVIEW_PENDING
+version: 1.0.0
+status: DONE_OWNER_ACCEPTED
 date: 2026-09-13
+last_updated: 2026-09-14
 owner: Dũng Lư
 branch: feats/epic-11
 upstream: origin/feats/epic-11
@@ -13,8 +14,10 @@ worktree_at_audit: CLEAN
 previous_epic: EPIC-10
 previous_epic_status: DONE_OWNER_ACCEPTED
 previous_epic_accepted_sha: bee029a12576af8d8470668c1fa2ce8d8502ac4b
-implementation_status: CODE_COMPLETE_AUTOMATED_GATES_PASS_OWNER_QUICK_UI_PASS
+implementation_status: DONE_OWNER_ACCEPTED
 implementation_sha: deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0
+accepted_candidate_sha: 6a0fa42860a9134c1374867a33aa0d8b16d9bb89
+owner_closure: DONE_OWNER_ACCEPTED_2026_09_14
 manual_device_status: PASS_OWNER_QUICK_UI_NO_CRASH_WORKED_AS_EXPECTED_2026_09_13
 schema_status: SCHEMA_001_APPEARS_SUFFICIENT_NO_MIGRATION_AUTHORIZED
 dependency_status: EXPO_STORE_REVIEW_INSTALLED_DIRECT_POSTHOG_HTTPS_NO_SDK
@@ -32,6 +35,7 @@ analytics_adr: ../architecture/decisions/ADR-008-posthog-analytics-and-cost-guar
 feedback_review_adr: ../architecture/decisions/ADR-006-in-app-feedback-and-store-review.md
 manual_guide: ../../apps/mobile/test/device/epic-11-quick-ui-smoke.md
 implementation_report: ./EPIC-11_IMPLEMENTATION_REPORT.md
+exit_report: ./EPIC-11_EXIT_REPORT.md
 ---
 
 # EPIC-11 — Analytics, Feedback & Store Review
@@ -57,7 +61,9 @@ coding. Implementation đã được commit/push tại exact SHA
 `deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0`. Owner reported quick UI PASS on 2026-09-13: no crash and
 behavior worked as expected. Live PostHog is owner-deferred for cost and remains fail-closed. The feedback
 endpoint is an activation prerequisite before collecting real submissions, not a core-only internal-test
-gate. Owner closure review and unreported formal native/device breadth remain open.
+gate. On 2026-09-14, the owner explicitly accepted EPIC-11 at exact candidate SHA
+`6a0fa42860a9134c1374867a33aa0d8b16d9bb89`. Formal native/device breadth remains explicitly deferred
+to EPIC-12 and is not relabeled PASS.
 
 ## 1. Authority, baseline và source hierarchy
 
@@ -69,7 +75,8 @@ gate. Owner closure review and unreported formal native/device breadth remain op
 | Branch | `feats/epic-11` |
 | Planning baseline | `a8dd7eb21dc978884994a46230fb9837d8d74f68` |
 | Implementation SHA | `deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0` |
-| Upstream | `origin/feats/epic-11` tại implementation SHA |
+| Accepted candidate | `6a0fa42860a9134c1374867a33aa0d8b16d9bb89` |
+| Upstream | `origin/feats/epic-11` tại accepted candidate SHA |
 | Worktree trước task | Clean; không có owner change cần bảo tồn |
 | EPIC-10 | `DONE_OWNER_ACCEPTED`; implementation `bee029a12576af8d8470668c1fa2ce8d8502ac4b` |
 | Mutation policy | Chỉ planning docs/manual executable specification; không code/commit/push |
@@ -764,7 +771,8 @@ weakening offline core behavior or overstating unrun platform evidence.
   operation and MVP aggregate; EPIC-12 owns them.
 - Dependencies/start: `US-11-01→05` implementation candidates; `CONFIRM-09/10`.
 - Reuse: device harness conventions, repository checks, exact-SHA evidence, disposable DB/reset fixtures.
-- Missing: EPIC-11 aggregate fixture, validator entries, Exit Report and operational owner evidence.
+- Initial gap, now resolved: EPIC-11 aggregate fixture, validator entries, Exit Report and operational
+  owner evidence.
 
 ### Data and integrity rules
 
@@ -822,10 +830,10 @@ evidence present or explicit blocker; Exit Report reviewed; roadmap only then ma
 - [x] Implement dev-only isolated aggregate fixture and device-validator rules.
 - [x] Run full required automated/privacy/boundary/common regression matrix.
 - [x] Execute owner quick smoke; retain `NOT_RUN/BLOCKED` per unexecuted case.
-- [ ] Produce Exit Report/cost-retention handoff and obtain explicit owner acceptance.
+- [x] Produce Exit Report/cost-retention handoff and obtain explicit owner acceptance.
 
 **Expected output:** combined integration/device fixture, updated validator, completed manual evidence,
-operational handoff and future EPIC-11 Exit Report.
+operational handoff and EPIC-11 Exit Report.
 
 **Prohibited:** Story-free “test only” scope, production debug UI, production data/dashboard dependency,
 secret/content artifacts, false PASS, EPIC-12 matrix/release work or roadmap completion before acceptance.
@@ -973,7 +981,7 @@ Suggested one-line approval format (owner may edit any item):
 | Feedback duplicates or leaks content | Stable submission ID, memory-only, redacted tests | Disable Submit/adapter; never persist draft |
 | Store review spams | Atomic persist-before-call, unique version, caps, fresh trigger | Disable trigger; retain attempt history |
 | Native dependency shipped OTA-only | Native rebuild/evidence gate | Revert adapter/config; no release claim |
-| External prerequisite causes false completion | `BLOCKED/NOT_RUN` and local fake evidence separated | Keep Epic open; do not relabel PASS |
+| External prerequisite causes false completion | `BLOCKED/NOT_RUN` and local fake evidence separated | Keep the row deferred unless owner accepts the deferral; never relabel it PASS |
 
 ## 19. EPIC-11 Definition of Done and Exit Checklist
 
@@ -981,7 +989,7 @@ EPIC-11 is done only when the owner accepts one exact implementation SHA and all
 below are checked. `US1100-CONFIRM-*` approval starts scoped work; it does not itself satisfy DoD.
 
 - [x] All blocking confirmations resolved in writing.
-- [ ] `US-11-01→06` each meet DoR, DoD, tests, rollback and owner acceptance gate.
+- [x] `US-11-01→06` each meet DoR, DoD, tests, rollback and owner acceptance gate.
 - [x] Exact per-event taxonomy rejects invalid/extra/free-text payload at capture/read/send.
 - [x] Analytics Off creates no event, clears queue/rotates identity and opt-in never backfills.
 - [x] Queue cap/TTL/drop/retry/single-flight/relaunch/at-least-once behavior has real SQLite evidence.
@@ -994,13 +1002,15 @@ below are checked. `US1100-CONFIRM-*` approval starts scoped work; it does not i
 - [x] Touched common components pass all old/new consumer regression and a11y tests; line limits pass.
 - [x] Device guide validator/document checks pass; manual cases remain honest per platform.
 - [x] No secret, raw feedback, provider payload or production user data in logs/evidence/repo.
-- [ ] Exit Report identifies remaining EPIC-12 device/release breadth; EPIC-12 is not opened early.
-- [ ] Owner explicitly marks EPIC-11 `DONE_OWNER_ACCEPTED` at exact SHA before roadmap checkbox changes.
+- [x] Exit Report identifies remaining EPIC-12 device/release breadth; EPIC-12 was not opened early.
+- [x] Owner explicitly marks EPIC-11 `DONE_OWNER_ACCEPTED` at accepted candidate SHA
+  `6a0fa42860a9134c1374867a33aa0d8b16d9bb89` before roadmap checkbox changes.
 
 ## 20. Change log
 
 | Version | Date | Change |
 |---|---|---|
+| `1.0.0` | 2026-09-14 | Owner explicitly closed EPIC-11 as `DONE_OWNER_ACCEPTED` at candidate SHA `6a0fa42860a9134c1374867a33aa0d8b16d9bb89`; all six Story gates and Exit Report are complete, deferred EPIC-12 breadth remains honest. |
 | `0.4.0` | 2026-09-13 | Bound the implemented and owner-smoked candidate to pushed exact SHA `deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0`; closure review remains open and EPIC-12 remains unopened. |
 | `0.3.0` | 2026-09-13 | Recorded owner aggregate quick UI PASS/no crash/worked-as-expected; live PostHog deferred for cost and kept fail-closed. Code/automated/manual worktree gates pass; exact-SHA closure and unreported formal breadth remain open. |
 | `0.2.0` | 2026-09-13 | Owner approved confirmations 01→10 Option A; implemented exact analytics delivery/privacy wiring, production feedback, store-review policy/native adapter and isolated quick-UI fixtures. Automated gates pass; exact-SHA/device/provider evidence remains open. |

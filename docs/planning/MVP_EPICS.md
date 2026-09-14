@@ -1,16 +1,16 @@
 ---
 document_id: PIXELDORO_MVP_EPIC_BREAKDOWN
 title: PixelDoro Mobile MVP — Epic Breakdown
-version: 3.4.0
-status: EPIC_01_TO_10_DONE_OWNER_ACCEPTED_EPIC_11_CLOSURE_REVIEW_PENDING
-last_updated: 2026-09-13
+version: 3.5.0
+status: EPIC_01_TO_11_DONE_OWNER_ACCEPTED_EPIC_12_PLANNING_GATE_OPEN
+last_updated: 2026-09-14
 owner: Dũng Lư
 reviewer: Dũng Lư
 reviewer_role: Tech Lead
 approved_by: Dũng Lư
 approver_role: Product Owner
 approved_at: 2026-08-27
-amended_at: 2026-09-13
+amended_at: 2026-09-14
 amendment_approved_by: Dũng Lư
 language: vi
 scope:
@@ -131,7 +131,7 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 - [x] `08 / EPIC-08 / W3` — Progression & Shop.
 - [x] `09 / EPIC-09 / W3` — History & Contribution — `DONE_OWNER_ACCEPTED` 2026-09-12.
 - [x] `10 / EPIC-10 / W3` — Settings & Data Control — `DONE_OWNER_ACCEPTED` 2026-09-12.
-- [ ] `11 / EPIC-11 / W3` — Analytics, Feedback & Store Review.
+- [x] `11 / EPIC-11 / W3` — Analytics, Feedback & Store Review — `DONE_OWNER_ACCEPTED` 2026-09-14.
 - [ ] `12 / EPIC-12 / W4` — Beta Readiness.
 
 ### 2.4. Trạng thái hiện tại
@@ -148,13 +148,13 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 | `EPIC-08` | `DONE_OWNER_ACCEPTED` | US-08-01→05 owner accepted; exact candidate `30adc34...`; Exit Report closed by owner authorization. |
 | `EPIC-09` | `DONE_OWNER_ACCEPTED` | US-09-01→05 owner accepted; exact behavior candidate `a1abf5f...`; History/Contribution exit closed by owner authorization. |
 | `EPIC-10` | `DONE_OWNER_ACCEPTED` | US-10-01→05 owner accepted; exact merged candidate `bee029a12576af8d8470668c1fa2ce8d8502ac4b`; quick UI PASS/no crash and review/automated/native/export gates pass. |
-| `EPIC-11` | `IMPLEMENTED / OWNER_QUICK_UI_PASS` | Exact SHA `deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0`; automated gates pass and owner reports no crash/worked as expected. Live PostHog is deferred for cost and fail-closed; owner closure review remains open. |
-| `EPIC-12` | `NOT_OPENED` | Start gate remains `EPIC-11 DONE`; no beta-readiness/release work has started. |
+| `EPIC-11` | `DONE_OWNER_ACCEPTED` | `EPIC-11_EXIT_REPORT.md`; accepted candidate `6a0fa42860a9134c1374867a33aa0d8b16d9bb89`, implementation `deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0`; automated gates and owner quick UI pass. Provider activation deferrals remain explicit. |
+| `EPIC-12` | `PLANNING_GATE_OPEN` | EPIC-11 closure satisfies the start dependency; implementation/release evidence must be managed by EPIC-12 and is not implied by this closure. |
 
-Mười Epic đầu đã `DONE_OWNER_ACCEPTED`. EPIC-10 được đóng tại exact merged SHA
+Mười một Epic đầu đã `DONE_OWNER_ACCEPTED`. EPIC-10 được đóng tại exact merged SHA
 `bee029a12576af8d8470668c1fa2ce8d8502ac4b` sau owner quick-smoke/accept và xác nhận closure.
-EPIC-11 đã implementation và owner quick UI PASS tại exact SHA
-`deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0`; master checkbox vẫn mở cho tới owner closure acceptance.
+EPIC-11 được owner đóng ngày 2026-09-14 tại accepted candidate
+`6a0fa42860a9134c1374867a33aa0d8b16d9bb89`; EPIC-12 planning gate hiện đã mở.
 Live PostHog được owner tạm ẩn vì chi phí, không còn là live gate của internal test. Formal device/native
 breadth và full Beta Readiness vẫn thuộc EPIC-12 và chưa được mở. Feedback endpoint cũng có thể giữ
 unset trong core-only internal test, nhưng phải cấu hình trước khi thu submission thật.
@@ -688,8 +688,9 @@ matrix tiếp tục `DEFERRED_TO_LATER_PHASE` và được carry sang later vali
 
 **Loại:** Product/Operational
 
-- **Status:** `IMPLEMENTED / OWNER_QUICK_UI_PASS` tại exact SHA
-  `deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0` — owner closure review pending; master checkbox vẫn mở.
+- **Status:** `DONE_OWNER_ACCEPTED` tại accepted candidate
+  `6a0fa42860a9134c1374867a33aa0d8b16d9bb89`; implementation SHA
+  `deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0`.
 - **MVP priority:** `MUST`
 - **Delivery wave:** `W3_VERTICAL_MVP`
 - **Execution order:** `11`
@@ -880,6 +881,13 @@ Story hoặc implementation tương lai.
 - [x] Không estimate deadline trước khi Story refinement hoàn tất.
 
 ## 10. Change log
+
+### 3.5.0 — 2026-09-14
+
+- Closed EPIC-11 as `DONE_OWNER_ACCEPTED` at candidate SHA
+  `6a0fa42860a9134c1374867a33aa0d8b16d9bb89` after owner quick UI PASS and explicit closure request.
+- Preserved PostHog/feedback activation and formal native/accessibility breadth as deferred rather than PASS.
+- Marked W3 feature delivery complete and opened the EPIC-12 planning gate only.
 
 ### 3.4.0 — 2026-09-13
 

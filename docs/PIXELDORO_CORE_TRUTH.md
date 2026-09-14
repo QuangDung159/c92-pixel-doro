@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_CORE_TRUTH
 title: PixelDoro Product Core — Single Source of Truth
-version: 1.18.0
+version: 1.19.0
 status: ACTIVE
-last_updated: 2026-09-13
+last_updated: 2026-09-14
 owner: Dũng Lư
 owner_roles:
   - Tech Lead
@@ -1145,9 +1145,10 @@ Mobile MVP được xem là đủ điều kiện closed beta khi:
 - [x] Có cơ chế reset/xóa dữ liệu local.
 
 Checkbox chỉ được tick theo implementation/automated/manual evidence, không theo dự đoán roadmap.
-EPIC-11 đã có feedback UI/adapter production, typed analytics dedupe/privacy và owner quick UI PASS;
-live feedback endpoint và PostHog activation vẫn deferred trong core-only internal test. Formal aggregate
-device/release breadth tiếp tục thuộc EPIC-12.
+EPIC-11 đã `DONE_OWNER_ACCEPTED` tại candidate
+`6a0fa42860a9134c1374867a33aa0d8b16d9bb89`, với feedback UI/adapter production, typed analytics
+dedupe/privacy và owner quick UI PASS. Live feedback endpoint và PostHog activation vẫn deferred trong
+core-only internal test. Formal aggregate device/release breadth tiếp tục thuộc EPIC-12.
 
 ---
 
@@ -1205,6 +1206,13 @@ Không mục nào trong bảng này được xem là requirement đã chốt cho
 ---
 
 # 22. Change Log
+
+## 1.19.0 — 2026-09-14
+
+- Ghi nhận EPIC-11 `DONE_OWNER_ACCEPTED` tại candidate
+  `6a0fa42860a9134c1374867a33aa0d8b16d9bb89` và mở planning gate cho EPIC-12.
+- Giữ live PostHog, feedback endpoint và formal device/accessibility breadth ở trạng thái deferred;
+  không suy diễn thành provider/device PASS.
 
 ## 1.18.0 — 2026-09-13
 
