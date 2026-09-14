@@ -2,7 +2,10 @@ import type {
   HomeProfileProjection,
   PetVisualProjection,
 } from '@pixeldoro/application';
-import type { RoomDecorationsControllerProjection } from '@/application';
+import type {
+  RoomDecorationsControllerProjection,
+  StoreReviewRequestOutcome,
+} from '@/application';
 import { StyleSheet, Text } from 'react-native';
 
 import {
@@ -30,6 +33,8 @@ export interface HomeScreenProps {
   readonly onStartFocus: () => void;
   readonly room: RoomDecorationsControllerProjection;
   readonly onRetryRoom: () => void;
+  readonly reviewFixtureOutcome?: StoreReviewRequestOutcome | null;
+  readonly reviewFixtureLabel?: string;
 }
 
 export const HomeScreen = ({
@@ -40,6 +45,8 @@ export const HomeScreen = ({
   onStartFocus,
   room,
   onRetryRoom,
+  reviewFixtureOutcome,
+  reviewFixtureLabel,
 }: HomeScreenProps) => {
   const roomItems = room.status === 'ready' ? room.room.items : [];
   return (
@@ -69,6 +76,19 @@ export const HomeScreen = ({
           />
           <RoomDecorationStatus onRetry={onRetryRoom} projection={room} />
           <ProgressionSummary progression={profile} variant="full" />
+          {reviewFixtureOutcome !== undefined ? (
+            <Panel>
+              <Text style={styles.cardEyebrow}>EPIC-11 REVIEW FIXTURE</Text>
+              {reviewFixtureLabel === undefined ? null : (
+                <Text style={styles.cardBody}>{reviewFixtureLabel}</Text>
+              )}
+              <Text accessibilityLiveRegion="polite" style={styles.cardBody}>
+                {reviewFixtureOutcome === null
+                  ? 'Chưa có yêu cầu đánh giá mới.'
+                  : `Kết quả đã làm sạch: ${reviewFixtureOutcome}`}
+              </Text>
+            </Panel>
+          ) : null}
           <Panel tone="strong">
             <Text style={styles.cardEyebrow}>TIẾP THEO</Text>
             <Text style={styles.cardTitle}>Sẵn sàng cho một phiên 25 phút?</Text>

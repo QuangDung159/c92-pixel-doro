@@ -4,6 +4,7 @@ import type {
   AnalyticsProperties,
   StoreReviewAttemptRecord,
 } from '@/application';
+import { validateAnalyticsEventPayload } from '@/application';
 
 import {
   corrupt,
@@ -54,84 +55,17 @@ const approvedEventNames: readonly ApprovedAnalyticsEventName[] = [
   'store_review_requested',
 ];
 
-const approvedItemIds = new Set([
-  'desk-mug', 'tiny-plant', 'book-stack', 'desk-lamp', 'wall-calendar',
-  'floor-cushion', 'small-rug', 'wall-poster', 'bookshelf', 'standing-lamp',
-  'armchair', 'window-view',
-]);
-
-const isOneOf = (value: unknown, values: readonly string[]): value is string =>
-  typeof value === 'string' && values.includes(value);
-
-const isApprovedProperty = (key: string, value: unknown): boolean => {
-  switch (key) {
-    case 'sessionType':
-      return isOneOf(value, ['focus', 'short_break', 'long_break']);
-    case 'focusVariant':
-      return value === null || isOneOf(value, ['standard', 'onboarding_trial']);
-    case 'mode':
-      return value === null || isOneOf(value, ['relax', 'strict']);
-    case 'workTag':
-      return value === null || isOneOf(value, ['coding', 'study', 'writing', 'reading']);
-    case 'status':
-      return isOneOf(value, ['running', 'completed', 'failed', 'cancelled']);
-    case 'terminalStatus':
-      return isOneOf(value, ['completed', 'failed', 'cancelled']);
-    case 'breakType':
-      return isOneOf(value, ['short_break', 'long_break']);
-    case 'rewardReason':
-      return isOneOf(value, ['focus_completed', 'onboarding_trial_completed']);
-    case 'category':
-      return value === 'furniture';
-    case 'itemId':
-      return typeof value === 'string' && approvedItemIds.has(value);
-    case 'configuredDurationMinutes':
-    case 'durationMinutes':
-      return typeof value === 'number' && Number.isSafeInteger(value) &&
-        value >= 5 && value <= 120;
-    case 'xpEarned':
-      return typeof value === 'number' && Number.isSafeInteger(value) &&
-        value >= 0 && value <= 120;
-    case 'coinsEarned':
-      return typeof value === 'number' && Number.isSafeInteger(value) &&
-        value >= 0 && value <= 24;
-    case 'pricePaidCoins':
-      return typeof value === 'number' && Number.isSafeInteger(value) && value > 0;
-    case 'attemptCount':
-      return isNonNegativeSafeInteger(value);
-    case 'isFirstSession':
-    case 'isSecondSession':
-    case 'isReturningUser':
-      return typeof value === 'boolean';
-    default:
-      return false;
-  }
-};
-
 export const isApprovedAnalyticsEventName = (
   value: unknown,
 ): value is ApprovedAnalyticsEventName =>
   typeof value === 'string' &&
   approvedEventNames.includes(value as ApprovedAnalyticsEventName);
 
-export const validateAnalyticsProperties = (
-  value: unknown,
-): value is AnalyticsProperties => {
-  if (
-    value === null ||
-    typeof value !== 'object' ||
-    Array.isArray(value) ||
-    Object.getPrototypeOf(value) !== Object.prototype
-  ) return false;
-  const entries = Object.entries(value);
-  return entries.length <= 20 &&
-    entries.every(([key, property]) => isApprovedProperty(key, property));
-};
-
 export const serializeAnalyticsProperties = (
+  eventName: ApprovedAnalyticsEventName,
   properties: AnalyticsProperties,
 ): RowMapping<string> => {
-  if (!validateAnalyticsProperties(properties)) return corrupt('properties');
+  if (!validateAnalyticsEventPayload(eventName, properties)) return corrupt('properties');
   const serialized = JSON.stringify(properties);
   return utf8ByteLength(serialized) <= 2048
     ? mapped(serialized)
@@ -168,7 +102,9 @@ export const mapAnalyticsEventRow = (
   } catch {
     return corrupt('properties_json');
   }
-  if (!validateAnalyticsProperties(properties)) return corrupt('properties_json');
+  if (!validateAnalyticsEventPayload(row.event_name, properties)) {
+    return corrupt('properties_json');
+  }
   if (!isSafeTimestamp(row.occurred_at)) return corrupt('occurred_at');
   if (
     !isSafeTimestamp(row.expires_at) ||

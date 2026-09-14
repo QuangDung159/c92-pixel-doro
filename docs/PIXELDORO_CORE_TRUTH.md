@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_CORE_TRUTH
 title: PixelDoro Product Core — Single Source of Truth
-version: 1.17.0
+version: 1.19.0
 status: ACTIVE
-last_updated: 2026-09-12
+last_updated: 2026-09-14
 owner: Dũng Lư
 owner_roles:
   - Tech Lead
@@ -881,6 +881,15 @@ Internal prototype
     → quyết định mở rộng hoặc điều chỉnh core loop
 ```
 
+## 13.5. Analytics provider activation — `RESOLVED`
+
+Trong internal test từ 2026-09-13, live PostHog được tạm ẩn để team tập trung vào trải nghiệm core và
+không phát sinh chi phí provider. Typed taxonomy, local bounded queue, privacy/opt-out và adapter boundary
+vẫn được giữ; thiếu project/key phải fail-closed và không tạo external request.
+
+Quyết định này hoãn activation, không thay đổi lựa chọn kiến trúc PostHog Cloud EU hoặc privacy limits.
+Bật lại provider cần owner review riêng về nhu cầu signal, retention, cost owner và billing alerts.
+
 ---
 
 # 14. Data Truth
@@ -988,7 +997,7 @@ Chi tiết type, constraint, index và migration thuộc `architecture/data-mode
 | Database | SQLite | `MVP_DEFAULT` |
 | Animation | Reanimated; Skia chỉ khi cần hiệu ứng phức tạp | `MVP_DEFAULT` |
 | Notification | Local notifications | `LOCKED` |
-| Analytics | PostHog Cloud EU, anonymous manual events qua adapter | `MVP_DEFAULT` |
+| Analytics | PostHog Cloud EU, anonymous manual events qua adapter; live rollout tạm ẩn vì chi phí | `MVP_DEFAULT / LIVE_DEFERRED` |
 | Store review | System review API qua `expo-store-review` | `LOCKED` |
 | OTA update | EAS Update | `LOCKED` |
 | Build và submission | EAS Build + EAS Submit + EAS Workflows | `LOCKED` |
@@ -1130,15 +1139,16 @@ Mobile MVP được xem là đủ điều kiện closed beta khi:
 - [x] Onboarding trial persist `mode = relax`, `workTag = null`, không hiển thị selector tương ứng và không thể fail bởi Strict violation.
 - [ ] Contribution graph chỉ tính completed standard Focus minutes và loại onboarding trial.
 - [ ] Người dùng có thể tắt audio và haptic.
-- [ ] Người dùng có thể gửi feedback.
-- [ ] Các analytics event chính không phát trùng ngoài chủ đích.
-- [ ] Không có crash/blocker đã biết trong core focus flow.
+- [ ] Người dùng có thể gửi feedback tới live endpoint; UI/adapter đã sẵn sàng nhưng activation đang deferred.
+- [x] Các analytics event chính không phát trùng ngoài chủ đích.
+- [x] Không có crash/blocker đã biết trong core focus flow.
 - [x] Có cơ chế reset/xóa dữ liệu local.
 
-Checkbox được tick theo evidence của EPIC-01–05, không theo dự đoán roadmap. Các mục Standard
-Focus, Strict, notification, economy UI, History/Contribution UI, Settings, Feedback, provider
-analytics và Beta Readiness vẫn mở cho EPIC-06–12. `Contribution graph` ở trên chưa tick dù query
-exclusion đã có, vì production graph UI thuộc EPIC-09.
+Checkbox chỉ được tick theo implementation/automated/manual evidence, không theo dự đoán roadmap.
+EPIC-11 đã `DONE_OWNER_ACCEPTED` tại candidate
+`6a0fa42860a9134c1374867a33aa0d8b16d9bb89`, với feedback UI/adapter production, typed analytics
+dedupe/privacy và owner quick UI PASS. Live feedback endpoint và PostHog activation vẫn deferred trong
+core-only internal test. Formal aggregate device/release breadth tiếp tục thuộc EPIC-12.
 
 ---
 
@@ -1153,7 +1163,7 @@ exclusion đã có, vì production graph UI thuộc EPIC-09.
 | OPEN-003 | Sau bốn completed Focus kể từ completed Long Break gần nhất, Break kế tiếp là Long Break 15 phút. Trạng thái đến hạn giữ qua relaunch, chỉ reset khi Long Break completed; failed/cancelled Focus và cancelled Long Break không thay đổi/reset cadence. Quyết định chọn loại Break không đồng nghĩa auto-start. | Product | `RESOLVED` | 2026-08-26 |
 | OPEN-004 | Completed Focus nhận `XP = completedFocusMinutes` và `Coin = floor(completedFocusMinutes / 5)`; overtime không tạo thêm reward, failed/cancelled Focus và Break không nhận XP/Coin. | Product/Game Design | `RESOLVED` | 2026-08-26 |
 | OPEN-010 | Break không auto-start. Sau completed Focus reward/celebration, người dùng chọn “Bắt đầu nghỉ” hoặc “Về Home”; chỉ StartBreak transaction sau explicit action mới tạo running Break. | Product | `RESOLVED` | 2026-08-26 |
-| OPEN-007 | Beta analytics dùng PostHog Cloud EU qua adapter, anonymous-only và manual allowlist; áp dụng queue, privacy, retention và cost limits trong ADR-008. | Engineering/Product | `RESOLVED` | 2026-08-26 |
+| OPEN-007 | Beta analytics architecture dùng PostHog Cloud EU qua adapter, anonymous-only và manual allowlist; live activation tạm ẩn từ 2026-09-13 vì chi phí, theo ADR-008 rollout update. | Engineering/Product | `RESOLVED / LIVE_DEFERRED` | 2026-09-13 |
 | OPEN-008 | Feedback được thu bằng popup/screen trong app với `experience score` 1–5 sao và nội dung tùy chọn. Store review là flow độc lập dùng system API; cấm review gating. | Product | `RESOLVED` | 2026-08-26 |
 | OPEN-011 | Store review dùng engagement trigger trung tính: production-only, sau 7 ngày cài đặt, 5 completed standard Focus sessions và 3 standard-Focus active days; onboarding trial không được tính. Request tại Home sau reward/celebration; cooldown 120 ngày, tối đa 3 attempts/365 ngày và một attempt/app version. | Product/Engineering | `RESOLVED` | 2026-08-26 |
 | SL-OPEN-001 | Break không áp dụng Strict/grace violation; background/lock/crash/kill không làm Break failed. | Product/Engineering | `RESOLVED` | 2026-08-26 |
@@ -1196,6 +1206,21 @@ Không mục nào trong bảng này được xem là requirement đã chốt cho
 ---
 
 # 22. Change Log
+
+## 1.19.0 — 2026-09-14
+
+- Ghi nhận EPIC-11 `DONE_OWNER_ACCEPTED` tại candidate
+  `6a0fa42860a9134c1374867a33aa0d8b16d9bb89` và mở planning gate cho EPIC-12.
+- Giữ live PostHog, feedback endpoint và formal device/accessibility breadth ở trạng thái deferred;
+  không suy diễn thành provider/device PASS.
+
+## 1.18.0 — 2026-09-13
+
+- Owner ghi nhận EPIC-11 quick UI PASS: không crash và behavior hoạt động như kỳ vọng.
+- Giữ PostHog Cloud EU là provider architecture mặc định nhưng tạm ẩn live rollout trong internal test
+  vì chi phí; missing config fail-closed và không tạo external request/cost.
+- Việc bật lại analytics cần owner review riêng về signal, retention và billing alerts; core experience
+  là ưu tiên hiện tại.
 
 ## 1.17.0 — 2026-09-12
 

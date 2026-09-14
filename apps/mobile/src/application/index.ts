@@ -99,6 +99,9 @@ export * from './shop';
 export * from './room';
 export * from './history';
 export * from './settings';
+export * from './analytics';
+export * from './feedback';
+export * from './store-review';
 export {
   OnboardingTrialRunningController,
   type OnboardingTrialRunningControllerDependencies,

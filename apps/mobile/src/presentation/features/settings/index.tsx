@@ -11,6 +11,7 @@ import {
 
 import {
   DataControlSection,
+  FeedbackEntrySection,
   FocusDefaultsSection,
   NotificationSection,
   PreferenceSection,
@@ -32,6 +33,7 @@ export interface SettingsScreenProps {
   readonly onActivateRetry: () => void;
   readonly onDismissIssue: () => void;
   readonly onOpenSystemSettings: () => void;
+  readonly onOpenFeedback: () => void;
   readonly onReset: () => Promise<boolean>;
   readonly onResetComplete: () => void;
   readonly onRetry: () => void;
@@ -48,6 +50,7 @@ export const SettingsScreen = ({
   onActivateRetry,
   onDismissIssue,
   onOpenSystemSettings,
+  onOpenFeedback,
   onReset,
   onResetComplete,
   onRetry,
@@ -138,6 +141,7 @@ export const SettingsScreen = ({
         onOpenSystemSettings={onOpenSystemSettings}
         permission={projection.notificationPermission}
       />
+      <FeedbackEntrySection onOpenFeedback={onOpenFeedback} />
       <DataControlSection
         analyticsEnabled={current('analyticsEnabled')}
         onRequestReset={() => setConfirmingReset(true)}

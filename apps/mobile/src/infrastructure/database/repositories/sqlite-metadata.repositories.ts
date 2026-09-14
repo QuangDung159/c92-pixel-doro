@@ -13,6 +13,7 @@ import type {
 import {
   mapAnalyticsEventRow,
   mapStoreReviewAttemptRow,
+  isApprovedAnalyticsEventName,
   serializeAnalyticsProperties,
   type AnalyticsEventRow,
   type StoreReviewAttemptRow,
@@ -191,12 +192,15 @@ export class SQLiteAnalyticsEventRepository implements AnalyticsEventRepository 
     record: AnalyticsEventRecord,
     nowMs: number,
   ): ReturnType<AnalyticsEventRepository['insertInTransaction']> {
+    if (!isApprovedAnalyticsEventName(record.eventName)) {
+      return invalidWrite('analytics_events', 'event_name');
+    }
     if (
       !isSafeTimestamp(nowMs) || record.expiresAt <= nowMs ||
       record.deliveryState !== 'pending' || record.attemptCount !== 0 ||
       record.nextAttemptAt !== null
     ) return invalidWrite('analytics_events', 'enqueue_input');
-    const properties = serializeAnalyticsProperties(record.properties);
+    const properties = serializeAnalyticsProperties(record.eventName, record.properties);
     if (!properties.ok) return invalidWrite('analytics_events', properties.field);
     const validation = mapAnalyticsEventRow(analyticsToRow(record, properties.value));
     if (!validation.ok) return invalidWrite('analytics_events', validation.field);

@@ -1,16 +1,16 @@
 ---
 document_id: PIXELDORO_MVP_EPIC_BREAKDOWN
 title: PixelDoro Mobile MVP — Epic Breakdown
-version: 3.0.0
-status: EPIC_01_TO_10_DONE_OWNER_ACCEPTED_EPIC_11_NOT_STARTED
-last_updated: 2026-09-12
+version: 3.5.0
+status: EPIC_01_TO_11_DONE_OWNER_ACCEPTED_EPIC_12_PLANNING_GATE_OPEN
+last_updated: 2026-09-14
 owner: Dũng Lư
 reviewer: Dũng Lư
 reviewer_role: Tech Lead
 approved_by: Dũng Lư
 approver_role: Product Owner
 approved_at: 2026-08-27
-amended_at: 2026-09-12
+amended_at: 2026-09-14
 amendment_approved_by: Dũng Lư
 language: vi
 scope:
@@ -131,7 +131,7 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 - [x] `08 / EPIC-08 / W3` — Progression & Shop.
 - [x] `09 / EPIC-09 / W3` — History & Contribution — `DONE_OWNER_ACCEPTED` 2026-09-12.
 - [x] `10 / EPIC-10 / W3` — Settings & Data Control — `DONE_OWNER_ACCEPTED` 2026-09-12.
-- [ ] `11 / EPIC-11 / W3` — Analytics, Feedback & Store Review.
+- [x] `11 / EPIC-11 / W3` — Analytics, Feedback & Store Review — `DONE_OWNER_ACCEPTED` 2026-09-14.
 - [ ] `12 / EPIC-12 / W4` — Beta Readiness.
 
 ### 2.4. Trạng thái hiện tại
@@ -148,11 +148,16 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 | `EPIC-08` | `DONE_OWNER_ACCEPTED` | US-08-01→05 owner accepted; exact candidate `30adc34...`; Exit Report closed by owner authorization. |
 | `EPIC-09` | `DONE_OWNER_ACCEPTED` | US-09-01→05 owner accepted; exact behavior candidate `a1abf5f...`; History/Contribution exit closed by owner authorization. |
 | `EPIC-10` | `DONE_OWNER_ACCEPTED` | US-10-01→05 owner accepted; exact merged candidate `bee029a12576af8d8470668c1fa2ce8d8502ac4b`; quick UI PASS/no crash and review/automated/native/export gates pass. |
+| `EPIC-11` | `DONE_OWNER_ACCEPTED` | `EPIC-11_EXIT_REPORT.md`; accepted candidate `6a0fa42860a9134c1374867a33aa0d8b16d9bb89`, implementation `deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0`; automated gates and owner quick UI pass. Provider activation deferrals remain explicit. |
+| `EPIC-12` | `PLANNING_GATE_OPEN` | EPIC-11 closure satisfies the start dependency; implementation/release evidence must be managed by EPIC-12 and is not implied by this closure. |
 
-Mười Epic đầu đã `DONE_OWNER_ACCEPTED`. EPIC-10 được đóng tại exact merged SHA
+Mười một Epic đầu đã `DONE_OWNER_ACCEPTED`. EPIC-10 được đóng tại exact merged SHA
 `bee029a12576af8d8470668c1fa2ce8d8502ac4b` sau owner quick-smoke/accept và xác nhận closure.
-EPIC-11 chỉ được mở planning gate, chưa bắt đầu implementation. Provider analytics và Beta Readiness
-vẫn thuộc EPIC-11/12.
+EPIC-11 được owner đóng ngày 2026-09-14 tại accepted candidate
+`6a0fa42860a9134c1374867a33aa0d8b16d9bb89`; EPIC-12 planning gate hiện đã mở.
+Live PostHog được owner tạm ẩn vì chi phí, không còn là live gate của internal test. Formal device/native
+breadth và full Beta Readiness vẫn thuộc EPIC-12 và chưa được mở. Feedback endpoint cũng có thể giữ
+unset trong core-only internal test, nhưng phải cấu hình trước khi thu submission thật.
 
 ## 3. Critical path và delivery gates
 
@@ -683,6 +688,9 @@ matrix tiếp tục `DEFERRED_TO_LATER_PHASE` và được carry sang later vali
 
 **Loại:** Product/Operational
 
+- **Status:** `DONE_OWNER_ACCEPTED` tại accepted candidate
+  `6a0fa42860a9134c1374867a33aa0d8b16d9bb89`; implementation SHA
+  `deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0`.
 - **MVP priority:** `MUST`
 - **Delivery wave:** `W3_VERTICAL_MVP`
 - **Execution order:** `11`
@@ -694,7 +702,7 @@ matrix tiếp tục `DEFERRED_TO_LATER_PHASE` và được carry sang later vali
 
 **In scope:**
 
-- PostHog Cloud EU adapter với anonymous installation ID.
+- PostHog Cloud EU adapter với anonymous installation ID, giữ fail-closed; live rollout tạm ẩn vì chi phí.
 - Manual typed event allowlist và property/payload limits.
 - Bounded offline queue 1.000 events, TTL 7 ngày, drop-oldest.
 - Core MVP analytics events và trial exclusions.
@@ -702,24 +710,24 @@ matrix tiếp tục `DEFERRED_TO_LATER_PHASE` và được carry sang later vali
 - Feedback không persist local và comment không vào analytics/log.
 - Native store-review eligibility, frequency cap và persisted attempts.
 - Feedback/store-review separation và no-review-gating enforcement.
-- Cost/retention operational guardrails.
+- Cost/retention operational guardrails chỉ trở thành activation gate khi owner bật lại live PostHog.
 
 **Epic completion checklist:**
 
-- [ ] Không person profile, autocapture, session replay, GeoIP hoặc advertising identifier.
-- [ ] Không development/test analytics; preview chỉ dùng dataset tách biệt khi cần.
-- [ ] Event/property/payload chỉ đi qua typed allowlist.
-- [ ] Queue cap/TTL/retry chạy ngoài core transaction.
-- [ ] Analytics failure không block core flow.
-- [ ] Trial chỉ phát onboarding events và không phát standard Focus/reward events.
-- [ ] Feedback comment không persist, không log và không gửi analytics.
-- [ ] Feedback submit failure cho Retry tại chỗ và không ảnh hưởng core loop.
-- [ ] Store review chỉ xét production tại Home sau completed reward/celebration.
-- [ ] Eligibility dùng 7 ngày, 5 completed Standard Focus và 3 active local days.
-- [ ] Cooldown 120 ngày, tối đa 3 attempts/365 ngày và một attempt/app version.
-- [ ] Attempt persist trước native call và vẫn tính khi prompt không hiển thị.
-- [ ] Feedback score/comment/history không tham gia store-review eligibility.
-- [ ] Chỉ capture `store_review_requested`, không suy diễn review outcome.
+- [x] Không person profile, autocapture, session replay, GeoIP hoặc advertising identifier.
+- [x] Không development/test analytics; preview chỉ dùng dataset tách biệt khi cần.
+- [x] Event/property/payload chỉ đi qua typed allowlist.
+- [x] Queue cap/TTL/retry chạy ngoài core transaction.
+- [x] Analytics failure không block core flow.
+- [x] Trial chỉ phát onboarding events và không phát standard Focus/reward events.
+- [x] Feedback comment không persist, không log và không gửi analytics.
+- [x] Feedback submit failure cho Retry tại chỗ và không ảnh hưởng core loop.
+- [x] Store review chỉ xét production tại Home sau completed reward/celebration.
+- [x] Eligibility dùng 7 ngày, 5 completed Standard Focus và 3 active local days.
+- [x] Cooldown 120 ngày, tối đa 3 attempts/365 ngày và một attempt/app version.
+- [x] Attempt persist trước native call và vẫn tính khi prompt không hiển thị.
+- [x] Feedback score/comment/history không tham gia store-review eligibility.
+- [x] Chỉ capture `store_review_requested`, không suy diễn review outcome.
 
 **Out of scope:** Review gating, custom store prompt, incentive, feedback outbox, session replay, user profile và server-side analytics identity.
 
@@ -873,6 +881,42 @@ Story hoặc implementation tương lai.
 - [x] Không estimate deadline trước khi Story refinement hoàn tất.
 
 ## 10. Change log
+
+### 3.5.0 — 2026-09-14
+
+- Closed EPIC-11 as `DONE_OWNER_ACCEPTED` at candidate SHA
+  `6a0fa42860a9134c1374867a33aa0d8b16d9bb89` after owner quick UI PASS and explicit closure request.
+- Preserved PostHog/feedback activation and formal native/accessibility breadth as deferred rather than PASS.
+- Marked W3 feature delivery complete and opened the EPIC-12 planning gate only.
+
+### 3.4.0 — 2026-09-13
+
+- Bound the implemented and owner-smoked EPIC-11 candidate to pushed exact SHA
+  `deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0`.
+- Kept the EPIC-11 master checkbox open for explicit owner closure; EPIC-12 remains `NOT_OPENED`.
+
+### 3.3.0 — 2026-09-13
+
+- Recorded EPIC-11 owner quick UI PASS: no crash and behavior worked as expected.
+- Recorded the owner cost decision to keep live PostHog hidden/fail-closed during internal test while
+  retaining the adapter and privacy-safe architecture.
+- Kept the EPIC-11 master checkbox open for exact-SHA closure; EPIC-12 remains `NOT_OPENED`.
+
+### 3.2.0 — 2026-09-13
+
+- Recorded owner approval for `US1100-CONFIRM-01→10=A` and EPIC-11 implementation start.
+- Kept the EPIC-11 master checkbox open while exact-SHA quick UI, native build and external provider
+  evidence remain pending; EPIC-12 stays `NOT_OPENED`.
+
+### 3.1.0 — 2026-09-12
+
+- Recorded EPIC-11 as `PLANNING / USER_STORIES_DRAFTED` at exact audit baseline
+  `a8dd7eb21dc978884994a46230fb9837d8d74f68`; implementation remains `NOT_STARTED` and its master
+  completion checkbox remains unchecked.
+- Kept EPIC-10 `DONE_OWNER_ACCEPTED` at accepted SHA
+  `bee029a12576af8d8470668c1fa2ce8d8502ac4b` and kept EPIC-12 `NOT_OPENED`.
+- Linked planning state to six owner-reviewable vertical slices without approving provider/native/schema
+  changes or beginning implementation.
 
 ### 3.0.0 — 2026-09-12
 

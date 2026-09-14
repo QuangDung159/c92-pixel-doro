@@ -35,6 +35,8 @@ import type { ShopController } from './shop';
 import type { RoomDecorationsController } from './room';
 import type { ContributionController, HistoryController } from './history';
 import type { SettingsController } from './settings';
+import type { FeedbackController } from './feedback';
+import type { StoreReviewRequestOutcome } from './store-review';
 import type { PetVisualDiagnostic } from './ports/pet-visual-diagnostics.port';
 import type {
   CompleteFirstUseHandoffOutcome,
@@ -64,6 +66,9 @@ export interface MobileApplicationFacade {
   readonly history: HistoryController;
   readonly historyContribution: ContributionController;
   readonly settings: SettingsController;
+  readonly feedback: FeedbackController;
+  readonly epic11ReviewFixtureAvailable: boolean;
+  readonly epic11ReviewFixtureLabel: string | null;
   readonly standardFocusReviewResetAvailable: boolean;
   readonly onboardingTrialRunning: OnboardingTrialRunningController;
   readonly onboardingTrialCompletion: OnboardingTrialCompletionController;
@@ -109,6 +114,10 @@ export interface MobileApplicationFacade {
   retryOnboardingTrialPetFeedback(): Promise<void>;
   resetStandardFocusReviewData(): Promise<boolean>;
   recordPetVisualDiagnostic(diagnostic: PetVisualDiagnostic): void;
+  recordFocusSetupViewed(): void;
+  requestStoreReviewAtHome(
+    freshCompletionToken: string,
+  ): Promise<StoreReviewRequestOutcome>;
   reportPetVisualComplete(feedbackId: string): void;
   reportPetVisualFailure(feedbackId: string): void;
   triggerPetTerminalReviewFixture(): Promise<void>;

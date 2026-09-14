@@ -1,9 +1,9 @@
 ---
 document_id: PIXELDORO_TECHNICAL_OVERVIEW
 title: PixelDoro Mobile MVP — Technical Overview
-version: 1.0.0
+version: 1.1.0
 status: APPROVED
-last_updated: 2026-08-26
+last_updated: 2026-09-13
 owner: Dũng Lư
 approved_by: Dũng Lư
 approver_role: Tech Lead
@@ -75,7 +75,7 @@ SQLite là nguồn sự thật bền vững trên thiết bị. Zustand giữ st
 | Animation | React Native Reanimated + bundled sprite assets | `MVP_DEFAULT` | Baseline đã chấp nhận cho UI transition, Pet state animation và feedback; sprite asset là nguồn hình ảnh chính. |
 | Complex graphics | React Native Skia | `GATED` | Không cài trong baseline. Chỉ thêm sau prototype/benchmark vượt adoption gate trong ADR-005. |
 | Notification | Local notification qua `expo-notifications` | `LOCKED` | Chỉ nhắc Focus/Break kết thúc. Notification không quyết định session result hoặc reward eligibility. |
-| Analytics | PostHog Cloud EU sau application adapter | `MVP_DEFAULT` | Anonymous product analytics, manual allowlist only; cấm autocapture, session replay và person profile. Giới hạn dữ liệu, queue và chi phí theo mục 8.1 cùng ADR-008. |
+| Analytics | PostHog Cloud EU sau application adapter | `MVP_DEFAULT / LIVE_DEFERRED` | Adapter/queue/privacy boundary giữ nguyên; live activation tạm ẩn vì chi phí. Anonymous manual allowlist only; giới hạn theo mục 8.1 và ADR-008. |
 | Product feedback | In-app popup/screen qua feedback adapter | `LOCKED` | Thu experience score 1–5 sao và nội dung tùy chọn; độc lập với store rating/review. |
 | Store review | `expo-store-review` dùng native system review APIs | `LOCKED` | Không custom store prompt, review gating hoặc incentive. |
 | OTA update | EAS Update | `LOCKED` | Chỉ phát hành JavaScript, styling và asset tương thích với native runtime. |
@@ -211,6 +211,11 @@ Analytics và feedback có thể cần mạng nhưng phải là side effect best
 ### 8.1. Analytics limits và cost guardrails
 
 Mobile MVP dùng PostHog Cloud EU cho product analytics. SDK phải nằm sau analytics adapter do ứng dụng sở hữu; provider không được trở thành dependency của Domain hoặc core flow. Analytics luôn là side effect best-effort và không được làm chậm hoặc làm thất bại start/complete session, reward transaction hay navigation.
+
+**Activation status 2026-09-13:** owner tạm ẩn live PostHog trong internal test để kiểm soát chi phí và
+tập trung core experience. Không cấp key/project, external delivery fail-closed và live provider không
+là EPIC-11 closure gate. Adapter contract, bounded queue và opt-out vẫn được giữ để tái kích hoạt có kiểm
+soát; activation sau này cần owner duyệt signal need, retention/cost owner và billing alerts.
 
 Các giới hạn bắt buộc:
 
@@ -399,7 +404,7 @@ Tài liệu được xem là sẵn sàng phê duyệt khi reviewer xác nhận:
 | [ADR-005](decisions/ADR-005-animation-stack.md) | Reanimated + sprite baseline, Skia sau performance gate | `ACCEPTED` |
 | [ADR-006](decisions/ADR-006-in-app-feedback-and-store-review.md) | In-app feedback độc lập với native store review; engagement trigger và frequency cap | `ACCEPTED` |
 | [ADR-007](decisions/ADR-007-eas-delivery-pipeline.md) | EAS Update, managed credentials và build/submit pipeline | `ACCEPTED` |
-| [ADR-008](decisions/ADR-008-posthog-analytics-and-cost-guardrails.md) | PostHog Cloud EU, anonymous analytics và cost guardrails | `ACCEPTED` |
+| [ADR-008](decisions/ADR-008-posthog-analytics-and-cost-guardrails.md) | PostHog Cloud EU, anonymous analytics và cost guardrails | `ACCEPTED_ARCHITECTURE_ROLLOUT_DEFERRED` |
 
 ## 13. Technical decisions
 
@@ -429,6 +434,12 @@ Sau khi Technical Overview và các ADR được phê duyệt, thứ tự tiếp
 3. `timer-engine.md` và `session-lifecycle.md`: có thể soạn song song sau kiến trúc.
 
 ## 15. Change log
+
+### 1.1.0 — 2026-09-13
+
+- Recorded owner decision to keep live PostHog hidden/fail-closed during internal test because of cost.
+- Retained typed adapter/queue/privacy architecture; reactivation requires a separate retention/cost
+  operational approval. Core experience remains the current priority.
 
 ### 1.0.0 — 2026-08-26
 

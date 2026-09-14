@@ -89,7 +89,16 @@ export const StandardFocusResultBranch = ({ sessionId }: { readonly sessionId: s
       onDismissPetFeedbackError={dismiss} onRetryPet={() => void refreshPet()}
       onRetryBreakRecommendation={() => void refreshBreakRecommendation(sessionId)}
       onStartBreak={() => void handleStartBreak()}
-      onHome={() => router.replace('/(tabs)')}
+      onHome={() => {
+        if (result.result.status === 'completed') {
+          router.replace({
+            pathname: '/(tabs)',
+            params: { reviewToken: result.result.receiptId },
+          });
+        } else {
+          router.replace('/(tabs)');
+        }
+      }}
       {...(review.available ? { onReviewReload: () => { discard(); void refresh(sessionId); } } : {})}
     />
   </PetRouteVisibility>;

@@ -16,6 +16,8 @@ import {
   OnboardingTrialRunningController,
   ReadinessGate,
   AnalyticsCaptureGate,
+  type AnalyticsDeliveryPort,
+  type FeedbackSubmissionPort,
   SettingsController,
   StandardFocusLifecycleController,
   StandardFocusOutcomeController,
@@ -37,6 +39,7 @@ import {
   type StandardFocusNotificationNavigationController,
   type StartupReconciliationPort,
   type SensoryFeedbackPort,
+  type StoreReviewPort,
 } from '@/application';
 import {
   PetCompanionController,
@@ -167,10 +170,17 @@ import {
   resolveSettingsReviewScenario,
   settingsReviewDatabaseName,
 } from './review/settings-review-fixture';
+import {
+  createEpic11ReviewFixture,
+  epic11ReviewDatabaseName,
+  resolveEpic11ReviewScenario,
+} from './review/epic-11-review-fixture';
+import { createEpic11Services } from './epic-11/create-epic-11-services';
 
 const PIXELDORO_DATABASE_NAME = 'pixeldoro.db';
 
 export interface CreateMobileApplicationOptions {
+  readonly analyticsDelivery?: AnalyticsDeliveryPort;
   readonly appLifecycle?: AppLifecyclePort;
   readonly bootstrapData?: BootstrapDataPort;
   readonly bootstrapVerifier?: BootstrapVerifierPort;
@@ -179,6 +189,7 @@ export interface CreateMobileApplicationOptions {
   readonly confirmedResetPersistence?: ConfirmedResetPersistencePort;
   readonly databaseName?: string;
   readonly diagnosticsEnabled?: boolean;
+  readonly feedbackProvider?: FeedbackSubmissionPort;
   readonly migration?: MigrationPort;
   readonly onboardingAnalytics?: OnboardingAnalyticsRecorderPort;
   readonly id?: IdPort;
@@ -195,6 +206,8 @@ export interface CreateMobileApplicationOptions {
   readonly sqliteDriver?: SQLiteDriver;
   readonly startupReconciliation?: StartupReconciliationPort;
   readonly sensoryFeedback?: SensoryFeedbackPort;
+  readonly storeReview?: StoreReviewPort;
+  readonly storeReviewProduction?: boolean;
   readonly openSystemSettings?: () => Promise<void>;
 }
 
@@ -223,6 +236,10 @@ export const createMobileApplication = (
     __DEV__;
   const settingsReviewScenario = resolveSettingsReviewScenario(
     process.env.EXPO_PUBLIC_EPIC_10_REVIEW_FIXTURE,
+    reviewFixturesEnabled,
+  );
+  const epic11ReviewScenario = resolveEpic11ReviewScenario(
+    process.env.EXPO_PUBLIC_EPIC_11_REVIEW_FIXTURE,
     reviewFixturesEnabled,
   );
   const historyFirstPageReviewScenario = resolveHistoryFirstPageReviewScenario(
@@ -274,7 +291,9 @@ export const createMobileApplication = (
     reviewFixturesEnabled,
   );
   const databaseOwner = new SQLiteDatabaseOwner(
-    options.databaseName ?? (settingsReviewScenario !== undefined
+    options.databaseName ?? (epic11ReviewScenario !== undefined
+      ? epic11ReviewDatabaseName(epic11ReviewScenario)
+      : settingsReviewScenario !== undefined
       ? settingsReviewDatabaseName(settingsReviewScenario)
       : epic09ExitReviewScenario !== undefined
       ? epic09ExitReviewDatabaseName(epic09ExitReviewScenario)
@@ -303,6 +322,10 @@ export const createMobileApplication = (
   );
   const transaction = new SQLiteTransaction(databaseOwner);
   const persistence = createSQLitePersistenceGraph(databaseOwner, transaction);
+  const epic11ReviewFixture = createEpic11ReviewFixture(
+    epic11ReviewScenario,
+    persistence.storeReviewFacts,
+  );
   const historyFirstPageReviewFixture = createHistoryFirstPageReviewFixture(
     historyFirstPageReviewScenario,
     persistence.standardFocusHistory,
@@ -428,6 +451,7 @@ export const createMobileApplication = (
   const sideEffectAnalyticsQueue =
     epic09ExitReviewFixture?.analyticsQueue ?? epic08ExitReviewFixture?.analyticsQueue ??
     standardFocusSideEffectReviewFixture?.analyticsQueue ?? persistence.analyticsQueue;
+  const analyticsDeliveryRef: { current?: { flush(): Promise<unknown> } } = {};
   const coordinatedSideEffectAnalyticsQueue = {
     enqueueBounded: (
       ...args: Parameters<typeof sideEffectAnalyticsQueue.enqueueBounded>
@@ -436,6 +460,9 @@ export const createMobileApplication = (
         return Promise.resolve({ ok: true as const, value: 'already_queued' as const });
       }
       return sideEffectAnalyticsQueue.enqueueBounded(...args);
+    }).then((result) => {
+      if (result.ok) void analyticsDeliveryRef.current?.flush();
+      return result;
     }),
   };
   const startupStandardReconciliation = new ReconcileStandardFocusUseCase({
@@ -904,6 +931,35 @@ export const createMobileApplication = (
     sessions: persistence.sessions,
     settings: persistence.settings,
   });
+  const epic11 = createEpic11Services({
+    ...(options.analyticsDelivery === undefined
+      ? {}
+      : { analyticsDelivery: options.analyticsDelivery }),
+    analyticsGate,
+    analyticsQueue: persistence.analyticsQueue,
+    analyticsCaptureQueue: coordinatedSideEffectAnalyticsQueue,
+    attempts: persistence.storeReviewAttempts,
+    clock,
+    ...(options.feedbackProvider === undefined
+      ? {}
+      : { feedbackProvider: options.feedbackProvider }),
+    ...(epic11ReviewFixture === undefined ? {} : { fixture: epic11ReviewFixture }),
+    id,
+    installation: persistence.installation,
+    isAppActive: () => appVisibility.getSnapshot() === 'active',
+    isProductionReview: options.storeReviewProduction ?? (
+      process.env.EXPO_PUBLIC_STORE_REVIEW_RUNTIME === 'production' &&
+      !reviewFixturesEnabled
+    ),
+    ...(options.storeReview === undefined ? {} : { nativeReview: options.storeReview }),
+    readAnalyticsEnabled: () => {
+      const projection = bootstrap.getSnapshot();
+      return projection.status === 'ready' && projection.snapshot.settings.analyticsEnabled;
+    },
+    reviewFacts: epic11ReviewFixture?.reviewFacts ?? persistence.storeReviewFacts,
+    sessions: persistence.sessions,
+  });
+  analyticsDeliveryRef.current = epic11.delivery;
   const petVisualDiagnostics =
     options.petVisualDiagnostics ?? new SafeConsolePetVisualDiagnosticsAdapter();
   const petTerminalReviewFixture = createPetTerminalReviewFixture(
@@ -988,6 +1044,7 @@ export const createMobileApplication = (
         petTerminalFeedback.discardActive();
         return;
       }
+      void epic11.delivery.flush();
       standardFocusLifecycle.handleState(state);
       breakLifecycle.handleState(state);
       const standardBarrier = standardFocusLifecycle.whenIdle();
@@ -1200,6 +1257,12 @@ export const createMobileApplication = (
     history: history.controller,
     historyContribution: history.contribution,
     settings,
+    feedback: epic11.feedback,
+    epic11ReviewFixtureAvailable: epic11ReviewFixture !== undefined,
+    epic11ReviewFixtureLabel: epic11ReviewScenario === undefined
+      ? null
+      : `${epic11ReviewScenario} · ${options.databaseName ??
+        epic11ReviewDatabaseName(epic11ReviewScenario)}`,
     standardFocusReviewResetAvailable: reviewFixturesEnabled,
     onboardingTrialRunning,
     onboardingTrialCompletion,
@@ -1433,6 +1496,7 @@ export const createMobileApplication = (
           );
         }
         await firstUseEntry.refresh();
+        void epic11.delivery.flush();
       }
     },
     cancelOnboardingTrial: async (sessionId) => {
@@ -1490,6 +1554,15 @@ export const createMobileApplication = (
         // Visual diagnostics are best effort and cannot affect application truth.
       }
     },
+    recordFocusSetupViewed: () => {
+      void epic11.engagement.record(
+        'focus_setup_viewed',
+        id.nextId(),
+        clock.nowMs(),
+      );
+    },
+    requestStoreReviewAtHome: (freshCompletionToken) =>
+      epic11.storeReview.requestAtHome(freshCompletionToken),
     reportPetVisualComplete: (feedbackId) =>
       petTerminalFeedback.reportVisualComplete(feedbackId),
     reportPetVisualFailure: (feedbackId) =>
@@ -1540,6 +1613,9 @@ export const createMobileApplication = (
         roomDecorations.dispose();
         history.dispose();
         settings.dispose();
+        epic11.feedback.dispose();
+        epic11.storeReview.dispose();
+        epic11.delivery.dispose();
         onboardingTrialRunning.dispose();
         onboardingTrialHandoff.dispose();
         onboardingTrialPetFeedback.dispose();

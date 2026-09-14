@@ -127,6 +127,20 @@ export const DataControlSection = ({
   </PixelPanel>
 );
 
+export const FeedbackEntrySection = ({
+  onOpenFeedback,
+}: {
+  readonly onOpenFeedback: () => void;
+}) => (
+  <PixelPanel>
+    <SectionLabel>Góp ý</SectionLabel>
+    <Text style={styles.help}>
+      Chia sẻ điểm trải nghiệm và lời nhắn tùy chọn trực tiếp với team PixelDoro.
+    </Text>
+    <SecondaryButton label="Góp ý cho PixelDoro" onPress={onOpenFeedback} />
+  </PixelPanel>
+);
+
 const styles = StyleSheet.create({
   column: { gap: 9 },
   divider: { backgroundColor: palette.border, height: 1, opacity: 0.2 },

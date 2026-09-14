@@ -6,14 +6,17 @@ import {
   useStandardFocusSetupActions,
   useStandardFocusSetupProjection,
 } from '@/presentation/providers/standard-focus-hooks';
+import { useRecordFocusSetupViewed } from '@/presentation/providers/mobile-application-context';
 
 export default function FocusSetupRoute() {
   const router = useRouter();
   const projection = useStandardFocusSetupProjection();
+  const recordViewed = useRecordFocusSetupViewed();
   const { reset, setDuration, setMode, setWorkTag, start } = useStandardFocusSetupActions();
   useFocusEffect(useCallback(() => {
     reset();
-  }, [reset]));
+    recordViewed();
+  }, [recordViewed, reset]));
 
   return (
     <FocusSetupScreen
