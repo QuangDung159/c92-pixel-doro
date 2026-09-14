@@ -71,6 +71,52 @@ const epic10QuickUiFlow = await readFile(
 const epic11QuickUiFlow = await readFile(
   `${deviceDirectory}epic-11-quick-ui-smoke.md`, 'utf8',
 );
+const epic12BetaReadinessFlow = await readFile(
+  `${deviceDirectory}epic-12-beta-readiness.md`, 'utf8',
+);
+const requiredEpic12Cases = [
+  'E12-G01', 'E12-G02', 'E12-G03', 'E12-G04', 'E12-G05', 'E12-G06',
+  'E12-G07', 'E12-G08', 'E12-Q01', 'E12-Q02', 'E12-Q03', 'E12-Q04',
+  'E12-Q05', 'E12-Q06', 'E12-Q07', 'E12-Q08', 'E12-Q09', 'E12-Q10',
+  'E12-RC-01', 'E12-DATA-IOS', 'E12-DATA-AND', 'E12-LIFE-01',
+  'E12-LIFE-02', 'E12-LIFE-03', 'E12-LIFE-04', 'E12-IDEM-01',
+  'E12-IDEM-02', 'E12-DB-01', 'E12-DB-02', 'E12-OFF-01', 'E12-OFF-02',
+  'E12-PERM-01', 'E12-PERM-02', 'E12-SENS-01', 'E12-FDBK-01',
+  'E12-AN-01', 'E12-REVIEW-01', 'E12-A11Y-IOS', 'E12-A11Y-AND',
+  'E12-A11Y-TEXT', 'E12-A11Y-VIS', 'E12-A11Y-MOTION', 'E12-PET-01',
+  'E12-PET-02', 'E12-PET-03', 'E12-DELIVERY-01', 'E12-DELIVERY-02',
+  'E12-DELIVERY-03', 'E12-DELIVERY-04', 'E12-DIST-01', 'E12-DIST-02',
+  'E12-EXIT-01',
+];
+const requiredEpic12Evidence = [
+  'Status: `NOT_RUN / IMPLEMENTATION_IN_PROGRESS`',
+  'Allowed case results: `PASS`, `FAIL`, `BLOCKED`, `NOT_RUN`',
+  'Planning baseline SHA: `6a0fa42860a9134c1374867a33aa0d8b16d9bb89`',
+  'Exact SHA', 'Platform/device/OS', 'App version + build ID/profile',
+  'Runtime version + channel/update ID', 'Network/app/accessibility state',
+  'Start/end ISO timestamp + timezone', 'Artifact/link', 'Cleanup result',
+  'Blocker owner + next action', 'pixeldoro-us-02-09-epic-exit-probe.db',
+  'pixeldoro.db', 'Không dùng wildcard/glob', 'Normal launch',
+  'Current verdict: `NO_GO', 'Không suy diễn PASS từ automated test',
+];
+
+for (const evidence of [...requiredEpic12Cases, ...requiredEpic12Evidence]) {
+  if (!epic12BetaReadinessFlow.includes(evidence)) {
+    throw new Error(`EPIC-12 beta-readiness guide is missing: ${evidence}`);
+  }
+}
+
+const epic12CaseRows = epic12BetaReadinessFlow
+  .split('\n')
+  .filter((line) => /^\| `E12-[A-Z]/u.test(line));
+const falsePassRows = epic12CaseRows.filter(
+  (line) => !line.startsWith('| `E12-G01`') && (
+    line.includes('| `PASS` |') || line.includes('PASS_OWNER')
+  ),
+);
+if (falsePassRows.length > 0) {
+  throw new Error(`EPIC-12 guide contains unverified PASS rows: ${falsePassRows.join('\n')}`);
+}
 for (const evidence of [
   'PASS_OWNER_QUICK_UI_NO_CRASH_2026_09_13_EXACT_SHA_RECORDED',
   'EXPO_PUBLIC_EPIC_11_REVIEW_FIXTURE=epic_11_quick',

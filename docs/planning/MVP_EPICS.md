@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_MVP_EPIC_BREAKDOWN
 title: PixelDoro Mobile MVP — Epic Breakdown
-version: 3.5.0
-status: EPIC_01_TO_11_DONE_OWNER_ACCEPTED_EPIC_12_PLANNING_GATE_OPEN
+version: 3.6.0
+status: EPIC_12_IMPLEMENTATION_IN_PROGRESS
 last_updated: 2026-09-14
 owner: Dũng Lư
 reviewer: Dũng Lư
@@ -149,14 +149,15 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 | `EPIC-09` | `DONE_OWNER_ACCEPTED` | US-09-01→05 owner accepted; exact behavior candidate `a1abf5f...`; History/Contribution exit closed by owner authorization. |
 | `EPIC-10` | `DONE_OWNER_ACCEPTED` | US-10-01→05 owner accepted; exact merged candidate `bee029a12576af8d8470668c1fa2ce8d8502ac4b`; quick UI PASS/no crash and review/automated/native/export gates pass. |
 | `EPIC-11` | `DONE_OWNER_ACCEPTED` | `EPIC-11_EXIT_REPORT.md`; accepted candidate `6a0fa42860a9134c1374867a33aa0d8b16d9bb89`, implementation `deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0`; automated gates and owner quick UI pass. Provider activation deferrals remain explicit. |
-| `EPIC-12` | `PLANNING_GATE_OPEN` | EPIC-11 closure satisfies the start dependency; implementation/release evidence must be managed by EPIC-12 and is not implied by this closure. |
+| `EPIC-12` | `IMPLEMENTATION_IN_PROGRESS` | Owner opened implementation on 2026-09-14; device/delivery evidence remains `NOT_RUN` and no beta-ready PASS is implied. |
 
 Mười một Epic đầu đã `DONE_OWNER_ACCEPTED`. EPIC-10 được đóng tại exact merged SHA
 `bee029a12576af8d8470668c1fa2ce8d8502ac4b` sau owner quick-smoke/accept và xác nhận closure.
 EPIC-11 được owner đóng ngày 2026-09-14 tại accepted candidate
-`6a0fa42860a9134c1374867a33aa0d8b16d9bb89`; EPIC-12 planning gate hiện đã mở.
+`6a0fa42860a9134c1374867a33aa0d8b16d9bb89`; owner mở EPIC-12 implementation ngày 2026-09-14 tại
+pre-change SHA `aaee07fff999388920ebb3beb759567ac4f01c43`.
 Live PostHog được owner tạm ẩn vì chi phí, không còn là live gate của internal test. Formal device/native
-breadth và full Beta Readiness vẫn thuộc EPIC-12 và chưa được mở. Feedback endpoint cũng có thể giữ
+breadth và full Beta Readiness vẫn thuộc EPIC-12 và chưa được thực hiện. Feedback endpoint cũng có thể giữ
 unset trong core-only internal test, nhưng phải cấu hình trước khi thu submission thật.
 
 ## 3. Critical path và delivery gates
@@ -881,6 +882,15 @@ Story hoặc implementation tương lai.
 - [x] Không estimate deadline trước khi Story refinement hoàn tất.
 
 ## 10. Change log
+
+### 3.6.0 — 2026-09-14
+
+- Recorded the owner's instruction to open EPIC-12 implementation after EPIC-11 closure and W3
+  `MVP_FEATURE_COMPLETE`.
+- Recorded `EPIC12-CONFIRM-11=B`: aligned the exact 12 Expo SDK 57 patch dependencies reported by
+  Doctor; online Doctor now passes `21/21` and fresh native build evidence remains required.
+- Kept all physical-device, accessibility, native build, distribution and rollback evidence honest as
+  `NOT_RUN`/`BLOCKED`; implementation start does not imply `CLOSED_BETA_READY`.
 
 ### 3.5.0 — 2026-09-14
 

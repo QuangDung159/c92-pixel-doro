@@ -1,6 +1,6 @@
 # EPIC-12 — Beta readiness device guide
 
-Status: `NOT_RUN / IMPLEMENTATION_BLOCKED_BY_EPIC_11_CLOSURE`
+Status: `NOT_RUN / IMPLEMENTATION_IN_PROGRESS`
 
 Planning baseline SHA: `6a0fa42860a9134c1374867a33aa0d8b16d9bb89`
 
@@ -12,8 +12,9 @@ thể. Không suy diễn PASS từ automated test, quick smoke, SHA cũ, một p
 không crash.
 
 EPIC-12 chỉ được bắt đầu implementation khi EPIC-11 đã có cả `DONE_OWNER_ACCEPTED` và
-`MVP_FEATURE_COMPLETE`. Tại planning baseline, gate này chưa đạt; vì vậy chỉ được chuẩn bị kế hoạch,
-không được tạo release candidate hoặc ghi nhận beta-ready.
+`MVP_FEATURE_COMPLETE`. Owner đã xác nhận closure ngày 2026-09-14; authority hiện hành ghi EPIC-11
+`DONE_OWNER_ACCEPTED` và W3 feature delivery complete. Điều này mở implementation nhưng không tạo
+release candidate hoặc beta-ready PASS.
 
 ## 1. Hai tầng kiểm thử và quy tắc kết luận
 
@@ -69,7 +70,7 @@ Các tham chiếu `CONFIRM-nn` trong guide là dạng rút gọn của canonical
 
 | Gate | Required value | Owner | Result | Evidence / blocker |
 |---|---|---|---|---|
-| `E12-G01` | EPIC-11 = `DONE_OWNER_ACCEPTED` + `MVP_FEATURE_COMPLETE` | Product owner | `BLOCKED` | Owner confirmation chưa có tại planning baseline |
+| `E12-G01` | EPIC-11 = `DONE_OWNER_ACCEPTED` + `MVP_FEATURE_COMPLETE` | Product owner | `PASS` | Owner confirmation 2026-09-14; EPIC-11 Exit/User Stories/Implementation Report và `MVP_EPICS.md` 3.5.0 |
 | `E12-G02` | Một frozen exact RC SHA; cùng SHA cho iOS và Android final evidence | Release owner | `NOT_RUN` | `<fill exact SHA>` |
 | `E12-G03` | Minimum + representative physical device/OS matrix được chốt | QA owner | `NOT_RUN` | `<fill matrix decision>` |
 | `E12-G04` | iOS internal group và Android internal/closed track chính xác được chốt | Release owner | `NOT_RUN` | Không suy diễn từ EAS production track hiện tại |
@@ -319,7 +320,7 @@ pnpm start --clear
 
 | Gate | Required to ship closed beta | Current result | Evidence/owner |
 |---|---|---|---|
-| EPIC-11 owner closure + MVP feature-complete | Yes | `BLOCKED` | `CONFIRM-01` |
+| EPIC-11 owner closure + MVP feature-complete | Yes | `PASS` | `EPIC12-CONFIRM-01=A`, 2026-09-14 |
 | Frozen same-SHA iOS/Android candidate | Yes | `NOT_RUN` | `CONFIRM-02` |
 | Automated hardening and boundary checks | Yes | `NOT_RUN` | `<fill>` |
 | EPIC-02 same-SHA durability pair | Yes | `NOT_RUN` | `<fill>` |
@@ -332,7 +333,7 @@ pnpm start --clear
 | Evidence index, release notes, known issues, support path | Yes | `NOT_RUN` | `<fill>` |
 | Zero known crash/P0 blocker and explicit owner acceptance | Yes | `NOT_RUN` | `CONFIRM-12` |
 
-Current verdict: `NO_GO — PLANNING_DRAFT / IMPLEMENTATION_BLOCKED_BY_EPIC_11_CLOSURE`.
+Current verdict: `NO_GO — IMPLEMENTATION_IN_PROGRESS / DEVICE_AND_DELIVERY_EVIDENCE_PENDING`.
 
 Không đổi verdict thành GO cho đến khi mọi required row là PASS trên frozen SHA, mọi BLOCKED được owner
 giải quyết hoặc chấp nhận rõ ràng theo policy, và owner ghi chính xác `EPIC-12 DONE_OWNER_ACCEPTED` cùng
