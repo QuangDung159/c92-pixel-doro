@@ -102,6 +102,7 @@ export * from './settings';
 export * from './analytics';
 export * from './feedback';
 export * from './store-review';
+export * from './app-version';
 export {
   OnboardingTrialRunningController,
   type OnboardingTrialRunningControllerDependencies,

@@ -15,6 +15,7 @@ export interface ConfirmationDialogProps {
   readonly busyLabel?: string;
   readonly dismissLabel?: string;
   readonly confirmTone?: 'primary' | 'secondary';
+  readonly dismissible?: boolean;
 }
 
 export const ConfirmationDialog = ({
@@ -28,34 +29,37 @@ export const ConfirmationDialog = ({
   busyLabel = 'Đang dừng phiên…',
   dismissLabel = 'Tiếp tục',
   confirmTone = 'secondary',
-}: ConfirmationDialogProps) => (
-  <Modal
-    animationType="fade"
-    onRequestClose={() => { if (!busy) onDismiss(); }}
-    transparent
-    visible={visible}
-  >
-    <View style={styles.scrim}>
-      <View accessibilityLabel={title} accessibilityViewIsModal style={styles.card}>
-        <Text accessibilityRole="header" style={styles.title}>
-          {title}
-        </Text>
-        <Text style={styles.body}>{body}</Text>
-        {confirmTone === 'primary' ? (
-          <>
+  dismissible = true,
+}: ConfirmationDialogProps) => {
+  const confirmButton = confirmTone === 'primary'
+    ? <PrimaryButton busy={busy} label={busy ? busyLabel : confirmLabel} onPress={onConfirm} />
+    : <SecondaryButton busy={busy} label={busy ? busyLabel : confirmLabel} onPress={onConfirm} />;
+
+  return (
+    <Modal
+      animationType="fade"
+      onRequestClose={() => { if (dismissible && !busy) onDismiss(); }}
+      transparent
+      visible={visible}
+    >
+      <View style={styles.scrim}>
+        <View accessibilityLabel={title} accessibilityViewIsModal style={styles.card}>
+          <Text accessibilityRole="header" style={styles.title}>
+            {title}
+          </Text>
+          <Text style={styles.body}>{body}</Text>
+          {dismissible && confirmTone === 'primary' ? (
             <SecondaryButton busy={busy} label={dismissLabel} onPress={onDismiss} />
-            <PrimaryButton busy={busy} label={busy ? busyLabel : confirmLabel} onPress={onConfirm} />
-          </>
-        ) : (
-          <>
+          ) : null}
+          {dismissible && confirmTone === 'secondary' ? (
             <PrimaryButton busy={busy} label={dismissLabel} onPress={onDismiss} />
-            <SecondaryButton busy={busy} label={busy ? busyLabel : confirmLabel} onPress={onConfirm} />
-          </>
-        )}
+          ) : null}
+          {confirmButton}
+        </View>
       </View>
-    </View>
-  </Modal>
-);
+    </Modal>
+  );
+};
 
 export const ConfirmationModal = ConfirmationDialog;
 
