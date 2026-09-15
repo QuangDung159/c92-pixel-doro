@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_EPIC_12_IMPLEMENTATION_REPORT
 title: PixelDoro EPIC-12 — Hardening, Device Validation và Closed-beta Delivery Implementation Report
-version: 0.6.0
-status: IMPLEMENTATION_IN_PROGRESS_CANDIDATE_INVALIDATED_REFREEZE_AND_REBUILD_REQUIRED
+version: 0.7.0
+status: IMPLEMENTATION_IN_PROGRESS_BUILD_SOURCE_GUARD_IMPLEMENTED_COMMIT_REFREEZE_REBUILD_REQUIRED
 date: 2026-09-14
 last_updated: 2026-09-15
 owner: Dũng Lư
@@ -69,6 +69,11 @@ operational fact, not release PASS. Clean product/config baseline
 Because this audit changes the evidence harness, the replacement SHA must be taken only after these
 records are committed cleanly, then explicitly re-frozen and rebuilt.
 
+The root mobile build entry point now blocks any tracked/untracked worktree change, prints the exact
+40-character build SHA, executes prebuild, then verifies the repository is still clean and the SHA is
+unchanged before invoking EAS. Its dirty-worktree negative path fails closed as expected, and full root
+quality remains green. This guard is not yet committed, so replacement freeze remains pending.
+
 ## 2. Implemented scope
 
 ### 2.1. Production graph retirement
@@ -120,6 +125,7 @@ Executed from repository root with required Node `22.23.2` / pinned pnpm environ
 | Repository hygiene | `PASS` | One lockfile, no signing material/Skia/prototype source, UI <=300 lines, one immutable migration |
 | Expo Doctor (online) | `PASS` | `21/21`; no issue detected after owner-approved patch alignment |
 | Peer dependency audit | `PASS_WITH_BASELINE_WARNING` | Existing optional `@expo/require-utils@55.0.8` TypeScript range warning; unchanged from baseline; Doctor/typecheck pass |
+| Build-source guard negative path | `PASS` | Dirty tracked/untracked state rejected before prebuild/EAS; exact changed paths reported |
 
 SQLite experimental warnings emitted by Node during tests are tooling warnings; no test failed.
 
@@ -204,7 +210,8 @@ evidence and requires a new exact SHA plus rerun. Documentation-only evidence up
 
 ## 8. Next execution order
 
-1. Commit this evidence/harness update, verify a clean tree, rerun quality, then owner explicitly
+1. Commit the build-source guard plus evidence/harness update, verify a clean tree, run the guard's
+   `--check` success path and rerun quality, then owner explicitly
    re-freezes that new exact SHA as the replacement candidate.
 2. Rebuild both platforms from the same clean exact SHA; do not reuse the current uploaded artifacts as
    blocking evidence.
@@ -220,6 +227,7 @@ evidence and requires a new exact SHA plus rerun. Documentation-only evidence up
 
 | Version | Date | Change |
 |---|---|---|
+| `0.7.0` | 2026-09-15 | Implemented fail-closed build-source verification before and after prebuild. Dirty-source negative check and full quality PASS; commit, clean-path verification and replacement re-freeze remain required. |
 | `0.6.0` | 2026-09-15 | Recorded owner-reported App Store/Play Store uploads and verified three finished EAS store builds. Detected dirty-source metadata and cross-SHA mismatch, invalidated `59cb87c...`, and recorded quality-PASS product/config baseline `baf70d3...`; replacement SHA awaits clean evidence/harness commit, explicit re-freeze and rebuild. |
 | `0.5.0` | 2026-09-15 | Recorded owner deferral of EAS Build and store upload. No `CONFIRM-04` A/B/C target was inferred, no external action was performed, and delivery remains blocked until resumed. |
 | `0.4.0` | 2026-09-15 | Recorded `EPIC12-CONFIRM-03=A`; required minimum + representative physical-device coverage. Read-only discovery recorded one offline physical iPhone plus available iOS/Android virtual targets; unresolved physical slots remain `BLOCKED`. |

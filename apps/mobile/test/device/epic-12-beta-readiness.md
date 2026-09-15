@@ -69,6 +69,14 @@ Không được giả định một suffix tồn tại nếu guide nguồn hoặ
 - Timestamp dùng ISO-8601 kèm timezone, ví dụ `2026-09-14T10:30:00+07:00`.
 - Artifact path/link phải tồn tại, đọc được và chỉ thuộc release evidence được owner phê duyệt.
 
+### 2.3 Build-source gate
+
+- Mọi release-evidence build phải chạy qua root build entry point trên clean committed/pushed SHA.
+- Gate phải từ chối cả tracked và untracked changes trước prebuild.
+- Sau prebuild, gate phải xác nhận worktree vẫn clean và exact SHA không đổi trước khi gọi EAS.
+- Build log phải giữ dòng `Verified clean mobile build source` với exact 40-character SHA.
+- Nếu xuất hiện `Refusing mobile build`, commit/resolve thay đổi rồi chạy lại; không bypass để lấy artifact.
+
 ## 3. Prerequisites và owner gates
 
 Các tham chiếu `CONFIRM-nn` trong guide là dạng rút gọn của canonical ID
@@ -83,7 +91,7 @@ Các tham chiếu `CONFIRM-nn` trong guide là dạng rút gọn của canonical
 | `E12-G05` | Feedback test endpoint bật cho beta hoặc owner chấp nhận limitation rõ ràng | Product/privacy owner | `NOT_RUN` | `<fill>` |
 | `E12-G06` | PostHog tiếp tục fail-closed/deferred hoặc được bật bằng test project EU | Product/privacy owner | `NOT_RUN` | Live PostHog historical state: owner-deferred do cost |
 | `E12-G07` | Rollback/republish decision owner và go/no-go owner được gọi tên | Release owner | `NOT_RUN` | `<fill>` |
-| `E12-G08` | Build IDs, runtime version, update channel và native compatibility recorded | Build owner | `FAIL` | EAS IDs recorded, but artifacts are cross-SHA and include uncommitted config; exact-source/native compatibility gate fails |
+| `E12-G08` | Build IDs, runtime version, update channel và native compatibility recorded | Build owner | `FAIL` | Existing EAS artifacts are cross-SHA and include uncommitted config. Build-source guard is implemented and negative-tested, but must be committed/re-frozen before clean rebuild |
 
 ### Device slots — owner phải chốt trước full run
 

@@ -54,6 +54,9 @@ when the current shell is using another Node version, invoke them through
 Before every production build, manually increment `ANDROID_VERSION_CODE` and
 `IOS_BUILD_NUMBER` at the top of `apps/mobile/app.config.ts`. EAS is configured with
 the local version source and does not auto-increment either value.
+Commit and push that version change before building. The root build entry point refuses
+to continue when the repository is dirty, prints the exact source SHA, runs prebuild,
+and verifies the repository is still clean before invoking EAS.
 
 For EAS account setup, native build validation, preview promotion, rollback, and
 evidence capture, follow [the delivery runbook](docs/runbooks/EPIC-01_DELIVERY.md).

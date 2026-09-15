@@ -39,17 +39,51 @@ if (!nvmScript) {
   process.exit(1);
 }
 
+const readGit = (args) => spawnSync('git', args, {
+  cwd: repositoryRoot,
+  encoding: 'utf8',
+});
+
+const requireCleanBuildSource = (phase) => {
+  const status = readGit(['status', '--porcelain=v1', '--untracked-files=all']);
+  if (status.error) throw status.error;
+  if (status.status !== 0) {
+    console.error(`Unable to verify Git status ${phase}.`);
+    process.exit(1);
+  }
+
+  const dirtyEntries = status.stdout.trim();
+  if (dirtyEntries !== '') {
+    console.error([
+      `Refusing mobile build: repository is not clean ${phase}.`,
+      'Commit or intentionally discard every tracked/untracked change first.',
+      dirtyEntries,
+    ].join('\n'));
+    process.exit(1);
+  }
+
+  const revision = readGit(['rev-parse', 'HEAD']);
+  if (revision.error) throw revision.error;
+  if (revision.status !== 0) {
+    console.error(`Unable to resolve exact Git SHA ${phase}.`);
+    process.exit(1);
+  }
+
+  const exactSha = revision.stdout.trim();
+  if (!/^[0-9a-f]{40}$/u.test(exactSha)) {
+    console.error(`Invalid exact Git SHA ${phase}: ${exactSha}`);
+    process.exit(1);
+  }
+  console.log(`Verified clean mobile build source ${phase}: ${exactSha}`);
+  return exactSha;
+};
+
 const setupCommands = [
   'source "$PIXELDORO_NVM_SCRIPT"',
   'nvm use "$PIXELDORO_NODE_VERSION"',
   'node -v',
   'pnpm -v',
 ];
-const buildCommands = [
-  'pnpm prebuild',
-  'pnpm --filter @pixeldoro/mobile run "$PIXELDORO_BUILD_TARGET"',
-];
-const command = [...setupCommands, ...(checkOnly ? [] : buildCommands)].join(' && ');
 const buildEnvironment = {
   ...process.env,
   NVM_DIR: nvmDirectory,
@@ -63,11 +97,32 @@ const buildEnvironment = {
 delete buildEnvironment.npm_config_prefix;
 delete buildEnvironment.NPM_CONFIG_PREFIX;
 
-const result = spawnSync('/bin/zsh', ['-c', command], {
-  cwd: repositoryRoot,
-  env: buildEnvironment,
-  stdio: 'inherit',
-});
+const runCommands = (commands) => spawnSync(
+  '/bin/zsh',
+  ['-c', [...setupCommands, ...commands].join(' && ')],
+  {
+    cwd: repositoryRoot,
+    env: buildEnvironment,
+    stdio: 'inherit',
+  },
+);
 
-if (result.error) throw result.error;
-process.exitCode = result.status ?? 1;
+const sourceSha = requireCleanBuildSource('before prebuild');
+const prebuildResult = runCommands(checkOnly ? [] : ['pnpm prebuild']);
+if (prebuildResult.error) throw prebuildResult.error;
+if ((prebuildResult.status ?? 1) !== 0 || checkOnly) {
+  process.exitCode = prebuildResult.status ?? 1;
+} else {
+  const postPrebuildSha = requireCleanBuildSource('after prebuild');
+  if (postPrebuildSha !== sourceSha) {
+    console.error(`Build source SHA changed during prebuild: ${sourceSha} -> ${postPrebuildSha}`);
+    process.exitCode = 1;
+  } else {
+    buildEnvironment.PIXELDORO_BUILD_SHA = sourceSha;
+    const buildResult = runCommands([
+      'pnpm --filter @pixeldoro/mobile run "$PIXELDORO_BUILD_TARGET"',
+    ]);
+    if (buildResult.error) throw buildResult.error;
+    process.exitCode = buildResult.status ?? 1;
+  }
+}

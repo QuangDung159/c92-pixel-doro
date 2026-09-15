@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_EPIC_12_USER_STORIES
 title: PixelDoro EPIC-12 — Hardening, Device Validation và Closed-beta Delivery User Stories
-version: 0.7.0
-status: IMPLEMENTATION_IN_PROGRESS_CANDIDATE_INVALIDATED_REFREEZE_REQUIRED
+version: 0.8.0
+status: IMPLEMENTATION_IN_PROGRESS_BUILD_SOURCE_GUARD_IMPLEMENTED_COMMIT_AND_REFREEZE_REQUIRED
 date: 2026-09-14
 last_updated: 2026-09-15
 owner: Dũng Lư
@@ -247,6 +247,11 @@ source included uncommitted changes. The prior candidate is therefore invalidate
 Clean product/config baseline `baf70d37778e92ff0d5c258d2f2d5c1d2c0d87be` passes full quality. Because this
 audit also updates the evidence harness, the replacement RC SHA remains pending a clean commit of these
 records and explicit owner re-freeze; uploaded artifacts remain non-qualifying evidence.
+
+Root mobile build orchestration now fails closed when tracked or untracked changes exist, prints the
+exact 40-character SHA, runs prebuild, then rechecks clean status and unchanged SHA before invoking EAS.
+The dirty-worktree negative path and full root quality pass; this guard must be committed before final
+re-freeze so future artifacts cannot repeat the uncommitted-source failure.
 
 ## 8. Story details
 
@@ -883,6 +888,7 @@ plan này tự chọn thay owner. Recommendation chỉ là planning input.
 
 | Version | Date | Change |
 |---|---|---|
+| `0.8.0` | 2026-09-15 | Added a fail-closed mobile build-source guard: reject dirty tracked/untracked state, print exact SHA, and recheck clean/unchanged source after prebuild before EAS. Negative dirty-state check and full quality pass; commit and re-freeze remain required. |
 | `0.7.0` | 2026-09-15 | Recorded owner-reported first App Store/Play Store uploads and EAS build metadata. Detected cross-SHA plus dirty-source mismatches, invalidated frozen candidate `59cb87c...`, and recorded quality-PASS product/config baseline `baf70d3...`; replacement SHA awaits clean evidence/harness commit, explicit re-freeze and rebuild. |
 | `0.6.0` | 2026-09-15 | Recorded owner deferral of EAS Build and store upload. `EPIC12-CONFIRM-04` target remains unselected; delivery gates stay `BLOCKED/NOT_RUN`, with no external build or upload performed. |
 | `0.5.0` | 2026-09-15 | Recorded `EPIC12-CONFIRM-03=A`: minimum and representative physical devices are required for hardware claims, with simulator/emulator supplemental. Read-only inventory found an offline physical iPhone 13 plus available iOS/Android virtual targets; unresolved physical slots remain `BLOCKED`. |

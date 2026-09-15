@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_MVP_EPIC_BREAKDOWN
 title: PixelDoro Mobile MVP — Epic Breakdown
-version: 3.10.0
+version: 3.11.0
 status: EPIC_12_IMPLEMENTATION_IN_PROGRESS
 last_updated: 2026-09-15
 owner: Dũng Lư
@@ -882,6 +882,13 @@ Story hoặc implementation tương lai.
 - [x] Không estimate deadline trước khi Story refinement hoàn tất.
 
 ## 10. Change log
+
+### 3.11.0 — 2026-09-15
+
+- Implemented a fail-closed mobile build-source guard that rejects tracked/untracked changes, records the
+  exact SHA, and rechecks clean/unchanged state after prebuild before invoking EAS.
+- Verified the dirty-worktree negative path and full root quality. Guard/evidence commit, clean-path check,
+  explicit replacement re-freeze and same-SHA rebuild remain required.
 
 ### 3.10.0 — 2026-09-15
 

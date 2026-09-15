@@ -90,6 +90,11 @@ Before either production command, manually increment `ANDROID_VERSION_CODE` and
 `cli.appVersionSource: local`, and the production profile explicitly disables EAS
 auto-increment so the checked-in values remain the source of truth.
 
+Commit and push all version/config/asset changes before invoking a root build command.
+The root build entry point fails closed on tracked or untracked worktree changes, prints
+the exact 40-character source SHA, runs prebuild, and verifies the worktree plus SHA again
+before invoking EAS. Never bypass this gate for an artifact used as release evidence.
+
 The command asks, in order, for platform, artifact type, environment, and build runner.
 iOS uses IPA and production as defaults; its simulator archive option is restricted to
 development. Android uses AAB and production as defaults; AAB is restricted to

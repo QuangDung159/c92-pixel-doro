@@ -101,6 +101,7 @@ const requiredEpic12Evidence = [
   'Blocker owner + next action', 'pixeldoro-us-02-09-epic-exit-probe.db',
   'pixeldoro.db', 'Không dùng wildcard/glob', 'Normal launch',
   'Current verdict: `NO_GO', 'Không suy diễn PASS từ automated test',
+  'Verified clean mobile build source', 'Refusing mobile build',
 ];
 
 for (const evidence of [...requiredEpic12Cases, ...requiredEpic12Evidence]) {
