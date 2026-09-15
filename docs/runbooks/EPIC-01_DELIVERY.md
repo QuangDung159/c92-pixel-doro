@@ -72,24 +72,41 @@ Attach build URLs/IDs, platform + OS/device details, date, commit SHA, and the m
 pass/fail result to the Epic evidence record. A screenshot of the initial screen plus a
 short result table is sufficient. A successful build alone is not boot evidence.
 
-To conserve EAS cloud build quota, Android artifacts may also be built locally from the
-repository root. Both commands keep `credentialsSource: remote`; generated artifacts
-are written to the git-ignored `apps/mobile/artifacts/` directory:
+Use the single interactive build entry point from the repository root:
 
 ```sh
-pnpm android:apk
-pnpm android:aab
+pnpm build:mobile
 ```
 
-The APK is for direct installation and smoke testing. The AAB is the Google Play upload
-artifact and cannot be installed directly on an emulator/device. Local build evidence
-must still record the artifact checksum, platform/toolchain, date, commit SHA, and
-device smoke result.
+Use either production shortcut when no interactive selection is needed:
 
-The mobile workspace pins the EAS local-build plugin used by EAS CLI `22.6.0` and sets
-`EAS_LOCAL_BUILD_PLUGIN_PATH` in both local Android scripts. This avoids relying on
-`npx` to create the plugin executable dynamically; it does not change the remote
-credential source or persist signing material in the repository.
+```sh
+pnpm build:android:prd:local
+pnpm build:ios:prd:local
+```
+
+Before either production command, manually increment `ANDROID_VERSION_CODE` and
+`IOS_BUILD_NUMBER` in `apps/mobile/app.config.ts`. The project uses
+`cli.appVersionSource: local`, and the production profile explicitly disables EAS
+auto-increment so the checked-in values remain the source of truth.
+
+The command asks, in order, for platform, artifact type, environment, and build runner.
+iOS uses IPA and production as defaults; its simulator archive option is restricted to
+development. Android uses AAB and production as defaults; AAB is restricted to
+production because it is a Google Play artifact rather than a directly shareable
+install. Development defaults to a local build, while other environments default to
+EAS service builds. Local artifacts are written under `apps/mobile/artifacts/`; EAS
+builds return a shareable build page. Signing credentials remain EAS-managed remotely
+in both modes.
+
+## 3.1 Shareable QA and staging builds
+
+QA and staging use EAS-hosted internal-distribution builds so testers can install from
+the build page without receiving local artifact files. Each tier has a separate EAS
+Update channel while both inherit the `preview` EAS environment. Select Android + APK
+or iOS + IPA, choose QA or staging, then accept the default EAS runner. iOS internal
+builds can only be installed on devices registered with EAS and included in the
+provisioning profile.
 
 ## 4. Preview and production OTA boundary
 
