@@ -6,6 +6,7 @@ import { PrimaryButton } from './button';
 vi.mock('react-native', () => ({
   Modal: 'Modal',
   Pressable: 'Pressable',
+  ScrollView: 'ScrollView',
   StyleSheet: { create: <TValue,>(styles: TValue): TValue => styles },
   Text: 'Text',
   View: 'View',
@@ -26,6 +27,7 @@ describe('ConfirmationDialog', () => {
       visible: true,
     });
     const card = tree.props.children.props.children;
+    expect(card.props.children[0].type).toBe('ScrollView');
     const actions = (card.props.children as readonly unknown[]).filter((child) => {
       if (child === null || typeof child !== 'object') return false;
       return (child as { readonly type?: unknown }).type === PrimaryButton;

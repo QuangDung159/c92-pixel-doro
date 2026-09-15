@@ -6,7 +6,7 @@ const IOS_BUNDLE_IDENTIFIER = "com.dragonc92team.pixeldoro";
 const ANDROID_APPLICATION_ID = "com.dragonc92team.pixeldoro";
 const EAS_PROJECT_ID = "6f65fb79-ffe9-4fa6-9951-895f27bf0725";
 // Increment both values manually before every production store build.
-const IOS_BUILD_NUMBER = "2";
+const IOS_BUILD_NUMBER = "3";
 const ANDROID_VERSION_CODE = 1;
 
 export default ({ config }: ConfigContext): ExpoConfig => {
@@ -29,7 +29,11 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     ...(projectId === undefined
       ? {}
       : {
-          updates: { url: `https://u.expo.dev/${projectId}` },
+          updates: {
+            url: `https://u.expo.dev/${projectId}`,
+            checkAutomatically: "ON_LOAD",
+            fallbackToCacheTimeout: 0,
+          },
           extra: { eas: { projectId } },
         }),
     ios: {

@@ -14,6 +14,8 @@ import {
   OnboardingTrialPetFeedbackBridge,
   OnboardingTrialResultController,
   OnboardingTrialRunningController,
+  OtaRestartSafetyEvaluator,
+  OtaUpdateController,
   ReadinessGate,
   AnalyticsCaptureGate,
   type AnalyticsDeliveryPort,
@@ -30,6 +32,8 @@ import {
   type FirstUseSessionReader,
   type MigrationPort,
   type OnboardingAnalyticsRecorderPort,
+  type OtaRestartSafetyPort,
+  type OtaUpdatePort,
   type PetVisualDiagnosticsPort,
   type RecoveryDiagnosticsPort,
   type ResetNotificationCleanupPort,
@@ -86,6 +90,7 @@ import {
 } from '@/infrastructure/platform/notifications/expo-focus-notification.adapter';
 import { DeviceTimeoutScheduler } from '@/infrastructure/platform/timing/device-timeout.scheduler';
 import { ExpoSensoryFeedbackAdapter } from '@/infrastructure/platform/sensory/expo-sensory-feedback.adapter';
+import { ExpoOtaUpdateAdapter } from '@/infrastructure/platform/ota-update/expo-ota-update.adapter';
 import { Linking } from 'react-native';
 
 import type { MobileApplication } from './mobile-application';
@@ -192,6 +197,8 @@ export interface CreateMobileApplicationOptions {
   readonly feedbackProvider?: FeedbackSubmissionPort;
   readonly migration?: MigrationPort;
   readonly onboardingAnalytics?: OnboardingAnalyticsRecorderPort;
+  readonly otaRestartSafety?: OtaRestartSafetyPort;
+  readonly otaUpdates?: OtaUpdatePort;
   readonly id?: IdPort;
   readonly localCalendar?: LocalCalendarPort;
   readonly firstUseInstallation?: FirstUseInstallationReader;
@@ -882,6 +889,27 @@ export const createMobileApplication = (
     },
   }, appLifecycle.getCurrentState());
   standardFocusLifecycleRef.current = standardFocusLifecycle;
+  const otaUpdate = new OtaUpdateController({
+    clock,
+    updates: options.otaUpdates ?? new ExpoOtaUpdateAdapter(),
+    restartSafety: options.otaRestartSafety ?? new OtaRestartSafetyEvaluator({
+      isBootstrapReady: () => bootstrap.getSnapshot().status === 'ready',
+      isCriticalOperationActive: () => transaction.isBusy(),
+      waitForLifecycleIdle: async () => {
+        await Promise.all([
+          standardFocusLifecycle.whenIdle(),
+          breakLifecycle.whenIdle(),
+        ]);
+      },
+      runAfterSessionCommands: (work) => sessionCommands.run(work),
+      findActiveSession: () => persistence.sessions.findActive(),
+    }),
+  });
+  const otaSafetyUnsubscribers = [
+    standardFocusOutcome.subscribe(() => void otaUpdate.refreshRestartSafety()),
+    breakOutcome.subscribe(() => void otaUpdate.refreshRestartSafety()),
+    onboardingTrialCompletion.subscribe(() => void otaUpdate.refreshRestartSafety()),
+  ];
   const completeFirstUseHandoffUseCase = new CompleteFirstUseHandoffUseCase({
     clock,
     installation: onboardingTrialInstallation,
@@ -1054,6 +1082,7 @@ export const createMobileApplication = (
         if (bootstrap.getSnapshot().status !== 'ready') return;
         appVisibility.publish('active');
         onboardingTrialRunning.setAppVisible(true);
+        void otaUpdate.handleForeground();
         if (result.ok && result.value.outcome === 'completed_fresh') {
           await Promise.all([
             firstUseEntry.refresh(),
@@ -1237,6 +1266,7 @@ export const createMobileApplication = (
 
   return {
     appVisibility,
+    otaUpdate,
     breakRecommendation: breakRecommendation.recommendation,
     breakCancel: breakStart.cancel,
     breakStart: breakStart.start,
@@ -1487,6 +1517,7 @@ export const createMobileApplication = (
           await standardFocus.setup.start();
         }
         startPetLifecycleRefresh();
+        void otaUpdate.start();
         await petCompanion.refresh();
         const startupOutcome = standardFocusOutcome.getSnapshot();
         if (startupOutcome.status !== 'idle') {
@@ -1621,6 +1652,8 @@ export const createMobileApplication = (
         onboardingTrialPetFeedback.dispose();
         onboardingTrialCompletion.dispose();
         onboardingTrialResult.dispose();
+        for (const unsubscribe of otaSafetyUnsubscribers) unsubscribe();
+        otaUpdate.dispose();
         petVisual.dispose();
         petCompanion.dispose();
         petTerminalFeedback.dispose();

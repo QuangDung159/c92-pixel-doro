@@ -1,18 +1,28 @@
-import { useCallback, useEffect, useRef } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useEffect, useRef, useSyncExternalStore } from 'react';
 
+import { selectOtaReleaseInfo } from '@/application';
 import { SettingsScreen } from '@/presentation/features/settings';
+import {
+  useAppVisibility,
+  useMobileApplication,
+} from '@/presentation/providers/mobile-application-context';
 import {
   useSettingsActions,
   useSettingsProjection,
 } from '@/presentation/providers/settings-hooks';
-import { useAppVisibility } from '@/presentation/providers/mobile-application-context';
 
 export default function SettingsRoute() {
   const router = useRouter();
   const projection = useSettingsProjection();
   const actions = useSettingsActions();
   const visibility = useAppVisibility();
+  const application = useMobileApplication();
+  const otaProjection = useSyncExternalStore(
+    application.otaUpdate.subscribe,
+    application.otaUpdate.getSnapshot,
+    application.otaUpdate.getSnapshot,
+  );
   const previousVisibility = useRef(visibility);
 
   useFocusEffect(useCallback(() => {
@@ -42,6 +52,7 @@ export default function SettingsRoute() {
       onSetNotifications={(enabled) => { void actions.setNotificationsEnabled(enabled); }}
       onSetSound={(enabled) => { void actions.setSoundEnabled(enabled); }}
       projection={projection}
+      releaseInfo={selectOtaReleaseInfo(otaProjection)}
     />
   );
 }

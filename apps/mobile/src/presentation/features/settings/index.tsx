@@ -1,13 +1,18 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import type { AppDefaultMode, AppSettingsRecord, SettingsProjection } from '@/application';
+import type {
+  AppDefaultMode,
+  AppSettingsRecord,
+  OtaReleaseInfo,
+  SettingsProjection,
+} from "@/application";
 import {
   ConfirmationDialog,
   ErrorState,
   LoadingState,
   ScreenHeader,
   ScreenShell,
-} from '@/presentation/components';
+} from "@/presentation/components";
 
 import {
   DataControlSection,
@@ -16,20 +21,24 @@ import {
   NotificationSection,
   PreferenceSection,
   SettingsIssueBanner,
-} from './settings-sections';
+} from "./settings-sections";
+import { SettingsVersionFooter } from "./settings-version-footer";
 
-type BackgroundSettingsDraft = Partial<Pick<
-  AppSettingsRecord,
-  | 'focusDurationMinutes'
-  | 'defaultMode'
-  | 'soundEnabled'
-  | 'hapticsEnabled'
-  | 'notificationsEnabled'
-  | 'analyticsEnabled'
->>;
+type BackgroundSettingsDraft = Partial<
+  Pick<
+    AppSettingsRecord,
+    | "focusDurationMinutes"
+    | "defaultMode"
+    | "soundEnabled"
+    | "hapticsEnabled"
+    | "notificationsEnabled"
+    | "analyticsEnabled"
+  >
+>;
 
 export interface SettingsScreenProps {
   readonly projection: SettingsProjection;
+  readonly releaseInfo: OtaReleaseInfo;
   readonly onActivateRetry: () => void;
   readonly onDismissIssue: () => void;
   readonly onOpenSystemSettings: () => void;
@@ -47,6 +56,7 @@ export interface SettingsScreenProps {
 
 export const SettingsScreen = ({
   projection,
+  releaseInfo,
   onActivateRetry,
   onDismissIssue,
   onOpenSystemSettings,
@@ -64,10 +74,14 @@ export const SettingsScreen = ({
   const [confirmingReset, setConfirmingReset] = useState(false);
   const [draft, setDraft] = useState<BackgroundSettingsDraft>({});
 
-  if (projection.status === 'idle' || projection.status === 'loading') {
-    return <ScreenShell><LoadingState label="Đang đọc cài đặt…" /></ScreenShell>;
+  if (projection.status === "idle" || projection.status === "loading") {
+    return (
+      <ScreenShell>
+        <LoadingState label="Đang đọc cài đặt…" />
+      </ScreenShell>
+    );
   }
-  if (projection.status === 'error') {
+  if (projection.status === "error") {
     return (
       <ScreenShell>
         <ErrorState
@@ -79,14 +93,15 @@ export const SettingsScreen = ({
     );
   }
 
-  const busy = (key: typeof projection.busy[number]) => projection.busy.includes(key);
-  const resetBusy = busy('reset');
+  const busy = (key: (typeof projection.busy)[number]) =>
+    projection.busy.includes(key);
+  const resetBusy = busy("reset");
   const current = <Key extends keyof BackgroundSettingsDraft>(
     key: Key,
   ): AppSettingsRecord[Key] => {
     const draftValue = draft[key];
     return busy(key) && draftValue !== undefined
-      ? draftValue as AppSettingsRecord[Key]
+      ? (draftValue as AppSettingsRecord[Key])
       : projection.settings[key];
   };
   const stage = (
@@ -109,48 +124,49 @@ export const SettingsScreen = ({
         />
       )}
       <FocusDefaultsSection
-        duration={current('focusDurationMinutes')}
-        mode={current('defaultMode')}
+        duration={current("focusDurationMinutes")}
+        mode={current("defaultMode")}
         onSetDuration={(minutes) => {
           onSetDuration(minutes);
-          stage('focusDurationMinutes', minutes);
+          stage("focusDurationMinutes", minutes);
         }}
         onSetMode={(mode) => {
           onSetMode(mode);
-          stage('defaultMode', mode);
+          stage("defaultMode", mode);
         }}
       />
       <PreferenceSection
-        hapticsEnabled={current('hapticsEnabled')}
+        hapticsEnabled={current("hapticsEnabled")}
         onSetHaptics={(enabled) => {
           onSetHaptics(enabled);
-          stage('hapticsEnabled', enabled);
+          stage("hapticsEnabled", enabled);
         }}
         onSetSound={(enabled) => {
           onSetSound(enabled);
-          stage('soundEnabled', enabled);
+          stage("soundEnabled", enabled);
         }}
-        soundEnabled={current('soundEnabled')}
+        soundEnabled={current("soundEnabled")}
       />
       <NotificationSection
-        enabled={current('notificationsEnabled')}
+        enabled={current("notificationsEnabled")}
         onChange={(enabled) => {
           onSetNotifications(enabled);
-          stage('notificationsEnabled', enabled);
+          stage("notificationsEnabled", enabled);
         }}
         onOpenSystemSettings={onOpenSystemSettings}
         permission={projection.notificationPermission}
       />
       <FeedbackEntrySection onOpenFeedback={onOpenFeedback} />
       <DataControlSection
-        analyticsEnabled={current('analyticsEnabled')}
+        analyticsEnabled={current("analyticsEnabled")}
         onRequestReset={() => setConfirmingReset(true)}
         onSetAnalytics={(enabled) => {
           onSetAnalytics(enabled);
-          stage('analyticsEnabled', enabled);
+          stage("analyticsEnabled", enabled);
         }}
         resetBusy={resetBusy}
       />
+      <SettingsVersionFooter release={releaseInfo} />
       <ConfirmationDialog
         body="Lịch sử, XP, Coin, vật phẩm và mọi tùy chọn trên thiết bị sẽ bị xóa. Không thể hoàn tác."
         busy={resetBusy}
