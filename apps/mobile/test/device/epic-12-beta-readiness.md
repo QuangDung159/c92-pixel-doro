@@ -1,10 +1,14 @@
 # EPIC-12 — Beta readiness device guide
 
-Status: `NOT_RUN / IMPLEMENTATION_IN_PROGRESS`
+Status: `NOT_RUN / CANDIDATE_INVALIDATED / REFREEZE_REQUIRED`
 
 Planning baseline SHA: `6a0fa42860a9134c1374867a33aa0d8b16d9bb89`
 
-Frozen release-candidate SHA: `59cb87c4bc4b150a7d95265d9655f4b04bc2309a`
+Previous frozen release-candidate SHA: `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` (`INVALIDATED`)
+
+Product/config baseline SHA: `baf70d37778e92ff0d5c258d2f2d5c1d2c0d87be` (`QUALITY_PASS`)
+
+Replacement candidate SHA: `PENDING_CLEAN_COMMIT_AND_OWNER_REFREEZE`
 
 Allowed case results: `PASS`, `FAIL`, `BLOCKED`, `NOT_RUN`.
 
@@ -73,13 +77,13 @@ Các tham chiếu `CONFIRM-nn` trong guide là dạng rút gọn của canonical
 | Gate | Required value | Owner | Result | Evidence / blocker |
 |---|---|---|---|---|
 | `E12-G01` | EPIC-11 = `DONE_OWNER_ACCEPTED` + `MVP_FEATURE_COMPLETE` | Product owner | `PASS` | Owner confirmation 2026-09-14; EPIC-11 Exit/User Stories/Implementation Report và `MVP_EPICS.md` 3.5.0 |
-| `E12-G02` | Một frozen exact RC SHA; cùng SHA cho iOS và Android final evidence | Release owner | `PASS` | `EPIC12-CONFIRM-02=A`, 2026-09-14; frozen SHA `59cb87c4bc4b150a7d95265d9655f4b04bc2309a`; device evidence itself remains `NOT_RUN` |
+| `E12-G02` | Một frozen exact RC SHA; cùng SHA cho iOS và Android final evidence | Release owner | `FAIL` | Prior SHA `59cb87c...` invalidated; Android build reports `1ca4e3f...`, latest iOS reports `726c22e...`, and both include config not committed at those SHAs; re-freeze/rebuild required |
 | `E12-G03` | Minimum + representative physical device/OS matrix được chốt | QA owner | `BLOCKED` | `EPIC12-CONFIRM-03=A`, 2026-09-15; policy approved, awaiting complete physical device/model/OS inventory |
-| `E12-G04` | iOS internal group và Android internal/closed track chính xác được chốt | Release owner | `BLOCKED` | Owner deferred EAS Build/store upload on 2026-09-15; exact `CONFIRM-04=A/B/C` target remains unselected |
+| `E12-G04` | iOS internal group và Android internal/closed track chính xác được chốt | Release owner | `BLOCKED` | Store upload owner-reported 2026-09-15; exact App Store/TestFlight group and Google Play track/release remain unrecorded |
 | `E12-G05` | Feedback test endpoint bật cho beta hoặc owner chấp nhận limitation rõ ràng | Product/privacy owner | `NOT_RUN` | `<fill>` |
 | `E12-G06` | PostHog tiếp tục fail-closed/deferred hoặc được bật bằng test project EU | Product/privacy owner | `NOT_RUN` | Live PostHog historical state: owner-deferred do cost |
 | `E12-G07` | Rollback/republish decision owner và go/no-go owner được gọi tên | Release owner | `NOT_RUN` | `<fill>` |
-| `E12-G08` | Build IDs, runtime version, update channel và native compatibility recorded | Build owner | `BLOCKED` | EAS Build deferred by owner on 2026-09-15; no build/runtime/update ID exists yet |
+| `E12-G08` | Build IDs, runtime version, update channel và native compatibility recorded | Build owner | `FAIL` | EAS IDs recorded, but artifacts are cross-SHA and include uncommitted config; exact-source/native compatibility gate fails |
 
 ### Device slots — owner phải chốt trước full run
 
@@ -105,7 +109,7 @@ Supplemental targets discovered read-only on 2026-09-15; these do not satisfy ph
 | Tester | `<fill>` |
 | Start/end ISO timestamp + timezone | `<fill>` |
 | Branch | `<fill>` |
-| Exact RC SHA | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` |
+| Exact RC SHA | `<REFREEZE_REQUIRED>` |
 | Working tree status | `<clean / explain>` |
 | Platform/device/model | `<fill>` |
 | OS/API version | `<fill>` |
@@ -163,7 +167,7 @@ Quick-smoke aggregate:
 
 | Exact SHA | Device/OS/build/runtime/channel | Tester/timezone | Elapsed | Result | Evidence |
 |---|---|---|---:|---|---|
-| `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `NOT_RUN` | `<fill>` |
+| `<REFREEZE_REQUIRED>` | `<fill>` | `<fill>` | `<fill>` | `NOT_RUN` | `<fill>` |
 
 Nếu một feature không thể đạt trong 15 phút bằng fixture hiện có, ghi case `BLOCKED` và blocker/next
 action; không dùng thao tác DB thủ công hoặc skip im lặng.
@@ -178,7 +182,7 @@ Mỗi row phải có một evidence record riêng theo schema dưới đây. C�
 | Field bắt buộc cho mỗi row | Giá trị |
 |---|---|
 | Case/result | `<case> / PASS\|FAIL\|BLOCKED\|NOT_RUN` |
-| Exact SHA | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` |
+| Exact SHA | `<REFREEZE_REQUIRED>` |
 | Platform/device/OS | `<fill>` |
 | Physical/simulator/emulator | `<fill>` |
 | App version + build ID/profile | `<fill>` |
@@ -250,6 +254,15 @@ Threshold/device/tool must be confirmed before the benchmark. Historical EPIC-04
 `5b3a182...` is context only and cannot PASS these final-RC rows.
 
 ### 6.7 Preview, runtime, OTA, rollback và distribution
+
+Store-build ledger discovered from EAS metadata on 2026-09-15. `FINISHED` means the cloud build
+completed; owner reports store upload completed. It does not mean same-SHA, install, review or rollout PASS.
+
+| Platform | EAS build ID | EAS Git SHA | Version/build/runtime/channel | Build | Release-evidence result |
+|---|---|---|---|---|---|
+| Android | `93d77431-0b2d-435e-914e-fe90f95f07bb` | `1ca4e3f51487fe4df2cd264c18f6b90554842447` | `1.0.1` / `1` / `1.0.1` / `production` | `FINISHED`; store upload owner-reported | `FAIL` — SHA/config not reproducible and differs from latest iOS |
+| iOS, first | `98fee2fe-defc-4fa7-8684-f1b5ddcbbd15` | `1ca4e3f51487fe4df2cd264c18f6b90554842447` | `1.0.1` / `1` / `1.0.1` / `production` | `FINISHED`; superseded by build 2 | `FAIL` — SHA/config not reproducible |
+| iOS, latest | `d20dc640-ba5b-4d76-9bd5-96e9f9f39ed1` | `726c22e26009fff952c381408a551c0ef01d0980` | `1.0.1` / `2` / `1.0.1` / `production` | `FINISHED`; store upload owner-reported | `FAIL` — SHA/config not reproducible and differs from Android |
 
 | Case | Prerequisite | Steps | Exact expected result | Required coverage | Result | Evidence record |
 |---|---|---|---|---|---|---|
@@ -330,19 +343,19 @@ pnpm start --clear
 | Gate | Required to ship closed beta | Current result | Evidence/owner |
 |---|---|---|---|
 | EPIC-11 owner closure + MVP feature-complete | Yes | `PASS` | `EPIC12-CONFIRM-01=A`, 2026-09-14 |
-| Frozen same-SHA iOS/Android candidate | Yes | `PASS` | `EPIC12-CONFIRM-02=A`; SHA `59cb87c4bc4b150a7d95265d9655f4b04bc2309a`; platform runs remain `NOT_RUN` |
-| Automated hardening and boundary checks | Yes | `PASS` | Frozen-SHA root quality PASS: 220 test files / 1,109 tests; Expo Doctor `21/21` |
+| Frozen same-SHA iOS/Android candidate | Yes | `FAIL` | Prior SHA `59cb87c...` invalidated; uploaded Android/iOS artifacts are dirty-source and cross-SHA; replacement awaits clean evidence/harness commit and owner re-freeze |
+| Automated hardening and boundary checks | Yes | `PASS` | Product/config baseline and current evidence/harness worktree quality PASS: 220 test files / 1,109 tests; prior Expo Doctor `21/21` |
 | EPIC-02 same-SHA durability pair | Yes | `NOT_RUN` | `<fill>` |
 | Lifecycle/offline/idempotency/migration/reset | Yes | `NOT_RUN` | `<fill>` |
 | Notification/audio/haptic/provider/store-review | Yes, except explicitly accepted external limitation | `NOT_RUN` | `<fill>` |
 | Accessibility minimum + representative matrix | Yes | `BLOCKED` | `CONFIRM-03=A`; exact device/OS inventory and `CONFIRM-10` remain pending |
 | Pet fallback + 30-minute benchmark | Yes | `NOT_RUN` | `CONFIRM-09` |
-| Preview/runtime/OTA/rollback rehearsal | Yes | `BLOCKED` | EAS Build deferred; `CONFIRM-08` pending |
-| iOS/Android internal distribution | Yes | `BLOCKED` | EAS Build/store upload deferred; `CONFIRM-04` target and `CONFIRM-07` pending |
+| Preview/runtime/OTA/rollback rehearsal | Yes | `BLOCKED` | Existing store builds fail exact-source gate; `CONFIRM-08` pending |
+| iOS/Android internal distribution | Yes | `BLOCKED` | Upload owner-reported, but artifacts fail exact-source gate; exact group/track, tester install and `CONFIRM-04/07` remain pending |
 | Evidence index, release notes, known issues, support path | Yes | `NOT_RUN` | `<fill>` |
 | Zero known crash/P0 blocker and explicit owner acceptance | Yes | `NOT_RUN` | `CONFIRM-12` |
 
-Current verdict: `NO_GO — IMPLEMENTATION_IN_PROGRESS / DEVICE_AND_DELIVERY_EVIDENCE_PENDING`.
+Current verdict: `NO_GO — CANDIDATE_INVALIDATED / REFREEZE_AND_CLEAN_REBUILD_REQUIRED`.
 
 Không đổi verdict thành GO cho đến khi mọi required row là PASS trên frozen SHA, mọi BLOCKED được owner
 giải quyết hoặc chấp nhận rõ ràng theo policy, và owner ghi chính xác `EPIC-12 DONE_OWNER_ACCEPTED` cùng
@@ -352,23 +365,23 @@ giải quyết hoặc chấp nhận rõ ràng theo policy, và owner ghi chính 
 
 | Case | Result | Exact SHA | Platform/device/OS | Build/runtime/channel | Network/app/a11y | Tester/timezone | Artifact | Cleanup | Blocker owner/next |
 |---|---|---|---|---|---|---|---|---|---|
-| `E12-Q01→Q10` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-RC-01` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-DATA-IOS` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-DATA-AND` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-LIFE-01→04` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-IDEM-01→02` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-DB-01→02` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-OFF-01→02` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-PERM-01→02` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-SENS-01` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-FDBK-01` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-AN-01` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-REVIEW-01` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-A11Y-*` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-PET-01→03` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-DELIVERY-01→04` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-DIST-01→02` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-EXIT-01` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-Q01→Q10` | `NOT_RUN` | `<REFREEZE_REQUIRED>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-RC-01` | `NOT_RUN` | `<REFREEZE_REQUIRED>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-DATA-IOS` | `NOT_RUN` | `<REFREEZE_REQUIRED>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-DATA-AND` | `NOT_RUN` | `<REFREEZE_REQUIRED>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-LIFE-01→04` | `NOT_RUN` | `<REFREEZE_REQUIRED>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-IDEM-01→02` | `NOT_RUN` | `<REFREEZE_REQUIRED>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-DB-01→02` | `NOT_RUN` | `<REFREEZE_REQUIRED>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-OFF-01→02` | `NOT_RUN` | `<REFREEZE_REQUIRED>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-PERM-01→02` | `NOT_RUN` | `<REFREEZE_REQUIRED>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-SENS-01` | `NOT_RUN` | `<REFREEZE_REQUIRED>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-FDBK-01` | `NOT_RUN` | `<REFREEZE_REQUIRED>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-AN-01` | `NOT_RUN` | `<REFREEZE_REQUIRED>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-REVIEW-01` | `NOT_RUN` | `<REFREEZE_REQUIRED>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-A11Y-*` | `NOT_RUN` | `<REFREEZE_REQUIRED>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-PET-01→03` | `NOT_RUN` | `<REFREEZE_REQUIRED>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-DELIVERY-01→04` | `NOT_RUN` | `<REFREEZE_REQUIRED>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-DIST-01→02` | `BLOCKED` | `<REFREEZE_REQUIRED>` | iOS/Android | IDs in §6.7; exact group/track `<fill>` | `<fill>` | Owner report 2026-09-15 | Store upload reported; install evidence missing | `<fill>` | Re-freeze/rebuild, record group/track, install/launch |
+| `E12-EXIT-01` | `NOT_RUN` | `<REFREEZE_REQUIRED>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
 
 Không gộp range trong evidence artifact thực tế: khi chạy, tách một row cho từng case và từng platform.

@@ -1,7 +1,7 @@
 ---
 document_id: PIXELDORO_MVP_EPIC_BREAKDOWN
 title: PixelDoro Mobile MVP — Epic Breakdown
-version: 3.9.0
+version: 3.10.0
 status: EPIC_12_IMPLEMENTATION_IN_PROGRESS
 last_updated: 2026-09-15
 owner: Dũng Lư
@@ -882,6 +882,15 @@ Story hoặc implementation tương lai.
 - [x] Không estimate deadline trước khi Story refinement hoàn tất.
 
 ## 10. Change log
+
+### 3.10.0 — 2026-09-15
+
+- Recorded owner-reported first App Store/Play Store uploads and verified three finished EAS production
+  store builds through read-only metadata.
+- Rejected the artifacts as EPIC-12 release evidence: Android and latest iOS report different Git SHAs,
+  and their app/build metadata proves uncommitted config was included in each source archive.
+- Invalidated frozen candidate `59cb87c...`; clean quality-PASS product/config baseline is `baf70d3...`.
+  Replacement SHA awaits clean evidence/harness commit, explicit owner re-freeze and same-SHA rebuild.
 
 ### 3.9.0 — 2026-09-15
 

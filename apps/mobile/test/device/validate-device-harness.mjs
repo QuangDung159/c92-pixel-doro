@@ -89,10 +89,12 @@ const requiredEpic12Cases = [
   'E12-EXIT-01',
 ];
 const requiredEpic12Evidence = [
-  'Status: `NOT_RUN / IMPLEMENTATION_IN_PROGRESS`',
+  'Status: `NOT_RUN / CANDIDATE_INVALIDATED / REFREEZE_REQUIRED`',
   'Allowed case results: `PASS`, `FAIL`, `BLOCKED`, `NOT_RUN`',
   'Planning baseline SHA: `6a0fa42860a9134c1374867a33aa0d8b16d9bb89`',
-  'Frozen release-candidate SHA: `59cb87c4bc4b150a7d95265d9655f4b04bc2309a`',
+  'Previous frozen release-candidate SHA: `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` (`INVALIDATED`)',
+  'Product/config baseline SHA: `baf70d37778e92ff0d5c258d2f2d5c1d2c0d87be` (`QUALITY_PASS`)',
+  'Replacement candidate SHA: `PENDING_CLEAN_COMMIT_AND_OWNER_REFREEZE`',
   'Exact SHA', 'Platform/device/OS', 'App version + build ID/profile',
   'Runtime version + channel/update ID', 'Network/app/accessibility state',
   'Start/end ISO timestamp + timezone', 'Artifact/link', 'Cleanup result',

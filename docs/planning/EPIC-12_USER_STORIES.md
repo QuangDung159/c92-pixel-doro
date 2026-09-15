@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_EPIC_12_USER_STORIES
 title: PixelDoro EPIC-12 — Hardening, Device Validation và Closed-beta Delivery User Stories
-version: 0.6.0
-status: IMPLEMENTATION_IN_PROGRESS_DEVICE_AND_DELIVERY_EVIDENCE_PENDING
+version: 0.7.0
+status: IMPLEMENTATION_IN_PROGRESS_CANDIDATE_INVALIDATED_REFREEZE_REQUIRED
 date: 2026-09-14
 last_updated: 2026-09-15
 owner: Dũng Lư
@@ -18,13 +18,15 @@ start_gate: EPIC_11_DONE_OWNER_ACCEPTED_AND_MVP_FEATURE_COMPLETE
 start_gate_status: MET_2026_09_14
 implementation_opened_sha: aaee07fff999388920ebb3beb759567ac4f01c43
 implementation_status: IN_PROGRESS
-release_candidate_sha: 59cb87c4bc4b150a7d95265d9655f4b04bc2309a
-release_candidate_status: FROZEN_OWNER_CONFIRMED_2026_09_14
+previous_release_candidate_sha: 59cb87c4bc4b150a7d95265d9655f4b04bc2309a
+previous_release_candidate_status: INVALIDATED_BY_POST_FREEZE_CONFIG_ASSET_AND_HARNESS_CHANGES
+product_config_baseline_sha: baf70d37778e92ff0d5c258d2f2d5c1d2c0d87be
+replacement_candidate_sha: PENDING_CLEAN_COMMIT_AFTER_EVIDENCE_HARNESS_UPDATE
 manual_device_status: NOT_RUN
 schema_verdict: SCHEMA_001_SUFFICIENT_NO_MIGRATION_PLANNED
 dependency_verdict: OWNER_APPROVED_12_EXPO_PATCH_ALIGNMENTS_APPLIED_NO_NEW_PACKAGE
-native_config_verdict: NO_CONFIG_CHANGE_FRESH_NATIVE_BUILD_REQUIRED_AFTER_PATCH_ALIGNMENT
-delivery_execution_status: EAS_BUILD_AND_STORE_UPLOAD_DEFERRED_BY_OWNER_2026_09_15
+native_config_verdict: POST_FREEZE_CONFIG_ASSET_AND_BUILD_TOOLING_CHANGE_REFREEZE_REBUILD_REQUIRED
+delivery_execution_status: FIRST_IOS_ANDROID_STORE_UPLOADS_OWNER_REPORTED_BUILD_SOURCE_GATE_FAILED
 authority: PLANNING
 product_truth: ../PIXELDORO_CORE_TRUTH.md
 epic_baseline: ./MVP_EPICS.md
@@ -237,6 +239,15 @@ confirmed `EPIC12-CONFIRM-02=A`, freezing exact RC SHA
 coverage is required, while exact device/OS inventory remains `BLOCKED`. These decisions do not imply
 device, build, distribution or final acceptance PASS.
 
+Post-freeze commits changed build/version configuration, build tooling and app icons. Owner later reported
+the first iOS/Android store uploads complete. EAS metadata confirms finished production/store artifacts,
+but Android reports Git SHA `1ca4e3f...` and latest iOS reports `726c22e...`; neither matches the frozen
+SHA. The artifact metadata also differs from config committed at each reported SHA, proving the uploaded
+source included uncommitted changes. The prior candidate is therefore invalidated for release evidence.
+Clean product/config baseline `baf70d37778e92ff0d5c258d2f2d5c1d2c0d87be` passes full quality. Because this
+audit also updates the evidence harness, the replacement RC SHA remains pending a clean commit of these
+records and explicit owner re-freeze; uploaded artifacts remain non-qualifying evidence.
+
 ## 8. Story details
 
 ### US-12-01 — Authoritative release-candidate truth, carry-over và freeze gate
@@ -294,8 +305,9 @@ regressions pass; owner accepts frozen identity.
 - [x] Start gate plus `CONFIRM-01=A`, `CONFIRM-02=A` and `CONFIRM-11=B` approved; `CONFIRM-12` remains pending.
 - [x] Every carry-over row has owner/case/blocker/PASS condition.
 - [x] Prototype reachability removed with automated integrity/repository evidence.
-- [x] RC manifest freezes exact committed SHA `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` after US-12-02.
-- [x] Owner accepts the candidate identity through `EPIC12-CONFIRM-02=A`; no manual case inferred.
+- [ ] Replacement RC manifest re-freezes one exact committed SHA after post-freeze invalidation and the
+  evidence/harness update is committed cleanly.
+- [ ] Owner accepts the replacement candidate identity; no manual case inferred from prior store uploads.
 
 ### US-12-02 — Automated hardening, data integrity và safe recovery
 
@@ -308,7 +320,7 @@ regressions pass; owner accepts frozen identity.
 | Current capability | Strong unit/SQLite/integration suite and failure injection already production-backed |
 | Exact gap | Full current-HEAD rerun/traceability, patch-drift disposition, static size/reachability gates and any newly found blocker regression |
 | Deliverables | Green automated matrix; blocker list/fixes if authorized; integrity fingerprint report; exact RC-freeze recommendation |
-| Owner gate / confirms | `CONFIRM-11` for any schema/dependency/native/config change; no such change is planned |
+| Owner gate / confirms | `CONFIRM-11` for schema/dependency/native/config change; post-freeze build/config changes now require re-freeze/rebuild |
 
 **Scope and behavior.** In scope: current root quality; session start/cancel/complete races; Strict boundary;
 reward/purchase/equip idempotency; queue opt-out races; migration empty/latest/checksum/gap/newer/rollback;
@@ -345,12 +357,14 @@ preserving schema and user data; a data fix requires forward migration and separ
 US-12-01 inventory and safe fixtures. DoD: all deterministic P0 tests green, no unresolved critical/high
 data blocker, exact evidence stored and owner permits freeze.
 
-- [x] Root quality and online Expo Doctor `21/21` pass on exact committed candidate
-  `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` after `CONFIRM-11=B`.
+- [x] Full root quality passes on clean product/config baseline
+  `baf70d37778e92ff0d5c258d2f2d5c1d2c0d87be` and current evidence/harness worktree; prior online Expo
+  Doctor evidence remains `21/21`.
 - [x] Migration/recovery/reset and all idempotency races pass in the current automated matrix.
 - [x] Fail-closed privacy and prototype/static boundary gates pass.
 - [x] Touched common consumer regression and provider split review pass.
-- [x] No schema/dependency/native/config change was introduced.
+- [x] Post-freeze config/build-tooling/icon changes are inventoried and invalidate the prior candidate;
+  schema and Expo dependency set remain unchanged.
 
 ### US-12-03 — Same-SHA iOS/Android native aggregate durability parity
 
@@ -822,9 +836,9 @@ Trong các bảng Story/carry-over, dạng rút gọn `CONFIRM-nn` luôn trỏ t
 | ID | Decision / 2–3 options | Recommended option | Trade-off | Stories blocked | Output unlocked | Pending default | Impact |
 |---|---|---|---|---|---|---|---|
 | `EPIC12-CONFIRM-01` | EPIC-11 closure: A accept exact candidate; B request fixes/new SHA; C keep open | A only if owner review accepts report; otherwise B | A opens EPIC-12; B delays but protects truth | 01→08 | EPIC-12 start gate | `A — ACCEPTED_2026_09_14` | Release |
-| `EPIC12-CONFIRM-02` | RC policy: A one frozen SHA for all blocking evidence; B per-platform SHA; C rolling main | A | Fixes require rerun, but evidence is comparable | 01→08 | Candidate manifest + same-SHA ledger | `A — ACCEPTED_2026_09_14`; frozen SHA `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | Release/process |
+| `EPIC12-CONFIRM-02` | RC policy: A one frozen SHA for all blocking evidence; B per-platform SHA; C rolling main | A | Fixes require rerun, but evidence is comparable | 01→08 | Candidate manifest + same-SHA ledger | `A — POLICY_ACCEPTED_2026_09_14`; prior frozen SHA invalidated, replacement awaits clean evidence/harness commit and explicit re-freeze | Release/process |
 | `EPIC12-CONFIRM-03` | Device matrix: A minimum + representative physical for hardware claims, simulator/emulator supplemental; B available devices only; C outsourced lab | A | Higher booking cost; credible native/perf evidence | 03→06 | Exact target ledger + device bookings | `A — ACCEPTED_2026_09_15`; exact device/OS slots remain `BLOCKED` until supplied | Device/cost |
-| `EPIC12-CONFIRM-04` | Internal distribution: A TestFlight + Google Play internal/closed; B EAS internal links only; C one platform first | A | Strongest store-like coverage; account/setup cost | 07/08 | Build/install plan + distribution evidence | `DEFERRED_BY_OWNER_2026_09_15`; no A/B/C target selected, no EAS build or store upload until resumed | Native/release/cost |
+| `EPIC12-CONFIRM-04` | Internal distribution: A TestFlight + Google Play internal/closed; B EAS internal links only; C one platform first | A | Strongest store-like coverage; account/setup cost | 07/08 | Build/install plan + distribution evidence | Store uploads owner-reported 2026-09-15; A/B/C target/group/track still unconfirmed and artifacts fail exact-source gate | Native/release/cost |
 | `EPIC12-CONFIRM-05` | Feedback endpoint: A activate approved preview/prod endpoint before real testers; B core-only test with form unavailable; C remove feedback promise from invite | A for feedback-collecting beta | Data ops/retention ownership vs stronger signal | 08 | Feedback activation/rollout copy | Adapter disabled; no real submissions | External/privacy/cost |
 | `EPIC12-CONFIRM-06` | PostHog: A continue deferred; B re-enable preview only; C re-enable beta production | A | No behavioral analytics/cost; preserves privacy boundary | 07/08 optional telemetry | Explicit telemetry disposition | Fail-closed, non-blocker | External/privacy/cost |
 | `EPIC12-CONFIRM-07` | Release target: A TestFlight internal + Google Play named internal/closed group; B production draft; C EAS install only | A | Requires exact account/group setup; avoids accidental public rollout | 08 | Target manifest + tester invite scope | Do not use current production track | Config/release |
@@ -869,6 +883,7 @@ plan này tự chọn thay owner. Recommendation chỉ là planning input.
 
 | Version | Date | Change |
 |---|---|---|
+| `0.7.0` | 2026-09-15 | Recorded owner-reported first App Store/Play Store uploads and EAS build metadata. Detected cross-SHA plus dirty-source mismatches, invalidated frozen candidate `59cb87c...`, and recorded quality-PASS product/config baseline `baf70d3...`; replacement SHA awaits clean evidence/harness commit, explicit re-freeze and rebuild. |
 | `0.6.0` | 2026-09-15 | Recorded owner deferral of EAS Build and store upload. `EPIC12-CONFIRM-04` target remains unselected; delivery gates stay `BLOCKED/NOT_RUN`, with no external build or upload performed. |
 | `0.5.0` | 2026-09-15 | Recorded `EPIC12-CONFIRM-03=A`: minimum and representative physical devices are required for hardware claims, with simulator/emulator supplemental. Read-only inventory found an offline physical iPhone 13 plus available iOS/Android virtual targets; unresolved physical slots remain `BLOCKED`. |
 | `0.4.0` | 2026-09-14 | Recorded `EPIC12-CONFIRM-02=A` and froze exact release-candidate SHA `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` for all blocking evidence; device/build/distribution rows remain `NOT_RUN`. |
