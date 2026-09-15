@@ -1,10 +1,10 @@
 ---
 document_id: PIXELDORO_EPIC_12_USER_STORIES
 title: PixelDoro EPIC-12 — Hardening, Device Validation và Closed-beta Delivery User Stories
-version: 0.2.0
+version: 0.6.0
 status: IMPLEMENTATION_IN_PROGRESS_DEVICE_AND_DELIVERY_EVIDENCE_PENDING
 date: 2026-09-14
-last_updated: 2026-09-14
+last_updated: 2026-09-15
 owner: Dũng Lư
 branch: feats/epic-12
 upstream: origin/feats/epic-12
@@ -18,10 +18,13 @@ start_gate: EPIC_11_DONE_OWNER_ACCEPTED_AND_MVP_FEATURE_COMPLETE
 start_gate_status: MET_2026_09_14
 implementation_opened_sha: aaee07fff999388920ebb3beb759567ac4f01c43
 implementation_status: IN_PROGRESS
+release_candidate_sha: 59cb87c4bc4b150a7d95265d9655f4b04bc2309a
+release_candidate_status: FROZEN_OWNER_CONFIRMED_2026_09_14
 manual_device_status: NOT_RUN
 schema_verdict: SCHEMA_001_SUFFICIENT_NO_MIGRATION_PLANNED
 dependency_verdict: OWNER_APPROVED_12_EXPO_PATCH_ALIGNMENTS_APPLIED_NO_NEW_PACKAGE
 native_config_verdict: NO_CONFIG_CHANGE_FRESH_NATIVE_BUILD_REQUIRED_AFTER_PATCH_ALIGNMENT
+delivery_execution_status: EAS_BUILD_AND_STORE_UPLOAD_DEFERRED_BY_OWNER_2026_09_15
 authority: PLANNING
 product_truth: ../PIXELDORO_CORE_TRUTH.md
 epic_baseline: ./MVP_EPICS.md
@@ -143,9 +146,9 @@ branch logic ở các typed arbitration/branch component thay vì tiếp tục p
 | Feedback | Production UI/adapter; external activation prerequisite | HTTPS/idempotency/memory-only; live endpoint unset | Local unavailable case required; endpoint needed before real submissions |
 | Store review | Production policy/adapter; native evidence missing | `expo-store-review` present; eligibility/caps tested; Development Build row `NOT_RUN` | US-12-05 native evidence |
 | EAS/runtime profiles | Production baseline but delivery unproven | dev/preview/production channels, `appVersion` runtime; workflows exist | Preview/runtime/rollback rehearsal and track decision |
-| Device fixtures/guides | Production-support, reusable | Broad isolated DB/env fixtures; validator recognizes through EPIC-11 only | Extend validator plan without weakening PASS rules |
+| Device fixtures/guides | Production-support, reusable | Broad isolated DB/env fixtures; validator recognizes EPIC-12 case/status/evidence contracts | Preserve validator rules and keep unexecuted rows `NOT_RUN` |
 | Common UI components | Production, reusable | Shell/header/panel/button/chip/dialog/status/Pet/toggle/grid/reward/progression contracts | Reuse and regress; no EPIC-12 redesign |
-| Prototype scaffold | Retired in current US-12-01 candidate | Root no longer mounts `PrototypeProvider`; obsolete focus/break branches, screens, state/context and aliases removed; integrity tests updated | Repository validator rejects retired prototype source re-entry; owner/candidate SHA still pending |
+| Prototype scaffold | Retired in frozen US-12-01 candidate | Root no longer mounts `PrototypeProvider`; obsolete focus/break branches, screens, state/context and aliases removed; integrity tests updated | Repository validator rejects retired prototype source re-entry; frozen SHA recorded |
 | Closed-beta artifact/release notes | Missing | No final artifact manifest, known-issues/go-no-go record or actual distribution evidence | US-12-08 |
 | Device/account/EAS/store access | External prerequisite | Availability not represented in repository | Owner confirmation and `BLOCKED` status when absent |
 | PostHog live project | Deferred có owner approval | Cost decision on 2026-09-13; missing config must fail closed | Not a blocker unless owner reverses decision |
@@ -178,7 +181,7 @@ complexity sang god hook/helper. Composition root nên tách factory theo existi
 | EPIC-07 Exit | Expo Doctor network/CocoaPods evidence | Historical `18/21` | Quality/exports passed | Revalidate current dependencies/tooling with network-capable environment | Build environment | 02/07 | Conditional | `CONFIRM-11` | No incompatible dependency/config issue; deviations documented |
 | EPIC-08 Exit deferred checklist | Physical purchase/equip/relaunch/offline and a11y matrix | `DEFERRED / NOT_RUN` | 179/918, real SQLite aggregate, quick smoke | Formal device + assistive technology | iOS/Android | 04/05 | Yes | `CONFIRM-03/10` | Atomic one-time purchase/owned/equip persists and remains accessible |
 | EPIC-09 Exit deferred items | History/contribution physical, VO/TalkBack, Largest Text, grayscale, Reduce Motion | `NOT_RUN_DEFERRED_TO_EPIC_12` | 206/1,056, SQLite reopen, exports | Formal final visual/device rows | iOS/Android | 05 | Yes per a11y policy | `CONFIRM-10` | Correct data/bands and non-color-only semantics on RC |
-| EPIC-09 Exit | SDK-57 patch drift/tooling debt | Resolved in current candidate; online Doctor `21/21` | Owner approved `CONFIRM-11=B`; exact 12 Expo patch alignments, lockfile, root quality and Doctor rerun PASS | Exact committed candidate + fresh native build/device evidence | Build env + iOS/Android | 02/03/07 | Yes before final artifact | `CONFIRM-11=B` recorded | Quality + Doctor remain green on frozen SHA; fresh native artifacts pass |
+| EPIC-09 Exit | SDK-57 patch drift/tooling debt | Resolved in frozen candidate; online Doctor `21/21` | Owner approved `CONFIRM-11=B`; exact 12 Expo patch alignments, lockfile, root quality and Doctor rerun PASS | Fresh native build/device evidence | Build env + iOS/Android | 02/03/07 | Yes before final artifact | `CONFIRM-11=B` recorded | Quality + Doctor remain green on frozen SHA; fresh native artifacts pass |
 | EPIC-10 Exit/Report | Android physical permission/silent mode, VO/TalkBack/Largest Text/Reduce Motion | `NOT_RUN`; iOS build only historical | 212/1,080, iOS Dev Build with audio/haptic | Full platform permission/availability and accessibility | iOS/Android | 04/05 | Yes | `CONFIRM-03/10` | Off/unavailable never emits or blocks core; settings persist |
 | EPIC-10 reset evidence | Reset failure/kill/relaunch and recovery | Automated historical PASS; formal device incomplete | Atomic reset/fingerprint/single-flight tests | RC device kill-before/after and normal-launch cleanup | iOS/Android | 04 | Yes | `CONFIRM-03` | No partial truth; rollback or committed fresh bootstrap only |
 | EPIC-11 Report §5–6 | Formal device/accessibility breadth | `NOT_RUN_DEFERRED_TO_EPIC_12` | 222/1,115, aggregate quick UI | Detailed platform/build/a11y rows | iOS/Android | 04/05 | Yes for core flow | `CONFIRM-03/10` | Each row independently recorded; no aggregate inference |
@@ -226,9 +229,13 @@ kết quả theo từng Story và không chia sẻ `PASS` ngầm. Bất kỳ pro
 config, harness hoặc acceptance-contract change sau freeze làm stale mọi downstream evidence bị ảnh
 hưởng; documentation-only record update không đổi behavior SHA nhưng phải giữ link tới artifact cũ.
 
-Implementation checkpoint 2026-09-14: `US-12-01/02` repository changes are implemented; root quality
-passes and online Expo Doctor is `21/21` after owner-approved `CONFIRM-11=B` patch alignment. Exact
-committed candidate/owner acceptance remain pending. `US-12-03→08` retain their `NOT_RUN`/blocked state.
+Implementation checkpoint updated 2026-09-15: `US-12-01/02` repository changes are implemented; root quality
+passes and online Expo Doctor is `21/21` after owner-approved `CONFIRM-11=B` patch alignment. Owner
+confirmed `EPIC12-CONFIRM-02=A`, freezing exact RC SHA
+`59cb87c4bc4b150a7d95265d9655f4b04bc2309a` for all blocking evidence. `US-12-03→08` retain their
+`NOT_RUN`/blocked state. Owner also approved `EPIC12-CONFIRM-03=A`; minimum and representative physical
+coverage is required, while exact device/OS inventory remains `BLOCKED`. These decisions do not imply
+device, build, distribution or final acceptance PASS.
 
 ## 8. Story details
 
@@ -284,11 +291,11 @@ a forward fix if route regression appears; never restores prototype as durable a
 DoR: start gate + confirmations + clean tree. DoD: manifest/reachability/carry ledger and all consumer
 regressions pass; owner accepts frozen identity.
 
-- [x] Start gate and `CONFIRM-01=A` approved; `CONFIRM-02/11/12` remain pending.
+- [x] Start gate plus `CONFIRM-01=A`, `CONFIRM-02=A` and `CONFIRM-11=B` approved; `CONFIRM-12` remains pending.
 - [x] Every carry-over row has owner/case/blocker/PASS condition.
 - [x] Prototype reachability removed with automated integrity/repository evidence.
-- [ ] RC manifest freezes exact committed SHA only after US-12-02.
-- [ ] Owner accepts the candidate identity; no manual case inferred.
+- [x] RC manifest freezes exact committed SHA `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` after US-12-02.
+- [x] Owner accepts the candidate identity through `EPIC12-CONFIRM-02=A`; no manual case inferred.
 
 ### US-12-02 — Automated hardening, data integrity và safe recovery
 
@@ -338,8 +345,8 @@ preserving schema and user data; a data fix requires forward migration and separ
 US-12-01 inventory and safe fixtures. DoD: all deterministic P0 tests green, no unresolved critical/high
 data blocker, exact evidence stored and owner permits freeze.
 
-- [x] Root quality and online Expo Doctor `21/21` pass after `CONFIRM-11=B`; exact committed-candidate
-  rerun remains required before freeze evidence is final.
+- [x] Root quality and online Expo Doctor `21/21` pass on exact committed candidate
+  `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` after `CONFIRM-11=B`.
 - [x] Migration/recovery/reset and all idempotency races pass in the current automated matrix.
 - [x] Fail-closed privacy and prototype/static boundary gates pass.
 - [x] Touched common consumer regression and provider split review pass.
@@ -733,12 +740,17 @@ pagination; Settings toggles/reset/dialog; Feedback score/input/error/success; b
 | Accessibility/performance | VO/TalkBack/Largest Text/contrast/Reduce Motion/30m Pet | Owner-approved device slots | Per-case evidence, no aggregation by inference |
 | Delivery | Preview/runtime/rollback/install | Same artifact chain | Build/update/distribution IDs + device smoke |
 
-Proposed target slots, pending `EPIC12-CONFIRM-03`:
+Approved target-slot policy under `EPIC12-CONFIRM-03=A`; exact device/OS inventory remains pending:
 
 | Slot | Minimum policy target | Representative/current target | Notes |
 |---|---|---|---|
 | iOS | iPhone-class target on iOS 16.4 if accessible | Current team iPhone/current iOS | Simulator may support aggregate/layout; physical required for haptic/notification/thermal claims |
 | Android | Phone-class API 24 if accessible | Current mid-range Android/current supported OS | Emulator may support aggregate; physical required for haptic/thermal/battery claims |
+
+Read-only inventory on 2026-09-15 found an iPhone 13 on iOS 26.6.2 offline, an iPhone 14 Plus
+Simulator on iOS 26.5 booted, and an Android `sdk_gphone64_arm64` emulator on API 36 connected. The
+iPhone 13 can fill `IOS-REP` only after reconnecting; the simulators/emulator are supplemental and do
+not satisfy minimum or representative physical-device claims.
 
 If exact minimum hardware/OS is unavailable, row is `BLOCKED` until owner explicitly changes required
 matrix or accepts a documented risk; representative coverage cannot silently stand in for minimum.
@@ -810,9 +822,9 @@ Trong các bảng Story/carry-over, dạng rút gọn `CONFIRM-nn` luôn trỏ t
 | ID | Decision / 2–3 options | Recommended option | Trade-off | Stories blocked | Output unlocked | Pending default | Impact |
 |---|---|---|---|---|---|---|---|
 | `EPIC12-CONFIRM-01` | EPIC-11 closure: A accept exact candidate; B request fixes/new SHA; C keep open | A only if owner review accepts report; otherwise B | A opens EPIC-12; B delays but protects truth | 01→08 | EPIC-12 start gate | `A — ACCEPTED_2026_09_14` | Release |
-| `EPIC12-CONFIRM-02` | RC policy: A one frozen SHA for all blocking evidence; B per-platform SHA; C rolling main | A | Fixes require rerun, but evidence is comparable | 01→08 | Candidate manifest + same-SHA ledger | No freeze | Release/process |
-| `EPIC12-CONFIRM-03` | Device matrix: A minimum + representative physical for hardware claims, simulator/emulator supplemental; B available devices only; C outsourced lab | A | Higher booking cost; credible native/perf evidence | 03→06 | Exact target ledger + device bookings | Missing slots `BLOCKED` | Device/cost |
-| `EPIC12-CONFIRM-04` | Internal distribution: A TestFlight + Google Play internal/closed; B EAS internal links only; C one platform first | A | Strongest store-like coverage; account/setup cost | 07/08 | Build/install plan + distribution evidence | No submit/distribution | Native/release/cost |
+| `EPIC12-CONFIRM-02` | RC policy: A one frozen SHA for all blocking evidence; B per-platform SHA; C rolling main | A | Fixes require rerun, but evidence is comparable | 01→08 | Candidate manifest + same-SHA ledger | `A — ACCEPTED_2026_09_14`; frozen SHA `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | Release/process |
+| `EPIC12-CONFIRM-03` | Device matrix: A minimum + representative physical for hardware claims, simulator/emulator supplemental; B available devices only; C outsourced lab | A | Higher booking cost; credible native/perf evidence | 03→06 | Exact target ledger + device bookings | `A — ACCEPTED_2026_09_15`; exact device/OS slots remain `BLOCKED` until supplied | Device/cost |
+| `EPIC12-CONFIRM-04` | Internal distribution: A TestFlight + Google Play internal/closed; B EAS internal links only; C one platform first | A | Strongest store-like coverage; account/setup cost | 07/08 | Build/install plan + distribution evidence | `DEFERRED_BY_OWNER_2026_09_15`; no A/B/C target selected, no EAS build or store upload until resumed | Native/release/cost |
 | `EPIC12-CONFIRM-05` | Feedback endpoint: A activate approved preview/prod endpoint before real testers; B core-only test with form unavailable; C remove feedback promise from invite | A for feedback-collecting beta | Data ops/retention ownership vs stronger signal | 08 | Feedback activation/rollout copy | Adapter disabled; no real submissions | External/privacy/cost |
 | `EPIC12-CONFIRM-06` | PostHog: A continue deferred; B re-enable preview only; C re-enable beta production | A | No behavioral analytics/cost; preserves privacy boundary | 07/08 optional telemetry | Explicit telemetry disposition | Fail-closed, non-blocker | External/privacy/cost |
 | `EPIC12-CONFIRM-07` | Release target: A TestFlight internal + Google Play named internal/closed group; B production draft; C EAS install only | A | Requires exact account/group setup; avoids accidental public rollout | 08 | Target manifest + tester invite scope | Do not use current production track | Config/release |
@@ -857,6 +869,9 @@ plan này tự chọn thay owner. Recommendation chỉ là planning input.
 
 | Version | Date | Change |
 |---|---|---|
+| `0.6.0` | 2026-09-15 | Recorded owner deferral of EAS Build and store upload. `EPIC12-CONFIRM-04` target remains unselected; delivery gates stay `BLOCKED/NOT_RUN`, with no external build or upload performed. |
+| `0.5.0` | 2026-09-15 | Recorded `EPIC12-CONFIRM-03=A`: minimum and representative physical devices are required for hardware claims, with simulator/emulator supplemental. Read-only inventory found an offline physical iPhone 13 plus available iOS/Android virtual targets; unresolved physical slots remain `BLOCKED`. |
+| `0.4.0` | 2026-09-14 | Recorded `EPIC12-CONFIRM-02=A` and froze exact release-candidate SHA `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` for all blocking evidence; device/build/distribution rows remain `NOT_RUN`. |
 | `0.3.0` | 2026-09-14 | Recorded `EPIC12-CONFIRM-11=B`; aligned exactly 12 Expo SDK 57 patch dependencies, regenerated lockfile, and passed online Expo Doctor `21/21` plus full root quality. Fresh native/device evidence remains `NOT_RUN`. |
 | `0.2.0` | 2026-09-14 | Recorded EPIC-11 closure/MVP feature-complete and opened implementation at `aaee07f...`; retired prototype production graph, split the oversized provider hooks, extended repository/device validators and bound local quality PASS while keeping device/delivery evidence `NOT_RUN`. |
 | `0.1.0` | 2026-09-14 | Created full EPIC-01→11 carry-over/code/config audit, eight prioritized Stories, UI reuse/static-boundary plan, test/evidence/release/rollback strategy and 12 owner confirmations. Recorded planning baseline `6a0fa428...` and kept implementation blocked by EPIC-11 closure. |

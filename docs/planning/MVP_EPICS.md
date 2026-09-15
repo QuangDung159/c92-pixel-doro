@@ -1,16 +1,16 @@
 ---
 document_id: PIXELDORO_MVP_EPIC_BREAKDOWN
 title: PixelDoro Mobile MVP — Epic Breakdown
-version: 3.6.0
+version: 3.9.0
 status: EPIC_12_IMPLEMENTATION_IN_PROGRESS
-last_updated: 2026-09-14
+last_updated: 2026-09-15
 owner: Dũng Lư
 reviewer: Dũng Lư
 reviewer_role: Tech Lead
 approved_by: Dũng Lư
 approver_role: Product Owner
 approved_at: 2026-08-27
-amended_at: 2026-09-14
+amended_at: 2026-09-15
 amendment_approved_by: Dũng Lư
 language: vi
 scope:
@@ -882,6 +882,27 @@ Story hoặc implementation tương lai.
 - [x] Không estimate deadline trước khi Story refinement hoàn tất.
 
 ## 10. Change log
+
+### 3.9.0 — 2026-09-15
+
+- Recorded the owner's decision to perform EAS Build and store upload later; no external build, submit,
+  upload or distribution action was performed.
+- Kept `EPIC12-CONFIRM-04` target selection unresolved and delivery gates `BLOCKED/NOT_RUN`; deferral does
+  not imply TestFlight/Google Play readiness.
+
+### 3.8.0 — 2026-09-15
+
+- Recorded `EPIC12-CONFIRM-03=A`: minimum and representative physical devices are required for native,
+  hardware, accessibility and performance claims; simulator/emulator coverage is supplemental.
+- Read-only inventory found an offline iPhone 13/iOS 26.6.2 plus available iOS 26.5 Simulator and
+  Android API 36 emulator targets. Kept unresolved physical slots `BLOCKED`; no device PASS was inferred.
+
+### 3.7.0 — 2026-09-14
+
+- Recorded `EPIC12-CONFIRM-02=A` and froze exact release-candidate SHA
+  `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` for all blocking iOS/Android evidence.
+- Kept fresh native build, physical-device, accessibility, distribution and rollback evidence as
+  `NOT_RUN`; freezing candidate identity does not imply `CLOSED_BETA_READY`.
 
 ### 3.6.0 — 2026-09-14
 

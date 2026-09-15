@@ -1,19 +1,21 @@
 ---
 document_id: PIXELDORO_EPIC_12_IMPLEMENTATION_REPORT
 title: PixelDoro EPIC-12 — Hardening, Device Validation và Closed-beta Delivery Implementation Report
-version: 0.2.0
+version: 0.5.0
 status: IMPLEMENTATION_IN_PROGRESS_AUTOMATED_AND_EXPO_DOCTOR_PASS_DEVICE_AND_DELIVERY_NOT_RUN
 date: 2026-09-14
-last_updated: 2026-09-14
+last_updated: 2026-09-15
 owner: Dũng Lư
 branch: feats/epic-12
 upstream: origin/feats/epic-12
 implementation_baseline_sha: aaee07fff999388920ebb3beb759567ac4f01c43
-candidate_sha: PENDING_COMMIT_NOT_FROZEN
+candidate_sha: 59cb87c4bc4b150a7d95265d9655f4b04bc2309a
+candidate_status: FROZEN_OWNER_CONFIRMED_2026_09_14
 start_gate: MET_EPIC_11_DONE_OWNER_ACCEPTED_AND_MVP_FEATURE_COMPLETE
 schema_verdict: SCHEMA_001_UNCHANGED
 dependency_verdict: OWNER_APPROVED_12_EXPO_PATCH_ALIGNMENTS_APPLIED
 native_config_verdict: NO_CONFIG_CHANGE_FRESH_NATIVE_BUILD_REQUIRED
+delivery_execution_status: EAS_BUILD_AND_STORE_UPLOAD_DEFERRED_BY_OWNER_2026_09_15
 manual_device_status: NOT_RUN
 closed_beta_status: NO_GO
 user_stories: ./EPIC-12_USER_STORIES.md
@@ -28,11 +30,23 @@ Owner xác nhận đóng EPIC-11 và yêu cầu mở EPIC-12 ngày 2026-09-14. A
 `DONE_OWNER_ACCEPTED` và W3 `MVP_FEATURE_COMPLETE`, vì vậy implementation bắt đầu từ exact clean SHA
 `aaee07fff999388920ebb3beb759567ac4f01c43` trên branch `feats/epic-12`.
 
-Repository hardening của `US-12-01/02` đã được implement trong worktree và root quality gate pass.
+Repository hardening của `US-12-01/02` đã được commit trong frozen candidate và root quality gate pass.
 Owner đã xác nhận `EPIC12-CONFIRM-11=B`; đúng 12 Expo SDK patch dependencies được align, lockfile được
-đồng bộ, và online Expo Doctor hiện `21/21`. Chưa có exact committed candidate SHA,
-device/build/update/distribution evidence hoặc owner exit
-acceptance; do đó Epic vẫn `IN_PROGRESS`, manual rows vẫn `NOT_RUN`, và verdict vẫn `NO_GO`.
+đồng bộ, và online Expo Doctor hiện `21/21`. Owner sau đó xác nhận `EPIC12-CONFIRM-02=A`,
+freezing exact committed candidate SHA `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` cho mọi blocking
+evidence. Chưa có device/build/update/distribution evidence hoặc owner exit acceptance; do đó Epic vẫn
+`IN_PROGRESS`, manual rows vẫn `NOT_RUN`, và verdict vẫn `NO_GO`.
+
+Ngày 2026-09-15, owner duyệt `EPIC12-CONFIRM-03=A`: hardware claims phải dùng minimum và
+representative physical devices; simulator/emulator chỉ bổ sung. Exact device/model/OS inventory chưa
+đủ nên các slot vẫn `BLOCKED` và không có device PASS. Read-only discovery thấy một iPhone 13/iOS
+26.6.2 đang offline, một iPhone 14 Plus Simulator/iOS 26.5 đang booted và Android
+`sdk_gphone64_arm64` emulator/API 36 đang connected. Hai virtual targets chỉ là supplemental; iPhone 13
+chỉ có thể làm representative physical target sau khi reconnect.
+
+Owner đồng thời quyết định EAS Build và store upload sẽ thực hiện sau. Quyết định này hoãn execution,
+không chọn thay `EPIC12-CONFIRM-04=A/B/C`; không EAS build, submit, upload hay distribution action nào
+được thực hiện trong checkpoint này.
 
 ## 2. Implemented scope
 
@@ -109,8 +123,8 @@ Owner đã duyệt và implementation đã áp dụng đúng patch alignment sau
 
 | Story | Implementation status | Remaining exit evidence |
 |---|---|---|
-| `US-12-01` | `IMPLEMENTED_CANDIDATE_PENDING_SHA_AND_OWNER_ACCEPTANCE` | Commit/freeze exact SHA; owner confirms RC policy and risk disposition |
-| `US-12-02` | `IMPLEMENTED_AUTOMATED_AND_DOCTOR_PASS_PENDING_EXACT_CANDIDATE` | Re-run full quality/Doctor on clean committed candidate and bind output to SHA |
+| `US-12-01` | `IMPLEMENTED_RC_SHA_FROZEN` | Final risk/exit acceptance remains separate under `CONFIRM-12` |
+| `US-12-02` | `IMPLEMENTED_AUTOMATED_AND_DOCTOR_PASS_EXACT_RC_SHA` | Preserve evidence unless behavior/config/harness changes invalidate it |
 | `US-12-03` | `NOT_RUN` | Same-SHA iOS/Android two-phase durability reports |
 | `US-12-04` | `NOT_RUN` | Physical/representative offline/lifecycle/idempotency matrix |
 | `US-12-05` | `NOT_RUN` | VoiceOver/TalkBack/Largest Text/permission/native store-review evidence |
@@ -123,7 +137,7 @@ Owner đã duyệt và implementation đã áp dụng đúng patch alignment sau
 | Field | Current value |
 |---|---|
 | Implementation baseline | `aaee07fff999388920ebb3beb759567ac4f01c43` |
-| Candidate exact SHA | `PENDING_COMMIT_NOT_FROZEN` |
+| Candidate exact SHA | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` — frozen by `EPIC12-CONFIRM-02=A` |
 | App version | `0.1.0` |
 | Runtime policy | `appVersion` |
 | SQLite migrations | One immutable `001`; unchanged |
@@ -131,7 +145,7 @@ Owner đã duyệt và implementation đã áp dụng đúng patch alignment sau
 | Native/build configuration | Config unchanged; fresh native build required because native module versions changed |
 | Live PostHog | Deferred/fail-closed; no key/config added |
 | Feedback live endpoint | Deferred/unset; no real submission claim |
-| Automated candidate evidence | Root quality PASS; online Expo Doctor `21/21`; rerun required after exact commit/freeze |
+| Automated candidate evidence | Exact-SHA root quality PASS; online Expo Doctor `21/21` |
 | Manual/device/build/delivery evidence | `NOT_RUN` |
 
 Any production/config/harness change after the candidate is frozen invalidates affected downstream
@@ -154,9 +168,11 @@ evidence and requires a new exact SHA plus rerun. Documentation-only evidence up
 | ID | State | Effect |
 |---|---|---|
 | `EPIC12-CONFIRM-01` | `A — ACCEPTED_2026_09_14` | EPIC-11 closure/start gate mở implementation |
-| `EPIC12-CONFIRM-02` | `PENDING` | Chưa freeze candidate SHA |
-| `EPIC12-CONFIRM-03/09/10` | `PENDING` | Device, benchmark và accessibility rows chưa thể exit |
-| `EPIC12-CONFIRM-04/07/08` | `PENDING` | Build target, track/group, rollback và go/no-go chưa được chọn |
+| `EPIC12-CONFIRM-02` | `A — ACCEPTED_2026_09_14` | One exact SHA frozen for all blocking evidence: `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` |
+| `EPIC12-CONFIRM-03` | `A — ACCEPTED_2026_09_15` | Minimum + representative physical coverage required; exact device/OS inventory remains `BLOCKED` |
+| `EPIC12-CONFIRM-09/10` | `PENDING` | Benchmark và accessibility evidence floor chưa được chốt |
+| `EPIC12-CONFIRM-04` | `DEFERRED_BY_OWNER_2026_09_15` | EAS Build/store upload later; exact A/B/C distribution target remains unselected |
+| `EPIC12-CONFIRM-07/08` | `PENDING` | Track/group, rollback và go/no-go owner chưa được chọn |
 | `EPIC12-CONFIRM-05` | `PENDING` | Feedback endpoint vẫn unset; không thu submission thật |
 | `EPIC12-CONFIRM-06` | `PENDING_DEFAULT_DEFERRED` | PostHog vẫn fail-closed và không phải core blocker |
 | `EPIC12-CONFIRM-11` | `B — ACCEPTED_AND_APPLIED_2026_09_14` | 12 patch alignments applied; Doctor `21/21`; fresh native build evidence required |
@@ -164,9 +180,10 @@ evidence and requires a new exact SHA plus rerun. Documentation-only evidence up
 
 ## 8. Next execution order
 
-1. Review current diff, commit only when owner requests, then freeze exact candidate SHA.
-2. Rerun full quality/Doctor on that clean SHA and bind `US-12-01/02` evidence.
-3. Produce fresh native Development/preview builds for the aligned native modules.
+1. Fill the exact iOS/Android device/model/OS inventory required by `CONFIRM-03=A`.
+2. Continue non-distribution owner decisions and evidence preparation without EAS Build/store upload.
+3. When the owner resumes delivery, select `CONFIRM-04/07`, then produce fresh EAS native builds from
+   frozen SHA `59cb87c4bc4b150a7d95265d9655f4b04bc2309a`.
 4. Execute `US-12-03` same-SHA iOS/Android aggregate.
 5. Execute manual guide rows for `US-12-04→06` on owner-confirmed devices.
 6. After target/channel/owner confirmations, execute preview/runtime/rollback and internal distribution.
@@ -177,5 +194,8 @@ evidence and requires a new exact SHA plus rerun. Documentation-only evidence up
 
 | Version | Date | Change |
 |---|---|---|
+| `0.5.0` | 2026-09-15 | Recorded owner deferral of EAS Build and store upload. No `CONFIRM-04` A/B/C target was inferred, no external action was performed, and delivery remains blocked until resumed. |
+| `0.4.0` | 2026-09-15 | Recorded `EPIC12-CONFIRM-03=A`; required minimum + representative physical-device coverage. Read-only discovery recorded one offline physical iPhone plus available iOS/Android virtual targets; unresolved physical slots remain `BLOCKED`. |
+| `0.3.0` | 2026-09-14 | Recorded `EPIC12-CONFIRM-02=A`; froze exact RC SHA `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` for all blocking evidence while preserving device/build/delivery rows as `NOT_RUN` and verdict `NO_GO`. |
 | `0.2.0` | 2026-09-14 | Applied owner-approved `EPIC12-CONFIRM-11=B`: exactly 12 Expo SDK 57 patch alignments, regenerated lockfile, online Doctor `21/21`, full root quality PASS; native/device evidence remains `NOT_RUN`. |
 | `0.1.0` | 2026-09-14 | Opened implementation after EPIC-11 closure; retired prototype graph, split oversized provider hooks, extended repository/device validators and recorded full local quality PASS without claiming device/delivery readiness. |

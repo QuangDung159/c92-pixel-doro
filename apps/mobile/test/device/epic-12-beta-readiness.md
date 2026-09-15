@@ -4,12 +4,14 @@ Status: `NOT_RUN / IMPLEMENTATION_IN_PROGRESS`
 
 Planning baseline SHA: `6a0fa42860a9134c1374867a33aa0d8b16d9bb89`
 
+Frozen release-candidate SHA: `59cb87c4bc4b150a7d95265d9655f4b04bc2309a`
+
 Allowed case results: `PASS`, `FAIL`, `BLOCKED`, `NOT_RUN`.
 
-Guide này là runbook kiểm chứng, không phải bằng chứng đã chạy. Mọi row bên dưới bắt đầu ở
-`NOT_RUN`, ngoại trừ prerequisite chưa được owner chốt có thể được đổi thành `BLOCKED` kèm blocker cụ
-thể. Không suy diễn PASS từ automated test, quick smoke, SHA cũ, một platform khác, hay việc app
-không crash.
+Guide này là runbook kiểm chứng, không phải bằng chứng đã chạy. Governance prerequisite chỉ được PASS
+khi có owner decision/evidence tương ứng; mọi execution row bắt đầu ở `NOT_RUN`. Prerequisite chưa được
+owner chốt có thể được đổi thành `BLOCKED` kèm blocker cụ thể. Không suy diễn PASS từ automated test,
+quick smoke, SHA cũ, một platform khác, hay việc app không crash.
 
 EPIC-12 chỉ được bắt đầu implementation khi EPIC-11 đã có cả `DONE_OWNER_ACCEPTED` và
 `MVP_FEATURE_COMPLETE`. Owner đã xác nhận closure ngày 2026-09-14; authority hiện hành ghi EPIC-11
@@ -71,22 +73,29 @@ Các tham chiếu `CONFIRM-nn` trong guide là dạng rút gọn của canonical
 | Gate | Required value | Owner | Result | Evidence / blocker |
 |---|---|---|---|---|
 | `E12-G01` | EPIC-11 = `DONE_OWNER_ACCEPTED` + `MVP_FEATURE_COMPLETE` | Product owner | `PASS` | Owner confirmation 2026-09-14; EPIC-11 Exit/User Stories/Implementation Report và `MVP_EPICS.md` 3.5.0 |
-| `E12-G02` | Một frozen exact RC SHA; cùng SHA cho iOS và Android final evidence | Release owner | `NOT_RUN` | `<fill exact SHA>` |
-| `E12-G03` | Minimum + representative physical device/OS matrix được chốt | QA owner | `NOT_RUN` | `<fill matrix decision>` |
-| `E12-G04` | iOS internal group và Android internal/closed track chính xác được chốt | Release owner | `NOT_RUN` | Không suy diễn từ EAS production track hiện tại |
+| `E12-G02` | Một frozen exact RC SHA; cùng SHA cho iOS và Android final evidence | Release owner | `PASS` | `EPIC12-CONFIRM-02=A`, 2026-09-14; frozen SHA `59cb87c4bc4b150a7d95265d9655f4b04bc2309a`; device evidence itself remains `NOT_RUN` |
+| `E12-G03` | Minimum + representative physical device/OS matrix được chốt | QA owner | `BLOCKED` | `EPIC12-CONFIRM-03=A`, 2026-09-15; policy approved, awaiting complete physical device/model/OS inventory |
+| `E12-G04` | iOS internal group và Android internal/closed track chính xác được chốt | Release owner | `BLOCKED` | Owner deferred EAS Build/store upload on 2026-09-15; exact `CONFIRM-04=A/B/C` target remains unselected |
 | `E12-G05` | Feedback test endpoint bật cho beta hoặc owner chấp nhận limitation rõ ràng | Product/privacy owner | `NOT_RUN` | `<fill>` |
 | `E12-G06` | PostHog tiếp tục fail-closed/deferred hoặc được bật bằng test project EU | Product/privacy owner | `NOT_RUN` | Live PostHog historical state: owner-deferred do cost |
 | `E12-G07` | Rollback/republish decision owner và go/no-go owner được gọi tên | Release owner | `NOT_RUN` | `<fill>` |
-| `E12-G08` | Build IDs, runtime version, update channel và native compatibility recorded | Build owner | `NOT_RUN` | `<fill>` |
+| `E12-G08` | Build IDs, runtime version, update channel và native compatibility recorded | Build owner | `BLOCKED` | EAS Build deferred by owner on 2026-09-15; no build/runtime/update ID exists yet |
 
 ### Device slots — owner phải chốt trước full run
 
 | Slot | Minimum required role | Exact device | OS | Owner confirmation | State |
 |---|---|---|---|---|---|
-| `IOS-MIN` | Physical iPhone ở minimum supported iOS 16.4 nếu thiết bị khả dụng; nếu không, owner ghi giới hạn | `<fill>` | `<fill>` | `CONFIRM-03` | `NOT_RUN` |
-| `IOS-REP` | Physical iPhone ở iOS đại diện hiện hành | `<fill>` | `<fill>` | `CONFIRM-03` | `NOT_RUN` |
-| `AND-MIN` | Physical Android ở minimum supported API 24 nếu thiết bị khả dụng; nếu không, owner ghi giới hạn | `<fill>` | `<fill>` | `CONFIRM-03` | `NOT_RUN` |
-| `AND-REP` | Physical Android ở target/đại diện API 36 hoặc owner-approved available level | `<fill>` | `<fill>` | `CONFIRM-03` | `NOT_RUN` |
+| `IOS-MIN` | Physical iPhone ở minimum supported iOS 16.4 nếu thiết bị khả dụng; nếu không, owner ghi giới hạn | `<fill>` | `<fill>` | `CONFIRM-03=A` | `BLOCKED` |
+| `IOS-REP` | Physical iPhone ở iOS đại diện hiện hành | iPhone 13 | iOS 26.6.2 | `CONFIRM-03=A`; discovered offline 2026-09-15 | `BLOCKED` |
+| `AND-MIN` | Physical Android ở minimum supported API 24 nếu thiết bị khả dụng; nếu không, owner ghi giới hạn | `<fill>` | `<fill>` | `CONFIRM-03=A` | `BLOCKED` |
+| `AND-REP` | Physical Android ở target/đại diện API 36 hoặc owner-approved available level | `<fill>` | `<fill>` | `CONFIRM-03=A` | `BLOCKED` |
+
+Supplemental targets discovered read-only on 2026-09-15; these do not satisfy physical-device rows:
+
+| Slot | Target | OS/API | Availability | Permitted evidence |
+|---|---|---|---|---|
+| `IOS-SIM-REP` | iPhone 14 Plus Simulator | iOS 26.5 | `BOOTED` | Aggregate/layout supplemental only |
+| `AND-EMU-REP` | `sdk_gphone64_arm64` emulator | API 36 | `CONNECTED` | Aggregate/layout supplemental only |
 
 ## 4. Run header — điền riêng cho mỗi build candidate
 
@@ -96,7 +105,7 @@ Các tham chiếu `CONFIRM-nn` trong guide là dạng rút gọn của canonical
 | Tester | `<fill>` |
 | Start/end ISO timestamp + timezone | `<fill>` |
 | Branch | `<fill>` |
-| Exact RC SHA | `<40-char SHA>` |
+| Exact RC SHA | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` |
 | Working tree status | `<clean / explain>` |
 | Platform/device/model | `<fill>` |
 | OS/API version | `<fill>` |
@@ -154,7 +163,7 @@ Quick-smoke aggregate:
 
 | Exact SHA | Device/OS/build/runtime/channel | Tester/timezone | Elapsed | Result | Evidence |
 |---|---|---|---:|---|---|
-| `<fill>` | `<fill>` | `<fill>` | `<fill>` | `NOT_RUN` | `<fill>` |
+| `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `NOT_RUN` | `<fill>` |
 
 Nếu một feature không thể đạt trong 15 phút bằng fixture hiện có, ghi case `BLOCKED` và blocker/next
 action; không dùng thao tác DB thủ công hoặc skip im lặng.
@@ -169,7 +178,7 @@ Mỗi row phải có một evidence record riêng theo schema dưới đây. C�
 | Field bắt buộc cho mỗi row | Giá trị |
 |---|---|
 | Case/result | `<case> / PASS\|FAIL\|BLOCKED\|NOT_RUN` |
-| Exact SHA | `<40-char SHA>` |
+| Exact SHA | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` |
 | Platform/device/OS | `<fill>` |
 | Physical/simulator/emulator | `<fill>` |
 | App version + build ID/profile | `<fill>` |
@@ -321,15 +330,15 @@ pnpm start --clear
 | Gate | Required to ship closed beta | Current result | Evidence/owner |
 |---|---|---|---|
 | EPIC-11 owner closure + MVP feature-complete | Yes | `PASS` | `EPIC12-CONFIRM-01=A`, 2026-09-14 |
-| Frozen same-SHA iOS/Android candidate | Yes | `NOT_RUN` | `CONFIRM-02` |
-| Automated hardening and boundary checks | Yes | `NOT_RUN` | `<fill>` |
+| Frozen same-SHA iOS/Android candidate | Yes | `PASS` | `EPIC12-CONFIRM-02=A`; SHA `59cb87c4bc4b150a7d95265d9655f4b04bc2309a`; platform runs remain `NOT_RUN` |
+| Automated hardening and boundary checks | Yes | `PASS` | Frozen-SHA root quality PASS: 220 test files / 1,109 tests; Expo Doctor `21/21` |
 | EPIC-02 same-SHA durability pair | Yes | `NOT_RUN` | `<fill>` |
 | Lifecycle/offline/idempotency/migration/reset | Yes | `NOT_RUN` | `<fill>` |
 | Notification/audio/haptic/provider/store-review | Yes, except explicitly accepted external limitation | `NOT_RUN` | `<fill>` |
-| Accessibility minimum + representative matrix | Yes | `NOT_RUN` | `CONFIRM-03`, `CONFIRM-10` |
+| Accessibility minimum + representative matrix | Yes | `BLOCKED` | `CONFIRM-03=A`; exact device/OS inventory and `CONFIRM-10` remain pending |
 | Pet fallback + 30-minute benchmark | Yes | `NOT_RUN` | `CONFIRM-09` |
-| Preview/runtime/OTA/rollback rehearsal | Yes | `NOT_RUN` | `CONFIRM-08` |
-| iOS/Android internal distribution | Yes | `NOT_RUN` | `CONFIRM-04`, `CONFIRM-07` |
+| Preview/runtime/OTA/rollback rehearsal | Yes | `BLOCKED` | EAS Build deferred; `CONFIRM-08` pending |
+| iOS/Android internal distribution | Yes | `BLOCKED` | EAS Build/store upload deferred; `CONFIRM-04` target and `CONFIRM-07` pending |
 | Evidence index, release notes, known issues, support path | Yes | `NOT_RUN` | `<fill>` |
 | Zero known crash/P0 blocker and explicit owner acceptance | Yes | `NOT_RUN` | `CONFIRM-12` |
 
@@ -343,23 +352,23 @@ giải quyết hoặc chấp nhận rõ ràng theo policy, và owner ghi chính 
 
 | Case | Result | Exact SHA | Platform/device/OS | Build/runtime/channel | Network/app/a11y | Tester/timezone | Artifact | Cleanup | Blocker owner/next |
 |---|---|---|---|---|---|---|---|---|---|
-| `E12-Q01→Q10` | `NOT_RUN` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-RC-01` | `NOT_RUN` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-DATA-IOS` | `NOT_RUN` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-DATA-AND` | `NOT_RUN` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-LIFE-01→04` | `NOT_RUN` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-IDEM-01→02` | `NOT_RUN` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-DB-01→02` | `NOT_RUN` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-OFF-01→02` | `NOT_RUN` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-PERM-01→02` | `NOT_RUN` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-SENS-01` | `NOT_RUN` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-FDBK-01` | `NOT_RUN` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-AN-01` | `NOT_RUN` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-REVIEW-01` | `NOT_RUN` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-A11Y-*` | `NOT_RUN` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-PET-01→03` | `NOT_RUN` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-DELIVERY-01→04` | `NOT_RUN` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-DIST-01→02` | `NOT_RUN` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
-| `E12-EXIT-01` | `NOT_RUN` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-Q01→Q10` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-RC-01` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-DATA-IOS` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-DATA-AND` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-LIFE-01→04` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-IDEM-01→02` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-DB-01→02` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-OFF-01→02` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-PERM-01→02` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-SENS-01` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-FDBK-01` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-AN-01` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-REVIEW-01` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-A11Y-*` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-PET-01→03` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-DELIVERY-01→04` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-DIST-01→02` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
+| `E12-EXIT-01` | `NOT_RUN` | `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` | `<fill>` |
 
 Không gộp range trong evidence artifact thực tế: khi chạy, tách một row cho từng case và từng platform.

@@ -92,6 +92,7 @@ const requiredEpic12Evidence = [
   'Status: `NOT_RUN / IMPLEMENTATION_IN_PROGRESS`',
   'Allowed case results: `PASS`, `FAIL`, `BLOCKED`, `NOT_RUN`',
   'Planning baseline SHA: `6a0fa42860a9134c1374867a33aa0d8b16d9bb89`',
+  'Frozen release-candidate SHA: `59cb87c4bc4b150a7d95265d9655f4b04bc2309a`',
   'Exact SHA', 'Platform/device/OS', 'App version + build ID/profile',
   'Runtime version + channel/update ID', 'Network/app/accessibility state',
   'Start/end ISO timestamp + timezone', 'Artifact/link', 'Cleanup result',
@@ -110,7 +111,7 @@ const epic12CaseRows = epic12BetaReadinessFlow
   .split('\n')
   .filter((line) => /^\| `E12-[A-Z]/u.test(line));
 const falsePassRows = epic12CaseRows.filter(
-  (line) => !line.startsWith('| `E12-G01`') && (
+  (line) => !line.startsWith('| `E12-G01`') && !line.startsWith('| `E12-G02`') && (
     line.includes('| `PASS` |') || line.includes('PASS_OWNER')
   ),
 );
