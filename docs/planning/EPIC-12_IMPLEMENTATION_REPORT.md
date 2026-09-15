@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_EPIC_12_IMPLEMENTATION_REPORT
 title: PixelDoro EPIC-12 — Hardening, Device Validation và Closed-beta Delivery Implementation Report
-version: 0.7.0
-status: IMPLEMENTATION_IN_PROGRESS_BUILD_SOURCE_GUARD_IMPLEMENTED_COMMIT_REFREEZE_REBUILD_REQUIRED
+version: 0.8.0
+status: DONE_OWNER_ACCEPTED_PRODUCT_SCOPE_RELEASE_VALIDATION_DEFERRED
 date: 2026-09-14
 last_updated: 2026-09-15
 owner: Dũng Lư
@@ -14,19 +14,28 @@ previous_candidate_status: INVALIDATED_BY_POST_FREEZE_CONFIG_ASSET_AND_HARNESS_C
 product_config_baseline_sha: baf70d37778e92ff0d5c258d2f2d5c1d2c0d87be
 replacement_candidate_sha: PENDING_CLEAN_COMMIT_AFTER_EVIDENCE_HARNESS_UPDATE
 start_gate: MET_EPIC_11_DONE_OWNER_ACCEPTED_AND_MVP_FEATURE_COMPLETE
+closure_scope: PRODUCT_CORE_ONLY
+product_scope_status: DONE_OWNER_ACCEPTED_2026_09_15
 schema_verdict: SCHEMA_001_UNCHANGED
 dependency_verdict: OWNER_APPROVED_12_EXPO_PATCH_ALIGNMENTS_APPLIED
 native_config_verdict: POST_FREEZE_CONFIG_ASSET_AND_BUILD_TOOLING_CHANGE_REFREEZE_REBUILD_REQUIRED
 delivery_execution_status: FIRST_IOS_ANDROID_STORE_UPLOADS_OWNER_REPORTED_BUILD_SOURCE_GATE_FAILED
-manual_device_status: NOT_RUN
-closed_beta_status: NO_GO
+manual_device_status: DEFERRED_TO_RELEASE_VALIDATION
+closed_beta_status: NOT_CLAIMED
 user_stories: ./EPIC-12_USER_STORIES.md
 manual_guide: ../../apps/mobile/test/device/epic-12-beta-readiness.md
+exit_report: ./EPIC-12_EXIT_REPORT.md
 ---
 
 # EPIC-12 implementation report
 
 ## 1. Current result
+
+Owner explicitly directed `Đóng EPIC-12 theo product scope` on 2026-09-15. EPIC-12 is closed as
+`DONE_OWNER_ACCEPTED_PRODUCT_SCOPE`: the Mobile MVP core feature set is implemented and no additional
+product feature remains in this Epic. Physical-device, accessibility, performance, exact-source build,
+distribution and rollback evidence is transferred to a separate release-validation track. This report
+does not claim `CLOSED_BETA_READY` or convert any unexecuted row to PASS.
 
 Owner xác nhận đóng EPIC-11 và yêu cầu mở EPIC-12 ngày 2026-09-14. Authority hiện hành đã có EPIC-11
 `DONE_OWNER_ACCEPTED` và W3 `MVP_FEATURE_COMPLETE`, vì vậy implementation bắt đầu từ exact clean SHA
@@ -37,8 +46,9 @@ Owner đã xác nhận `EPIC12-CONFIRM-11=B`; đúng 12 Expo SDK patch dependenc
 đồng bộ, và online Expo Doctor hiện `21/21`. Owner sau đó xác nhận `EPIC12-CONFIRM-02=A`,
 freezing exact committed candidate SHA `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` cho mọi blocking
 evidence. Tại checkpoint đó chưa có device/update/distribution evidence hoặc owner exit acceptance.
-Các build/upload phát sinh sau đó được ghi bên dưới nhưng không đạt exact-source gate; do đó Epic vẫn
-`IN_PROGRESS`, manual rows vẫn `NOT_RUN/BLOCKED`, và verdict vẫn `NO_GO`.
+Các build/upload phát sinh sau đó được ghi bên dưới nhưng không đạt exact-source gate. Owner later closed
+the product-only scope; the release-validation track remains deferred, manual rows stay
+`NOT_RUN/BLOCKED/FAIL`, and no closed-beta verdict is claimed.
 
 Ngày 2026-09-15, owner duyệt `EPIC12-CONFIRM-03=A`: hardware claims phải dùng minimum và
 representative physical devices; simulator/emulator chỉ bổ sung. Exact device/model/OS inventory chưa
@@ -150,14 +160,14 @@ Owner đã duyệt và implementation đã áp dụng đúng patch alignment sau
 
 | Story | Implementation status | Remaining exit evidence |
 |---|---|---|
-| `US-12-01` | `CANDIDATE_INVALIDATED_REFREEZE_REQUIRED` | Commit evidence/harness update cleanly; owner approves replacement exact SHA |
-| `US-12-02` | `QUALITY_PASS_PRODUCT_CONFIG_BASELINE` | Re-run/bind quality and a new clean build to the owner-refrozen replacement SHA |
-| `US-12-03` | `NOT_RUN` | Same-SHA iOS/Android two-phase durability reports |
-| `US-12-04` | `NOT_RUN` | Physical/representative offline/lifecycle/idempotency matrix |
-| `US-12-05` | `NOT_RUN` | VoiceOver/TalkBack/Largest Text/permission/native store-review evidence |
-| `US-12-06` | `NOT_RUN` | Pet fallback device rows and 30-minute iOS/Android benchmark |
-| `US-12-07` | `NOT_RUN` | Preview/runtime/OTA negative boundary and rollback rehearsal |
-| `US-12-08` | `BLOCKED_BY_TARGETS_AND_PRIOR_STORIES` | Internal distribution, artifact, notes, operational handoff and owner go/no-go |
+| `US-12-01` | `PRODUCT_HARDENING_DONE_RELEASE_CANDIDATE_WORK_DEFERRED` | Replacement candidate truth moves to release-validation track |
+| `US-12-02` | `DONE_PRODUCT_SCOPE_AUTOMATED` | No core implementation gap; future release candidate reruns quality |
+| `US-12-03` | `DEFERRED_TO_RELEASE_VALIDATION` | Same-SHA iOS/Android two-phase durability reports |
+| `US-12-04` | `DEFERRED_TO_RELEASE_VALIDATION` | Physical/representative offline/lifecycle/idempotency matrix |
+| `US-12-05` | `DEFERRED_TO_RELEASE_VALIDATION` | VoiceOver/TalkBack/Largest Text/permission/native store-review evidence |
+| `US-12-06` | `DEFERRED_TO_RELEASE_VALIDATION` | Pet fallback device rows and 30-minute iOS/Android benchmark |
+| `US-12-07` | `DEFERRED_TO_RELEASE_VALIDATION` | Preview/runtime/OTA negative boundary and rollback rehearsal |
+| `US-12-08` | `DEFERRED_TO_RELEASE_VALIDATION` | Distribution, artifact, notes, operational handoff and closed-beta go/no-go |
 
 ## 5. Candidate manifest state
 
@@ -185,8 +195,8 @@ evidence and requires a new exact SHA plus rerun. Documentation-only evidence up
 
 - Không migration hoặc schema mutation; schema `001` giữ nguyên.
 - Đúng 12 Expo SDK patch dependencies được update theo `CONFIRM-11=B`; không thêm package mới.
-- Không đổi native/app/EAS config và chưa build/submit/publish update. Vì native module versions đã đổi,
-  fresh Development/preview build là bắt buộc trước native/device PASS.
+- Native/app/EAS config, version metadata, icons and build tooling changed after the original freeze.
+  Store builds/uploads exist, but their dirty-source/cross-SHA mismatch excludes them from release PASS.
 - Không thêm provider key, endpoint, production data hoặc raw feedback/analytics content.
 - Prototype retirement rollback, nếu phát hiện production regression, là forward restore tối thiểu của
   route-independent behavior; không đưa prototype thành product truth trở lại.
@@ -206,9 +216,10 @@ evidence and requires a new exact SHA plus rerun. Documentation-only evidence up
 | `EPIC12-CONFIRM-05` | `PENDING` | Feedback endpoint vẫn unset; không thu submission thật |
 | `EPIC12-CONFIRM-06` | `PENDING_DEFAULT_DEFERRED` | PostHog vẫn fail-closed và không phải core blocker |
 | `EPIC12-CONFIRM-11` | `B — ACCEPTED_AND_APPLIED_2026_09_14` | 12 patch alignments applied; Doctor `21/21`; fresh native build evidence required |
-| `EPIC12-CONFIRM-12` | `PENDING_DEFAULT_NO_GO_ON_CRASH_OR_P0` | Exit policy chưa owner-sign |
+| `EPIC12-CONFIRM-12` | `DEFERRED_RELEASE_ONLY` | Closed-beta exit policy remains pending and does not block product-scope closure |
+| `EPIC12-PRODUCT-CLOSE` | `DONE_OWNER_ACCEPTED_2026_09_15` | Owner explicitly closed EPIC-12 product scope; see `EPIC-12_EXIT_REPORT.md` |
 
-## 8. Next execution order
+## 8. Deferred release-validation order
 
 1. Commit the build-source guard plus evidence/harness update, verify a clean tree, run the guard's
    `--check` success path and rerun quality, then owner explicitly
@@ -220,13 +231,14 @@ evidence and requires a new exact SHA plus rerun. Documentation-only evidence up
 4. Fill the exact iOS/Android physical device/model/OS inventory required by `CONFIRM-03=A`.
 5. Execute `US-12-03` same-SHA iOS/Android aggregate and `US-12-04→06` device rows.
 6. Execute preview/runtime/rollback and internal distribution after remaining owner confirmations.
-7. Create Exit Report only when all mandatory rows have evidence and owner explicitly accepts
-   `EPIC-12 DONE_OWNER_ACCEPTED` plus `CLOSED_BETA_READY`.
+7. Mark `CLOSED_BETA_READY` only when all mandatory release rows have evidence and the owner explicitly
+   accepts that separate release state. Product-scope EPIC-12 closure does not depend on this sequence.
 
 ## 9. Change log
 
 | Version | Date | Change |
 |---|---|---|
+| `0.8.0` | 2026-09-15 | Closed EPIC-12 as `DONE_OWNER_ACCEPTED_PRODUCT_SCOPE` by explicit owner direction. Core product implementation is accepted; all unresolved device/build/accessibility/performance/distribution work is deferred to release validation without a `CLOSED_BETA_READY` claim. |
 | `0.7.0` | 2026-09-15 | Implemented fail-closed build-source verification before and after prebuild. Dirty-source negative check and full quality PASS; commit, clean-path verification and replacement re-freeze remain required. |
 | `0.6.0` | 2026-09-15 | Recorded owner-reported App Store/Play Store uploads and verified three finished EAS store builds. Detected dirty-source metadata and cross-SHA mismatch, invalidated `59cb87c...`, and recorded quality-PASS product/config baseline `baf70d3...`; replacement SHA awaits clean evidence/harness commit, explicit re-freeze and rebuild. |
 | `0.5.0` | 2026-09-15 | Recorded owner deferral of EAS Build and store upload. No `CONFIRM-04` A/B/C target was inferred, no external action was performed, and delivery remains blocked until resumed. |

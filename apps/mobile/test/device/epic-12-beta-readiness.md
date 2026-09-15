@@ -1,6 +1,6 @@
 # EPIC-12 — Beta readiness device guide
 
-Status: `NOT_RUN / CANDIDATE_INVALIDATED / REFREEZE_REQUIRED`
+Status: `DEFERRED_TO_RELEASE_VALIDATION / PRODUCT_SCOPE_CLOSED`
 
 Planning baseline SHA: `6a0fa42860a9134c1374867a33aa0d8b16d9bb89`
 
@@ -11,6 +11,10 @@ Product/config baseline SHA: `baf70d37778e92ff0d5c258d2f2d5c1d2c0d87be` (`QUALIT
 Replacement candidate SHA: `PENDING_CLEAN_COMMIT_AND_OWNER_REFREEZE`
 
 Allowed case results: `PASS`, `FAIL`, `BLOCKED`, `NOT_RUN`.
+
+Owner closed EPIC-12 as `DONE_OWNER_ACCEPTED_PRODUCT_SCOPE` on 2026-09-15. This guide is retained as
+the deferred release-validation track. Its unresolved rows do not block product-feature closure and do
+not become PASS; `CLOSED_BETA_READY` is not claimed.
 
 Guide này là runbook kiểm chứng, không phải bằng chứng đã chạy. Governance prerequisite chỉ được PASS
 khi có owner decision/evidence tương ứng; mọi execution row bắt đầu ở `NOT_RUN`. Prerequisite chưa được
@@ -363,9 +367,9 @@ pnpm start --clear
 | Evidence index, release notes, known issues, support path | Yes | `NOT_RUN` | `<fill>` |
 | Zero known crash/P0 blocker and explicit owner acceptance | Yes | `NOT_RUN` | `CONFIRM-12` |
 
-Current verdict: `NO_GO — CANDIDATE_INVALIDATED / REFREEZE_AND_CLEAN_REBUILD_REQUIRED`.
+Current verdict: `DEFERRED — PRODUCT_SCOPE_CLOSED / CLOSED_BETA_READY_NOT_CLAIMED`.
 
-Không đổi verdict thành GO cho đến khi mọi required row là PASS trên frozen SHA, mọi BLOCKED được owner
+Khi release validation được mở lại, không đổi verdict thành GO cho đến khi mọi required row là PASS trên frozen SHA, mọi BLOCKED được owner
 giải quyết hoặc chấp nhận rõ ràng theo policy, và owner ghi chính xác `EPIC-12 DONE_OWNER_ACCEPTED` cùng
 `CLOSED_BETA_READY`.
 

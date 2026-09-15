@@ -89,7 +89,7 @@ const requiredEpic12Cases = [
   'E12-EXIT-01',
 ];
 const requiredEpic12Evidence = [
-  'Status: `NOT_RUN / CANDIDATE_INVALIDATED / REFREEZE_REQUIRED`',
+  'Status: `DEFERRED_TO_RELEASE_VALIDATION / PRODUCT_SCOPE_CLOSED`',
   'Allowed case results: `PASS`, `FAIL`, `BLOCKED`, `NOT_RUN`',
   'Planning baseline SHA: `6a0fa42860a9134c1374867a33aa0d8b16d9bb89`',
   'Previous frozen release-candidate SHA: `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` (`INVALIDATED`)',
@@ -100,7 +100,7 @@ const requiredEpic12Evidence = [
   'Start/end ISO timestamp + timezone', 'Artifact/link', 'Cleanup result',
   'Blocker owner + next action', 'pixeldoro-us-02-09-epic-exit-probe.db',
   'pixeldoro.db', 'Không dùng wildcard/glob', 'Normal launch',
-  'Current verdict: `NO_GO', 'Không suy diễn PASS từ automated test',
+  'Current verdict: `DEFERRED', 'Không suy diễn PASS từ automated test',
   'Verified clean mobile build source', 'Refusing mobile build',
 ];
 

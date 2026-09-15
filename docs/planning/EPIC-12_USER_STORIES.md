@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_EPIC_12_USER_STORIES
 title: PixelDoro EPIC-12 — Hardening, Device Validation và Closed-beta Delivery User Stories
-version: 0.8.0
-status: IMPLEMENTATION_IN_PROGRESS_BUILD_SOURCE_GUARD_IMPLEMENTED_COMMIT_AND_REFREEZE_REQUIRED
+version: 0.9.0
+status: DONE_OWNER_ACCEPTED_PRODUCT_SCOPE
 date: 2026-09-14
 last_updated: 2026-09-15
 owner: Dũng Lư
@@ -17,7 +17,10 @@ previous_epic_implementation_sha: deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0
 start_gate: EPIC_11_DONE_OWNER_ACCEPTED_AND_MVP_FEATURE_COMPLETE
 start_gate_status: MET_2026_09_14
 implementation_opened_sha: aaee07fff999388920ebb3beb759567ac4f01c43
-implementation_status: IN_PROGRESS
+implementation_status: DONE_OWNER_ACCEPTED_PRODUCT_SCOPE
+closure_scope: PRODUCT_CORE_ONLY
+product_scope_status: FEATURE_COMPLETE_OWNER_ACCEPTED_2026_09_15
+release_validation_status: DEFERRED_NOT_CLOSED_BETA_READY
 previous_release_candidate_sha: 59cb87c4bc4b150a7d95265d9655f4b04bc2309a
 previous_release_candidate_status: INVALIDATED_BY_POST_FREEZE_CONFIG_ASSET_AND_HARNESS_CHANGES
 product_config_baseline_sha: baf70d37778e92ff0d5c258d2f2d5c1d2c0d87be
@@ -36,9 +39,15 @@ project_structure_baseline: ../architecture/project-structure.md
 data_model: ../architecture/data-model.md
 manual_guide: ../../apps/mobile/test/device/epic-12-beta-readiness.md
 implementation_report: ./EPIC-12_IMPLEMENTATION_REPORT.md
+exit_report: ./EPIC-12_EXIT_REPORT.md
 ---
 
 # EPIC-12 — Hardening, Device Validation và Closed-beta Delivery
+
+> Product-scope closure, 2026-09-15: owner explicitly closed EPIC-12 as
+> `DONE_OWNER_ACCEPTED_PRODUCT_SCOPE`. Mobile MVP core features are complete. Device, accessibility,
+> performance, same-SHA build, distribution and rollback evidence are deferred to a separate release
+> validation track and are not claimed as PASS or `CLOSED_BETA_READY`.
 
 ## 1. Executive summary
 
@@ -83,7 +92,7 @@ push được thực hiện trong task planning này. Mọi manual/device case c
 | EPIC-11 | `DONE_OWNER_ACCEPTED`; authority và Exit Report đã ghi closure ngày 2026-09-14 |
 | `MVP_FEATURE_COMPLETE` | Đạt; `MVP_EPICS.md` ghi W3 feature delivery complete |
 | EPIC-12 start gate | **ĐÃ ĐẠT** |
-| Current state | `IMPLEMENTATION_IN_PROGRESS / DEVICE_AND_DELIVERY_EVIDENCE_PENDING` |
+| Current state | `DONE_OWNER_ACCEPTED_PRODUCT_SCOPE / RELEASE_VALIDATION_DEFERRED` |
 
 Gate record mở implementation:
 
@@ -852,11 +861,23 @@ Trong các bảng Story/carry-over, dạng rút gọn `CONFIRM-nn` luôn trỏ t
 | `EPIC12-CONFIRM-10` | Accessibility evidence: A VO+TalkBack+Largest Text+contrast+Reduce Motion; B one screen reader/platform; C automated only | A | Most effort; lowest exclusion/rejection risk | 05/08 | Formal a11y matrix + exit threshold | Formal rows `NOT_RUN`; no release acceptance | Accessibility |
 | `EPIC12-CONFIRM-11` | Schema/dependency/native/config need: A no change unless blocker; B approve named narrow patch; C broad modernization | B, after Doctor identified exact drift | Twelve patch updates require fresh native build evidence but remove SDK mismatch | 01/02/07 | Clean Doctor + candidate dependency graph | `B — ACCEPTED_AND_APPLIED_2026_09_14` | Dependency/native build; no schema/config |
 | `EPIC12-CONFIRM-12` | Exit risk policy: A zero crash/P0 plus accepted nonblocking limitations; B zero known issue; C ship with P0 workaround | A | Practical closed beta with explicit risk ownership | 01/04/08 | Go/no-go threshold + limitation policy | Any crash/P0 is no-go | Release |
+| `EPIC12-PRODUCT-CLOSE` | Close EPIC-12 after confirming no core feature remains; retain release validation separately | Owner-directed product-only closure | Closes product work without overstating beta readiness | Product scope | Product Exit Report | `DONE_OWNER_ACCEPTED_PRODUCT_SCOPE_2026_09_15` | Product |
 
 Các confirmation tạo chi phí, external service, native/config/schema change hoặc distribution không được
 plan này tự chọn thay owner. Recommendation chỉ là planning input.
 
 ## 19. Epic completion checklist
+
+### Product-scope closure — accepted 2026-09-15
+
+- [x] Mobile MVP core feature set is implemented; no new EPIC-12 product feature remains.
+- [x] Automated product hardening and regression matrix passes.
+- [x] Owner explicitly directed `Đóng EPIC-12 theo product scope`.
+- [x] Unexecuted device, accessibility, performance and release evidence is transferred without false PASS.
+- [x] EPIC-12 is `DONE_OWNER_ACCEPTED_PRODUCT_SCOPE`.
+- [ ] `CLOSED_BETA_READY` — not claimed; belongs to the deferred release-validation track.
+
+### Original full closed-beta exit criteria — deferred, not waived or passed
 
 - [ ] `EPIC12-CONFIRM-01→12` blocking decisions are recorded; pending defaults respected.
 - [ ] `US-12-01` RC truth/carry-over/freeze gate accepted.
@@ -882,12 +903,14 @@ plan này tự chọn thay owner. Recommendation chỉ là planning input.
 - [ ] Internal iOS and Android build/install evidence exists.
 - [ ] Closed-beta artifact, release notes, known issues and operational handoff are complete.
 - [ ] No known crash or P0 closed-beta blocker remains.
-- [ ] Owner explicitly marks `EPIC-12 DONE_OWNER_ACCEPTED` and `CLOSED_BETA_READY`.
+- [x] Owner explicitly marks `EPIC-12 DONE_OWNER_ACCEPTED_PRODUCT_SCOPE`.
+- [ ] Owner explicitly marks `CLOSED_BETA_READY`; not part of this scoped closure.
 
 ## 20. Change log
 
 | Version | Date | Change |
 |---|---|---|
+| `0.9.0` | 2026-09-15 | Closed EPIC-12 as `DONE_OWNER_ACCEPTED_PRODUCT_SCOPE` by explicit owner direction. Mobile MVP core is feature-complete; device/accessibility/performance/same-SHA distribution/rollback work is transferred to release validation with no false PASS or `CLOSED_BETA_READY` claim. |
 | `0.8.0` | 2026-09-15 | Added a fail-closed mobile build-source guard: reject dirty tracked/untracked state, print exact SHA, and recheck clean/unchanged source after prebuild before EAS. Negative dirty-state check and full quality pass; commit and re-freeze remain required. |
 | `0.7.0` | 2026-09-15 | Recorded owner-reported first App Store/Play Store uploads and EAS build metadata. Detected cross-SHA plus dirty-source mismatches, invalidated frozen candidate `59cb87c...`, and recorded quality-PASS product/config baseline `baf70d3...`; replacement SHA awaits clean evidence/harness commit, explicit re-freeze and rebuild. |
 | `0.6.0` | 2026-09-15 | Recorded owner deferral of EAS Build and store upload. `EPIC12-CONFIRM-04` target remains unselected; delivery gates stay `BLOCKED/NOT_RUN`, with no external build or upload performed. |

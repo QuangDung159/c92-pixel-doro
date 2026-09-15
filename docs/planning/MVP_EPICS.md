@@ -1,8 +1,8 @@
 ---
 document_id: PIXELDORO_MVP_EPIC_BREAKDOWN
 title: PixelDoro Mobile MVP — Epic Breakdown
-version: 3.11.0
-status: EPIC_12_IMPLEMENTATION_IN_PROGRESS
+version: 3.12.0
+status: EPIC_12_DONE_OWNER_ACCEPTED_PRODUCT_SCOPE_RELEASE_VALIDATION_DEFERRED
 last_updated: 2026-09-15
 owner: Dũng Lư
 reviewer: Dũng Lư
@@ -132,7 +132,7 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 - [x] `09 / EPIC-09 / W3` — History & Contribution — `DONE_OWNER_ACCEPTED` 2026-09-12.
 - [x] `10 / EPIC-10 / W3` — Settings & Data Control — `DONE_OWNER_ACCEPTED` 2026-09-12.
 - [x] `11 / EPIC-11 / W3` — Analytics, Feedback & Store Review — `DONE_OWNER_ACCEPTED` 2026-09-14.
-- [ ] `12 / EPIC-12 / W4` — Beta Readiness.
+- [x] `12 / EPIC-12 / W4` — `DONE_OWNER_ACCEPTED_PRODUCT_SCOPE` 2026-09-15; `CLOSED_BETA_READY` not claimed.
 
 ### 2.4. Trạng thái hiện tại
 
@@ -149,16 +149,17 @@ Nếu đang thực hiện, trạng thái được quản lý ở planning tool/i
 | `EPIC-09` | `DONE_OWNER_ACCEPTED` | US-09-01→05 owner accepted; exact behavior candidate `a1abf5f...`; History/Contribution exit closed by owner authorization. |
 | `EPIC-10` | `DONE_OWNER_ACCEPTED` | US-10-01→05 owner accepted; exact merged candidate `bee029a12576af8d8470668c1fa2ce8d8502ac4b`; quick UI PASS/no crash and review/automated/native/export gates pass. |
 | `EPIC-11` | `DONE_OWNER_ACCEPTED` | `EPIC-11_EXIT_REPORT.md`; accepted candidate `6a0fa42860a9134c1374867a33aa0d8b16d9bb89`, implementation `deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0`; automated gates and owner quick UI pass. Provider activation deferrals remain explicit. |
-| `EPIC-12` | `IMPLEMENTATION_IN_PROGRESS` | Owner opened implementation on 2026-09-14; device/delivery evidence remains `NOT_RUN` and no beta-ready PASS is implied. |
+| `EPIC-12` | `DONE_OWNER_ACCEPTED_PRODUCT_SCOPE` | Owner closed product scope on 2026-09-15; Mobile MVP core is feature-complete. Device/accessibility/performance/distribution/rollback evidence is deferred and `CLOSED_BETA_READY` is not claimed. |
 
-Mười một Epic đầu đã `DONE_OWNER_ACCEPTED`. EPIC-10 được đóng tại exact merged SHA
+Tất cả 12 Epic đã đóng theo product scope. EPIC-10 được đóng tại exact merged SHA
 `bee029a12576af8d8470668c1fa2ce8d8502ac4b` sau owner quick-smoke/accept và xác nhận closure.
 EPIC-11 được owner đóng ngày 2026-09-14 tại accepted candidate
 `6a0fa42860a9134c1374867a33aa0d8b16d9bb89`; owner mở EPIC-12 implementation ngày 2026-09-14 tại
 pre-change SHA `aaee07fff999388920ebb3beb759567ac4f01c43`.
-Live PostHog được owner tạm ẩn vì chi phí, không còn là live gate của internal test. Formal device/native
-breadth và full Beta Readiness vẫn thuộc EPIC-12 và chưa được thực hiện. Feedback endpoint cũng có thể giữ
-unset trong core-only internal test, nhưng phải cấu hình trước khi thu submission thật.
+Owner closed EPIC-12 on 2026-09-15 under product-only scope because no core feature remains. Live PostHog
+continues deferred because of cost. Formal device/native/accessibility/performance and full Beta Readiness
+move to a separate release-validation track. Feedback endpoint may remain unset for core-only testing but
+must be configured before collecting real submissions.
 
 ## 3. Critical path và delivery gates
 
@@ -262,6 +263,15 @@ Trong khi một gate liên quan chưa chốt hoặc exact artwork chưa được
 - Reanimated + bundled sprite baseline; chưa cài Skia.
 
 **Epic completion checklist:**
+
+Product-scope closure:
+
+- [x] Mobile MVP core implementation is feature-complete.
+- [x] Automated product hardening passes.
+- [x] Owner accepted `DONE_OWNER_ACCEPTED_PRODUCT_SCOPE` on 2026-09-15.
+- [x] Remaining release/device evidence is transferred without false PASS.
+
+Deferred `CLOSED_BETA_READY` checklist:
 
 - [x] Workspace layout và package dependency direction khớp Project Structure.
 - [x] Root scripts chạy được typecheck, lint và test theo workspace.
@@ -882,6 +892,15 @@ Story hoặc implementation tương lai.
 - [x] Không estimate deadline trước khi Story refinement hoàn tất.
 
 ## 10. Change log
+
+### 3.12.0 — 2026-09-15
+
+- Closed EPIC-12 as `DONE_OWNER_ACCEPTED_PRODUCT_SCOPE` by explicit owner direction; the Mobile MVP core
+  feature set is complete and no additional product feature remains in this Epic.
+- Transferred unresolved device, accessibility, performance, same-SHA build, distribution and rollback
+  evidence to a separate release-validation track. No unresolved row was promoted to PASS and
+  `CLOSED_BETA_READY` is not claimed.
+- Added `EPIC-12_EXIT_REPORT.md` as the scoped closure authority.
 
 ### 3.11.0 — 2026-09-15
 
