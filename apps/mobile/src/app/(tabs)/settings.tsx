@@ -1,16 +1,16 @@
-import { useCallback, useEffect, useRef, useSyncExternalStore } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useEffect, useRef, useSyncExternalStore } from 'react';
 
 import { selectOtaReleaseInfo } from '@/application';
 import { SettingsScreen } from '@/presentation/features/settings';
 import {
-  useSettingsActions,
-  useSettingsProjection,
-} from '@/presentation/providers/settings-hooks';
-import {
   useAppVisibility,
   useMobileApplication,
 } from '@/presentation/providers/mobile-application-context';
+import {
+  useSettingsActions,
+  useSettingsProjection,
+} from '@/presentation/providers/settings-hooks';
 
 export default function SettingsRoute() {
   const router = useRouter();
@@ -39,7 +39,6 @@ export default function SettingsRoute() {
   return (
     <SettingsScreen
       onActivateRetry={() => { void actions.activate(); }}
-      onCheckForUpdate={() => { void application.otaUpdate.checkNow(); }}
       onDismissIssue={actions.dismissIssue}
       onOpenSystemSettings={() => { void actions.openSystemSettings(); }}
       onOpenFeedback={() => router.push('/feedback')}

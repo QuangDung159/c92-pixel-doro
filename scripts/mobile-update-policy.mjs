@@ -11,6 +11,44 @@ export const MobileUpdateOutcome = Object.freeze({
   UNDETERMINED_BLOCKED: 'UNDETERMINED_BLOCKED',
 });
 
+const fastUpdateTargets = Object.freeze({
+  development: Object.freeze({ channel: 'development', environment: 'development' }),
+  staging: Object.freeze({ channel: 'staging', environment: 'production' }),
+  production: Object.freeze({ channel: 'production', environment: 'production' }),
+});
+
+export const createFastUpdateSpec = ({ target, message, platform = 'all', now = Date.now() }) => {
+  const selected = fastUpdateTargets[target];
+  if (selected === undefined) throw new Error('FAST_UPDATE_TARGET_INVALID');
+  if (typeof message !== 'string' || message.trim() === '') {
+    throw new Error('FAST_UPDATE_MESSAGE_REQUIRED');
+  }
+  if (platform !== 'android' && platform !== 'ios' && platform !== 'all') {
+    throw new Error('FAST_UPDATE_PLATFORM_INVALID');
+  }
+  const otaNumber = String(now);
+  if (!/^\d{13}$/u.test(otaNumber)) throw new Error('FAST_UPDATE_TIMESTAMP_INVALID');
+  const platforms = platform === 'all' ? ['ios', 'android'] : [platform];
+  const commands = platforms.map((targetPlatform) => [
+    'pnpm', 'dlx', 'eas-cli@22.6.0', 'update',
+    '--channel', selected.channel,
+    '--environment', selected.environment,
+    '--platform', targetPlatform,
+    '--message', message.trim(),
+  ]);
+  return Object.freeze({
+    mode: 'FAST_UPDATE',
+    target,
+    channel: selected.channel,
+    environment: selected.environment,
+    platform,
+    message: message.trim(),
+    otaNumber,
+    platforms,
+    commands,
+  });
+};
+
 const nativePatterns = [
   /(^|\/)package\.json$/u,
   /^pnpm-lock\.yaml$/u,

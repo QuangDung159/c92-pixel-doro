@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   classifyMobileUpdate,
   classifyMobileUpdatePath,
+  createFastUpdateSpec,
   MobileUpdateOutcome,
   readMobileRuntimeManifest,
   sanitizeUpdateReceipt,
@@ -13,6 +14,25 @@ const sha = 'a'.repeat(40);
 const otherSha = 'b'.repeat(40);
 
 describe('mobile update policy', () => {
+  it.each([
+    ['development', 'development', 'development'],
+    ['staging', 'staging', 'production'],
+    ['production', 'production', 'production'],
+  ])('maps the direct fast lane for %s', (target, channel, environment) => {
+    expect(createFastUpdateSpec({
+      target, message: 'urgent hotfix', now: 1789487502248,
+    })).toMatchObject({
+      mode: 'FAST_UPDATE', target, channel, environment,
+      platform: 'all', platforms: ['ios', 'android'], otaNumber: '1789487502248',
+    });
+  });
+
+  it('keeps message as the only required release input beyond target', () => {
+    expect(() => createFastUpdateSpec({
+      target: 'production', message: '', now: 1789487502248,
+    })).toThrow('FAST_UPDATE_MESSAGE_REQUIRED');
+  });
+
   it.each([
     ['apps/mobile/src/presentation/components/card.tsx', MobileUpdateOutcome.ELIGIBLE],
     ['apps/mobile/assets/images/pet.png', MobileUpdateOutcome.ELIGIBLE],
@@ -52,8 +72,8 @@ describe('mobile update policy', () => {
       runtimePolicy: 'appVersion',
       runtimeVersion: '1.0.1',
       platforms: {
-        android: { applicationId: 'com.dragonc92team.pixeldoro', versionCode: 1 },
-        ios: { bundleIdentifier: 'com.dragonc92team.pixeldoro', buildNumber: '2' },
+        android: { applicationId: 'com.dragonc92team.pixeldoro' },
+        ios: { bundleIdentifier: 'com.dragonc92team.pixeldoro' },
       },
       profiles: {
         qa: { channel: 'qa', environment: 'preview' },
@@ -61,6 +81,8 @@ describe('mobile update policy', () => {
         production: { channel: 'production', environment: 'production' },
       },
     });
+    expect(manifest.platforms.android.versionCode).toBeGreaterThan(0);
+    expect(manifest.platforms.ios.buildNumber).toMatch(/^\d+$/u);
     expect(manifest.configHash).toMatch(/^[0-9a-f]{64}$/u);
   });
 

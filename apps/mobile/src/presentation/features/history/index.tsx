@@ -1,7 +1,7 @@
 import type {
   ContributionControllerProjection,
   HistoryControllerProjection,
-} from '@/application';
+} from "@/application";
 
 import {
   EmptyState,
@@ -9,11 +9,11 @@ import {
   LoadingState,
   ScreenHeader,
   ScreenShell,
-} from '@/presentation/components';
+} from "@/presentation/components";
 
-import { FocusHistoryList } from './focus-history-list';
-import { ContributionPanel } from './contribution-panel';
-import { HistoryRefreshStatus } from './history-refresh-status';
+import { ContributionPanel } from "./contribution-panel";
+import { FocusHistoryList } from "./focus-history-list";
+import { HistoryRefreshStatus } from "./history-refresh-status";
 
 export interface HistoryScreenProps {
   readonly contribution: ContributionControllerProjection;
@@ -50,20 +50,23 @@ export const HistoryScreen = ({
         eyebrow="LỊCH SỬ"
         title="Những nhịp đã qua."
       />
-      {projection.status === 'idle' || projection.status === 'loading' ? (
+      {projection.status === "idle" || projection.status === "loading" ? (
         <LoadingState label="Đang đọc lịch sử Focus…" />
       ) : null}
-      {projection.status === 'empty' ? (
+      {projection.status === "empty" ? (
         <>
-          <HistoryRefreshStatus onRetry={onRetryRefresh} status={projection.refresh} />
+          <HistoryRefreshStatus
+            onRetry={onRetryRefresh}
+            status={projection.refresh}
+          />
           <FocusHistoryList
             contributionHeader={contributionPanel}
-            emptyState={(
+            emptyState={
               <EmptyState
                 body="Phiên Focus chuẩn đầu tiên sẽ xuất hiện ở đây. Trial và phiên nghỉ không nằm trong lịch sử này."
                 title="Chưa có lịch sử Focus"
               />
-            )}
+            }
             onLoadMore={onLoadMore}
             onRetryLoadMore={onRetryLoadMore}
             pagination="end"
@@ -71,18 +74,23 @@ export const HistoryScreen = ({
           />
         </>
       ) : null}
-      {projection.status === 'error' ? (
+      {projection.status === "error" ? (
         <ErrorState
-          body={projection.code === 'HISTORY_DATA_INVALID'
-            ? 'Dữ liệu lịch sử cần được kiểm tra an toàn trước khi hiển thị.'
-            : 'Chưa đọc được lịch sử trên thiết bị. Các phiên đã lưu không bị thay đổi.'}
+          body={
+            projection.code === "HISTORY_DATA_INVALID"
+              ? "Dữ liệu lịch sử cần được kiểm tra an toàn trước khi hiển thị."
+              : "Chưa đọc được lịch sử trên thiết bị. Các phiên đã lưu không bị thay đổi."
+          }
           onRetry={onRetryInitial}
           title="Lịch sử cần thử lại"
         />
       ) : null}
-      {projection.status === 'ready' ? (
+      {projection.status === "ready" ? (
         <>
-          <HistoryRefreshStatus onRetry={onRetryRefresh} status={projection.refresh} />
+          <HistoryRefreshStatus
+            onRetry={onRetryRefresh}
+            status={projection.refresh}
+          />
           <FocusHistoryList
             contributionHeader={contributionPanel}
             onLoadMore={onLoadMore}
@@ -96,14 +104,17 @@ export const HistoryScreen = ({
   );
 };
 
-export { FocusHistoryList } from './focus-history-list';
-export { FocusHistoryRow, formatHistoryLocalDate } from './focus-history-row';
-export { HistoryStatusBadge, historyStatusLabel } from './history-status-badge';
-export { HistoryDateSectionHeader } from './history-date-section-header';
-export { HistoryPaginationFooter } from './history-pagination-footer';
-export { HistoryRefreshStatus } from './history-refresh-status';
-export { ContributionPanel } from './contribution-panel';
-export { ContributionDayRow, contributionRangeLabels } from './contribution-day-row';
-export { ContributionGraphStrip } from './contribution-graph-strip';
-export { ContributionLegend } from './contribution-legend';
-export { contributionVisualTokens } from './contribution-visual-tokens';
+export {
+  ContributionDayRow,
+  contributionRangeLabels,
+} from "./contribution-day-row";
+export { ContributionGraphStrip } from "./contribution-graph-strip";
+export { ContributionLegend } from "./contribution-legend";
+export { ContributionPanel } from "./contribution-panel";
+export { contributionVisualTokens } from "./contribution-visual-tokens";
+export { FocusHistoryList } from "./focus-history-list";
+export { FocusHistoryRow, formatHistoryLocalDate } from "./focus-history-row";
+export { HistoryDateSectionHeader } from "./history-date-section-header";
+export { HistoryPaginationFooter } from "./history-pagination-footer";
+export { HistoryRefreshStatus } from "./history-refresh-status";
+export { HistoryStatusBadge, historyStatusLabel } from "./history-status-badge";

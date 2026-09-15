@@ -1,14 +1,14 @@
 ---
 document_id: PIXELDORO_EPIC_13_USER_STORIES
 title: PixelDoro EPIC-13 — Expo OTA Quick Update & Hotfix Delivery User Stories
-version: 1.2.0
+version: 1.3.0
 status: IMPLEMENTATION_IN_PROGRESS_OWNER_APPROVED_SCOPE
 date: 2026-09-15
 last_updated: 2026-09-15
 owner: Dũng Lư
 approved_by: Dũng Lư
 approved_at: 2026-09-15
-owner_decisions: OTA_CONFIRM_01_TO_09_RECOMMENDED_OPTIONS_ACCEPTED
+owner_decisions: ORIGINAL_STAGED_FLOW_SUPERSEDED_BY_DIRECT_RELEASE_FAST_LANE
 epic: EPIC-13
 scope: POST_MVP_OPERATIONAL_DELIVERY
 implementation_status: LOCAL_US_13_01_TO_05_IMPLEMENTED_PENDING_DEVICE_EVIDENCE
@@ -1091,6 +1091,8 @@ production OTA or only serve QA/rehearsal before a new signed store runtime.
 
 | Version | Date | Change |
 |---|---|---|
+| `1.3.1` | 2026-09-15 | Fixed fast-lane `all` to publish iOS then Android separately with the same OTA timestamp, avoiding Expo Web bundling and the missing `expo-sqlite` WASM path; removed the unsupported EAS `--non-interactive` flag and set `CI=1`. |
+| `1.3.0` | 2026-09-15 | Owner superseded the staged-only default in favor of release speed. Added direct-execution `dev`, `stg`, and `prd` fast-lane commands with only a required message, optional platform selection, and shared millisecond OTA number; fast-lane dry-run was explicitly removed. The guarded workflow remains available as an optional path; no update was executed by this implementation turn. |
 | `1.2.0` | 2026-09-15 | Implemented the local US-13-01→05 foundation: explicit update config/profile mapping, runtime manifest, fail-closed classifier, guarded QA/staging wrapper, client update lifecycle, safe-restart gate, common dialog reuse, and Settings identity showing native version plus a shared publish-time millisecond OTA number (`Updates.createdAt` fallback for older bundles). “Latest” is claimed only after a successful compatible check on the current channel. Remote/device/production work remains unexecuted and unauthorized. |
 | `1.1.0` | 2026-09-15 | Recorded owner approval of the EPIC-13 plan and recommended options for `OTA-CONFIRM-01→09`; opened ordered implementation while preserving separate authorization for every EAS build, publish, channel, rollout, rollback, commit, and push action. |
 | `1.0.0` | 2026-09-15 | Created EPIC-13 planning baseline after repository, history, code/config, remote EAS read-only, and official Expo audit. Decomposed eight vertical Stories; added UI/component, eligibility, test, device, promotion, rollback, risk, decision, DoR/DoD, and master checklists. No implementation or EAS mutation performed. |

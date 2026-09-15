@@ -5,6 +5,7 @@ import { resolve } from 'node:path';
 
 import {
   classifyMobileUpdate,
+  createFastUpdateSpec,
   MobileUpdateOutcome,
   readMobileRuntimeManifest,
   sanitizeUpdateReceipt,
@@ -29,6 +30,27 @@ const requireGit = (gitArgs, label) => {
 };
 
 const mode = args[0];
+if (mode === 'fast') {
+  const spec = createFastUpdateSpec({
+    target: valueFor('--target'),
+    message: valueFor('--message') ?? process.env.npm_config_message,
+    platform: valueFor('--platform') ?? 'all',
+    ...(valueFor('--ota-number') === undefined
+      ? {}
+      : { now: Number(valueFor('--ota-number')) }),
+  });
+  console.log(JSON.stringify(spec, null, 2));
+  for (const command of spec.commands) {
+    const update = spawnSync(command[0], command.slice(1), {
+      cwd: resolve(repositoryRoot, 'apps/mobile'),
+      env: { ...process.env, CI: '1', EXPO_PUBLIC_OTA_NUMBER: spec.otaNumber },
+      stdio: 'inherit',
+    });
+    if (update.error) throw update.error;
+    if (update.status !== 0) throw new Error('FAST_UPDATE_FAILED');
+  }
+  process.exit(0);
+}
 if (mode === 'manifest') {
   const sourceSha = requireGit(['rev-parse', 'HEAD'], 'HEAD_UNRESOLVED');
   const dirty = requireGit(['status', '--porcelain=v1', '--untracked-files=all'], 'STATUS_FAILED') !== '';
@@ -40,7 +62,7 @@ if (mode === 'manifest') {
   process.exit(0);
 }
 if (mode !== 'source') {
-  console.error('Usage: node scripts/run-mobile-update.mjs manifest | source --target qa|staging --base <sha> --runtime <version> --platform android|ios|all --message <text> --dry-run');
+  console.error('Usage: node scripts/run-mobile-update.mjs fast --target development|staging|production --message <text> [--platform android|ios|all] [--ota-number <13-digit>] | manifest | source ...');
   process.exit(1);
 }
 

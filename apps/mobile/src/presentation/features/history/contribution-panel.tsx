@@ -1,16 +1,16 @@
-import type { ContributionControllerProjection } from '@/application';
-import { StyleSheet, View } from 'react-native';
+import type { ContributionControllerProjection } from "@/application";
+import { StyleSheet, View } from "react-native";
 
 import {
   InlineNotice,
   SecondaryButton,
   SectionLabel,
-} from '@/presentation/components';
-import { palette } from '@/presentation/theme/palette';
+} from "@/presentation/components";
+import { palette } from "@/presentation/theme/palette";
 
-import { ContributionDayRow } from './contribution-day-row';
-import { ContributionGraphStrip } from './contribution-graph-strip';
-import { ContributionLegend } from './contribution-legend';
+import { ContributionDayRow } from "./contribution-day-row";
+import { ContributionGraphStrip } from "./contribution-graph-strip";
+import { ContributionLegend } from "./contribution-legend";
 
 export const ContributionPanel = ({
   onRetryInitial,
@@ -23,23 +23,25 @@ export const ContributionPanel = ({
 }) => (
   <View style={styles.panel}>
     <SectionLabel>7 ngày gần đây</SectionLabel>
-    {projection.status === 'idle' || projection.status === 'loading' ? (
+    {projection.status === "idle" || projection.status === "loading" ? (
       <InlineNotice>Đang tính nhịp tập trung…</InlineNotice>
     ) : null}
-    {projection.status === 'error' ? (
+    {projection.status === "error" ? (
       <View style={styles.notice}>
         <InlineNotice announce>Chưa đọc được đóng góp theo ngày.</InlineNotice>
         <SecondaryButton label="Thử lại" onPress={onRetryInitial} />
       </View>
     ) : null}
-    {projection.status === 'ready' ? (
+    {projection.status === "ready" ? (
       <>
-        {projection.refresh === 'refreshing' ? (
+        {projection.refresh === "refreshing" ? (
           <InlineNotice>Đang cập nhật đóng góp…</InlineNotice>
         ) : null}
-        {projection.refresh === 'error' ? (
+        {projection.refresh === "error" ? (
           <View style={styles.notice}>
-            <InlineNotice announce>Chưa cập nhật được đóng góp mới nhất.</InlineNotice>
+            <InlineNotice announce>
+              Chưa cập nhật được đóng góp mới nhất.
+            </InlineNotice>
             <SecondaryButton label="Thử lại" onPress={onRetryRefresh} />
           </View>
         ) : null}
