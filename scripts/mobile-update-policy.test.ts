@@ -20,16 +20,16 @@ describe('mobile update policy', () => {
     ['production', 'production', 'production'],
   ])('maps the direct fast lane for %s', (target, channel, environment) => {
     expect(createFastUpdateSpec({
-      target, message: 'urgent hotfix', now: 1789487502248,
+      target, message: 'urgent hotfix', now: 1789489114,
     })).toMatchObject({
       mode: 'FAST_UPDATE', target, channel, environment,
-      platform: 'all', platforms: ['ios', 'android'], otaNumber: '1789487502248',
+      platform: 'all', platforms: ['ios', 'android'], otaNumber: '1789489114',
     });
   });
 
   it('keeps message as the only required release input beyond target', () => {
     expect(() => createFastUpdateSpec({
-      target: 'production', message: '', now: 1789487502248,
+      target: 'production', message: '', now: 1789489114,
     })).toThrow('FAST_UPDATE_MESSAGE_REQUIRED');
   });
 

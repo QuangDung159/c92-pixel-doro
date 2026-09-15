@@ -55,14 +55,14 @@ describe('ExpoOtaUpdateAdapter', () => {
       runtimeVersion: '1.0.1',
       currentUpdateId: updateId,
       isEmbeddedLaunch: false,
-      otaNumber: String(new Date('2026-09-15T00:00:00.000Z').getTime()),
+      otaNumber: String(Math.floor(new Date('2026-09-15T00:00:00.000Z').getTime() / 1000)),
     });
   });
 
   it('prefers one publish-time OTA number shared by both platform bundles', async () => {
-    process.env.EXPO_PUBLIC_OTA_NUMBER = '1789440123456';
+    process.env.EXPO_PUBLIC_OTA_NUMBER = '1789489114';
     await expect(new ExpoOtaUpdateAdapter().getRuntimeInfo()).resolves.toMatchObject({
-      otaNumber: '1789440123456',
+      otaNumber: '1789489114',
     });
   });
 

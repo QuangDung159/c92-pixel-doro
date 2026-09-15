@@ -9,7 +9,7 @@ const runtime = {
   runtimeVersion: '1.0.1',
   currentUpdateId: 'current-id',
   isEmbeddedLaunch: false,
-  otaNumber: '1789440000000',
+  otaNumber: '1789489114',
 };
 
 describe('OTA release info', () => {
@@ -22,7 +22,7 @@ describe('OTA release info', () => {
       isEmbeddedLaunch: false,
       lastCheckedAt: 1789440001000,
       latestStatus: 'latest',
-      otaNumber: '1789440000000',
+      otaNumber: '1789489114',
       runtimeVersion: '1.0.1',
     });
   });

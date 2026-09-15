@@ -46,10 +46,10 @@ export class ExpoOtaUpdateAdapter implements OtaUpdatePort {
       runtimeVersion: Updates.runtimeVersion,
       currentUpdateId: Updates.updateId,
       isEmbeddedLaunch: Updates.isEmbeddedLaunch,
-      otaNumber: configuredOtaNumber !== undefined && /^\d{13}$/u.test(configuredOtaNumber)
+      otaNumber: configuredOtaNumber !== undefined && /^\d{10}$/u.test(configuredOtaNumber)
         ? configuredOtaNumber
         : createdAt instanceof Date && Number.isFinite(createdAt.getTime())
-          ? String(createdAt.getTime())
+          ? String(Math.floor(createdAt.getTime() / 1000))
           : null,
     };
   }

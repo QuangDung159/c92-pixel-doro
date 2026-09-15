@@ -132,7 +132,7 @@ describe('mobile composition root', () => {
             runtimeVersion: '1.0.1',
             currentUpdateId: null,
             isEmbeddedLaunch: true,
-            otaNumber: '1789440000000',
+            otaNumber: '1789489114',
           };
         },
         checkForUpdate: otaCheckForUpdate,

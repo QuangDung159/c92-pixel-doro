@@ -15,7 +15,7 @@ describe('update prompt arbitration', () => {
         runtimeVersion: '1.0.1',
         currentUpdateId: null,
         isEmbeddedLaunch: true,
-        otaNumber: '1789440000000',
+        otaNumber: '1789489114',
       },
       update: { kind: 'update', updateId: 'update-id' },
     })).toBe(false);
@@ -29,7 +29,7 @@ describe('update prompt arbitration', () => {
         runtimeVersion: '1.0.1',
         currentUpdateId: null,
         isEmbeddedLaunch: true,
-        otaNumber: '1789440000000',
+        otaNumber: '1789489114',
       },
       update: { kind: 'update', updateId: 'update-id' },
     })).toBe(true);

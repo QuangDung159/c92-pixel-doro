@@ -10,7 +10,7 @@ const runtime = {
   runtimeVersion: '1.0.1',
   currentUpdateId: '11111111-1111-4111-8111-111111111111',
   isEmbeddedLaunch: false,
-  otaNumber: '1789440000000',
+  otaNumber: '1789489114',
 };
 const update = {
   kind: 'update' as const,

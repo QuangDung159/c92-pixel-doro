@@ -17,7 +17,12 @@ const fastUpdateTargets = Object.freeze({
   production: Object.freeze({ channel: 'production', environment: 'production' }),
 });
 
-export const createFastUpdateSpec = ({ target, message, platform = 'all', now = Date.now() }) => {
+export const createFastUpdateSpec = ({
+  target,
+  message,
+  platform = 'all',
+  now = Math.floor(Date.now() / 1000),
+}) => {
   const selected = fastUpdateTargets[target];
   if (selected === undefined) throw new Error('FAST_UPDATE_TARGET_INVALID');
   if (typeof message !== 'string' || message.trim() === '') {
@@ -27,7 +32,7 @@ export const createFastUpdateSpec = ({ target, message, platform = 'all', now = 
     throw new Error('FAST_UPDATE_PLATFORM_INVALID');
   }
   const otaNumber = String(now);
-  if (!/^\d{13}$/u.test(otaNumber)) throw new Error('FAST_UPDATE_TIMESTAMP_INVALID');
+  if (!/^\d{10}$/u.test(otaNumber)) throw new Error('FAST_UPDATE_TIMESTAMP_INVALID');
   const platforms = platform === 'all' ? ['ios', 'android'] : [platform];
   const commands = platforms.map((targetPlatform) => [
     'pnpm', 'dlx', 'eas-cli@22.6.0', 'update',

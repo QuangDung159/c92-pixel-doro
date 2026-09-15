@@ -1,7 +1,6 @@
 import type {
   AppDefaultMode,
   FocusNotificationPermission,
-  OtaReleaseInfo,
   SettingsIssueCode,
 } from "@/application";
 import {
@@ -222,26 +221,10 @@ export const FeedbackEntrySection = ({
   </PixelPanel>
 );
 
-export const AppVersionSection = ({
-  release,
-}: {
-  readonly release: OtaReleaseInfo;
-}) => (
-  <Text selectable style={styles.versionFooter}>
-    {`Version ${release.appVersion ?? "không xác định"} · OTA ${release.otaNumber ?? "embedded"}`}
-  </Text>
-);
-
 const styles = StyleSheet.create({
   column: { gap: 9 },
   divider: { backgroundColor: palette.border, height: 1, opacity: 0.2 },
   help: { color: palette.textSecondary, fontSize: 13, lineHeight: 19 },
-  versionFooter: {
-    color: palette.textSecondary,
-    fontSize: 12,
-    lineHeight: 18,
-    textAlign: "center",
-  },
   status: {
     color: palette.accentDark,
     fontSize: 12,

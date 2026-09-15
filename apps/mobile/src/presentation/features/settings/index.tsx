@@ -15,7 +15,6 @@ import {
 } from "@/presentation/components";
 
 import {
-  AppVersionSection,
   DataControlSection,
   FeedbackEntrySection,
   FocusDefaultsSection,
@@ -23,6 +22,7 @@ import {
   PreferenceSection,
   SettingsIssueBanner,
 } from "./settings-sections";
+import { SettingsVersionFooter } from "./settings-version-footer";
 
 type BackgroundSettingsDraft = Partial<
   Pick<
@@ -166,7 +166,7 @@ export const SettingsScreen = ({
         }}
         resetBusy={resetBusy}
       />
-      <AppVersionSection release={releaseInfo} />
+      <SettingsVersionFooter release={releaseInfo} />
       <ConfirmationDialog
         body="Lịch sử, XP, Coin, vật phẩm và mọi tùy chọn trên thiết bị sẽ bị xóa. Không thể hoàn tác."
         busy={resetBusy}

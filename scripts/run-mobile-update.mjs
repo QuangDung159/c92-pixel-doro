@@ -62,7 +62,7 @@ if (mode === 'manifest') {
   process.exit(0);
 }
 if (mode !== 'source') {
-  console.error('Usage: node scripts/run-mobile-update.mjs fast --target development|staging|production --message <text> [--platform android|ios|all] [--ota-number <13-digit>] | manifest | source ...');
+  console.error('Usage: node scripts/run-mobile-update.mjs fast --target development|staging|production --message <text> [--platform android|ios|all] [--ota-number <10-digit>] | manifest | source ...');
   process.exit(1);
 }
 
@@ -74,7 +74,7 @@ const message = valueFor('--message');
 const dryRun = args.includes('--dry-run');
 const execute = args.includes('--execute');
 const authorization = valueFor('--authorization');
-const otaNumber = String(Date.now());
+const otaNumber = String(Math.floor(Date.now() / 1000));
 if (target === 'production') throw new Error('DIRECT_PRODUCTION_SOURCE_PUBLISH_FORBIDDEN');
 if (target !== 'qa' && target !== 'staging') throw new Error('UPDATE_TARGET_INVALID');
 if (base === undefined || expectedRuntime === undefined || message === undefined || message.trim() === '') {
