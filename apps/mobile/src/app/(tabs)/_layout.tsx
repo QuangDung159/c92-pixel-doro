@@ -1,5 +1,6 @@
 import { Tabs } from 'expo-router';
 
+import { PixelTabIcon } from '@/presentation/navigation/pixel-tab-icon';
 import { palette } from '@/presentation/theme/palette';
 
 export default function TabsLayout() {
@@ -20,10 +21,34 @@ export default function TabsLayout() {
         },
       }}
     >
-      <Tabs.Screen name="index" options={{ title: 'Pet Room' }} />
-      <Tabs.Screen name="history" options={{ title: 'Lịch sử' }} />
-      <Tabs.Screen name="shop" options={{ title: 'Cửa hàng' }} />
-      <Tabs.Screen name="settings" options={{ title: 'Cài đặt' }} />
+      <Tabs.Screen
+        name="index"
+        options={{
+          tabBarIcon: ({ color }) => <PixelTabIcon color={color} name="pet-room" />,
+          title: 'Pet Room',
+        }}
+      />
+      <Tabs.Screen
+        name="history"
+        options={{
+          tabBarIcon: ({ color }) => <PixelTabIcon color={color} name="history" />,
+          title: 'Lịch sử',
+        }}
+      />
+      <Tabs.Screen
+        name="shop"
+        options={{
+          tabBarIcon: ({ color }) => <PixelTabIcon color={color} name="shop" />,
+          title: 'Cửa hàng',
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          tabBarIcon: ({ color }) => <PixelTabIcon color={color} name="settings" />,
+          title: 'Cài đặt',
+        }}
+      />
     </Tabs>
   );
 }
