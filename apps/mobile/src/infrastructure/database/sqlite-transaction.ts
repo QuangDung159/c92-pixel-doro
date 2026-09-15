@@ -35,6 +35,10 @@ export class SQLiteTransaction implements TransactionPort {
 
   constructor(private readonly owner: SQLiteDatabaseOwner) {}
 
+  isBusy(): boolean {
+    return this.executing;
+  }
+
   async execute<TValue, TError>(
     work: (
       scope: TransactionScope,

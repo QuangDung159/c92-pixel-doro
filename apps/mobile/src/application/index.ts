@@ -103,6 +103,7 @@ export * from './analytics';
 export * from './feedback';
 export * from './store-review';
 export * from './app-version';
+export * from './ota-update';
 export {
   OnboardingTrialRunningController,
   type OnboardingTrialRunningControllerDependencies,

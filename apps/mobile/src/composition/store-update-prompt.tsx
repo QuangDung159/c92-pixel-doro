@@ -15,7 +15,11 @@ const configuredApplicationId = (): string | null => {
   return null;
 };
 
-export const StoreUpdatePrompt = () => {
+export interface StoreUpdatePromptProps {
+  readonly suppressed?: boolean;
+}
+
+export const StoreUpdatePrompt = ({ suppressed = false }: StoreUpdatePromptProps) => {
   const currentVersion = Application.nativeApplicationVersion;
   const applicationId = configuredApplicationId();
   const nativeApplicationId = Application.applicationId;
@@ -82,7 +86,7 @@ export const StoreUpdatePrompt = () => {
       onConfirm={openStore}
       onDismiss={() => undefined}
       title="Cần cập nhật PixelDoro"
-      visible={availableUpdate !== null}
+      visible={availableUpdate !== null && !suppressed}
     />
   );
 };

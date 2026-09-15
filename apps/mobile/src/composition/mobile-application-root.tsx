@@ -9,7 +9,7 @@ import { MobileApplicationProvider } from '@/presentation/providers/mobile-appli
 import { ReducedMotionProvider } from '@/presentation/providers/reduced-motion-context';
 
 import { createMobileApplication } from './create-mobile-application';
-import { StoreUpdatePrompt } from './store-update-prompt';
+import { UpdatePrompts } from './update-prompts';
 
 export const MobileApplicationRoot = ({ children }: PropsWithChildren) => {
   const [application] = useState(createMobileApplication);
@@ -30,7 +30,7 @@ export const MobileApplicationRoot = ({ children }: PropsWithChildren) => {
       <ReducedMotionProvider>
         <PetAssetReviewProvider scenario={petAssetReviewScenario}>
           <BootstrapBoundary>
-            <StoreUpdatePrompt />
+            <UpdatePrompts />
             {children}
           </BootstrapBoundary>
         </PetAssetReviewProvider>

@@ -34,6 +34,11 @@ const invalidCases = [
     code: "import 'expo-notifications';",
   },
   {
+    name: 'Mobile Application cannot import Expo Updates',
+    filePath: 'apps/mobile/src/application/__ota-boundary-check__.ts',
+    code: "import 'expo-updates';",
+  },
+  {
     name: 'Mobile Presentation cannot import Domain directly',
     filePath: 'apps/mobile/src/presentation/__boundary-check__.ts',
     code: "import '@pixeldoro/domain';",
@@ -98,6 +103,11 @@ const validCases = [
     name: 'Platform Infrastructure can import Expo Notifications',
     filePath: 'apps/mobile/src/infrastructure/platform/__valid-notification-boundary-check__.ts',
     code: "import type { NotificationResponse } from 'expo-notifications';\nexport type Response = NotificationResponse;",
+  },
+  {
+    name: 'Platform Infrastructure can import Expo Updates',
+    filePath: 'apps/mobile/src/infrastructure/platform/__valid-ota-boundary-check__.ts',
+    code: "import type { UpdateCheckResult } from 'expo-updates';\nexport type Result = UpdateCheckResult;",
   },
 ];
 

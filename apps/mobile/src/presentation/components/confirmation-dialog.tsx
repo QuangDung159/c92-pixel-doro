@@ -1,4 +1,4 @@
-import { Modal, StyleSheet, Text, View } from 'react-native';
+import { Modal, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { palette } from '@/presentation/theme/palette';
 
@@ -44,10 +44,15 @@ export const ConfirmationDialog = ({
     >
       <View style={styles.scrim}>
         <View accessibilityLabel={title} accessibilityViewIsModal style={styles.card}>
-          <Text accessibilityRole="header" style={styles.title}>
-            {title}
-          </Text>
-          <Text style={styles.body}>{body}</Text>
+          <ScrollView
+            contentContainerStyle={styles.content}
+            showsVerticalScrollIndicator
+          >
+            <Text accessibilityRole="header" style={styles.title}>
+              {title}
+            </Text>
+            <Text style={styles.body}>{body}</Text>
+          </ScrollView>
           {dismissible && confirmTone === 'primary' ? (
             <SecondaryButton busy={busy} label={dismissLabel} onPress={onDismiss} />
           ) : null}
@@ -77,10 +82,12 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 3,
     gap: 14,
+    maxHeight: '90%',
     maxWidth: 460,
     padding: 22,
     width: '100%',
   },
+  content: { gap: 14 },
   title: { color: palette.textPrimary, fontSize: 25, fontWeight: '900' },
   body: { color: palette.textSecondary, fontSize: 16, lineHeight: 23 },
 });

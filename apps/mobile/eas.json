@@ -31,7 +31,8 @@
     },
     "staging": {
       "extends": "preview",
-      "channel": "staging"
+      "channel": "staging",
+      "environment": "production"
     },
     "production": {
       "autoIncrement": false,

@@ -1,6 +1,11 @@
 import { useState } from 'react';
 
-import type { AppDefaultMode, AppSettingsRecord, SettingsProjection } from '@/application';
+import type {
+  AppDefaultMode,
+  AppSettingsRecord,
+  OtaReleaseInfo,
+  SettingsProjection,
+} from '@/application';
 import {
   ConfirmationDialog,
   ErrorState,
@@ -10,6 +15,7 @@ import {
 } from '@/presentation/components';
 
 import {
+  AppVersionSection,
   DataControlSection,
   FeedbackEntrySection,
   FocusDefaultsSection,
@@ -30,7 +36,9 @@ type BackgroundSettingsDraft = Partial<Pick<
 
 export interface SettingsScreenProps {
   readonly projection: SettingsProjection;
+  readonly releaseInfo: OtaReleaseInfo;
   readonly onActivateRetry: () => void;
+  readonly onCheckForUpdate: () => void;
   readonly onDismissIssue: () => void;
   readonly onOpenSystemSettings: () => void;
   readonly onOpenFeedback: () => void;
@@ -47,7 +55,9 @@ export interface SettingsScreenProps {
 
 export const SettingsScreen = ({
   projection,
+  releaseInfo,
   onActivateRetry,
+  onCheckForUpdate,
   onDismissIssue,
   onOpenSystemSettings,
   onOpenFeedback,
@@ -142,6 +152,7 @@ export const SettingsScreen = ({
         permission={projection.notificationPermission}
       />
       <FeedbackEntrySection onOpenFeedback={onOpenFeedback} />
+      <AppVersionSection onCheckUpdate={onCheckForUpdate} release={releaseInfo} />
       <DataControlSection
         analyticsEnabled={current('analyticsEnabled')}
         onRequestReset={() => setConfirmingReset(true)}

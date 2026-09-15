@@ -50,6 +50,10 @@ describe('mobile composition root', () => {
     });
     let lifecycleListener: ((state: 'active' | 'background') => void) | undefined;
     let petScenario: PetBaseReviewScenario = 'idle';
+    const otaCheckForUpdate = vi.fn(async () => ({ outcome: 'no_update' as const }));
+    const otaReload = vi.fn(async () => undefined);
+    const otaBootstrapStates: string[] = [];
+    let readBootstrapStatus = (): string => 'not_wired';
     const appLifecycle: AppLifecyclePort = {
       getCurrentState: () => 'active',
       subscribe: (listener) => {
@@ -118,12 +122,33 @@ describe('mobile composition root', () => {
         },
       },
       petVisualDiagnostics: { record: petVisualDiagnostic },
+      otaUpdates: {
+        getRuntimeInfo: async () => {
+          otaBootstrapStates.push(readBootstrapStatus());
+          return {
+            appVersion: '1.0.1',
+            enabled: true,
+            channel: 'staging',
+            runtimeVersion: '1.0.1',
+            currentUpdateId: null,
+            isEmbeddedLaunch: true,
+            otaNumber: '1789440000000',
+          };
+        },
+        checkForUpdate: otaCheckForUpdate,
+        fetchUpdate: vi.fn(async () => ({ outcome: 'not_downloaded' as const })),
+        reload: otaReload,
+      },
     });
+    readBootstrapStatus = () => application.bootstrap.getSnapshot().status;
 
     expect(application.bootstrap.getSnapshot()).toEqual({ status: 'idle' });
     expect(application.appVisibility.getSnapshot()).toBe('active');
 
     await application.boot();
+    await vi.waitFor(() => expect(otaCheckForUpdate).toHaveBeenCalledOnce());
+    expect(otaBootstrapStates).toEqual(['ready']);
+    expect(otaReload).not.toHaveBeenCalled();
     expect(application.bootstrap.getSnapshot().status).toBe('ready');
     expect(application.firstUseEntry.getSnapshot()).toEqual({
       status: 'ready',

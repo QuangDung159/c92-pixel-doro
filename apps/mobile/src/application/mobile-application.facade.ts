@@ -37,6 +37,7 @@ import type { ContributionController, HistoryController } from './history';
 import type { SettingsController } from './settings';
 import type { FeedbackController } from './feedback';
 import type { StoreReviewRequestOutcome } from './store-review';
+import type { OtaUpdateController } from './ota-update';
 import type { PetVisualDiagnostic } from './ports/pet-visual-diagnostics.port';
 import type {
   CompleteFirstUseHandoffOutcome,
@@ -76,6 +77,7 @@ export interface MobileApplicationFacade {
   readonly onboardingTrialPetFeedback: OnboardingTrialPetFeedbackBridge;
   readonly onboardingTrialResult: OnboardingTrialResultController;
   readonly appVisibility: AppVisibilityController;
+  readonly otaUpdate: OtaUpdateController;
   readonly petCompanion: PetCompanionController;
   readonly petTerminalFeedback: PetTerminalFeedbackController;
   readonly petVisual: PetVisualController;

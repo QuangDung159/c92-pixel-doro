@@ -1,6 +1,7 @@
 import type {
   AppDefaultMode,
   FocusNotificationPermission,
+  OtaReleaseInfo,
   SettingsIssueCode,
 } from '@/application';
 import {
@@ -141,10 +142,46 @@ export const FeedbackEntrySection = ({
   </PixelPanel>
 );
 
+const latestStatusCopy: Record<OtaReleaseInfo['latestStatus'], string> = {
+  checking: 'Đang kiểm tra bản OTA mới nhất…',
+  latest: 'Đang chạy bản mới nhất tại lần kiểm tra gần nhất trên channel này.',
+  update_available: 'Có bản OTA mới hơn; hãy áp dụng khi hộp cập nhật xuất hiện.',
+  unavailable: 'Bản cài này không hỗ trợ kiểm tra OTA.',
+  unknown: 'Chưa xác minh được bản OTA mới nhất. Ứng dụng vẫn dùng được bình thường.',
+};
+
+export const AppVersionSection = ({
+  onCheckUpdate,
+  release,
+}: {
+  readonly onCheckUpdate: () => void;
+  readonly release: OtaReleaseInfo;
+}) => (
+  <PixelPanel>
+    <SectionLabel>Thông tin phiên bản</SectionLabel>
+    <Text selectable style={styles.versionValue}>
+      {`Version ${release.appVersion ?? 'không xác định'} · OTA ${release.otaNumber ?? 'embedded'}`}
+    </Text>
+    <Text selectable style={styles.help}>
+      {`Runtime ${release.runtimeVersion ?? 'không xác định'} · Channel ${release.channel ?? 'không xác định'}`}
+    </Text>
+    <Text accessibilityLiveRegion="polite" style={styles.status}>
+      {latestStatusCopy[release.latestStatus]}
+    </Text>
+    {release.lastCheckedAt === null ? null : (
+      <Text selectable style={styles.help}>
+        {`Kiểm tra lúc ${new Date(release.lastCheckedAt).toLocaleString('vi-VN')}`}
+      </Text>
+    )}
+    <SecondaryButton label="Kiểm tra cập nhật" onPress={onCheckUpdate} />
+  </PixelPanel>
+);
+
 const styles = StyleSheet.create({
   column: { gap: 9 },
   divider: { backgroundColor: palette.border, height: 1, opacity: 0.2 },
   help: { color: palette.textSecondary, fontSize: 13, lineHeight: 19 },
+  versionValue: { color: palette.textPrimary, fontSize: 15, fontWeight: '900', lineHeight: 22 },
   status: { color: palette.accentDark, fontSize: 12, fontWeight: '800', lineHeight: 18 },
   dangerTitle: { color: palette.accentRed, fontSize: 16, fontWeight: '900' },
 });

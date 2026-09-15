@@ -29,7 +29,11 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     ...(projectId === undefined
       ? {}
       : {
-          updates: { url: `https://u.expo.dev/${projectId}` },
+          updates: {
+            url: `https://u.expo.dev/${projectId}`,
+            checkAutomatically: "ON_LOAD",
+            fallbackToCacheTimeout: 0,
+          },
           extra: { eas: { projectId } },
         }),
     ios: {
