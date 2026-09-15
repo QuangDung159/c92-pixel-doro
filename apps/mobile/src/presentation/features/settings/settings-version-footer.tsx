@@ -9,7 +9,7 @@ export const SettingsVersionFooter = ({
   readonly release: OtaReleaseInfo;
 }) => (
   <Text selectable style={styles.footer}>
-    {`Version ${release.appVersion ?? "không xác định"} · OTA ${release.otaNumber ?? "embedded"}`}
+    {`Version ${release.appVersion ?? "không xác định"} · ${release.otaNumber ?? "embedded"}`}
   </Text>
 );
 
