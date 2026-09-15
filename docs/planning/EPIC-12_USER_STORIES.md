@@ -1,25 +1,35 @@
 ---
 document_id: PIXELDORO_EPIC_12_USER_STORIES
 title: PixelDoro EPIC-12 — Hardening, Device Validation và Closed-beta Delivery User Stories
-version: 0.1.0
-status: PLANNING_DRAFT_IMPLEMENTATION_BLOCKED_BY_EPIC_11_CLOSURE
+version: 0.9.0
+status: DONE_OWNER_ACCEPTED_PRODUCT_SCOPE
 date: 2026-09-14
-last_updated: 2026-09-14
+last_updated: 2026-09-15
 owner: Dũng Lư
-branch: feats/epic-11
-upstream: origin/feats/epic-11
+branch: feats/epic-12
+upstream: origin/feats/epic-12
 planning_baseline_sha: 6a0fa42860a9134c1374867a33aa0d8b16d9bb89
 planning_baseline_identity: EXACT_COMMITTED_PUSHED_SHA
 worktree_at_audit: CLEAN
 previous_epic: EPIC-11
-previous_epic_status: IMPLEMENTED_OWNER_QUICK_UI_PASS_CLOSURE_REVIEW_PENDING
+previous_epic_status: DONE_OWNER_ACCEPTED
 previous_epic_implementation_sha: deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0
 start_gate: EPIC_11_DONE_OWNER_ACCEPTED_AND_MVP_FEATURE_COMPLETE
-implementation_status: NOT_STARTED_BLOCKED
+start_gate_status: MET_2026_09_14
+implementation_opened_sha: aaee07fff999388920ebb3beb759567ac4f01c43
+implementation_status: DONE_OWNER_ACCEPTED_PRODUCT_SCOPE
+closure_scope: PRODUCT_CORE_ONLY
+product_scope_status: FEATURE_COMPLETE_OWNER_ACCEPTED_2026_09_15
+release_validation_status: DEFERRED_NOT_CLOSED_BETA_READY
+previous_release_candidate_sha: 59cb87c4bc4b150a7d95265d9655f4b04bc2309a
+previous_release_candidate_status: INVALIDATED_BY_POST_FREEZE_CONFIG_ASSET_AND_HARNESS_CHANGES
+product_config_baseline_sha: baf70d37778e92ff0d5c258d2f2d5c1d2c0d87be
+replacement_candidate_sha: PENDING_CLEAN_COMMIT_AFTER_EVIDENCE_HARNESS_UPDATE
 manual_device_status: NOT_RUN
 schema_verdict: SCHEMA_001_SUFFICIENT_NO_MIGRATION_PLANNED
-dependency_verdict: NO_NEW_DEPENDENCY_PLANNED
-native_config_verdict: NO_CHANGE_AUTHORIZED_EXISTING_NATIVE_GRAPH_REQUIRES_FRESH_BUILD_EVIDENCE
+dependency_verdict: OWNER_APPROVED_12_EXPO_PATCH_ALIGNMENTS_APPLIED_NO_NEW_PACKAGE
+native_config_verdict: POST_FREEZE_CONFIG_ASSET_AND_BUILD_TOOLING_CHANGE_REFREEZE_REBUILD_REQUIRED
+delivery_execution_status: FIRST_IOS_ANDROID_STORE_UPLOADS_OWNER_REPORTED_BUILD_SOURCE_GATE_FAILED
 authority: PLANNING
 product_truth: ../PIXELDORO_CORE_TRUTH.md
 epic_baseline: ./MVP_EPICS.md
@@ -28,17 +38,24 @@ architecture_baseline: ../architecture/system-architecture.md
 project_structure_baseline: ../architecture/project-structure.md
 data_model: ../architecture/data-model.md
 manual_guide: ../../apps/mobile/test/device/epic-12-beta-readiness.md
+implementation_report: ./EPIC-12_IMPLEMENTATION_REPORT.md
+exit_report: ./EPIC-12_EXIT_REPORT.md
 ---
 
 # EPIC-12 — Hardening, Device Validation và Closed-beta Delivery
 
+> Product-scope closure, 2026-09-15: owner explicitly closed EPIC-12 as
+> `DONE_OWNER_ACCEPTED_PRODUCT_SCOPE`. Mobile MVP core features are complete. Device, accessibility,
+> performance, same-SHA build, distribution and rollback evidence are deferred to a separate release
+> validation track and are not claimed as PASS or `CLOSED_BETA_READY`.
+
 ## 1. Executive summary
 
 EPIC-12 đưa Mobile MVP từ trạng thái feature-complete candidate sang một release candidate có thể
-truy nguyên, có bằng chứng trên iOS/Android và có đường rollback. Planning được phép hoàn tất trước,
-nhưng implementation **chưa được mở**: `EPIC-11` vẫn là
-`IMPLEMENTED_OWNER_QUICK_UI_PASS_CLOSURE_REVIEW_PENDING`, chưa phải `DONE_OWNER_ACCEPTED`; do đó
-`MVP_FEATURE_COMPLETE` cũng chưa được đóng theo `MVP_EPICS.md`.
+truy nguyên, có bằng chứng trên iOS/Android và có đường rollback. Owner đã xác nhận đóng EPIC-11 ngày
+2026-09-14; authority hiện hành ghi `DONE_OWNER_ACCEPTED` và W3 `MVP_FEATURE_COMPLETE`, nên EPIC-12
+được mở implementation tại exact pre-change SHA `aaee07fff999388920ebb3beb759567ac4f01c43`.
+Việc mở implementation không suy ra device/release PASS hoặc `CLOSED_BETA_READY`.
 
 Audit chọn tám vertical Story, theo thứ tự giảm release risk:
 
@@ -65,26 +82,25 @@ push được thực hiện trong task planning này. Mọi manual/device case c
 | Audit item | Kết quả tại 2026-09-14 |
 |---|---|
 | Repository | `/Users/dunglu/Documents/Working/c92-pixel-doro` |
-| Branch / upstream | `feats/epic-11` / `origin/feats/epic-11` |
+| Branch / upstream hiện hành | `feats/epic-12` / `origin/feats/epic-12` |
 | Exact planning baseline | `6a0fa42860a9134c1374867a33aa0d8b16d9bb89` |
 | HEAD/upstream parity | Cùng exact SHA tại thời điểm audit |
 | Worktree trước planning | Clean; không có owner change chưa commit cần chạm hoặc ghi đè |
 | Candidate EPIC-11 implementation | `deeaebf07f5edcb4d24ca1cfcc3e2ff5a9780ee0` |
 | Diff candidate → planning HEAD | Chỉ docs và device-validator metadata; không có production source change |
 | EPIC-01→10 | `DONE_OWNER_ACCEPTED` theo roadmap/Exit Reports hiện hành |
-| EPIC-11 | `IMPLEMENTED_OWNER_QUICK_UI_PASS_CLOSURE_REVIEW_PENDING`; exact-SHA owner closure checkbox còn mở |
-| `MVP_FEATURE_COMPLETE` | Chưa đạt vì EPIC-11 master closure còn mở |
-| EPIC-12 start gate | **CHƯA ĐẠT** |
-| Planning state | `PLANNING_DRAFT / IMPLEMENTATION_BLOCKED_BY_EPIC_11_CLOSURE` |
+| EPIC-11 | `DONE_OWNER_ACCEPTED`; authority và Exit Report đã ghi closure ngày 2026-09-14 |
+| `MVP_FEATURE_COMPLETE` | Đạt; `MVP_EPICS.md` ghi W3 feature delivery complete |
+| EPIC-12 start gate | **ĐÃ ĐẠT** |
+| Current state | `DONE_OWNER_ACCEPTED_PRODUCT_SCOPE / RELEASE_VALIDATION_DEFERRED` |
 
-Các bước duy nhất để mở implementation:
+Gate record mở implementation:
 
-1. Owner review `EPIC-11_IMPLEMENTATION_REPORT.md` trên exact candidate và xác nhận hoặc từ chối
-   `DONE_OWNER_ACCEPTED`.
-2. Nếu chấp nhận, cập nhật authority/roadmap EPIC-11 và đóng `MVP_FEATURE_COMPLETE` bằng record rõ ràng.
-3. Owner chốt các confirmation blocking trong §18, ít nhất device matrix, RC freeze policy,
-   distribution targets, channel/track, rollback/go-no-go owner và accessibility evidence level.
-4. Chỉ sau đó mới chuyển `US-12-01` sang implementation `IN_PROGRESS`; không tự đóng EPIC-11 từ plan này.
+1. EPIC-11 User Stories, Implementation Report và Exit Report đều ghi `DONE_OWNER_ACCEPTED`.
+2. `MVP_EPICS.md` 3.5.0 ghi EPIC-01→11 đã accepted và W3 feature delivery complete.
+3. Owner xác nhận trực tiếp ngày 2026-09-14 và yêu cầu triển khai EPIC-12.
+4. Các confirmation còn lại trong §18 vẫn pending theo phạm vi của từng Story; không tự bật external
+   service, tạo chi phí, build/submit hoặc chọn device/track thay owner.
 
 Planning baseline không phải release-candidate SHA. RC SHA chỉ được freeze sau `US-12-02` và mọi change
 được owner duyệt; mọi device/build/update artifact phải ghi exact SHA riêng.
@@ -141,9 +157,9 @@ branch logic ở các typed arbitration/branch component thay vì tiếp tục p
 | Feedback | Production UI/adapter; external activation prerequisite | HTTPS/idempotency/memory-only; live endpoint unset | Local unavailable case required; endpoint needed before real submissions |
 | Store review | Production policy/adapter; native evidence missing | `expo-store-review` present; eligibility/caps tested; Development Build row `NOT_RUN` | US-12-05 native evidence |
 | EAS/runtime profiles | Production baseline but delivery unproven | dev/preview/production channels, `appVersion` runtime; workflows exist | Preview/runtime/rollback rehearsal and track decision |
-| Device fixtures/guides | Production-support, reusable | Broad isolated DB/env fixtures; validator recognizes through EPIC-11 only | Extend validator plan without weakening PASS rules |
+| Device fixtures/guides | Production-support, reusable | Broad isolated DB/env fixtures; validator recognizes EPIC-12 case/status/evidence contracts | Preserve validator rules and keep unexecuted rows `NOT_RUN` |
 | Common UI components | Production, reusable | Shell/header/panel/button/chip/dialog/status/Pet/toggle/grid/reward/progression contracts | Reuse and regress; no EPIC-12 redesign |
-| Prototype scaffold | Prototype cần loại khỏi production graph trước RC | Root still mounts `PrototypeProvider`; prototype focus/break screens/branches remain, though production routes no longer depend on them | Remove only after static reachability/consumer proof; P0 release gate |
+| Prototype scaffold | Retired in frozen US-12-01 candidate | Root no longer mounts `PrototypeProvider`; obsolete focus/break branches, screens, state/context and aliases removed; integrity tests updated | Repository validator rejects retired prototype source re-entry; frozen SHA recorded |
 | Closed-beta artifact/release notes | Missing | No final artifact manifest, known-issues/go-no-go record or actual distribution evidence | US-12-08 |
 | Device/account/EAS/store access | External prerequisite | Availability not represented in repository | Owner confirmation and `BLOCKED` status when absent |
 | PostHog live project | Deferred có owner approval | Cost decision on 2026-09-13; missing config must fail closed | Not a blocker unless owner reverses decision |
@@ -151,9 +167,10 @@ branch logic ở các typed arbitration/branch component thay vì tiếp tục p
 
 ### 4.3. Size and concentration audit
 
-Không production screen/component nào vượt 300 dòng, ngoại trừ
-`presentation/providers/mobile-application-context.tsx` (334) có React provider/hook responsibility và
-phải split-review trước khi chạm. Các concentration point khác không phải UI component nhưng có risk:
+Current US-12-01 candidate đã tách
+`presentation/providers/mobile-application-context.tsx` từ provider/hook file 334 dòng thành một stable
+barrel và các module bootstrap/onboarding/feature/Pet có ownership riêng; public consumer import contract
+không đổi và mọi production screen/component hiện <=300 dòng. Các concentration point khác không phải UI component nhưng có risk:
 `composition/create-mobile-application.ts` (1,633), `application/shop/shop.controller.ts` (543),
 `application/bootstrap/mobile-bootstrap.ts` (521), derived queries (496), Settings controller (468),
 migration runner (350) và migration `001` (695). Không refactor chỉ để giảm line count trong EPIC-12;
@@ -175,7 +192,7 @@ complexity sang god hook/helper. Composition root nên tách factory theo existi
 | EPIC-07 Exit | Expo Doctor network/CocoaPods evidence | Historical `18/21` | Quality/exports passed | Revalidate current dependencies/tooling with network-capable environment | Build environment | 02/07 | Conditional | `CONFIRM-11` | No incompatible dependency/config issue; deviations documented |
 | EPIC-08 Exit deferred checklist | Physical purchase/equip/relaunch/offline and a11y matrix | `DEFERRED / NOT_RUN` | 179/918, real SQLite aggregate, quick smoke | Formal device + assistive technology | iOS/Android | 04/05 | Yes | `CONFIRM-03/10` | Atomic one-time purchase/owned/equip persists and remains accessible |
 | EPIC-09 Exit deferred items | History/contribution physical, VO/TalkBack, Largest Text, grayscale, Reduce Motion | `NOT_RUN_DEFERRED_TO_EPIC_12` | 206/1,056, SQLite reopen, exports | Formal final visual/device rows | iOS/Android | 05 | Yes per a11y policy | `CONFIRM-10` | Correct data/bands and non-color-only semantics on RC |
-| EPIC-09 Exit | SDK-57 patch drift/tooling debt | Historical Doctor `20/21` with nine patch drifts | Pinned lockfile and passing exports | Current Doctor resolution/risk disposition | Build env | 02/07 | Conditional | `CONFIRM-11` | Owner accepts no-change disposition or approved compatible patch produces clean rerun |
+| EPIC-09 Exit | SDK-57 patch drift/tooling debt | Resolved in frozen candidate; online Doctor `21/21` | Owner approved `CONFIRM-11=B`; exact 12 Expo patch alignments, lockfile, root quality and Doctor rerun PASS | Fresh native build/device evidence | Build env + iOS/Android | 02/03/07 | Yes before final artifact | `CONFIRM-11=B` recorded | Quality + Doctor remain green on frozen SHA; fresh native artifacts pass |
 | EPIC-10 Exit/Report | Android physical permission/silent mode, VO/TalkBack/Largest Text/Reduce Motion | `NOT_RUN`; iOS build only historical | 212/1,080, iOS Dev Build with audio/haptic | Full platform permission/availability and accessibility | iOS/Android | 04/05 | Yes | `CONFIRM-03/10` | Off/unavailable never emits or blocks core; settings persist |
 | EPIC-10 reset evidence | Reset failure/kill/relaunch and recovery | Automated historical PASS; formal device incomplete | Atomic reset/fingerprint/single-flight tests | RC device kill-before/after and normal-launch cleanup | iOS/Android | 04 | Yes | `CONFIRM-03` | No partial truth; rollback or committed fresh bootstrap only |
 | EPIC-11 Report §5–6 | Formal device/accessibility breadth | `NOT_RUN_DEFERRED_TO_EPIC_12` | 222/1,115, aggregate quick UI | Detailed platform/build/a11y rows | iOS/Android | 04/05 | Yes for core flow | `CONFIRM-03/10` | Each row independently recorded; no aggregate inference |
@@ -222,6 +239,28 @@ complexity sang god hook/helper. Composition root nên tách factory theo existi
 kết quả theo từng Story và không chia sẻ `PASS` ngầm. Bất kỳ production, migration, dependency, native
 config, harness hoặc acceptance-contract change sau freeze làm stale mọi downstream evidence bị ảnh
 hưởng; documentation-only record update không đổi behavior SHA nhưng phải giữ link tới artifact cũ.
+
+Implementation checkpoint updated 2026-09-15: `US-12-01/02` repository changes are implemented; root quality
+passes and online Expo Doctor is `21/21` after owner-approved `CONFIRM-11=B` patch alignment. Owner
+confirmed `EPIC12-CONFIRM-02=A`, freezing exact RC SHA
+`59cb87c4bc4b150a7d95265d9655f4b04bc2309a` for all blocking evidence. `US-12-03→08` retain their
+`NOT_RUN`/blocked state. Owner also approved `EPIC12-CONFIRM-03=A`; minimum and representative physical
+coverage is required, while exact device/OS inventory remains `BLOCKED`. These decisions do not imply
+device, build, distribution or final acceptance PASS.
+
+Post-freeze commits changed build/version configuration, build tooling and app icons. Owner later reported
+the first iOS/Android store uploads complete. EAS metadata confirms finished production/store artifacts,
+but Android reports Git SHA `1ca4e3f...` and latest iOS reports `726c22e...`; neither matches the frozen
+SHA. The artifact metadata also differs from config committed at each reported SHA, proving the uploaded
+source included uncommitted changes. The prior candidate is therefore invalidated for release evidence.
+Clean product/config baseline `baf70d37778e92ff0d5c258d2f2d5c1d2c0d87be` passes full quality. Because this
+audit also updates the evidence harness, the replacement RC SHA remains pending a clean commit of these
+records and explicit owner re-freeze; uploaded artifacts remain non-qualifying evidence.
+
+Root mobile build orchestration now fails closed when tracked or untracked changes exist, prints the
+exact 40-character SHA, runs prebuild, then rechecks clean status and unchanged SHA before invoking EAS.
+The dirty-worktree negative path and full root quality pass; this guard must be committed before final
+re-freeze so future artifacts cannot repeat the uncommitted-source failure.
 
 ## 8. Story details
 
@@ -277,11 +316,12 @@ a forward fix if route regression appears; never restores prototype as durable a
 DoR: start gate + confirmations + clean tree. DoD: manifest/reachability/carry ledger and all consumer
 regressions pass; owner accepts frozen identity.
 
-- [ ] Start gate and `CONFIRM-01/02/11/12` approved.
-- [ ] Every carry-over row has owner/case/blocker/PASS condition.
-- [ ] Prototype reachability removed or explicitly no-go with evidence.
-- [ ] RC manifest freezes exact committed SHA only after US-12-02.
-- [ ] Owner accepts the candidate identity; no manual case inferred.
+- [x] Start gate plus `CONFIRM-01=A`, `CONFIRM-02=A` and `CONFIRM-11=B` approved; `CONFIRM-12` remains pending.
+- [x] Every carry-over row has owner/case/blocker/PASS condition.
+- [x] Prototype reachability removed with automated integrity/repository evidence.
+- [ ] Replacement RC manifest re-freezes one exact committed SHA after post-freeze invalidation and the
+  evidence/harness update is committed cleanly.
+- [ ] Owner accepts the replacement candidate identity; no manual case inferred from prior store uploads.
 
 ### US-12-02 — Automated hardening, data integrity và safe recovery
 
@@ -294,7 +334,7 @@ regressions pass; owner accepts frozen identity.
 | Current capability | Strong unit/SQLite/integration suite and failure injection already production-backed |
 | Exact gap | Full current-HEAD rerun/traceability, patch-drift disposition, static size/reachability gates and any newly found blocker regression |
 | Deliverables | Green automated matrix; blocker list/fixes if authorized; integrity fingerprint report; exact RC-freeze recommendation |
-| Owner gate / confirms | `CONFIRM-11` for any schema/dependency/native/config change; no such change is planned |
+| Owner gate / confirms | `CONFIRM-11` for schema/dependency/native/config change; post-freeze build/config changes now require re-freeze/rebuild |
 
 **Scope and behavior.** In scope: current root quality; session start/cancel/complete races; Strict boundary;
 reward/purchase/equip idempotency; queue opt-out races; migration empty/latest/checksum/gap/newer/rollback;
@@ -331,11 +371,14 @@ preserving schema and user data; a data fix requires forward migration and separ
 US-12-01 inventory and safe fixtures. DoD: all deterministic P0 tests green, no unresolved critical/high
 data blocker, exact evidence stored and owner permits freeze.
 
-- [ ] Full current automated matrix runs on one clean committed candidate.
-- [ ] Migration/recovery/reset and all idempotency races pass.
-- [ ] Fail-closed privacy and prototype/static boundary gates pass.
-- [ ] Any touched common consumer regression and split review passes.
-- [ ] No schema/dependency/native/config change, or separate owner approval recorded.
+- [x] Full root quality passes on clean product/config baseline
+  `baf70d37778e92ff0d5c258d2f2d5c1d2c0d87be` and current evidence/harness worktree; prior online Expo
+  Doctor evidence remains `21/21`.
+- [x] Migration/recovery/reset and all idempotency races pass in the current automated matrix.
+- [x] Fail-closed privacy and prototype/static boundary gates pass.
+- [x] Touched common consumer regression and provider split review pass.
+- [x] Post-freeze config/build-tooling/icon changes are inventoried and invalidate the prior candidate;
+  schema and Expo dependency set remain unchanged.
 
 ### US-12-03 — Same-SHA iOS/Android native aggregate durability parity
 
@@ -698,8 +741,8 @@ pagination; Settings toggles/reset/dialog; Feedback score/input/error/success; b
 ## 12. Line-count, split và static-boundary checklist
 
 - [ ] No component or screen exceeds 300 lines; 240–260 triggers documented split review.
-- [ ] `mobile-application-context.tsx` (334 at audit) is split by provider/hook responsibility before any
-  EPIC-12 edit lands; no god hook replaces it.
+- [x] `mobile-application-context.tsx` (334 at audit) is split by provider/hook responsibility; no god
+  hook replaces it and the existing barrel contract remains stable.
 - [ ] `focus/session.tsx` stays below 240 and delegates branches/arbitration.
 - [ ] If `create-mobile-application.ts` is touched, feature-slice factories reduce wiring concentration;
   no business rule moves into Composition.
@@ -725,12 +768,17 @@ pagination; Settings toggles/reset/dialog; Feedback score/input/error/success; b
 | Accessibility/performance | VO/TalkBack/Largest Text/contrast/Reduce Motion/30m Pet | Owner-approved device slots | Per-case evidence, no aggregation by inference |
 | Delivery | Preview/runtime/rollback/install | Same artifact chain | Build/update/distribution IDs + device smoke |
 
-Proposed target slots, pending `EPIC12-CONFIRM-03`:
+Approved target-slot policy under `EPIC12-CONFIRM-03=A`; exact device/OS inventory remains pending:
 
 | Slot | Minimum policy target | Representative/current target | Notes |
 |---|---|---|---|
 | iOS | iPhone-class target on iOS 16.4 if accessible | Current team iPhone/current iOS | Simulator may support aggregate/layout; physical required for haptic/notification/thermal claims |
 | Android | Phone-class API 24 if accessible | Current mid-range Android/current supported OS | Emulator may support aggregate; physical required for haptic/thermal/battery claims |
+
+Read-only inventory on 2026-09-15 found an iPhone 13 on iOS 26.6.2 offline, an iPhone 14 Plus
+Simulator on iOS 26.5 booted, and an Android `sdk_gphone64_arm64` emulator on API 36 connected. The
+iPhone 13 can fill `IOS-REP` only after reconnecting; the simulators/emulator are supplemental and do
+not satisfy minimum or representative physical-device claims.
 
 If exact minimum hardware/OS is unavailable, row is `BLOCKED` until owner explicitly changes required
 matrix or accepts a documented risk; representative coverage cannot silently stand in for minimum.
@@ -801,23 +849,35 @@ Trong các bảng Story/carry-over, dạng rút gọn `CONFIRM-nn` luôn trỏ t
 
 | ID | Decision / 2–3 options | Recommended option | Trade-off | Stories blocked | Output unlocked | Pending default | Impact |
 |---|---|---|---|---|---|---|---|
-| `EPIC12-CONFIRM-01` | EPIC-11 closure: A accept exact candidate; B request fixes/new SHA; C keep open | A only if owner review accepts report; otherwise B | A opens EPIC-12; B delays but protects truth | 01→08 | EPIC-12 start gate | Implementation blocked | Release |
-| `EPIC12-CONFIRM-02` | RC policy: A one frozen SHA for all blocking evidence; B per-platform SHA; C rolling main | A | Fixes require rerun, but evidence is comparable | 01→08 | Candidate manifest + same-SHA ledger | No freeze | Release/process |
-| `EPIC12-CONFIRM-03` | Device matrix: A minimum + representative physical for hardware claims, simulator/emulator supplemental; B available devices only; C outsourced lab | A | Higher booking cost; credible native/perf evidence | 03→06 | Exact target ledger + device bookings | Missing slots `BLOCKED` | Device/cost |
-| `EPIC12-CONFIRM-04` | Internal distribution: A TestFlight + Google Play internal/closed; B EAS internal links only; C one platform first | A | Strongest store-like coverage; account/setup cost | 07/08 | Build/install plan + distribution evidence | No submit/distribution | Native/release/cost |
+| `EPIC12-CONFIRM-01` | EPIC-11 closure: A accept exact candidate; B request fixes/new SHA; C keep open | A only if owner review accepts report; otherwise B | A opens EPIC-12; B delays but protects truth | 01→08 | EPIC-12 start gate | `A — ACCEPTED_2026_09_14` | Release |
+| `EPIC12-CONFIRM-02` | RC policy: A one frozen SHA for all blocking evidence; B per-platform SHA; C rolling main | A | Fixes require rerun, but evidence is comparable | 01→08 | Candidate manifest + same-SHA ledger | `A — POLICY_ACCEPTED_2026_09_14`; prior frozen SHA invalidated, replacement awaits clean evidence/harness commit and explicit re-freeze | Release/process |
+| `EPIC12-CONFIRM-03` | Device matrix: A minimum + representative physical for hardware claims, simulator/emulator supplemental; B available devices only; C outsourced lab | A | Higher booking cost; credible native/perf evidence | 03→06 | Exact target ledger + device bookings | `A — ACCEPTED_2026_09_15`; exact device/OS slots remain `BLOCKED` until supplied | Device/cost |
+| `EPIC12-CONFIRM-04` | Internal distribution: A TestFlight + Google Play internal/closed; B EAS internal links only; C one platform first | A | Strongest store-like coverage; account/setup cost | 07/08 | Build/install plan + distribution evidence | Store uploads owner-reported 2026-09-15; A/B/C target/group/track still unconfirmed and artifacts fail exact-source gate | Native/release/cost |
 | `EPIC12-CONFIRM-05` | Feedback endpoint: A activate approved preview/prod endpoint before real testers; B core-only test with form unavailable; C remove feedback promise from invite | A for feedback-collecting beta | Data ops/retention ownership vs stronger signal | 08 | Feedback activation/rollout copy | Adapter disabled; no real submissions | External/privacy/cost |
 | `EPIC12-CONFIRM-06` | PostHog: A continue deferred; B re-enable preview only; C re-enable beta production | A | No behavioral analytics/cost; preserves privacy boundary | 07/08 optional telemetry | Explicit telemetry disposition | Fail-closed, non-blocker | External/privacy/cost |
 | `EPIC12-CONFIRM-07` | Release target: A TestFlight internal + Google Play named internal/closed group; B production draft; C EAS install only | A | Requires exact account/group setup; avoids accidental public rollout | 08 | Target manifest + tester invite scope | Do not use current production track | Config/release |
 | `EPIC12-CONFIRM-08` | Rollback/go-no-go owner: A Dũng owns both with named backup; B separate release/technical owners; C no formal owner | A for solo team | Concentrated responsibility but unambiguous action | 07/08 | Rehearsal authority + signed decision | No promotion | Release/security |
 | `EPIC12-CONFIRM-09` | Benchmark coverage: A required slots + ADR metrics/no freeze >100ms; B representative only; C historical EPIC-04 evidence | A | More test time; final-RC confidence | 04→06 | Measurement protocol + booked devices | Benchmark rows `NOT_RUN` | Device/performance |
 | `EPIC12-CONFIRM-10` | Accessibility evidence: A VO+TalkBack+Largest Text+contrast+Reduce Motion; B one screen reader/platform; C automated only | A | Most effort; lowest exclusion/rejection risk | 05/08 | Formal a11y matrix + exit threshold | Formal rows `NOT_RUN`; no release acceptance | Accessibility |
-| `EPIC12-CONFIRM-11` | Schema/dependency/native/config need: A no change unless blocker; B approve named narrow patch; C broad modernization | A | May leave nonblocking drift; minimizes RC churn | 01/02/07 | Scope authority for a proven blocker | No change authorized | Schema/dependency/native/config |
+| `EPIC12-CONFIRM-11` | Schema/dependency/native/config need: A no change unless blocker; B approve named narrow patch; C broad modernization | B, after Doctor identified exact drift | Twelve patch updates require fresh native build evidence but remove SDK mismatch | 01/02/07 | Clean Doctor + candidate dependency graph | `B — ACCEPTED_AND_APPLIED_2026_09_14` | Dependency/native build; no schema/config |
 | `EPIC12-CONFIRM-12` | Exit risk policy: A zero crash/P0 plus accepted nonblocking limitations; B zero known issue; C ship with P0 workaround | A | Practical closed beta with explicit risk ownership | 01/04/08 | Go/no-go threshold + limitation policy | Any crash/P0 is no-go | Release |
+| `EPIC12-PRODUCT-CLOSE` | Close EPIC-12 after confirming no core feature remains; retain release validation separately | Owner-directed product-only closure | Closes product work without overstating beta readiness | Product scope | Product Exit Report | `DONE_OWNER_ACCEPTED_PRODUCT_SCOPE_2026_09_15` | Product |
 
 Các confirmation tạo chi phí, external service, native/config/schema change hoặc distribution không được
 plan này tự chọn thay owner. Recommendation chỉ là planning input.
 
 ## 19. Epic completion checklist
+
+### Product-scope closure — accepted 2026-09-15
+
+- [x] Mobile MVP core feature set is implemented; no new EPIC-12 product feature remains.
+- [x] Automated product hardening and regression matrix passes.
+- [x] Owner explicitly directed `Đóng EPIC-12 theo product scope`.
+- [x] Unexecuted device, accessibility, performance and release evidence is transferred without false PASS.
+- [x] EPIC-12 is `DONE_OWNER_ACCEPTED_PRODUCT_SCOPE`.
+- [ ] `CLOSED_BETA_READY` — not claimed; belongs to the deferred release-validation track.
+
+### Original full closed-beta exit criteria — deferred, not waived or passed
 
 - [ ] `EPIC12-CONFIRM-01→12` blocking decisions are recorded; pending defaults respected.
 - [ ] `US-12-01` RC truth/carry-over/freeze gate accepted.
@@ -843,10 +903,19 @@ plan này tự chọn thay owner. Recommendation chỉ là planning input.
 - [ ] Internal iOS and Android build/install evidence exists.
 - [ ] Closed-beta artifact, release notes, known issues and operational handoff are complete.
 - [ ] No known crash or P0 closed-beta blocker remains.
-- [ ] Owner explicitly marks `EPIC-12 DONE_OWNER_ACCEPTED` and `CLOSED_BETA_READY`.
+- [x] Owner explicitly marks `EPIC-12 DONE_OWNER_ACCEPTED_PRODUCT_SCOPE`.
+- [ ] Owner explicitly marks `CLOSED_BETA_READY`; not part of this scoped closure.
 
 ## 20. Change log
 
 | Version | Date | Change |
 |---|---|---|
+| `0.9.0` | 2026-09-15 | Closed EPIC-12 as `DONE_OWNER_ACCEPTED_PRODUCT_SCOPE` by explicit owner direction. Mobile MVP core is feature-complete; device/accessibility/performance/same-SHA distribution/rollback work is transferred to release validation with no false PASS or `CLOSED_BETA_READY` claim. |
+| `0.8.0` | 2026-09-15 | Added a fail-closed mobile build-source guard: reject dirty tracked/untracked state, print exact SHA, and recheck clean/unchanged source after prebuild before EAS. Negative dirty-state check and full quality pass; commit and re-freeze remain required. |
+| `0.7.0` | 2026-09-15 | Recorded owner-reported first App Store/Play Store uploads and EAS build metadata. Detected cross-SHA plus dirty-source mismatches, invalidated frozen candidate `59cb87c...`, and recorded quality-PASS product/config baseline `baf70d3...`; replacement SHA awaits clean evidence/harness commit, explicit re-freeze and rebuild. |
+| `0.6.0` | 2026-09-15 | Recorded owner deferral of EAS Build and store upload. `EPIC12-CONFIRM-04` target remains unselected; delivery gates stay `BLOCKED/NOT_RUN`, with no external build or upload performed. |
+| `0.5.0` | 2026-09-15 | Recorded `EPIC12-CONFIRM-03=A`: minimum and representative physical devices are required for hardware claims, with simulator/emulator supplemental. Read-only inventory found an offline physical iPhone 13 plus available iOS/Android virtual targets; unresolved physical slots remain `BLOCKED`. |
+| `0.4.0` | 2026-09-14 | Recorded `EPIC12-CONFIRM-02=A` and froze exact release-candidate SHA `59cb87c4bc4b150a7d95265d9655f4b04bc2309a` for all blocking evidence; device/build/distribution rows remain `NOT_RUN`. |
+| `0.3.0` | 2026-09-14 | Recorded `EPIC12-CONFIRM-11=B`; aligned exactly 12 Expo SDK 57 patch dependencies, regenerated lockfile, and passed online Expo Doctor `21/21` plus full root quality. Fresh native/device evidence remains `NOT_RUN`. |
+| `0.2.0` | 2026-09-14 | Recorded EPIC-11 closure/MVP feature-complete and opened implementation at `aaee07f...`; retired prototype production graph, split the oversized provider hooks, extended repository/device validators and bound local quality PASS while keeping device/delivery evidence `NOT_RUN`. |
 | `0.1.0` | 2026-09-14 | Created full EPIC-01→11 carry-over/code/config audit, eight prioritized Stories, UI reuse/static-boundary plan, test/evidence/release/rollback strategy and 12 owner confirmations. Recorded planning baseline `6a0fa428...` and kept implementation blocked by EPIC-11 closure. |

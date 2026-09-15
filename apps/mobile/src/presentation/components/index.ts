@@ -15,7 +15,7 @@ export { PetStage, PixelCompanion, type PetStageProps } from './pet-stage';
 export { PetStatusText, type PetStatusTextProps } from './pet-status-text';
 export { PetVisualStatus, type PetVisualStatusProps } from './pet-visual-status';
 export { ScreenHeader, type ScreenHeaderProps } from './screen-header';
-export { ScreenShell, ScreenShell as PrototypeScreen } from './screen-shell';
+export { ScreenShell } from './screen-shell';
 export { RewardSummary, type RewardSummaryProps } from './reward-summary';
 export { ProgressionSummary, type ProgressionSummaryProps } from './progression-summary';
 export { ItemTile, type ItemTileAction, type ItemTileModel } from './item-tile';

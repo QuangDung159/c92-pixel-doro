@@ -92,10 +92,10 @@ describe('EPIC-09 production History integrity', () => {
     expect(graph).not.toMatch(/numberOfLines|adjustsFontSizeToFit|minimumFontScale/);
   });
 
-  it('allows EPIC-10 to replace Settings while preserving still-used prototype routes', () => {
+  it('keeps Settings production-only after prototype route retirement', () => {
     expect(read('apps/mobile/src/presentation/features/settings/index.tsx'))
       .not.toContain('PrototypeBadge');
-    expect(read('apps/mobile/src/app/_layout.tsx')).toContain('PrototypeProvider');
+    expect(read('apps/mobile/src/app/_layout.tsx')).not.toContain('PrototypeProvider');
   });
 
   it('owns history_viewed at the controller boundary without route or presentation coupling', () => {

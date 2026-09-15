@@ -25,27 +25,20 @@
       "credentialsSource": "remote",
       "node": "22.23.2"
     },
-    "android-apk": {
+    "qa": {
       "extends": "preview",
-      "credentialsSource": "remote",
-      "android": {
-        "buildType": "apk"
-      }
+      "channel": "qa"
+    },
+    "staging": {
+      "extends": "preview",
+      "channel": "staging"
     },
     "production": {
-      "autoIncrement": true,
+      "autoIncrement": false,
       "channel": "production",
       "environment": "production",
       "credentialsSource": "remote",
       "node": "22.23.2"
-    },
-    "android-aab": {
-      "extends": "production",
-      "autoIncrement": false,
-      "credentialsSource": "remote",
-      "android": {
-        "buildType": "app-bundle"
-      }
     }
   },
   "submit": {

@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
@@ -21,9 +21,12 @@ describe('EPIC-08 aggregate production boundary', () => {
     );
   });
 
-  it('keeps retired production screens independent from prototype ownership', () => {
+  it('keeps production screens independent after retiring prototype ownership', () => {
     const root = read('apps/mobile/src/app/_layout.tsx');
-    expect(root).toContain('PrototypeProvider');
+    expect(root).not.toContain('PrototypeProvider');
+    const prototypeDirectory = resolve(repoRoot, 'apps/mobile/src/presentation/prototype');
+    expect(existsSync(resolve(prototypeDirectory, 'prototype-context.tsx'))).toBe(false);
+    expect(existsSync(resolve(prototypeDirectory, 'prototype-state.ts'))).toBe(false);
     expect(read('apps/mobile/src/presentation/features/history/index.tsx'))
       .not.toMatch(/prototype|mock|sample/i);
     expect(read('apps/mobile/src/presentation/features/settings/index.tsx'))

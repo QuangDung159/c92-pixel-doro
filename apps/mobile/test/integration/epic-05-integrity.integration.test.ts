@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
@@ -34,17 +34,26 @@ describe('EPIC-05 production integrity', () => {
       expect(source, path).not.toContain('usePrototype');
       expect(source, path).not.toMatch(/infrastructure\/database|sqlite|repository/i);
     }
-    expect(read('apps/mobile/src/app/focus/prototype-session-branch.tsx'))
-      .toContain('usePrototype');
-    expect(read('apps/mobile/src/app/focus/prototype-result-branch.tsx'))
-      .toContain('usePrototype');
+    expect(existsSync(resolve(
+      repositoryRoot,
+      'apps/mobile/src/app/focus/prototype-session-branch.tsx',
+    ))).toBe(false);
+    expect(existsSync(resolve(
+      repositoryRoot,
+      'apps/mobile/src/app/focus/prototype-result-branch.tsx',
+    ))).toBe(false);
+    const prototypeDirectory = resolve(
+      repositoryRoot,
+      'apps/mobile/src/presentation/prototype',
+    );
+    expect(existsSync(prototypeDirectory)
+      ? listSourceFiles('apps/mobile/src/presentation/prototype')
+      : []).toEqual([]);
   });
 
   it('keeps every scoped UI/source module within 300 lines', () => {
     const scoped = [
       ...productionTrialFiles,
-      'apps/mobile/src/app/focus/prototype-session-branch.tsx',
-      'apps/mobile/src/app/focus/prototype-result-branch.tsx',
       'apps/mobile/src/application/onboarding-trial/onboarding-analytics.recorder.ts',
       'apps/mobile/src/composition/review/onboarding-trial-review-fixture.ts',
     ];

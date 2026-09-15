@@ -70,9 +70,61 @@ for (const manifest of manifests) {
   }
 }
 
+const retiredPrototypeFiles = relativeFiles.filter(
+  (file) => file.startsWith('apps/mobile/src/') && (
+    file.includes('/prototype/') || file.split('/').at(-1)?.startsWith('prototype-')
+  ),
+);
+
+if (retiredPrototypeFiles.length > 0) {
+  throw new Error(
+    `Retired prototype source re-entered the production graph: ${retiredPrototypeFiles.join(', ')}`,
+  );
+}
+
+const retiredPrototypeReferences = [];
+for (const file of relativeFiles.filter(
+  (path) => path.startsWith('apps/mobile/src/') &&
+    /\.[jt]sx?$/u.test(path) &&
+    !path.includes('.test.'),
+)) {
+  const content = await readFile(resolve(repositoryRoot, file), 'utf8');
+  if (
+    content.includes('presentation/prototype') ||
+    content.includes('PrototypeProvider') ||
+    /\busePrototype\s*\(/u.test(content)
+  ) {
+    retiredPrototypeReferences.push(file);
+  }
+}
+
+if (retiredPrototypeReferences.length > 0) {
+  throw new Error(
+    `Retired prototype reference re-entered production source: ${retiredPrototypeReferences.join(', ')}`,
+  );
+}
+
+const productionUiFiles = relativeFiles.filter(
+  (file) => (
+    file.startsWith('apps/mobile/src/app/') ||
+    file.startsWith('apps/mobile/src/presentation/')
+  ) && file.endsWith('.tsx') && !file.includes('.test.'),
+);
+
+const oversizedUiFiles = [];
+for (const file of productionUiFiles) {
+  const content = await readFile(resolve(repositoryRoot, file), 'utf8');
+  const lineCount = content.split(/\r?\n/u).length - (content.endsWith('\n') ? 1 : 0);
+  if (lineCount > 300) oversizedUiFiles.push(`${file} (${lineCount})`);
+}
+
+if (oversizedUiFiles.length > 0) {
+  throw new Error(`Production screen/component exceeds 300 lines: ${oversizedUiFiles.join(', ')}`);
+}
+
 const { validateMigrations } = await import('./validate-migrations.mjs');
 const migrationResult = await validateMigrations(repositoryRoot);
 
 console.log(
-  `Repository hygiene verified: one lockfile, no signing material, no Skia dependency, ${migrationResult.migrationCount} immutable migration(s).`,
+  `Repository hygiene verified: one lockfile, no signing material, no Skia dependency, no retired prototype source, UI files <=300 lines, ${migrationResult.migrationCount} immutable migration(s).`,
 );
