@@ -6,8 +6,8 @@ const IOS_BUNDLE_IDENTIFIER = "com.dragonc92team.pixeldoro";
 const ANDROID_APPLICATION_ID = "com.dragonc92team.pixeldoro";
 const EAS_PROJECT_ID = "6f65fb79-ffe9-4fa6-9951-895f27bf0725";
 // Increment both values manually before every production store build.
-const IOS_BUILD_NUMBER = "3";
-const ANDROID_VERSION_CODE = 1;
+const IOS_BUILD_NUMBER = "1";
+const ANDROID_VERSION_CODE = 2;
 
 export default ({ config }: ConfigContext): ExpoConfig => {
   const projectId = env.EXPO_PROJECT_ID ?? EAS_PROJECT_ID;
@@ -17,7 +17,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     ...config,
     name: "Mèo Dev",
     slug: "pixeldoro",
-    version: "1.0.1",
+    version: "1.0.2",
     orientation: "portrait",
     icon: "./assets/images/pixeldoro-icon-1024.png",
     scheme: "pixeldoro",
