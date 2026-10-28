@@ -113,7 +113,7 @@ export const SettingsScreen = ({
       <ScreenHeader
         description="Các lựa chọn được lưu trên thiết bị và vẫn có hiệu lực khi mở lại ứng dụng."
         eyebrow="SETTINGS"
-        title="Cài PixelDoro theo nhịp của bạn."
+        title="Tùy chỉnh Mèo Dev theo nhịp của bạn."
       />
       {projection.issue === null ? null : (
         <SettingsIssueBanner

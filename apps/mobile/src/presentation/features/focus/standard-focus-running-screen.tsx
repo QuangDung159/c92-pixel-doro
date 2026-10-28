@@ -76,9 +76,9 @@ export const StandardFocusRunningScreen = ({
       />
       <InlineNotice>
         {pending
-          ? 'Phiên đã tới deadline. PixelDoro đang xác nhận và đọc kết quả đã lưu.'
+          ? 'Phiên đã tới deadline. Mèo Dev đang xác nhận và đọc kết quả đã lưu.'
           : strict
-            ? 'Rời PixelDoro quá 10 giây trước deadline sẽ kết thúc phiên Strict mà không có phần thưởng.'
+            ? 'Rời Mèo Dev quá 10 giây trước deadline sẽ kết thúc phiên Strict mà không có phần thưởng.'
             : 'Thời gian hiển thị được tính từ phiên đã lưu, không phụ thuộc số nhịp tick trên màn hình.'}
       </InlineNotice>
       {cancelError === null ? null : <InlineNotice>{cancelError}</InlineNotice>}

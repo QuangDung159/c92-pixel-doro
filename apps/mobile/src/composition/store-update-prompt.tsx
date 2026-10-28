@@ -79,13 +79,13 @@ export const StoreUpdatePrompt = ({ suppressed = false }: StoreUpdatePromptProps
     <ConfirmationDialog
       body={availableUpdate === null
         ? ''
-        : `Phiên bản ${availableUpdate.version} đã sẵn sàng. Cập nhật để nhận cải tiến mới nhất của PixelDoro.`}
+        : `Phiên bản ${availableUpdate.version} đã sẵn sàng. Cập nhật để nhận cải tiến mới nhất của Mèo Dev.`}
       confirmLabel="Cập nhật ngay"
       confirmTone="primary"
       dismissible={false}
       onConfirm={openStore}
       onDismiss={() => undefined}
-      title="Cần cập nhật PixelDoro"
+      title="Cần cập nhật Mèo Dev"
       visible={availableUpdate !== null && !suppressed}
     />
   );

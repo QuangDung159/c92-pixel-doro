@@ -72,7 +72,7 @@ export const StandardFocusResultScreen = ({
     </View>}
     <InlineNotice>
       {completed ? 'Phần thưởng đã được lưu an toàn. Bạn có thể về Home ngay.' : failed
-        ? 'Bạn đã rời PixelDoro quá 10 giây trước deadline. Phiên không nhận phần thưởng và không mở Break.'
+        ? 'Bạn đã rời Mèo Dev quá 10 giây trước deadline. Phiên không nhận phần thưởng và không mở Break.'
         : 'Phiên bị hủy không nhận phần thưởng và không mở Break. Không có dữ liệu hoàn thành giả được tạo.'}
     </InlineNotice>
     {completed ? <BreakRecommendationPanel

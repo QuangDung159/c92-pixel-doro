@@ -26,7 +26,7 @@ const issueCopy: Record<SettingsIssueCode, string> = {
   NOTIFICATION_PERMISSION_FAILED:
     "Chưa đọc được quyền thông báo của hệ điều hành.",
   NOTIFICATION_OS_BLOCKED:
-    "PixelDoro đang bật nhắc việc, nhưng hệ điều hành đang chặn thông báo.",
+    "Mèo Dev đang bật nhắc việc, nhưng hệ điều hành đang chặn thông báo.",
   NOTIFICATION_SYNC_FAILED:
     "Tùy chọn đã lưu nhưng lịch thông báo chưa đồng bộ.",
   SYSTEM_SETTINGS_UNAVAILABLE:
@@ -215,9 +215,9 @@ export const FeedbackEntrySection = ({
     <SectionLabel>Góp ý</SectionLabel>
     <Text style={styles.help}>
       Chia sẻ điểm trải nghiệm và lời nhắn tùy chọn trực tiếp với team
-      PixelDoro.
+      Mèo Dev.
     </Text>
-    <SecondaryButton label="Góp ý cho PixelDoro" onPress={onOpenFeedback} />
+    <SecondaryButton label="Góp ý cho Mèo Dev" onPress={onOpenFeedback} />
   </PixelPanel>
 );
 

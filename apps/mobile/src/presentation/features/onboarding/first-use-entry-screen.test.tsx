@@ -51,7 +51,7 @@ describe('FirstUseEntryScreen', () => {
     }>;
     expect(error.type).toBe('ErrorState');
     expect(error.props).toMatchObject({
-      title: 'Chưa thể mở PixelDoro',
+      title: 'Chưa thể mở Mèo Dev',
       body: 'Dữ liệu của bạn vẫn an toàn. Hãy thử lại để mở đúng không gian của bạn.',
     });
     expect(JSON.stringify(error.props)).not.toMatch(/sqlite|database|FIRST_USE_/i);

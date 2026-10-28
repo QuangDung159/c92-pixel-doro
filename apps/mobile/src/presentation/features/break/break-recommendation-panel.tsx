@@ -43,7 +43,7 @@ export const BreakRecommendationPanel = ({
         Chưa đọc được nhịp nghỉ đã lưu.
       </Text>
       <Text style={styles.body}>
-        Bạn có thể thử lại hoặc về Home. PixelDoro sẽ không tự chọn một phiên nghỉ khác.
+        Bạn có thể thử lại hoặc về Home. Mèo Dev sẽ không tự chọn một phiên nghỉ khác.
       </Text>
       <SecondaryButton label="Thử đọc lại" onPress={onRetry} />
     </Panel>;
@@ -72,7 +72,7 @@ export const BreakRecommendationPanel = ({
     />
     {startProjection.status === 'error' ? <InlineNotice>
       {startProjection.error.code === 'ACTIVE_SESSION'
-        ? 'Một phiên khác đang chạy. PixelDoro không thay thế hoặc dừng phiên đó.'
+        ? 'Một phiên khác đang chạy. Mèo Dev không thay thế hoặc dừng phiên đó.'
         : startProjection.error.code === 'SOURCE_UNAVAILABLE'
           ? 'Kết quả Focus này không còn đủ điều kiện để bắt đầu nghỉ.'
           : 'Chưa thể bắt đầu phiên nghỉ. Dữ liệu Focus của bạn vẫn an toàn; hãy thử lại.'}

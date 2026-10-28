@@ -15,7 +15,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
 
   return {
     ...config,
-    name: "PixelDoro",
+    name: "Mèo Dev",
     slug: "pixeldoro",
     version: "1.0.1",
     orientation: "portrait",

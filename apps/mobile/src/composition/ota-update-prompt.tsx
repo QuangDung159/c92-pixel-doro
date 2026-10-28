@@ -24,7 +24,7 @@ export const OtaUpdatePrompt = () => {
       dismissLabel="Để sau"
       onConfirm={() => void application.otaUpdate.requestRestart()}
       onDismiss={() => application.otaUpdate.dismissPrompt()}
-      title="Cập nhật PixelDoro"
+      title="Cập nhật Mèo Dev"
       visible={visible}
     />
   );

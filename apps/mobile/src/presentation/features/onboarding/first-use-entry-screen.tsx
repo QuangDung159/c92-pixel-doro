@@ -15,7 +15,7 @@ export const FirstUseEntryScreen = ({
       <ErrorState
         body="Dữ liệu của bạn vẫn an toàn. Hãy thử lại để mở đúng không gian của bạn."
         onRetry={onRetry}
-        title="Chưa thể mở PixelDoro"
+        title="Chưa thể mở Mèo Dev"
       />
     ) : (
       <LoadingState

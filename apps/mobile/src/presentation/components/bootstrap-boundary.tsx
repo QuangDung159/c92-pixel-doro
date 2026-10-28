@@ -18,13 +18,13 @@ export const RecoveryBoundaryContent = ({
 }: RecoveryBoundaryContentProps) => (
   <View
     accessibilityRole="alert"
-    accessibilityLabel="Không thể khởi động PixelDoro"
+    accessibilityLabel="Không thể khởi động Mèo Dev"
     style={styles.centered}
   >
     <ErrorState
       body="Dữ liệu của bạn vẫn được giữ nguyên. Hãy thử lại để tiếp tục."
       onRetry={onRetry}
-      title="PixelDoro chưa thể sẵn sàng"
+      title="Mèo Dev chưa thể sẵn sàng"
     />
   </View>
 );
@@ -40,7 +40,7 @@ export const BootstrapBoundary = ({ children }: PropsWithChildren) => {
   if (projection.status !== 'ready') {
     return (
       <View
-        accessibilityLabel="PixelDoro đang khởi động"
+        accessibilityLabel="Mèo Dev đang khởi động"
         accessibilityLiveRegion="polite"
         style={styles.centered}
       >

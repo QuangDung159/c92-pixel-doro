@@ -28,7 +28,7 @@ export const TrialResultBranch = () => {
   }
   if (result.status !== 'ready') {
     return <ScreenShell><ErrorState title="Chưa thể đọc kết quả"
-      body="Không có kết quả phù hợp. PixelDoro không dùng dữ liệu mô phỏng thay thế."
+      body="Không có kết quả phù hợp. Mèo Dev không dùng dữ liệu mô phỏng thay thế."
       onRetry={() => void refresh()} /></ScreenShell>;
   }
   return <PetRouteVisibility><OnboardingTrialResultScreen result={result.result} pet={pet}

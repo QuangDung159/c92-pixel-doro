@@ -57,7 +57,7 @@ export default function BreakSessionRoute() {
   if (validSessionId === null) {
     return <ScreenShell><ErrorState
       title="Chưa thể mở phiên nghỉ"
-      body="Định danh phiên nghỉ không hợp lệ. PixelDoro sẽ không dùng một phiên khác thay thế."
+      body="Định danh phiên nghỉ không hợp lệ. Mèo Dev sẽ không dùng một phiên khác thay thế."
       onRetry={() => router.replace('/(tabs)')}
     /></ScreenShell>;
   }

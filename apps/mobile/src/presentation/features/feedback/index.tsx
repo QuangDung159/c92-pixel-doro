@@ -95,7 +95,7 @@ export const FeedbackScreen = ({
         <ScreenHeader
           description="Góp ý đã được gửi riêng cho team sản phẩm, không phải đánh giá trên cửa hàng."
           eyebrow="FEEDBACK · SENT"
-          title="Cảm ơn bạn đã giúp PixelDoro tốt hơn."
+          title="Cảm ơn bạn đã giúp Mèo Dev tốt hơn."
         />
         <PixelPanel tone="strong">
           <Text accessibilityRole="alert" style={styles.success}>✓ Đã gửi góp ý</Text>
@@ -110,7 +110,7 @@ export const FeedbackScreen = ({
   return (
     <ScreenShell>
       <ScreenHeader
-        description="Phản hồi này dành cho team PixelDoro, không phải App Store hay Google Play."
+        description="Phản hồi này dành cho team Mèo Dev, không phải App Store hay Google Play."
         eyebrow="FEEDBACK"
         title="Nhịp hôm nay thế nào?"
       />

@@ -9,7 +9,7 @@ export default function FocusResultRoute() {
   if (sessionId === undefined) return <TrialResultBranch />;
   if (typeof sessionId !== 'string' || !sessionId.trim()) {
     return <ScreenShell><ErrorState title="Chưa thể mở kết quả"
-      body="Định danh kết quả không hợp lệ. PixelDoro sẽ không dùng một phiên khác thay thế."
+      body="Định danh kết quả không hợp lệ. Mèo Dev sẽ không dùng một phiên khác thay thế."
       onRetry={() => router.replace('/(tabs)')} /></ScreenShell>;
   }
   return <StandardFocusResultBranch sessionId={sessionId} />;

@@ -62,7 +62,7 @@ export const OnboardingTrialRunningScreen = ({
       />
       <InlineNotice>
         {pending
-          ? 'Phiên đã tới deadline. PixelDoro đang chờ bước xác nhận kết quả an toàn.'
+          ? 'Phiên đã tới deadline. Mèo Dev đang chờ bước xác nhận kết quả an toàn.'
           : 'Relax: thời gian tiếp tục theo đồng hồ kể cả khi bạn khóa màn hình hoặc chuyển app.'}
       </InlineNotice>
       {cancelError === null ? null : <InlineNotice>{cancelError}</InlineNotice>}

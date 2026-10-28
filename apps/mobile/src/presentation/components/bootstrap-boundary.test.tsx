@@ -30,10 +30,10 @@ describe('RecoveryBoundaryContent', () => {
 
     expect(tree.props).toMatchObject({
       accessibilityRole: 'alert',
-      accessibilityLabel: 'Không thể khởi động PixelDoro',
+      accessibilityLabel: 'Không thể khởi động Mèo Dev',
     });
     expect(errorState?.props).toMatchObject({
-      title: 'PixelDoro chưa thể sẵn sàng',
+      title: 'Mèo Dev chưa thể sẵn sàng',
       body: 'Dữ liệu của bạn vẫn được giữ nguyên. Hãy thử lại để tiếp tục.',
     });
     errorState?.props.onRetry();
